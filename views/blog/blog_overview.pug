@@ -165,16 +165,13 @@ block blogcontent
         td
           p="Left Col.: "
         td
-          div.d-none.d-md-block
-            +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
+          +userConfigOption("overview","showNumbers",showNumbers," show editor numbers, ")
           +userConfigOption("overview","showMail",showMail," show mail, ")
-          div.d-none.d-md-block
-            +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
+          +userConfigOption("overview","showVisibleLanguages",showVisibleLanguages," show languages(short)" )
       tr
         td
           p.d-none.d-md-block="Right Col.:"
         td
-          div.d-none.d-md-block
           +userConfigOption("overview","showCollector",showCollector," show collector, " )
           +userConfigOption("overview","showEditor",showEditor," show editor , ")
           +userConfigOption("overview","showColoredUser",showColoredUser," show users colored, ")

@@ -334,12 +334,14 @@ function checkMarkdownError() {
   let linkList;
   let allLinksFound = true;
   let linkFromCollectionFound = false;
+  let linksInCollection = false;
   const allLinks = [];
   let errorLinkTwice = null;
   let errorLinkNotInCollection = null;
 
   const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
   while ((linkList = regexToken.exec(md)) !== null) {
+    linksInCollection = true;
     const link = linkList[0];
 
     let linkAllowed = false;
@@ -381,7 +383,7 @@ function checkMarkdownError() {
     text.html("Please check links (e.g." + errorLinkNotInCollection + "), some looks not to be in collection, nor be a translation link");
     errorOccured = true;
   }
-  if (linkFromCollectionFound === false && md !== "" && md !== "no translation" && md.indexOf("----------") < 0) {
+  if (linksInCollection && linkFromCollectionFound === false && md !== "" && md !== "no translation" && md.indexOf("----------") < 0) {
     text.show(400);
     text.html("Please use a link from collection in article.");
     errorOccured = true;

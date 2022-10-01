@@ -12,6 +12,8 @@ const debug        = require("debug")("OSMBC:app");
 
 const session      = require("express-session");
 const compression  = require("compression");
+const pug          = require("pug");
+const HttpStatus   = require("http-status-codes");
 
 const helmet       = require("helmet");
 const crypto       = require("crypto");
@@ -121,7 +123,6 @@ if (mediaFolder["externally mirrored"] === false) {
 
 
 
-// Initialise Morgan Logger, (and parser to log cookies)
 app.use(cookieParser());
 
 
@@ -180,7 +181,9 @@ app.use(htmlRoot + "/slack", slackrouter);
 
 
 // maxAge for not logged in user cookies is 10 minutes
-const cookieMaxAge = 1000 * 60 * 10;
+const cookieMaxAge = config.getValue("cookieMaxAge") * 1000 * 60 * 60 * 24;
+
+
 
 
 
@@ -200,41 +203,11 @@ app.use(session(
 ));
 
 
-// Initialize Passport!  Also use passport.session() middleware, to support
-// persistent login sessions (recommended).
-app.use(auth.passport.initialize());
-app.use(auth.passport.session());
+// Initialise authenication stuff including passport
 
-function renderLogin(req, res) {
-  debug("renderLogin");
-  res.render("login", { layout: layoutConst });
-}
-app.get(htmlRoot + "/login", renderLogin);
+auth.initialise(app);
 
-// GET /auth/openstreetmap
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in OpenStreetMap authentication will involve redirecting
-//   the user to openstreetmap.org.  After authorization, OpenStreetMap will redirect the user
-//   back to this application at /auth/openstreetmap/callback
-app.get(htmlRoot + "/auth/openstreetmap", auth.passport.authenticate("openstreetmap"));
 
-// GET /auth/openstreetmap/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
-app.get(htmlRoot + "/auth/openstreetmap/callback",
-  auth.passport.authenticate("openstreetmap", { failureRedirect: "/login" }),
-  function(req, res) {
-    debug("after passport.authenticate Function");
-    res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-  });
-
-app.get(htmlRoot + "/logout", function(req, res) {
-  debug("logoutFunction");
-  req.logout();
-  res.redirect(htmlRoot + "/osmbc.html");
-});
 
 // layout does not render, but prepares the res.rendervar variable for
 // dynamic contend in layout.pug
@@ -261,69 +234,31 @@ app.use(function(req, res, next) {
 
 
 
-// development error handler
-// will print stacktrace
-if (app.get("env") === "development") {
-  debug("Set development error hander");
-  app.locals.pretty = true;
-  /* jshint -W098 */
-  app.use(function(err, req, res, next) {
-    debug("app.use Error Handler for Debug");
-    logger.error(err.toString());
-    logger.error(err.stack);
 
-    res.status(err.status || 500);
-    if (err.type && err.type === "API") return res.send(err.message);
-    res.render("error", {
-      message: err.message,
-      error: err,
-      nonce: res.locals.cspNonce,
-      layout: layoutConst
-    });
-  });
-  /* jshint +W098 */
-}
-
-
-// test error handler
-// will print stacktrace
-if (app.get("env") === "test") {
-  debug("Set test error hander");
-  app.locals.pretty = true;
-  /* jshint -W098 */
-  app.use(function(err, req, res, next) {
-    debug("app.use Error Handler for Debug");
-    res.status(err.status || 500);
-    logger.error("Error Message " + err.message);
-    logger.error(err.stack);
-    if (err.type && err.type === "API") return res.send(err.message + "\n" + JSON.stringify(err));
-    res.render("error", {
-      message: err.message,
-      error: err,
-      nonce: res.locals.cspNonce,
-      layout: layoutConst
-    });
-  });
-  /* jshint +W098 */
-}
-
-// production error handler
-// no stacktraces leaked to user
-/* jshint -W098 */
 app.use(function(err, req, res, next) {
-  debug("Set production error hander");
-  debug("app.use status function");
-  logger.error("Express Error Handler Function: Error Occured");
-  logger.error("error object:" + JSON.stringify(err));
+  debug("Express Error Handler");
+  logger.error("Error Message " + err.message);
+  if (app.get("env") !== "production") {
+    logger.error(err.stack);
+  }
   res.status(err.status || 500);
   if (err.type && err.type === "API") return res.send(err.message);
-  res.render("error", {
-    message: (err) ? err.message : "no err object",
-    error: { detail: (err) ? err.detail : "no err object" },
-    layout: layoutConst
-  });
+  try {
+    const errHtml = pug.renderFile(path.join(__dirname, "views", "error.pug"),
+      {
+        message: err.message ?? "no err message",
+        detail: err.detail ?? null,
+        error: (app.get("env") !== "production") ? err : null,
+        nonce: res.locals.cspNonce,
+        layout: layoutConst,
+        getReasonPhrase: HttpStatus.getReasonPhrase
+
+      });
+    res.send(errHtml);
+  } catch (err) { console.error(err); }
 });
-/* jshint +W098 */
+
+
 
 
 module.exports = app;

@@ -1,109 +1,202 @@
 "use strict";
 
-const debug      = require("debug")("OSMBC:routes:auth");
-const async      = require("../util/async_wrap.js");
-const HttpStatus = require("http-status-codes");
+const debug       = require("debug")("OSMBC:routes:auth");
+const HttpStatus  = require("http-status-codes");
+const path        = require("path");
 
-const config = require("../config.js");
-const logger = require("../config.js").logger;
+const config      = require("../config.js");
+const logger      = require("../config.js").logger;
+const layoutConst = require("../routes/layout").layoutConst;
+const async       = require("../util/async_wrap.js");
 
 const passport     = require("passport");
 const OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
+const LocalHtpasswdStrategy = require("passport-local-htpasswd");
+const OAuth2Strategy = require("passport-oauth2").Strategy;
+const xml2js = require("xml2js");
+
+
+
 
 const userModule = require("../model/user.js");
 
 
 const htmlRoot = config.htmlRoot();
-
-// taken from: https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-// Passport session setup.
-//   To support persistent login sessions, Passport needs to be able to
-//   serialize users into and deserialize users out of the session.  Typically,
-//   this will be as simple as storing the user ID when serializing, and finding
-//   the user by ID when deserializing.  However, since this example does not
-//   have a database of user records, the complete OpenStreetMap profile is
-//   serialized and deserialized.
-// in OSMBC only the displayName is relevant (as long as there is no user database)
-// so this is enough for serialising.
-// if there will be a user database, this has to be integrated here
-passport.serializeUser(function (user, done) {
-  debug("passport.serializeUser CB");
-  const username = (user.displayName) ? user.displayName : "";
-  done(null, username);
-});
-
 const createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", { mustExist: true });
+const auth = config.getValue("auth", { mustExist: true });
 
-passport.deserializeUser(function (user, done) {
-  debug("passport.deserializeUser CB");
-  if (typeof user !== "string") {
-    logger.error("deserialise user with object called, expected string");
-    logger.error(JSON.stringify(user, null, 2));
-    return done(null, null);
+
+
+function initialise(app) {
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  function renderLogin(req, res) {
+    debug("renderLogin");
+    res.render("login", { layout: layoutConst });
   }
-  userModule.find({ OSMUser: user }, function(err, result) {
-    if (err) return done(null, null);
-    if (result.length === 1) {
-      const overWriteRole = config.getValue("DefineRole");
-      if (overWriteRole && overWriteRole[result[0].OSMUser]) {
-        result[0].access = overWriteRole[result[0].OSMUser];
-        logger.error("DefineRole Overwrite: Switching user " + result[0].OSMUser + " to access " + overWriteRole[result[0].OSMUser]);
-      }
-      return done(null, result[0]);
-    }
-    if (createGuestUsersAutomatic && result.length === 0) {
-      userModule.createNewUser({ OSMUser: user, access: "guest", mdWeeklyAuthor: "anonymous" }, function(err, user) {
-        if (err) return done(null, null);
-        return done(null, user);
+  function renderLoginFailure(req, res) {
+    debug("renderLoginFailure");
+    res.render("login failure", { layout: layoutConst });
+  }
+  app.get(htmlRoot + "/login", renderLogin);
+  app.get(htmlRoot + "/login_failure", renderLoginFailure);
+
+  if (auth.openstreetmap.enabled) {
+    app.get(htmlRoot + "/auth/openstreetmap", passport.authenticate("openstreetmap"));
+    app.get(htmlRoot + "/auth/openstreetmap/callback",
+      passport.authenticate("openstreetmap", { failureRedirect: config.getValue("htmlroot") + "/login" }),
+      function(req, res) {
+        debug("after passport.authenticate Function");
+        res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
       });
-      return;
+  }
+  if (auth.htaccess.enabled) {
+    function renderHtAccessLogin(req, res) {
+      res.render("login-wpwd", { layout: layoutConst });
     }
-    if (result.length === 0) {
-      // no automatic guest creation
-      return done(new Error("User >" + user + "< does not exist"));
-    }
-    if (result.length > 1) return done(null, null);
+    app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
+    const passport = require("passport");
+    app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd", { successRedirect: htmlRoot + "/", failureRedirect: htmlRoot + "/login_failure" }));
+  }
+
+  if (auth.openstreetmap_oauth20.enabled) {
+    app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2"));
+    app.get(htmlRoot + "/auth/openstreetmap_oauth20/callback", passport.authenticate("oauth2", { failureRedirect: "/login" }),
+      function(req, res) {
+      // Successful authentication, redirect home.
+        res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
+      });
+  }
+  app.get(htmlRoot + "/logout", function(req, res) {
+    debug("logoutFunction");
+    req.logout();
+    res.redirect(htmlRoot + "/osmbc.html");
   });
-});
 
 
-// taken from https://github.com/jaredhanson/passport-openstreetmap/blob/master/examples/login/app.js
-// Use the OpenStreetMapStrategy within Passport.
-//   Strategies in passport require a `verify` function, which accept
-//   credentials (in this case, a token, tokenSecret, and OpenStreetMap profile), and
-//   invoke a callback with a user object.
+  // Link serializing an deserializing function to passport
+  passport.serializeUser(function (user, done) {
+    debug("passport.serializeUser CB");
+    const username = (user.displayName) ? user.displayName : ((user.username) ? (user.username) : "");
+    done(null, username);
+  });
+  passport.deserializeUser(function (user, done) {
+    debug("passport.deserializeUser CB");
+    if (typeof user !== "string") {
+      logger.error("deserialise user with object called, expected string");
+      logger.error(JSON.stringify(user, null, 2));
+      return done(null, null);
+    }
+    userModule.find({ OSMUser: user }, function(err, result) {
+      if (err) return done(null, null);
+      if (result.length === 1) {
+        const overWriteRole = config.getValue("DefineRole");
+        if (overWriteRole && overWriteRole[result[0].OSMUser]) {
+          result[0].access = overWriteRole[result[0].OSMUser];
+          logger.error("DefineRole Overwrite: Switching user " + result[0].OSMUser + " to access " + overWriteRole[result[0].OSMUser]);
+        }
+        return done(null, result[0]);
+      }
+      if (createGuestUsersAutomatic && result.length === 0) {
+        userModule.createNewUser({ OSMUser: user, access: "guest", mdWeeklyAuthor: "anonymous" }, function(err, user) {
+          if (err) return done(null, null);
+          return done(null, user);
+        });
+        return;
+      }
+      if (result.length === 0) {
+        // no automatic guest creation
+        return done(new Error("User >" + user + "< does not exist"));
+      }
+      if (result.length > 1) return done(null, null);
+    });
+  });
 
-let Strategy = null;
-if (process.env.NODE_ENV === "test") {
-  Strategy = require("passport-mocked").Strategy;
-} else {
-  Strategy = OpenStreetMapStrategy;
+  // Initialise all login mechisms based on config file
+  if (auth.openstreetmap.enabled) {
+    const strategy = new OpenStreetMapStrategy({
+      name: "openstreetmap",
+      consumerKey: auth.openstreetmap.OPENSTREETMAP_CONSUMER_KEY,
+      consumerSecret: auth.openstreetmap.OPENSTREETMAP_CONSUMER_SECRET,
+      callbackURL: auth.openstreetmap.callbackUrl,
+      requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
+      accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
+      userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
+    },
+    function (token, tokenSecret, profile, done) {
+      debug("passport.use Token Function");
+      // asynchronous verification, for effect...
+      process.nextTick(function () {
+        debug("passport.use Token Function->prozess.nextTick");
+        // To keep the example simple, the user's OpenStreetMap profile is returned to
+        // represent the logged-in user.  In a typical application, you would want
+        // to associate the OpenStreetMap account with a user record in your database,
+        // and return that user instead.
+        return done(null, profile);
+      });
+    });
+    passport.use(strategy);
+  }
+  if (auth.htaccess.enabled) {
+    const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: path.join(__dirname, "..", "test_pwd") });
+    passport.use(strategy);
+  }
+  if (auth.openstreetmap_oauth20.enabled) {
+    const oauth2 = auth.openstreetmap_oauth20;
+    const client =  new OAuth2Strategy({
+      authorizationURL: oauth2.authorizationURL,
+      tokenURL: oauth2.tokenURL,
+      clientID: oauth2.clientID,
+      clientSecret: oauth2.clientSecret,
+      callbackURL: oauth2.callbackURL,
+      scope: oauth2.scope
+    },
+    function(accessToken, refreshToken, params, profile, cb) {
+      debug("passport.access Token CB");
+      return cb(null, profile);
+    });
+    if (client._oauth2) {
+      client._oauth2.useAuthorizationHeaderforGET(true);
+      client.userProfile = function (accesstoken, done) {
+        debug("passport.userProfile");
+        // choose your own adventure, or use the Strategy's oauth client
+        this._oauth2.get("https://api.openstreetmap.org/api/0.6/user/details", accesstoken, (err, body, res) => {
+          if (err) {
+            return done(err);
+          }
+          try {
+            const parser = new xml2js.Parser();
+            parser.parseString(body, function (err, result) {
+              if (err) return done(err);
+              const userProfile = { displayName: result.osm.user[0].$.display_name, id: result.osm.user[0].$.id };
+              return done(null, userProfile);
+            });
+            return;
+          } catch (e) {
+            return done(e);
+          }
+        });
+      };
+    }
+    passport.use(client);
+  }
 }
 
-passport.use(new Strategy({
-  name: "openstreetmap",
-  consumerKey: config.getValue("OPENSTREETMAP_CONSUMER_KEY", { mustExist: true }),
-  consumerSecret: config.getValue("OPENSTREETMAP_CONSUMER_SECRET", { mustExist: true }),
-  callbackURL: config.getValue("callbackUrl", { mustExist: true }),
-  requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
-  accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
-  userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
-},
-function (token, tokenSecret, profile, done) {
-  debug("passport.use Token Function");
 
-  // asynchronous verification, for effect...
-  process.nextTick(function () {
-    debug("passport.use Token Function->prozess.nextTick");
 
-    // To keep the example simple, the user's OpenStreetMap profile is returned to
-    // represent the logged-in user.  In a typical application, you would want
-    // to associate the OpenStreetMap account with a user record in your database,
-    // and return that user instead.
-    return done(null, profile);
-  });
-}
-));
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function checkRole(role, functions) {
@@ -212,3 +305,4 @@ module.exports.checkRole = checkRole;
 module.exports.checkUser = checkUser;
 module.exports.hasRole = hasRole;
 module.exports.ensureAuthenticated = ensureAuthenticated;
+module.exports.initialise = initialise;

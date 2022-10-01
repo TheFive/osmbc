@@ -11,7 +11,7 @@
   "dependencies": {
     "animated-gif-detector": "1.2.x",
     "async": "3.2.x",
-    "axios": "0.27.x",
+    "axios": "^0.27.2",
     "body-parser": "1.20.x",
     "bootstrap": "4.6.x",
     "bootstrap-select": "^1.13.18",
@@ -57,6 +57,8 @@
     "node-schedule": "2.1.x",
     "nodemailer": "6.7.x",
     "passport": "0.4.x",
+    "passport-local-htpasswd": "^0.1.1",
+    "passport-oauth2": "^1.6.1",
     "passport-openstreetmap": "0.1.x",
     "pg": "8.7.x",
     "progress": "2.0.x",
@@ -69,14 +71,15 @@
     "sanitize-html": "^2.7.1",
     "serve-favicon": "2.5.x",
     "ssrf": "^1.0.2",
-    "standard-http-error": "2.0.x",
     "stoppable": "1.1.x",
     "turndown": "7.1.x",
     "twit": "2.2.x",
     "winston": "3.3.x",
-    "winston-daily-rotate-file": "4.5.x"
+    "winston-daily-rotate-file": "4.5.x",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "axios-cookiejar-support": "^4.0.2",
     "dom-compare": "^0.6.0",
     "eslint": "7.24.x",
     "eslint-config-standard": "16.0.x",
@@ -93,11 +96,13 @@
     "mockdate": "3.0.x",
     "nock": "13.0.x",
     "nyc": "^15.1.0",
-    "passport-mocked": "^1.4.0",
+    "pretty": "^2.0.0",
+    "selenium-webdriver": "4.4.x",
     "serve-index": "^1.9.1",
     "should": "^13.2.3",
     "sinon": "9.2.x",
     "timemachine": "0.3.x",
+    "tough-cookie": "^4.0.0",
     "xmldom": "^0.6.0",
     "zombie": "^5.0.8"
   }

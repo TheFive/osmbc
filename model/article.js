@@ -354,27 +354,39 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
   });
 };
 
-
 function find(obj, order, callback) {
-  debug("find");
-  let createFunction = create;
-
-  if (typeof obj.blog === "object") {
-    const blog = obj.blog;
-    obj.blog = blog.name;
-    createFunction = function() {
-      return create({ _blog: blog });
-    };
+  if (typeof order === "function") {
+    callback = order;
+    order = undefined;
   }
-  if (typeof obj.blog === "string") {
-    if ((obj.blog === "Future") || (obj.blog === "TBC") || (obj.blog === "Trash")) {
+
+  function _find(obj, order, callback) {
+    debug("find");
+    let createFunction = create;
+
+    if (typeof obj.blog === "object") {
+      const blog = obj.blog;
+      obj.blog = blog.name;
       createFunction = function() {
-        return create({ _blog: null });
+        return create({ _blog: blog });
       };
     }
+    if (typeof obj.blog === "string") {
+      if ((obj.blog === "Future") || (obj.blog === "TBC") || (obj.blog === "Trash")) {
+        createFunction = function() {
+          return create({ _blog: null });
+        };
+      }
+    }
+    assert.notEqual(typeof createFunction, undefined);
+    pgMap.find({ table: "article", create: createFunction }, obj, order, callback);
   }
-  assert.notEqual(typeof createFunction, undefined);
-  pgMap.find({ table: "article", create: createFunction }, obj, order, callback);
+  if (callback) {
+    return _find(obj, order, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _find(obj, order, (err, result) => err ? reject(err) : resolve(result));
+  });
 }
 
 function findById(id, callback) {

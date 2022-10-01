@@ -127,8 +127,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
           self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
         }
         // check Event articles (async with no real callback)
-        self.fillEventArticle(lang, () => {});
-        return cb();
+        return self.fillEventArticle(lang, cb);
       }
       if (data === "markexported") {
         self[exported] = true;

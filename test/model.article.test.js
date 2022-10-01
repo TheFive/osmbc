@@ -3,19 +3,19 @@
 /* jshint ignore:start */
 
 
-var async  = require("async");
-var should = require("should");
-var nock   = require("nock");
-var debug  = require("debug")("OSMBC:test:article.test");
+const async  = require("async");
+const should = require("should");
+const nock   = require("nock");
+const debug  = require("debug")("OSMBC:test:article.test");
 
 
-var testutil = require("./testutil.js");
-var mockdate = require("mockdate");
+const testutil = require("./testutil.js");
+const mockdate = require("mockdate");
 
-var articleModule = require("../model/article.js");
-var logModule     = require("../model/logModule.js");
-var blogModule    = require("../model/blog.js");
-var messageCenter = require("../notification/messageCenter.js");
+const articleModule = require("../model/article.js");
+const logModule     = require("../model/logModule.js");
+const blogModule    = require("../model/blog.js");
+const messageCenter = require("../notification/messageCenter.js");
 
 
 // set Test Standard to ignore prototypes for should
@@ -30,7 +30,7 @@ should.config.checkProtoEql = false;
 
 
 describe("model/article", function() {
-  var testUser = { OSMUser: "user"};
+  const testUser = { OSMUser: "user" };
   before(function (bddone) {
     // nock all slack messages
     nock("https://hooks.slack.com/")
@@ -47,7 +47,7 @@ describe("model/article", function() {
   });
   describe("Article Constructor", function() {
     it("should create an Article object", function(bddone) {
-      var article = articleModule.create({oid: "Test"});
+      const article = articleModule.create({ oid: "Test" });
       should(article.oid).eql("Test");
       should(typeof (article)).eql("object");
       should(article instanceof articleModule.Class).be.True();
@@ -57,58 +57,58 @@ describe("model/article", function() {
   describe("getCommentMention", function() {
     /* eslint-disable mocha/no-synchronous-tests */
     function createArticleWithComment(comment1, comment2) {
-      var article = articleModule.create({markdown: "test"});
+      const article = articleModule.create({ markdown: "test" });
       article.commentList = [];
-      article.commentList.push({user: "User", timestamp: new Date(), text: comment1});
-      if (comment2) article.commentList.push({user: "User", timestamp: new Date(), text: comment2});
+      article.commentList.push({ user: "User", timestamp: new Date(), text: comment1 });
+      if (comment2) article.commentList.push({ user: "User", timestamp: new Date(), text: comment2 });
       return article;
     }
     it("should select language in correct case", function() {
-      let a = createArticleWithComment("@DE should to something", "Comment for @ES");
+      const a = createArticleWithComment("@DE should to something", "Comment for @ES");
       should(a.getCommentMention("User", "DE")).eql("language");
       should(a.getCommentMention("User", "ES")).eql("language");
       should(a.getCommentMention("User", "AT", "ES")).eql("language");
       should(a.getCommentMention("User", "AT", "DE")).eql("language");
     });
     it("should select language in different case", function() {
-      let a = createArticleWithComment("should to something @de", "Comment for @es or What");
+      const a = createArticleWithComment("should to something @de", "Comment for @es or What");
       should(a.getCommentMention("User", "DE")).eql("language");
       should(a.getCommentMention("User", "ES")).eql("language");
       should(a.getCommentMention("User", "AT", "ES")).eql("language");
       should(a.getCommentMention("User", "AT", "DE")).eql("language");
     });
     it("should select user in different case", function() {
-      let a = createArticleWithComment("should to something @user", "Comment for @es or What");
+      const a = createArticleWithComment("should to something @user", "Comment for @es or What");
       should(a.getCommentMention("User", "DE")).eql("user");
       should(a.getCommentMention("User", "ES")).eql("user");
       should(a.getCommentMention("User", "AT", "ES")).eql("user");
       should(a.getCommentMention("User", "AT", "DE")).eql("user");
     });
     it("should not select language if its part of user name", function() {
-      let a = createArticleWithComment("should to something @escadoni", "Test more");
+      const a = createArticleWithComment("should to something @escadoni", "Test more");
       should(a.getCommentMention("escadoni", "ES")).eql("user");
       should(a.getCommentMention("User", "ES")).eql("other");
     });
 
     it("should select user with space", function() {
-      let a = createArticleWithComment("should to something @user name", "Test more");
+      const a = createArticleWithComment("should to something @user name", "Test more");
       should(a.getCommentMention("user name", "ES")).eql("user");
     });
     it("should not select language if user is at the end", function() {
-      let a = createArticleWithComment("should to something @user");
+      const a = createArticleWithComment("should to something @user");
       should(a.getCommentMention("user", "DE")).eql("user");
     });
     it("should select all", function() {
-      let a = createArticleWithComment("should to something @all");
+      const a = createArticleWithComment("should to something @all");
       should(a.getCommentMention("user", "DE")).eql("language");
     });
     /* eslint-enable mocha/no-synchronous-tests */
   });
   describe("createNewArticle", function() {
     it("should createNewArticle with prototype", function(bddone) {
-      articleModule.createNewArticle({blog: "test", markdownDE: "**"}, function (err, result) {
+      articleModule.createNewArticle({ blog: "test", markdownDE: "**" }, function (err, result) {
         should.not.exist(err);
-        var id = result.id;
+        const id = result.id;
         testutil.getJsonWithId("article", id, function(err, result) {
           should.not.exist(err);
           should(result.blog).equal("test");
@@ -120,7 +120,7 @@ describe("model/article", function() {
     it("should createNewArticle without prototype", function(bddone) {
       articleModule.createNewArticle(function (err, result) {
         should.not.exist(err);
-        var id = result.id;
+        const id = result.id;
         testutil.getJsonWithId("article", id, function(err) {
           should.not.exist(err);
           bddone();
@@ -128,7 +128,7 @@ describe("model/article", function() {
       });
     });
     it("should create no New Article with ID", function(bddone) {
-      articleModule.createNewArticle({id: 2, blog: "test", markdownDE: "**"}, function (err) {
+      articleModule.createNewArticle({ id: 2, blog: "test", markdownDE: "**" }, function (err) {
         bddone();
         should.exist(err);
         should(err.message).eql("adfadf");
@@ -138,12 +138,12 @@ describe("model/article", function() {
   describe("save", function() {
     it("Should do save with a Promise", async function () {
       // Generate an article for test
-      var newArticle;
-      newArticle = await articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"});
-      var id = newArticle.id;
+      let newArticle;
+      newArticle = await articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" });
+      const id = newArticle.id;
 
       // get a second copy of the article (use Database for Copy)
-      var alternativeArticle = await articleModule.findById(id);
+      const alternativeArticle = await articleModule.findById(id);
 
       newArticle.blog = "TESTNEW";
       await newArticle.save();
@@ -151,22 +151,21 @@ describe("model/article", function() {
       try {
         await alternativeArticle.save();
       } catch (err) {
-        should(err).eql(new Error( 'Version Number Differs'));
+        should(err).eql(new Error("Version Number Differs"));
       }
-
     });
     it("should report a conflict, if version number differs", function (bddone) {
       // Generate an article for test
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
+        const id = result.id;
 
         // get a second copy of the article (use Database for Copy)
         articleModule.findById(id, function(err, result) {
           should.not.exist(err);
-          var alternativeArticle = result;
+          const alternativeArticle = result;
           newArticle.blog = "TESTNEW";
 
 
@@ -186,17 +185,17 @@ describe("model/article", function() {
     });
     it("should keep the intern reference to a blog (_blog)", function (bddone) {
       // Generate an article for test
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
+        const id = result.id;
 
         // get a second copy of the article (use Database for Copy)
         articleModule.findById(id, function(err, result) {
           should.not.exist(err);
           result.blog = "TESTNEW";
-          result._blog = {name: "TESTNEW"};
+          result._blog = { name: "TESTNEW" };
           result._derivedInfo = 42;
 
 
@@ -220,34 +219,34 @@ describe("model/article", function() {
       testutil.clearDB(bddone);
     });
     it("should set only the one Value in the database", function (bddone) {
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
+        const id = result.id;
         newArticle.markdownDE = "This Value will not be logged";
-        newArticle.setAndSave(testUser, {version: 1, blog: "Reference", collection: "text", categoryEN: "Imports"}, function(err) {
+        newArticle.setAndSave(testUser, { version: 1, blog: "Reference", collection: "text", categoryEN: "Imports" }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article", id, function(err, result) {
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id: id, markdownDE: "This Value will not be logged", blog: "Reference", collection: "text", categoryEN: "Imports", version: 2});
-            logModule.find({}, {column: "property"}, function (err, result) {
+            should(result).eql({ id: id, markdownDE: "This Value will not be logged", blog: "Reference", collection: "text", categoryEN: "Imports", version: 2 });
+            logModule.find({}, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(3);
-              var r0id = result[0].id;
-              var r1id = result[1].id;
-              var r2id = result[2].id;
+              const r0id = result[0].id;
+              const r1id = result[1].id;
+              const r2id = result[2].id;
               // var r3id = result[3].id;
-              var t0 = result[0].timestamp;
-              var t1 = result[1].timestamp;
-              var t2 = result[2].timestamp;
+              const t0 = result[0].timestamp;
+              const t1 = result[1].timestamp;
+              const t2 = result[2].timestamp;
               // var t3 = result[3].timestamp;
-              var now = new Date();
-              var t0diff = ((new Date(t0)).getTime() - now.getTime());
-              var t1diff = ((new Date(t1)).getTime() - now.getTime());
-              var t2diff = ((new Date(t2)).getTime() - now.getTime());
+              const now = new Date();
+              const t0diff = ((new Date(t0)).getTime() - now.getTime());
+              const t1diff = ((new Date(t1)).getTime() - now.getTime());
+              const t2diff = ((new Date(t2)).getTime() - now.getTime());
               //   var t3diff = ((new Date(t3)).getTime()-now.getTime());
 
               // The Value for comparison should be small, but not to small
@@ -256,9 +255,9 @@ describe("model/article", function() {
               should(t1diff).be.below(10);
               should(t2diff).be.below(10);
               //  should(t3diff).be.below(10);
-              should(result[0]).eql({id: r0id, timestamp: t0, blog: "Reference", oid: id, user: "user", table: "article", property: "blog", from: "TEST", to: "Reference"});
-              should(result[1]).eql({id: r1id, timestamp: t1, blog: "Reference", oid: id, user: "user", table: "article", property: "categoryEN", to: "Imports"});
-              should(result[2]).eql({id: r2id, timestamp: t2, blog: "Reference", oid: id, user: "user", table: "article", property: "collection", to: "text"});
+              should(result[0]).eql({ id: r0id, timestamp: t0, blog: "Reference", oid: id, user: "user", table: "article", property: "blog", from: "TEST", to: "Reference" });
+              should(result[1]).eql({ id: r1id, timestamp: t1, blog: "Reference", oid: id, user: "user", table: "article", property: "categoryEN", to: "Imports" });
+              should(result[2]).eql({ id: r2id, timestamp: t2, blog: "Reference", oid: id, user: "user", table: "article", property: "collection", to: "text" });
               //   should(result[3]).eql({id:r3id,timestamp:t3,oid:id,user:"user",table:"article",property:"collection",to:"text"});
               bddone();
             });
@@ -267,30 +266,30 @@ describe("model/article", function() {
       });
     });
     it("should trim markdown Values", function (bddone) {
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown"}, function(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown" }, function(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
-        newArticle.setAndSave(testUser, {version: "1", markdownDE: "  to be trimmed "}, function(err) {
+        const id = result.id;
+        newArticle.setAndSave(testUser, { version: "1", markdownDE: "  to be trimmed " }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("article", id, function(err, result) {
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id: id, markdownDE: "to be trimmed", version: 2});
+            should(result).eql({ id: id, markdownDE: "to be trimmed", version: 2 });
             bddone();
           });
         });
       });
     });
     it("should ignore unchanged Values", function (bddone) {
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
-        var empty;
-        var changeValues = {};
+        const id = result.id;
+        let empty;
+        const changeValues = {};
         changeValues.markdownDE = newArticle.markdownDE;
         changeValues.blog = empty;
         changeValues.version = "1";
@@ -299,8 +298,8 @@ describe("model/article", function() {
           testutil.getJsonWithId("article", id, function(err, result) {
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id: id, markdownDE: "markdown", blog: "TEST", version: 2});
-            logModule.find({}, {column: "property"}, function (err, result) {
+            should(result).eql({ id: id, markdownDE: "markdown", blog: "TEST", version: 2 });
+            logModule.find({}, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(0);
@@ -311,13 +310,13 @@ describe("model/article", function() {
       });
     });
     it("should delete markdown with spaces", function (bddone) {
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
-        var empty;
-        var changeValues = {};
+        const id = result.id;
+        let empty;
+        const changeValues = {};
         changeValues.markdownDE = " ";
         changeValues.blog = empty;
         changeValues.version = "1";
@@ -326,8 +325,8 @@ describe("model/article", function() {
           testutil.getJsonWithId("article", id, function(err, result) {
             should.not.exist(err);
             delete result._meta;
-            should(result).eql({id: id, markdownDE: "", blog: "TEST", version: 2});
-            logModule.find({}, {column: "property"}, function (err, result) {
+            should(result).eql({ id: id, markdownDE: "", blog: "TEST", version: 2 });
+            logModule.find({}, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(1);
@@ -339,22 +338,22 @@ describe("model/article", function() {
     });
     it("should report a conflict, if version number differs", function (bddone) {
       // Generate an article for test
-      var newArticle;
+      let newArticle;
       debug("Create a new Article");
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
-        var id = result.id;
+        const id = result.id;
 
         // get a second copy of the article (use Database for Copy)
         debug("Search for article to have two versions of it");
         articleModule.findById(id, function testSetAndSaveFindByIDCB(err, result) {
           should.not.exist(err);
-          var alternativeArticle = result;
+          const alternativeArticle = result;
 
-          newArticle.setAndSave({OSMUser: "TEST"}, {version: "1", blog: "TESTNEW"}, function(err) {
+          newArticle.setAndSave({ OSMUser: "TEST" }, { version: "1", blog: "TESTNEW" }, function(err) {
             should.not.exist(err);
-            alternativeArticle.setAndSave({OSMUser: "TEST"}, {version: "1", blog: "TESTALTERNATIVE"}, function(err) {
+            alternativeArticle.setAndSave({ OSMUser: "TEST" }, { version: "1", blog: "TESTALTERNATIVE" }, function(err) {
               // debug(err);
               // should.exist(err);
               should(err).eql(Error("Version Number Differs"));
@@ -378,12 +377,12 @@ describe("model/article", function() {
     });
     it("should report a conflict, no version or olddata is given", function (bddone) {
       // Generate an article for test
-      var newArticle;
+      let newArticle;
       debug("Create a new Article");
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
-        newArticle.setAndSave({OSMUser: "test"}, {markdownDE: "Hallo"}, function(err) {
+        newArticle.setAndSave({ OSMUser: "test" }, { markdownDE: "Hallo" }, function(err) {
           should(err.message).eql("No Version and no History Value for <markdownDE> given");
           bddone();
         });
@@ -391,16 +390,16 @@ describe("model/article", function() {
     });
     it("should set a Value with comparing history Value", function (bddone) {
       // Generate an article for test
-      var newArticle;
+      let newArticle;
       debug("Create a new Article");
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
-        newArticle.setAndSave({OSMUser: "test"}, {markdownDE: "Hallo", old: {markdownDE: "markdown"}}, function(err) {
+        newArticle.setAndSave({ OSMUser: "test" }, { markdownDE: "Hallo", old: { markdownDE: "markdown" } }, function(err) {
           should.not.exist(err);
           articleModule.findById(newArticle.id, function(err, result) {
             should.not.exist(err);
-            should(result).eql({_blog: null, markdownDE: "Hallo", version: 2, blog: "TEST", id: newArticle.id});
+            should(result).eql({ _blog: null, markdownDE: "Hallo", version: 2, blog: "TEST", id: newArticle.id });
             bddone();
           });
         });
@@ -408,16 +407,16 @@ describe("model/article", function() {
     });
     it("should set a Value with comparing history Value ignoring \r\n \n differences", function (bddone) {
       // Generate an article for test
-      var newArticle;
+      let newArticle;
       debug("Create a new Article");
-      articleModule.createNewArticle({markdownDE: "markdown\n", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      articleModule.createNewArticle({ markdownDE: "markdown\n", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
-        newArticle.setAndSave({OSMUser: "test"}, {markdownDE: "Hallo", old: {markdownDE: "markdown\r\n"}}, function(err) {
+        newArticle.setAndSave({ OSMUser: "test" }, { markdownDE: "Hallo", old: { markdownDE: "markdown\r\n" } }, function(err) {
           should.not.exist(err);
           articleModule.findById(newArticle.id, function(err, result) {
             should.not.exist(err);
-            should(result).eql({_blog: null, markdownDE: "Hallo", version: 2, blog: "TEST", id: newArticle.id});
+            should(result).eql({ _blog: null, markdownDE: "Hallo", version: 2, blog: "TEST", id: newArticle.id });
             bddone();
           });
         });
@@ -425,17 +424,17 @@ describe("model/article", function() {
     });
     it("should report error when old value wrong", function (bddone) {
       // Generate an article for test
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
         articleModule.findById(newArticle.id, function(err, result) {
           should.not.exist(err);
-          result.setAndSave({OSMUser: "test"}, {markdownDE: "test", version: 1}, function (err) {
+          result.setAndSave({ OSMUser: "test" }, { markdownDE: "test", version: 1 }, function (err) {
             should.not.exist(err);
             articleModule.findById(newArticle.id, function(err, result) {
               should.not.exist(err);
-              result.setAndSave({OSMUser: "test"}, {markdownDE: "Hallo", old: {markdownDE: "markdown"}}, function(err) {
+              result.setAndSave({ OSMUser: "test" }, { markdownDE: "Hallo", old: { markdownDE: "markdown" } }, function(err) {
                 should(err.message).eql("Field markdownDE already changed in DB");
                 bddone();
               });
@@ -446,10 +445,10 @@ describe("model/article", function() {
     });
     it("should report error when blog is closed", function (bddone) {
       // Generate an article for test
-      var newArticle;
+      let newArticle;
       async.auto({
-        blog: blogModule.createNewBlog.bind(null, {OSMUser: "TheFive"}, {name: "TEST", exportedEN: true}),
-        article: articleModule.createNewArticle.bind(null, {markdownDE: "markdown", blog: "TEST"})
+        blog: blogModule.createNewBlog.bind(null, { OSMUser: "TheFive" }, { name: "TEST", exportedEN: true }),
+        article: articleModule.createNewArticle.bind(null, { markdownDE: "markdown", blog: "TEST" })
 
       },
       function testSetAndSaveCreateNewArticleCB(err, result) {
@@ -457,7 +456,7 @@ describe("model/article", function() {
         newArticle = result.article;
         articleModule.findById(newArticle.id, function(err, result) {
           should.not.exist(err);
-          result.setAndSave({OSMUser: "test"}, {markdownEN: "test", version: 1}, function (err) {
+          result.setAndSave({ OSMUser: "test" }, { markdownEN: "test", version: 1 }, function (err) {
             should.exist(err);
             should(err.message).eql("markdownEN can not be edited. Blog is already exported.");
             bddone();
@@ -467,10 +466,10 @@ describe("model/article", function() {
     });
     it("should not report error when blog is closed, but markdown is undefined", function (bddone) {
       // Generate an article for test
-      var newArticle;
+      let newArticle;
       async.auto({
-        blog: blogModule.createNewBlog.bind(null, {OSMUser: "TheFive"}, {name: "TEST", exportedEN: true}),
-        article: articleModule.createNewArticle.bind(null, {markdownDE: "markdown", blog: "TEST"})
+        blog: blogModule.createNewBlog.bind(null, { OSMUser: "TheFive" }, { name: "TEST", exportedEN: true }),
+        article: articleModule.createNewArticle.bind(null, { markdownDE: "markdown", blog: "TEST" })
 
       },
       function testSetAndSaveCreateNewArticleCB(err, result) {
@@ -479,7 +478,7 @@ describe("model/article", function() {
         articleModule.findById(newArticle.id, function(err, result) {
           should.not.exist(err);
           let b;
-          result.setAndSave({OSMUser: "test"}, {markdownEN: b, markdownDE: "hallo", version: 1}, function (err) {
+          result.setAndSave({ OSMUser: "test" }, { markdownEN: b, markdownDE: "hallo", version: 1 }, function (err) {
             should.not.exist(err);
             bddone();
           });
@@ -488,13 +487,13 @@ describe("model/article", function() {
     });
     it("should set comment to solved if article is unpublished", function (bddone) {
       // Generate an article for test
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
         articleModule.findById(newArticle.id, function(err, result) {
           should.not.exist(err);
-          result.setAndSave({OSMUser: "test"}, {categoryEN: "--unpublished--", unpublishReason: "doublette", version: 1}, function (err) {
+          result.setAndSave({ OSMUser: "test" }, { categoryEN: "--unpublished--", unpublishReason: "doublette", version: 1 }, function (err) {
             should.not.exist(err);
             articleModule.findById(newArticle.id, function(err, result) {
               should.not.exist(err);
@@ -508,13 +507,13 @@ describe("model/article", function() {
     });
     it("should fail if something is set to unpublished without reason", function (bddone) {
       // Generate an article for test
-      var newArticle;
-      articleModule.createNewArticle({markdownDE: "markdown", blog: "TEST"}, function testSetAndSaveCreateNewArticleCB(err, result) {
+      let newArticle;
+      articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function testSetAndSaveCreateNewArticleCB(err, result) {
         should.not.exist(err);
         newArticle = result;
         articleModule.findById(newArticle.id, function(err, result) {
           should.not.exist(err);
-          result.setAndSave({OSMUser: "test"}, {categoryEN: "--unpublished--", version: 1}, function (err) {
+          result.setAndSave({ OSMUser: "test" }, { categoryEN: "--unpublished--", version: 1 }, function (err) {
             should.exist(err);
             should(err.message).eql("Missing reason for unpublishing article.");
             bddone();
@@ -524,16 +523,16 @@ describe("model/article", function() {
     });
   });
   describe("findFunctions", function() {
-    var idToFindLater;
+    let idToFindLater;
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({blog: "WN1's", markdownDE: "test1", collection: "col1", category: "catA"}, cb); },
-        function c1(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB"}, cb); },
+        function c1(cb) { articleModule.createNewArticle({ blog: "WN1's", markdownDE: "test1", collection: "col1", category: "catA" }, cb); },
+        function c1(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA" }, cb); },
+        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB" }, cb); },
         function c3(cb) {
-          articleModule.createNewArticle({blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA"},
+          articleModule.createNewArticle({ blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA" },
             function(err, result) {
               should.not.exist(err);
               idToFindLater = result.id;
@@ -548,7 +547,7 @@ describe("model/article", function() {
     });
     describe("find", function() {
       it("should find multiple objects with sort", function(bddone) {
-        articleModule.find({blog: "WN1"}, {column: "collection"}, function(err, result) {
+        articleModule.find({ blog: "WN1" }, { column: "collection" }, function(err, result) {
           should.not.exist(err);
           should.exist(result);
           should(result.length).equal(2);
@@ -556,30 +555,30 @@ describe("model/article", function() {
           delete result[0].id;
           delete result[1]._meta;
           delete result[1].id;
-          should(result[0]).eql({blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA", version: 1});
-          should(result[1]).eql({blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB", version: 1});
+          should(result[0]).eql({ blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA", version: 1 });
+          should(result[1]).eql({ blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB", version: 1 });
           bddone();
         });
       });
     });
     describe("findOne", function() {
       it("should findOne object with sort", function(bddone) {
-        articleModule.findOne({blog: "WN1"}, {column: "collection"}, function(err, result) {
+        articleModule.findOne({ blog: "WN1" }, { column: "collection" }, function(err, result) {
           should.not.exist(err);
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA", version: 1});
+          should(result).eql({ blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA", version: 1 });
           bddone();
         });
       });
       it("should findOne object with an apostrophe", function(bddone) {
-        articleModule.findOne({blog: "WN1's"}, {column: "collection"}, function(err, result) {
+        articleModule.findOne({ blog: "WN1's" }, { column: "collection" }, function(err, result) {
           should.not.exist(err);
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({blog: "WN1's", markdownDE: "test1", collection: "col1", category: "catA", version: 1});
+          should(result).eql({ blog: "WN1's", markdownDE: "test1", collection: "col1", category: "catA", version: 1 });
           bddone();
         });
       });
@@ -591,7 +590,7 @@ describe("model/article", function() {
           should.exist(result);
           delete result._meta;
           delete result.id;
-          should(result).eql({_blog: null, blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA", version: 1});
+          should(result).eql({ _blog: null, blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA", version: 1 });
           bddone();
         });
       });
@@ -599,23 +598,25 @@ describe("model/article", function() {
   });
   describe("findEmptyUserCollectedArticles", function() {
     before(function (bddone) {
-      testutil.importData({clear: true,
-        blog: [{name: "WN1", exportedDE: true, status: "edit"},
-          {name: "WNclosed", status: "closed"},
-          {name: "WN2", status: "open"},
-          {name: "WrongBlog", status: "open"}],
-        article: [{blog: "WN1", title: "first", id: 1},
-          {blog: "WN2", title: "second", categoryEN: "cat", markdownEN: "Hallole", id: 2},
-          {blog: "WNclosed", title: "third", id: 3},
-          {blog: "WN1", title: "forth", id: 4},
-          {blog: "WrongBlog", title: "fifth", categoryEN: "cat", id: 5}],
-        change: [{blog: "WN1", property: "collection", user: "test", oid: 1, table: "article"},
-          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
-          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
-          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
-          {blog: "WNclosed", property: "collection", user: "test", oid: 3, table: "article"},
-          {blog: "WN2", property: "collection", user: "test2", oid: 4, table: "article"},
-          {blog: "WrongBlog", property: "markdownDE", user: "test", oid: 5, table: "article"}]}, bddone);
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", exportedDE: true, status: "edit" },
+          { name: "WNclosed", status: "closed" },
+          { name: "WN2", status: "open" },
+          { name: "WrongBlog", status: "open" }],
+        article: [{ blog: "WN1", title: "first", id: 1 },
+          { blog: "WN2", title: "second", categoryEN: "cat", markdownEN: "Hallole", id: 2 },
+          { blog: "WNclosed", title: "third", id: 3 },
+          { blog: "WN1", title: "forth", id: 4 },
+          { blog: "WrongBlog", title: "fifth", categoryEN: "cat", id: 5 }],
+        change: [{ blog: "WN1", property: "collection", user: "test", oid: 1, table: "article" },
+          { blog: "WN2", property: "collection", user: "test", oid: 2, table: "article" },
+          { blog: "WN2", property: "collection", user: "test", oid: 2, table: "article" },
+          { blog: "WN2", property: "collection", user: "test", oid: 2, table: "article" },
+          { blog: "WNclosed", property: "collection", user: "test", oid: 3, table: "article" },
+          { blog: "WN2", property: "collection", user: "test2", oid: 4, table: "article" },
+          { blog: "WrongBlog", property: "markdownDE", user: "test", oid: 5, table: "article" }]
+      }, bddone);
     });
     it("should find all empty article for a user (DE)", function(bddone) {
       articleModule.findEmptyUserCollectedArticles("DE", "test", function(err, result) {
@@ -634,58 +635,60 @@ describe("model/article", function() {
     });
   });
   describe("displayTitle", function() {
-    var article;
+    let article;
     it("should return title first", function(bddone) {
-      article = articleModule.create({title: "Titel", markdownDE: "markdown"});
+      article = articleModule.create({ title: "Titel", markdownDE: "markdown" });
       should(article.displayTitle()).equal("Titel");
 
-      article = articleModule.create({title: "Very Long Title", markdownDE: "markdown"});
+      article = articleModule.create({ title: "Very Long Title", markdownDE: "markdown" });
       should(article.displayTitle(10)).equal("Very Long ...");
       bddone();
     });
     it("should return markdown second", function(bddone) {
-      article = articleModule.create({markdownDE: "markdown", collection: "col", category: "CAT"});
+      article = articleModule.create({ markdownDE: "markdown", collection: "col", category: "CAT" });
       should(article.displayTitle()).equal("col");
 
-      article = articleModule.create({title: "", markdownDE: "markdown", collection: "col", category: "CAT"});
+      article = articleModule.create({ title: "", markdownDE: "markdown", collection: "col", category: "CAT" });
       should(article.displayTitle()).equal("col");
 
-      article = articleModule.create({title: "", markdownDE: "* This is more markdown text to test the default limit of charachter", collection: "col", category: "CAT"});
+      article = articleModule.create({ title: "", markdownDE: "* This is more markdown text to test the default limit of charachter", collection: "col", category: "CAT" });
       should(article.displayTitle()).equal("col");
       bddone();
     });
     it("should return collection third", function(bddone) {
-      article = articleModule.create({markdownDE: "", collection: "col", category: "CAT"});
+      article = articleModule.create({ markdownDE: "", collection: "col", category: "CAT" });
       should(article.displayTitle()).equal("col");
 
-      article = articleModule.create({title: "", collection: "col", category: "CAT"});
+      article = articleModule.create({ title: "", collection: "col", category: "CAT" });
       should(article.displayTitle()).equal("col");
 
-      article = articleModule.create({collection: "Extrem shortening", category: "CAT"});
+      article = articleModule.create({ collection: "Extrem shortening", category: "CAT" });
       should(article.displayTitle(2)).equal("Ex...");
       bddone();
     });
   });
   describe("calculateLinks", function() {
-    var article;
-    var link;
+    let article;
+    let link;
     it("should collect one link from collection", function(bddone) {
-      article = articleModule.create({collection: "https://www.google.de"});
+      article = articleModule.create({ collection: "https://www.google.de" });
       link = article.calculateLinks();
       should(link).eql(["https://www.google.de"]);
 
-      article = articleModule.create({collection: "Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200"});
+      article = articleModule.create({ collection: "Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200" });
       link = article.calculateLinks();
       should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200"]);
       return bddone();
     });
     it("should collect Multiple Links from markdown and collection without doubling", function(bddone) {
       article = articleModule.create(
-        {collection: "Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200 \
+        {
+          collection: "Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200 \
               but be aware of http://bing.de/subpage/relation and of ftp://test.de",
           markdownDE: "The [Forum Article](https://forum.openstreetmap.org/thisIsALink?id=200) \
                      reads nice, but have a look to [this](https://bing.de/subpage/relation) \
-                     and [that](ftp://test.de)"});
+                     and [that](ftp://test.de)"
+        });
       link = article.calculateLinks();
       should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200",
         "http://bing.de/subpage/relation",
@@ -696,15 +699,15 @@ describe("model/article", function() {
     });
   });
   describe("remove", function() {
-    var idToFindLater;
+    let idToFindLater;
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB"}, cb); },
+        function c1(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1", collection: "col1", category: "catA" }, cb); },
+        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test2", collection: "col2", category: "catB" }, cb); },
         function c3(cb) {
-          articleModule.createNewArticle({blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA"},
+          articleModule.createNewArticle({ blog: "WN2", markdownDE: "test3", collection: "col3", category: "catA" },
             function(err, result) {
               should.not.exist(err);
               idToFindLater = result.id;
@@ -734,18 +737,18 @@ describe("model/article", function() {
     });
   });
   describe("calculateUsedLinks", function() {
-    var idToFindLater;
+    let idToFindLater;
     before(function (bddone) {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA"}, cb); },
-        function c02(cb) { articleModule.createNewArticle({blog: "Trash", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA"}, cb); },
-        function c01(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "--unpublished--"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo) http://www.osm.de/12345", collection: "http://www.osm.de/12345", categoryEN: "catB"}, cb); },
-        function c2(cb) { articleModule.createNewArticle({blog: "WN1", markdownDE: "test1 some [google](http://www.google.de)", collection: "http://www.osm.de/12345", categoryEN: "catB"}, cb); },
+        function c1(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA" }, cb); },
+        function c02(cb) { articleModule.createNewArticle({ blog: "Trash", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA" }, cb); },
+        function c01(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "--unpublished--" }, cb); },
+        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo) http://www.osm.de/12345", collection: "http://www.osm.de/12345", categoryEN: "catB" }, cb); },
+        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [google](http://www.google.de)", collection: "http://www.osm.de/12345", categoryEN: "catB" }, cb); },
         function c3(cb) {
-          articleModule.createNewArticle({blog: "WN2", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col3 http://www.google.de", categoryEN: "catA"},
+          articleModule.createNewArticle({ blog: "WN2", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col3 http://www.google.de", categoryEN: "catA" },
             function(err, result) {
               should.not.exist(err);
               idToFindLater = result.id;
@@ -776,7 +779,7 @@ describe("model/article", function() {
     it("should display the other Articles Links and ignore Standards", function(bddone) {
       articleModule.findById(idToFindLater, function(err, article) {
         should.not.exist(err);
-        article.calculateUsedLinks({ignoreStandard: true}, function(err, result) {
+        article.calculateUsedLinks({ ignoreStandard: true }, function(err, result) {
           should.not.exist(err);
           should.exist(result);
           should(result.count).equal(2);
@@ -792,43 +795,43 @@ describe("model/article", function() {
     before(async function () {
       // Initialise some Test Data for the find functions
       await testutil.clearDB();
-      await articleModule.createNewArticle({blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA"});
-      await articleModule.createNewArticle({blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA"}); 
-      await articleModule.createNewArticle({blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB"}); 
-      await articleModule.createNewArticle({blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest1", collection: "https://simple.link/whereisit", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest5", markdownEN: "[link](http://simple.link/whereisit/)", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest6 to short", markdownEN: "[link](http://simple.link/whereisi)", category: "catA"});
-      await articleModule.createNewArticle({blog: "5", markdownDE: "linktest7 to short", markdownEN: "[link](https://simple.link/whereisi)", category: "catA"});
+      await articleModule.createNewArticle({ blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA" });
+      await articleModule.createNewArticle({ blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA" });
+      await articleModule.createNewArticle({ blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB" });
+      await articleModule.createNewArticle({ blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest1", collection: "https://simple.link/whereisit", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest5", markdownEN: "[link](http://simple.link/whereisit/)", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest6 to short", markdownEN: "[link](http://simple.link/whereisi)", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest7 to short", markdownEN: "[link](https://simple.link/whereisi)", category: "catA" });
     });
     it("should find the simple link", async function() {
-      const result = await articleModule.fullTextSearch("https://simple.link/where", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'test3' ]);
+      const result = await articleModule.fullTextSearch("https://simple.link/where", { column: "blog" });
+      should(result.flatMap(x => x.markdownDE)).deepEqual(["test3"]);
     });
     it("should find the other link 3 times", async function() {
-      const result = await articleModule.fullTextSearch("https://www.test.at/link", {column: "blog"});
-      should(result.flatMap(x => x.blog)).deepEqual([ '1', '2', '3' ]);
+      const result = await articleModule.fullTextSearch("https://www.test.at/link", { column: "blog" });
+      should(result.flatMap(x => x.blog)).deepEqual(["1", "2", "3"]);
     });
     it("should search links with apostroph in it", async function() {
-      const result = await articleModule.fullTextSearch("http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842", {column: "blog"});
-      should(result.flatMap(x => x.blog)).deepEqual([ '5' ]);
+      const result = await articleModule.fullTextSearch("http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842", { column: "blog" });
+      should(result.flatMap(x => x.blog)).deepEqual(["5"]);
     });
     it("should search links independent from httpS or closing /", async function() {
-      let result = await articleModule.fullTextSearch("https://simple.link/whereisit", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', 'linktest5' ]);
-      
-      result = await articleModule.fullTextSearch("https://simple.link/whereisit/", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', 'linktest5' ]);
-      
-      result = await articleModule.fullTextSearch("http://simple.link/whereisit", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', 'linktest5' ]);
+      let result = await articleModule.fullTextSearch("https://simple.link/whereisit", { column: "blog" });
+      should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
 
-      result = await articleModule.fullTextSearch("http://simple.link/whereisit/", {column: "blog"});
-      should(result.flatMap(x => x.markdownDE)).deepEqual([ 'linktest1', 'linktest2', 'linktest3', 'linktest4', 'linktest5' ]);
+      result = await articleModule.fullTextSearch("https://simple.link/whereisit/", { column: "blog" });
+      should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
+
+      result = await articleModule.fullTextSearch("http://simple.link/whereisit", { column: "blog" });
+      should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
+
+      result = await articleModule.fullTextSearch("http://simple.link/whereisit/", { column: "blog" });
+      should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
     });
   });
   describe("comments", function() {
@@ -843,67 +846,77 @@ describe("model/article", function() {
       bddone();
     });
     it("should add a comment", function(bddone) {
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
-      var dataBefore = {
+      const timestamp = new Date();
+      const timestampIso = timestamp.toISOString();
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test"}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+        article: [{ blog: "WN1", collection: "something", title: "test" }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
           id: "1",
           version: 2,
-          commentList: [{user: "Test", timestamp: timestampIso, text: "a comment"}],
+          commentList: [{ user: "Test", timestamp: timestampIso, text: "a comment" }],
           commentStatus: "open",
-          commentRead: {Test: 0}}],
-        change: [{blog: "WN1", oid: 1, table: "article", from: "", to: "a comment", user: "Test", timestamp: timestampIso}]};
-      var testFunction = function testFunction(cb) {
+          commentRead: { Test: 0 }
+        }],
+        change: [{ blog: "WN1", oid: 1, table: "article", from: "", to: "a comment", user: "Test", timestamp: timestampIso }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.addCommentFunction({OSMUser: "Test"}, "a comment", cb);
+          article.addCommentFunction({ OSMUser: "Test" }, "a comment", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should add a comment with article link", function(bddone) {
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
-      var dataBefore = {
+      const timestamp = new Date();
+      const timestampIso = timestamp.toISOString();
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test"}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+        article: [{ blog: "WN1", collection: "something", title: "test" }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
           id: "1",
           version: 2,
-          commentList: [{user: "Test", timestamp: timestampIso, text: "a comment #99"}],
+          commentList: [{ user: "Test", timestamp: timestampIso, text: "a comment #99" }],
           commentStatus: "open",
-          commentRead: {Test: 0}}],
-        change: [{blog: "WN1", oid: 1, table: "article", from: "", to: "a comment #99", user: "Test", timestamp: timestampIso}]};
-      var testFunction = function testFunction(cb) {
+          commentRead: { Test: 0 }
+        }],
+        change: [{ blog: "WN1", oid: 1, table: "article", from: "", to: "a comment #99", user: "Test", timestamp: timestampIso }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.addCommentFunction({OSMUser: "Test"}, "a comment https://testosm.bc/article/99", cb);
+          article.addCommentFunction({ OSMUser: "Test" }, "a comment #99", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should not add a empty comment", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test"}]};
-      var dataAfter = {
-        article: [{blog: "WN1", collection: "something", title: "test"}],
-        change: []};
-      var testFunction = function testFunction(cb) {
+        article: [{ blog: "WN1", collection: "something", title: "test" }]
+      };
+      const dataAfter = {
+        article: [{ blog: "WN1", collection: "something", title: "test" }],
+        change: []
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.addCommentFunction({OSMUser: ""}, "", function checkErr(err) {
+          article.addCommentFunction({ OSMUser: "" }, "", function checkErr(err) {
             should.exist(err);
             should(err).eql(new Error("Empty Comment Added"));
             cb();
@@ -913,137 +926,176 @@ describe("model/article", function() {
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should add a second comment", function(bddone) {
-      var timestamp = new Date();
-      var timestampIso = new Date().toISOString();
-      var dataBefore = {
+      const timestamp = new Date();
+      const timestampIso = new Date().toISOString();
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}],
-          commentRead: {Test: 0}}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          commentList: [{ user: "Test", timestamp: timestamp, text: "a comment" }],
+          commentRead: { Test: 0 }
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestampIso, text: "a comment"},
-            {user: "Test2", timestamp: timestampIso, text: "a second comment"}],
-          commentRead: {Test: 0, Test2: 1}}
+          commentList: [{ user: "Test", timestamp: timestampIso, text: "a comment" },
+            { user: "Test2", timestamp: timestampIso, text: "a second comment" }],
+          commentRead: { Test: 0, Test2: 1 }
+        }
         ],
-        change: [{blog: "WN1", oid: 1, table: "article", from: "", to: "a second comment", user: "Test2", timestamp: timestampIso}]};
-      var testFunction = function testFunction(cb) {
+        change: [{ blog: "WN1", oid: 1, table: "article", from: "", to: "a second comment", user: "Test2", timestamp: timestampIso }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.addCommentFunction({OSMUser: "Test2"}, "a second comment", cb);
+          article.addCommentFunction({ OSMUser: "Test2" }, "a second comment", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should edit a comment", function(bddone) {
-      var timestamp = new Date();
-      var timestamp2 = new Date();
+      const timestamp = new Date();
+      const timestamp2 = new Date();
       timestamp2.setTime(timestamp2.getTime());
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          commentList: [{ user: "Test", timestamp: timestamp, text: "a comment" }]
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test",
+          commentList: [{
+            user: "Test",
             timestamp: timestamp.toISOString(),
             editstamp: timestamp2.toISOString(),
-            text: "a changed comment"}]}],
-        change: [{blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a changed comment", user: "Test", timestamp: timestamp2.toISOString()}]};
-      var testFunction = function testFunction(cb) {
+            text: "a changed comment"
+          }]
+        }],
+        change: [{ blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a changed comment", user: "Test", timestamp: timestamp2.toISOString() }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.editComment({OSMUser: "Test"}, 0, "a changed comment", cb);
+          article.editComment({ OSMUser: "Test" }, 0, "a changed comment", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should edit a comment with article link", function(bddone) {
-      var timestamp = new Date();
-      var timestamp2 = new Date();
+      const timestamp = new Date();
+      const timestamp2 = new Date();
       timestamp2.setTime(timestamp2.getTime());
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          commentList: [{ user: "Test", timestamp: timestamp, text: "a comment" }]
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test",
+          commentList: [{
+            user: "Test",
             timestamp: timestamp.toISOString(),
             editstamp: timestamp2.toISOString(),
-            text: "a comment #99"}]}],
-        change: [{blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a comment #99", user: "Test", timestamp: timestamp2.toISOString()}]};
-      var testFunction = function testFunction(cb) {
+            text: "a comment #99"
+          }]
+        }],
+        change: [{ blog: "WN1", oid: 1, table: "article", property: "comment0", from: "a comment", to: "a comment #99", user: "Test", timestamp: timestamp2.toISOString() }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.editComment({OSMUser: "Test"}, 0, "a comment https://testosm.bc/article/99", cb);
+          article.editComment({ OSMUser: "Test" }, 0, "a comment #99", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should mark a comment as read", function(bddone) {
-      var timestamp = new Date();
-      var timestamp2 = new Date();
+      const timestamp = new Date();
+      const timestamp2 = new Date();
       timestamp2.setTime(timestamp2.getTime() + 200);
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}, {user: "Test", timestamp: timestamp, text: "a second comment"}]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
-          collection: "something",
-          title: "test",
-          commentList: [{user: "Test",
-            timestamp: timestamp.toISOString(),
-            text: "a comment"}, {user: "Test",
-            timestamp: timestamp.toISOString(),
-            text: "a second comment"}],
-          commentRead: {Test: 1}}]
+          commentList: [{ user: "Test", timestamp: timestamp, text: "a comment" }, { user: "Test", timestamp: timestamp, text: "a second comment" }]
+        }]
       };
-      var testFunction = function testFunction(cb) {
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
+          collection: "something",
+          title: "test",
+          commentList: [{
+            user: "Test",
+            timestamp: timestamp.toISOString(),
+            text: "a comment"
+          }, {
+            user: "Test",
+            timestamp: timestamp.toISOString(),
+            text: "a second comment"
+          }],
+          commentRead: { Test: 1 }
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.markCommentRead({OSMUser: "Test"}, 1, cb);
+          article.markCommentRead({ OSMUser: "Test" }, 1, cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should not edit a comment with blank", function(bddone) {
-      var timestamp = new Date();
-      var timestamp2 = new Date();
+      const timestamp = new Date();
+      const timestamp2 = new Date();
       timestamp2.setTime(timestamp2.getTime() + 200);
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          commentList: [{ user: "Test", timestamp: timestamp, text: "a comment" }]
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test",
+          commentList: [{
+            user: "Test",
             timestamp: timestamp.toISOString(),
-            text: "a comment"}]}],
-        change: []};
-      var testFunction = function testFunction(cb) {
+            text: "a comment"
+          }]
+        }],
+        change: []
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.editComment({OSMUser: "Test"}, 0, " ", function checkErr(err) {
+          article.editComment({ OSMUser: "Test" }, 0, " ", function checkErr(err) {
             should.exist(err);
             should(err).eql(new Error("Empty Comment Added"));
             cb();
@@ -1054,24 +1106,30 @@ describe("model/article", function() {
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should allow only user wrote a comment to edit a comment", function(bddone) {
-      var timestamp = new Date();
-      var timestampIso = timestamp.toISOString();
-      var dataBefore = {
+      const timestamp = new Date();
+      const timestampIso = timestamp.toISOString();
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestamp, text: "a comment"}]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          commentList: [{ user: "Test", timestamp: timestamp, text: "a comment" }]
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          commentList: [{user: "Test", timestamp: timestampIso, text: "a comment"}]}]};
-      var testFunction = function testFunction(cb) {
+          commentList: [{ user: "Test", timestamp: timestampIso, text: "a comment" }]
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
-          article.editComment({OSMUser: "Test2"}, 0, "a changed comment", function (err) {
-            let e = new Error("Only Writer is allowed to change a commment");
+          article.editComment({ OSMUser: "Test2" }, 0, "a changed comment", function (err) {
+            const e = new Error("Only Writer is allowed to change a commment");
             e.status = 409;
             should(err).eql(e);
             return cb();
@@ -1092,166 +1150,206 @@ describe("model/article", function() {
       bddone();
     });
     it("should add a vote", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test"}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+        article: [{ blog: "WN1", collection: "something", title: "test" }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
           id: "1",
           version: 2,
-          votes: {"testtag": ["Test"]}}]};
-      var testFunction = function testFunction(cb) {
+          votes: { testtag: ["Test"] }
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.setVote({OSMUser: "Test"}, "testtag", cb);
+          article.setVote({ OSMUser: "Test" }, "testtag", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should not add a already set vote", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test", votes: {"testtag": ["Test"]}}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+        article: [{ blog: "WN1", collection: "something", title: "test", votes: { testtag: ["Test"] } }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          votes: {"testtag": ["Test"]}}]};
-      var testFunction = function testFunction(cb) {
+          votes: { testtag: ["Test"] }
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.setVote({OSMUser: "Test"}, "testtag", cb);
+          article.setVote({ OSMUser: "Test" }, "testtag", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should unset a vote", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          votes: {"testtag": ["Test"]}}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          votes: { testtag: ["Test"] }
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
           id: "1",
           version: 2,
-          votes: {testtag: []}}]};
-      var testFunction = function testFunction(cb) {
+          votes: { testtag: [] }
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.unsetVote({OSMUser: "Test"}, "testtag", cb);
+          article.unsetVote({ OSMUser: "Test" }, "testtag", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should not unset a unset vote", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          votes: {"testtag": ["Test"]}}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          votes: { testtag: ["Test"] }
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          votes: {"testtag": ["Test"]}}]};
-      var testFunction = function testFunction(cb) {
+          votes: { testtag: ["Test"] }
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.unsetVote({OSMUser: "Test"}, "testtag2", cb);
+          article.unsetVote({ OSMUser: "Test" }, "testtag2", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
 
     it("should add a tag", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test"}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+        article: [{ blog: "WN1", collection: "something", title: "test" }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
           id: "1",
           version: 2,
-          tags: ["testtag"]}]};
-      var testFunction = function testFunction(cb) {
+          tags: ["testtag"]
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.setTag({OSMUser: "Test"}, "testtag", cb);
+          article.setTag({ OSMUser: "Test" }, "testtag", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should not add an added tag", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1", collection: "something", title: "test", tags: ["testtag"]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+        article: [{ blog: "WN1", collection: "something", title: "test", tags: ["testtag"] }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          tags: ["testtag"]}]};
-      var testFunction = function testFunction(cb) {
+          tags: ["testtag"]
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.setTag({OSMUser: "Test"}, "testtag", cb);
+          article.setTag({ OSMUser: "Test" }, "testtag", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should remove a tag", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          tags: ["testtag"]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          tags: ["testtag"]
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
           id: "1",
           version: 2,
-          tags: []}]};
-      var testFunction = function testFunction(cb) {
+          tags: []
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.unsetTag({OSMUser: "Test"}, "testtag", cb);
+          article.unsetTag({ OSMUser: "Test" }, "testtag", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
     it("should not remove a removed tag", function(bddone) {
-      var dataBefore = {
+      const dataBefore = {
         clear: true,
-        article: [{blog: "WN1",
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          tags: ["testtag"]}]};
-      var dataAfter = {
-        article: [{blog: "WN1",
+          tags: ["testtag"]
+        }]
+      };
+      const dataAfter = {
+        article: [{
+          blog: "WN1",
           collection: "something",
           title: "test",
-          tags: ["testtag"]}]};
-      var testFunction = function testFunction(cb) {
+          tags: ["testtag"]
+        }]
+      };
+      const testFunction = function testFunction(cb) {
         articleModule.findById(1, function(err, article) {
           should.not.exist(err);
           should.exist(article);
-          article.unsetTag({OSMUser: "Test"}, "testtag2", cb);
+          article.unsetTag({ OSMUser: "Test" }, "testtag2", cb);
         });
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
@@ -1259,32 +1357,32 @@ describe("model/article", function() {
   });
   describe("isChangeAllowed", function() {
     it("should forbid editing of main attributes with one exported language", function(bddone) {
-      let blog = blogModule.create({name: "blog", exportedEN: true});
-      let article =  articleModule.create({blog: "blog", _blog: blog});
+      const blog = blogModule.create({ name: "blog", exportedEN: true });
+      const article =  articleModule.create({ blog: "blog", _blog: blog });
       should(article.isChangeAllowed("title")).be.false();
       should(article.isChangeAllowed("predecessorId")).be.false();
       should(article.isChangeAllowed("categoryEN")).be.false();
       bddone();
     });
     it("should forbid editing of main attributes with one closed language", function(bddone) {
-      let blog =  blogModule.create({name: "blog", closeEN: true});
-      let article = articleModule.create({blog: "blog", _blog: blog});
+      const blog =  blogModule.create({ name: "blog", closeEN: true });
+      const article = articleModule.create({ blog: "blog", _blog: blog });
       should(article.isChangeAllowed("title")).be.false();
       should(article.isChangeAllowed("categoryEN")).be.false();
       should(article.isChangeAllowed("predecessorId")).be.false();
       bddone();
     });
     it("should forbid editing of markdown attributes with one closed language", function(bddone) {
-      let blog =  blogModule.create({name: "blog", closeEN: true});
-      let article = articleModule.create({blog: "blog", _blog: blog});
+      const blog =  blogModule.create({ name: "blog", closeEN: true });
+      const article = articleModule.create({ blog: "blog", _blog: blog });
       should(article.isChangeAllowed("markdownEN")).be.false();
       should(article.isChangeAllowed("markdownDE")).be.true();
       should(article.isChangeAllowed("markdownES")).be.true();
       bddone();
     });
     it("should allow editing if language is closed, but article is no translation", function(bddone) {
-      let blog =  blogModule.create({name: "blog", closeEN: true, exportedDE: true});
-      let article = articleModule.create({blog: "blog", _blog: blog, markdownEN: "no translation", markdownDE: "no translation"});
+      const blog =  blogModule.create({ name: "blog", closeEN: true, exportedDE: true });
+      const article = articleModule.create({ blog: "blog", _blog: blog, markdownEN: "no translation", markdownDE: "no translation" });
       should(article.isChangeAllowed("markdownEN")).be.false();
       should(article.isChangeAllowed("markdownDE")).be.false();
       should(article.isChangeAllowed("markdownES")).be.true();
@@ -1295,8 +1393,8 @@ describe("model/article", function() {
       bddone();
     });
     it("should allow editing if nothing is closed / exported", function(bddone) {
-      let blog = blogModule.create({name: "blog"});
-      let article =  articleModule.create({blog: "blog", _blog: blog});
+      const blog = blogModule.create({ name: "blog" });
+      const article =  articleModule.create({ blog: "blog", _blog: blog });
       should(article.isChangeAllowed("title")).be.true();
       should(article.isChangeAllowed("predecessor")).be.true();
       should(article.isChangeAllowed("categoryEN")).be.true();
@@ -1324,30 +1422,32 @@ describe("model/article", function() {
   });
   describe("Copy Articles", function() {
     before(function (bddone) {
-      testutil.importData({clear: true,
-        blog: [{name: "WN1", exportedDE: true, status: "edit"},
-          {name: "WNclosed", status: "closed"},
-          {name: "WN2", status: "open"},
-          {name: "CopyToBlog", status: "open"}],
-        article: [{blog: "WN1", title: "first", id: 1},
-          {blog: "WN2", title: "second", categoryEN: "cat", markdownEN: "ENMarkdown", markdownDE: "DEMarkdown", markdownES: "ESMarkdown", id: 2},
-          {blog: "WNclosed", title: "third", id: 3},
-          {blog: "WN1", title: "forth", id: 4},
-          {blog: "WrongBlog", title: "fifth", categoryEN: "cat", id: 5}],
-        change: [{blog: "WN1", property: "collection", user: "test", oid: 1, table: "article"},
-          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
-          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
-          {blog: "WN2", property: "collection", user: "test", oid: 2, table: "article"},
-          {blog: "WNclosed", property: "collection", user: "test", oid: 3, table: "article"},
-          {blog: "WN2", property: "collection", user: "test2", oid: 4, table: "article"},
-          {blog: "WrongBlog", property: "markdownDE", user: "test", oid: 5, table: "article"}]}, bddone);
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", exportedDE: true, status: "edit" },
+          { name: "WNclosed", status: "closed" },
+          { name: "WN2", status: "open" },
+          { name: "CopyToBlog", status: "open" }],
+        article: [{ blog: "WN1", title: "first", id: 1 },
+          { blog: "WN2", title: "second", categoryEN: "cat", markdownEN: "ENMarkdown", markdownDE: "DEMarkdown", markdownES: "ESMarkdown", id: 2 },
+          { blog: "WNclosed", title: "third", id: 3 },
+          { blog: "WN1", title: "forth", id: 4 },
+          { blog: "WrongBlog", title: "fifth", categoryEN: "cat", id: 5 }],
+        change: [{ blog: "WN1", property: "collection", user: "test", oid: 1, table: "article" },
+          { blog: "WN2", property: "collection", user: "test", oid: 2, table: "article" },
+          { blog: "WN2", property: "collection", user: "test", oid: 2, table: "article" },
+          { blog: "WN2", property: "collection", user: "test", oid: 2, table: "article" },
+          { blog: "WNclosed", property: "collection", user: "test", oid: 3, table: "article" },
+          { blog: "WN2", property: "collection", user: "test2", oid: 4, table: "article" },
+          { blog: "WrongBlog", property: "markdownDE", user: "test", oid: 5, table: "article" }]
+      }, bddone);
     });
     it("should copy an article to another blog", function(bddone) {
       articleModule.findById(2, function(err, article) {
         should.not.exist(err);
         article.copyToBlog("CopyToBlog", ["DE", "EN"], function(err) {
           should.not.exist(err);
-          articleModule.findOne({blog: "CopyToBlog"}, function(err, article) {
+          articleModule.findOne({ blog: "CopyToBlog" }, function(err, article) {
             should.not.exist(err);
             should(article).eql({
               id: "6",

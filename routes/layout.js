@@ -45,7 +45,8 @@ const layoutConst = {
   util: util,
   appName: appName,
   osmbc_version: version.osmbc_version,
-  title: appName
+  title: appName,
+  auth: config.getValue("auth", { mustExist: true })
 };
 
 

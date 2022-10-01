@@ -1,27 +1,26 @@
-<html lang="en"><head>
+<html lang="en">
+
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>TESTBC</title>
-    <!-- Bootstrap core CSS-->
+    <title>TESTBC</title><!-- Bootstrap core CSS-->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   </head>
+
   <body>
     <!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
       <ul class="navbar-nav mr-auto"></ul>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a>
-          </li>
+          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
           <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">2</span></a></li>
-          <li class="navbar-item active">
-          </li>
+          <li class="navbar-item active"></li>
           <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN290">WN290<span class="badge badge-pill osmbcbadge-lang">0</span><span class="badge badge-pill osmbcbadge-lang2">0</span></a></li>
           <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
             <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
@@ -50,8 +49,7 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
               <div class="dropdown-divider"></div>
               <form class="p-1">
-                <div class="form-group">
-                  <input class="input form-control" id="newSetToBeSaved" type="text">
+                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
                   <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
                 </div>
               </form>
@@ -62,139 +60,113 @@
       </div>
     </nav>
     <div class="container-fluid">
-      <p>
-        </p><p>
-          </p><div class="row">
-            <div class="col-sm-1">
-              <p>Name</p>
-            </div>
-            <div class="col-sm-3">
-              <h2>WN290</h2>
-            </div>
-            <div class="col-sm-3"></div>
-            <div class="col-sm-5 text-right"><a class="btn btn-primary" id="edit" href="/blog/edit/WN290?edit=true" role="button">Edit</a><a class="btn btn-secondary" href="/article/list?blog=WN290">List of all articles</a></div>
-          </div>
-          <div class="row">
-            <div class="col-sm-1">
-              <p>Period</p>
-            </div>
-            <div class="col-sm-3">
-              <p>Dienstag, 2. Februar 2016 23:59 CET</p>
-            </div>
-            <div class="col-sm-3">
-              <p>Montag, 8. Februar 2016 23:59 CET</p>
-            </div>
-            <div class="col-sm-5"></div>
-          </div>
-          <div class="row">
-            <div class="col-sm-1">
-              <p>Status</p>
-            </div>
-            <div class="col-sm-3">
-              <p>edit</p>
-            </div>
-            <div class="col-sm-3"></div>
-            <div class="col-sm-5"> </div>
-          </div>
-          <div class="row">
-            <table class="table">
-              <tbody><tr>
-                <th>Language</th>
-                <th>Status</th>
-                <th>Review Start by</th>
-                <th>Review Start Time</th>
-                <th>Review</th>
-                <th>Download</th>
-                <th>Action</th>
-                <th>Special</th>
-              </tr>
-              <tr>
-                <td><span class="badge badge-secondary">DE</span></td>
-                <td>
-                  <div class="badge badge-pill osmbclabel-reviewblog">6</div>
-                </td>
-                <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span>
-                </td>
-                <td>
-                  <div>02/10/2016</div>
-                </td>
-                <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">Peda</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span><span class="badge small-margin osmbclabel-reviewblog">TheFive</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span>
-                </td>
-                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i>
-                </td>
-                <td>
-                  <div class="div">
-                    <button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button>
-                  </div>
-                </td>
-                <td>
-                  <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="DE">
-                    <input class="d-none" type="text" name="action" value="deleteallreviews">
-                    <button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
-                  </form>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="badge badge-secondary">EN</span></td>
-                <td>
-                  <div class="badge badge-pill osmbclabel-reviewblog">3</div>
-                </td>
-                <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span>
-                </td>
-                <td>
-                  <div>02/10/2016</div>
-                </td>
-                <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span><span class="badge small-margin osmbclabel-reviewblog">elpbatista</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">jinalfoflia</span>
-                </td>
-                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i>
-                </td>
-                <td>
-                  <div class="div">
-                    <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button>
-                  </div>
-                </td>
-                <td>
-                  <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="EN">
-                    <input class="d-none" type="text" name="action" value="deleteallreviews">
-                    <button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
-                  </form>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="badge badge-secondary">ES</span></td>
-                <td>
-                  <div class="badge badge-pill osmbclabel-reviewblog">1</div>
-                </td>
-                <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span>
-                </td>
-                <td>
-                  <div>02/10/2016</div>
-                </td>
-                <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span>
-                </td>
-                <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i>
-                </td>
-                <td>
-                  <div class="div">
-                    <button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button>
-                  </div>
-                </td>
-                <td>
-                  <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post">
-                    <input class="d-none" type="text" name="lang" value="ES">
-                    <input class="d-none" type="text" name="action" value="deleteallreviews">
-                    <button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button>
-                  </form>
-                </td>
-              </tr>
-            </tbody></table>
-          </div>
-          <div class="row">
-            <div class="col">Categories</div>
-            <div class="col">
-              <pre>- DE: '-- noch keine Kategorie --'
+      <p></p>
+      <p></p>
+      <div class="row">
+        <div class="col-sm-1">
+          <p>Name</p>
+        </div>
+        <div class="col-sm-3">
+          <h2>WN290</h2>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-5 text-right"><a class="btn btn-primary" id="edit" href="/blog/edit/WN290?edit=true" role="button">Edit</a><a class="btn btn-secondary" href="/article/list?blog=WN290">List of all articles</a></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-1">
+          <p>Period</p>
+        </div>
+        <div class="col-sm-3">
+          <p>Dienstag, 2. Februar 2016 23:59 CET</p>
+        </div>
+        <div class="col-sm-3">
+          <p>Montag, 8. Februar 2016 23:59 CET</p>
+        </div>
+        <div class="col-sm-5"></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-1">
+          <p>Status</p>
+        </div>
+        <div class="col-sm-3">
+          <p>edit</p>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-5"> </div>
+      </div>
+      <div class="row">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Language</th>
+              <th>Status</th>
+              <th>Review Start by</th>
+              <th>Review Start Time</th>
+              <th>Review</th>
+              <th>Download</th>
+              <th>Action</th>
+              <th>Special</th>
+            </tr>
+            <tr>
+              <td><span class="badge badge-secondary">DE</span></td>
+              <td>
+                <div class="badge badge-pill osmbclabel-reviewblog">6</div>
+              </td>
+              <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span></td>
+              <td>
+                <div>02/10/2016</div>
+              </td>
+              <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">Peda</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span><span class="badge small-margin osmbclabel-reviewblog">TheFive</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span></td>
+              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i></td>
+              <td>
+                <div class="div"><button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
+              </td>
+              <td>
+                <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post"><input class="d-none" type="text" name="lang" value="DE"><input class="d-none" type="text" name="action" value="deleteallreviews"><button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button></form>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-secondary">EN</span></td>
+              <td>
+                <div class="badge badge-pill osmbclabel-reviewblog">3</div>
+              </td>
+              <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span></td>
+              <td>
+                <div>02/10/2016</div>
+              </td>
+              <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span><span class="badge small-margin osmbclabel-reviewblog">elpbatista</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">jinalfoflia</span></td>
+              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i></td>
+              <td>
+                <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
+              </td>
+              <td>
+                <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post"><input class="d-none" type="text" name="lang" value="EN"><input class="d-none" type="text" name="action" value="deleteallreviews"><button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button></form>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-secondary">ES</span></td>
+              <td>
+                <div class="badge badge-pill osmbclabel-reviewblog">1</div>
+              </td>
+              <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span></td>
+              <td>
+                <div>02/10/2016</div>
+              </td>
+              <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span></td>
+              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i></td>
+              <td>
+                <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button></div>
+              </td>
+              <td>
+                <form id="deleteReview" name="deleteReview" action="/blog/WN290/setLangStatus" method="post"><input class="d-none" type="text" name="lang" value="ES"><input class="d-none" type="text" name="action" value="deleteallreviews"><button class="btn btn-warning" id="deletereviewbutton" type="submit">Delete Review</button></form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col">Categories</div>
+        <div class="col"><pre>- DE: '-- noch keine Kategorie --'
   EN: '-- no category yet --'
   ES: '-- no category yet --'
   PT: '-- no category yet --'
@@ -415,14 +387,13 @@
   FR: '--unpublished--'
   ID: '--unpublished--'
 </pre>
-            </div>
-            <div class="col"></div>
-            <div class="col">    </div>
-          </div>
-        <p></p>
+        </div>
+        <div class="col"></div>
+        <div class="col"> </div>
+      </div>
       <p></p>
-    </div>
-    <!-- /container-->
+      <p></p>
+    </div><!-- /container-->
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
@@ -430,158 +401,165 @@
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="/javascripts/osmbc_staff.js"></script>
-  
-
-
-  
     <title></title>
     <link rel="stylesheet" href="/stylesheets/style.css">
-  
-  
+    <script nonce="">
+      // Init This Window with jQuery ready Callback
+      $(document).ready(init2);
+      window.htmlroot = "";
 
-<script nonce="Fixed Nonce for Test">
-  // Init This Window with jQuery ready Callback
-  $(document).ready(init2);
-  window.htmlroot = "";
-  function init2() {
-    $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
-  }
-  
-  
-  
-  
-</script>
-<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
-<script src="/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js"></script>
-<script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
-<script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
-<script nonce="Fixed Nonce for Test">emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));
-  emojiList =     JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));  
-  
-   
-  
-  var openEditor = null;
-  
-  window.onload = function () {
-    window.mdRender = window.markdownit();
-    
-    window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
-    window.mdRender.use(window.markdownitSup);
-    window.mdRender.use(window["markdown-it-imsize.js"]);
-  
-    $(".preview").change(highlightWrongLinks);
-    highlightWrongLinks(window);
-  
-  
-    if (typeof(Storage) !== "undefined") {
-      if (window.sessionStorage.blogUrl !== window.location.href) return;
-      var x = window.sessionStorage.blogX;
-      var y = window.sessionStorage.blogY;
-      window.scrollTo(x, y);
-    }
-  }
-  
-  
-  
-  window.onbeforeunload = function (event) {
-    // store the scroll Position in the local Store
-    s = {x: window.scrollX, y: window.scrollY};
-  
-    if (typeof(Storage) !== "undefined") {
-  
-      window.sessionStorage.blogUrl = window.location.href;
-      window.sessionStorage.blogX = s.x;
-      window.sessionStorage.blogY = s.y;
-    }
-  };
-  
-  
-  
-  function onLeaveText(id,column) {
-    if (!column) column="";
-  
-    var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
-    var newValue = document.getElementById(column + "markdown" + id).value;
-    if (oldValue === newValue) return;
-    form = document.getElementById(column + 'EditArticle' + id);
-    form.submit();
-  }
-  
-  
-  function convert(text) {
-    
-  
-    // generate the OSMBlog Style List
-    if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
-    // convert md to html
-    text = window.mdRender.render(text);
-    // skip <ul> and </ul> at start and end
-  
-  
-    text = '<li>' + text + '</li>';
-  
-  
-    return text;
-  
-  }
-  function onchangeMarkdown(id,column) {
-    if (!column) column="";
-    var markdownField = document.getElementById(column + "markdown" + id);
-    var md = markdownField.value;
-    var pv = document.getElementById(column+"preview"+id);
-  
-  
-    pv.innerHTML = convert(md);
-    $(pv).trigger("change");
-  
-  }
-  
-  function callAndRedraw(call, redraw) {
-    $.get("" + call, function (data) {
-      let j = $.getJSON("" + redraw, function (json) {
-        for (k in json) {
-          var el = document.createElement("div");
-  
-          el.innerHTML = json[k];
-  
-          $(k).replaceWith(el.children[0]);
-          el.remove();
-  
+      function init2() {
+        $("#mailalert").animate({
+          height: '200px',
+          fontSize: "40px"
+        }, 1000)
+      }
+    </script>
+    <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+    <script src="/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js"></script>
+    <script src="/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js"></script>
+    <script src="/bower_components/markdown-it-imsize/dist/markdown-it-imsize.min.js"></script>
+    <script nonce="">
+      emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));
+      emojiList = JSON.parse(decodeURIComponent(window.atob(`JTdCJTdE`)));
+
+
+
+      var openEditor = null;
+
+      window.onload = function() {
+        window.mdRender = window.markdownit();
+
+        window.mdRender.use(window.markdownitEmoji, {
+          defs: window.emojiList,
+          shortcuts: window.emojiShortcut
+        });
+        window.mdRender.use(window.markdownitSup);
+        window.mdRender.use(window["markdown-it-imsize.js"]);
+
+        $(".preview").change(highlightWrongLinks);
+        highlightWrongLinks(window);
+
+
+        if (typeof(Storage) !== "undefined") {
+          if (window.sessionStorage.blogUrl !== window.location.href) return;
+          var x = window.sessionStorage.blogX;
+          var y = window.sessionStorage.blogY;
+          window.scrollTo(x, y);
         }
-      });
-    });
-  
-  }
-  
-  function translate(langFrom, langTo, service) {
-    $(".translate" + langFrom + langTo).addClass("d-none");
-    $(".translateWait" + langFrom + langTo).removeClass("d-none");
-    var from =  langFrom.toLowerCase();
-    var to = langTo.toLowerCase();
-  
-    let url =window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to;
-  
-  
-  
-    jQuery.post(window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Translation failed");
-      console.error(err);
-      $(".translateWait" + langFrom + langTo).addClass("d-none");
-      $(".translateError" + langFrom + langTo).removeClass("d-none");
-    });
-  } 
-      
-  function setLangStatus(lang, status,button) {
-    $(button).prop('disabled', true);
-    $(button).prop('html', "wait ...");
-    jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus",{action:status,lang:lang}, function (data) {
-      location.reload();
-    }).fail(function (err) {
-      console.error("Trouble setting Language Status");
-      console.error(err);
-    });
-  
-  }
-</script></body></html>
+      }
+
+
+
+      window.onbeforeunload = function(event) {
+        // store the scroll Position in the local Store
+        s = {
+          x: window.scrollX,
+          y: window.scrollY
+        };
+
+        if (typeof(Storage) !== "undefined") {
+
+          window.sessionStorage.blogUrl = window.location.href;
+          window.sessionStorage.blogX = s.x;
+          window.sessionStorage.blogY = s.y;
+        }
+      };
+
+
+
+      function onLeaveText(id, column) {
+        if (!column) column = "";
+
+        var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
+        var newValue = document.getElementById(column + "markdown" + id).value;
+        if (oldValue === newValue) return;
+        form = document.getElementById(column + 'EditArticle' + id);
+        form.submit();
+      }
+
+
+      function convert(text) {
+
+
+        // generate the OSMBlog Style List
+        if (text.substring(0, 2) == "* ") text = text.substring(2, 999999);
+        // convert md to html
+        text = window.mdRender.render(text);
+        // skip <ul> and </ul> at start and end
+
+
+        text = '<li>' + text + '</li>';
+
+
+        return text;
+
+      }
+
+      function onchangeMarkdown(id, column) {
+        if (!column) column = "";
+        var markdownField = document.getElementById(column + "markdown" + id);
+        var md = markdownField.value;
+        var pv = document.getElementById(column + "preview" + id);
+
+
+        pv.innerHTML = convert(md);
+        $(pv).trigger("change");
+
+      }
+
+      function callAndRedraw(call, redraw) {
+        $.get("" + call, function(data) {
+          let j = $.getJSON("" + redraw, function(json) {
+            for (k in json) {
+              var el = document.createElement("div");
+
+              el.innerHTML = json[k];
+
+              $(k).replaceWith(el.children[0]);
+              el.remove();
+
+            }
+          });
+        });
+
+      }
+
+      function translate(langFrom, langTo, service) {
+        $(".translate" + langFrom + langTo).addClass("d-none");
+        $(".translateWait" + langFrom + langTo).removeClass("d-none");
+        var from = langFrom.toLowerCase();
+        var to = langTo.toLowerCase();
+
+        let url = window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to;
+
+
+
+        jQuery.post(window.htmlroot + "/blog/WN290/translate/" + service + "/" + from + "/" + to, function(data) {
+          location.reload();
+        }).fail(function(err) {
+          console.error("Translation failed");
+          console.error(err);
+          $(".translateWait" + langFrom + langTo).addClass("d-none");
+          $(".translateError" + langFrom + langTo).removeClass("d-none");
+        });
+      }
+
+      function setLangStatus(lang, status, button) {
+        $(button).prop('disabled', true);
+        $(button).prop('html', "wait ...");
+        jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus", {
+          action: status,
+          lang: lang
+        }, function(data) {
+          location.reload();
+        }).fail(function(err) {
+          console.error("Trouble setting Language Status");
+          console.error(err);
+        });
+
+      }
+    </script>
+  </body>
+
+</html>

@@ -4,49 +4,26 @@
 
 
 const should  = require("should");
-const async   = require("async");
 const config  = require("../config.js");
-const rp = require("request-promise-native");
-const request = require("request");
+
 const HttpStatus = require("http-status-codes");
 
-var nock = require("nock");
-var testutil = require("./testutil.js");
-var initialise = require("../util/initialise.js");
-var userModule = require("../model/user.js");
-var mockdate = require("mockdate");
+const nock = require("nock");
+const testutil = require("./testutil.js");
+const initialise = require("../util/initialise.js");
+const userModule = require("../model/user.js");
+const mockdate = require("mockdate");
 
-var baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+
+
+
+const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 describe("routes/index", function() {
+  const jar = {};
+  let client;
 
-  let jar = {};
-  function checkUrlWithJar(options) {
-    return async function() {
-      should.exist(options.user);
-      should.exist(jar[options.user]);
-      should.exist(options.url);
-      should.exist(options.expectedMessage);
-      should.exist(options.expectedStatusCode);
-      let response = await rp.get({url: options.url, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
-      response.body.should.containEql(options.expectedMessage);
-      should(response.statusCode).eql(options.expectedStatusCode);
-    };
-  };
-  function checkPostUrlWithJar(options) {
-    return async function() {
-      should.exist(options.user);
-      should.exist(jar[options.user]);
-      should.exist(options.url);
-      should.exist(options.expectedMessage);
-      should.exist(options.expectedStatusCode);
-      should.exist(options.form);
-      let response = await rp.post({url: options.url, form:options.form,jar: jar[options.user], simple: false, resolveWithFullResponse: true});
-      response.body.should.containEql(options.expectedMessage);
-      should(response.statusCode).eql(options.expectedStatusCode);
-    };
-  };
 
 
 
@@ -54,10 +31,6 @@ describe("routes/index", function() {
   before(async function () {
     await initialise.initialiseModules();
     testutil.startServerSync();
-    jar.testUser = await testutil.getUserJar("TestUser");
-    jar.testUserDenied = await testutil.getUserJar("TestUserDenied");
-    jar.hallo = await testutil.getUserJar("Hallo");
-    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
   });
 
   after(function (bddone) {
@@ -70,11 +43,13 @@ describe("routes/index", function() {
   beforeEach(function(bddone) {
     config.initialise();
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
+
+    client = testutil.getWrappedAxiosClient();
     testutil.importData(
       {
-        user: [{"OSMUser": "TestUser", access: "full", version: "1"},
-          {OSMUser: "TestUserDenied", access: "denied"},
-          { "OSMUser": "Hallo", access: "full"}
+        user: [{ OSMUser: "TestUser", access: "full", version: "1" },
+          { OSMUser: "TestUserDenied", access: "denied" },
+          { OSMUser: "Hallo", access: "full" }
         ],
         clear: true
       }, bddone);
@@ -82,60 +57,64 @@ describe("routes/index", function() {
   after(function() {
     mockdate.reset();
   });
-  beforeEach(function(bddone){
+  beforeEach(function(bddone) {
     return bddone();
   });
-  afterEach(function(bddone){
+  afterEach(function(bddone) {
     return bddone();
   });
 
   describe("route GET /", function() {
-    let url = baseLink + "/";
+    const url = baseLink + "/";
     it("should show home page", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<title>TESTBC</title>");
-      body.should.containEql('<h2 class="d-none d-sm-block">Welcome to OSM BC</h2>');
-      body.should.containEql("Full Access Index Page");
+      let body = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      body = await client.get(url);
+      body.data.should.containEql("<title>TESTBC</title>");
+      body.data.should.containEql('<h2 class="d-none d-sm-block">Welcome to OSM BC</h2>');
+      body.data.should.containEql("Full Access Index Page");
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should show Guest Homepage",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.OK,
-        expectedMessage: "You are logged in as guest. Please refer to "}));
+        expectedMessage: "You are logged in as guest. Please refer to "
+      }));
   });
   describe("route GET /osmbc.html", function() {
     it("should redirect to /", async function() {
-      let response = await rp.get({
-        url: baseLink + "/osmbc.html",
-        followRedirect: false,
-        jar: jar.testUser, simple: false, resolveWithFullResponse: true});
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      let body = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      body = await client.get(baseLink + "/osmbc.html");
+      should(body.status).eql(302);
+
+      should(body.data).eql("Found. Redirecting to /");
     });
   });
   describe("route GET /osmbc", function() {
     it("should redirect to /", async function() {
-      let response = await rp.get({
-        url: baseLink + "/osmbc",
-        followRedirect: false,
-        jar: jar.testUser, simple: false, resolveWithFullResponse: true});
-      should(response.statusCode).eql(302);
-      should(response.body).eql("Found. Redirecting to /");
+      let body = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      body = await client.get(baseLink + "/osmbc");
+
+      should(body.status).eql(302);
+      should(body.data).eql("Found. Redirecting to /");
     });
   });
   describe("route GET /changelog", function() {
-    let url = baseLink + "/changelog";
+    const url = baseLink + "/changelog";
     it("should show changelog of software", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h1>Changelog</h1>");
-      let user = await userModule.findById(1);
+      let body = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      body = await client.get(url);
+      body.data.should.containEql("<h1>Changelog</h1>");
+      const user = await userModule.findById(1);
       should(user).eql({
         id: "1",
         OSMUser: "TestUser",
@@ -146,42 +125,43 @@ describe("routes/index", function() {
       });
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should show changelog of software to guest",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.OK,
-        expectedMessage: "<h1>Changelog</h1>"}));
+        expectedMessage: "<h1>Changelog</h1>"
+      }));
   });
   describe("route POST /language", function() {
-    let url = baseLink + "/language";
-    let data = {lang:"DE"};
+    const url = baseLink + "/language";
+    const data = { lang: "DE" };
 
-    function requestLanguageSetter(user,whichLang, lang) {
-      function _requestLanguageSetter(whichlang, lang, cb) {
-        let form = {};
-        form[whichlang] = lang;
-        request.post({url: baseLink + "/language?" ,form:form, jar: jar[user]}, function (err, response) {
-          should.not.exist(err);
-          should(response.statusCode).eql(200);
-          return cb();
-        });
-      }
-      return new Promise((resolve,reject) => _requestLanguageSetter(whichLang,lang,(err) => (err)? reject(err):resolve()));
+    async function requestLanguageSetter(client, whichLang, lang) {
+      const form = {};
+      form[whichLang] = lang;
+      try {
+        await client.post(baseLink + "/language?", form);
+      } finally {}
     }
 
     it("should change language for full access", async function () {
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
 
-      await requestLanguageSetter("testUser","lang", "ES");
-      await requestLanguageSetter("testUser","lang3", "EN");
-      await requestLanguageSetter("testUser","lang4", "EN");
 
-      let user = await userModule.findById(1);
+      await requestLanguageSetter(client, "lang", "ES");
+      await requestLanguageSetter(client, "lang3", "EN");
+      await requestLanguageSetter(client, "lang4", "EN");
+
+      const user = await userModule.findById(1);
       should(user).eql({
         id: "1",
         OSMUser: "TestUser",
@@ -191,21 +171,22 @@ describe("routes/index", function() {
         secondLang: "EN",
         lang3: null,
         lang4: null,
-        langArray: ["ES","EN"]
+        langArray: ["ES", "EN"]
       });
     });
 
     it("should change language with complex changes", async function () {
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
 
-      await requestLanguageSetter("testUser","lang", "ES");
-      await requestLanguageSetter("testUser","lang2", "PT-PT");
-      await requestLanguageSetter("testUser","lang3", "EN");
-      await requestLanguageSetter("testUser","lang4", "DE");
+      await requestLanguageSetter(client, "lang", "ES");
+      await requestLanguageSetter(client, "lang2", "PT-PT");
+      await requestLanguageSetter(client, "lang3", "EN");
+      await requestLanguageSetter(client, "lang4", "DE");
       // remove 3rd language after setting it to EN by setting it to none
-      await requestLanguageSetter("testUser","lang3", "none");
-      
+      await requestLanguageSetter(client, "lang3", "none");
 
-      let user = await userModule.findById(1);
+
+      const user = await userModule.findById(1);
 
       should(user).eql({
         id: "1",
@@ -216,18 +197,19 @@ describe("routes/index", function() {
         secondLang: "PT-PT",
         lang3: "DE",
         lang4: null,
-        langArray: ["ES","PT-PT","DE"]
+        langArray: ["ES", "PT-PT", "DE"]
       });
     });
 
 
     it("should change language for guest access", async function () {
+      await client.post(baseLink + "/login", { username: "TestUserNonExisting", password: "TestUserNonExisting" });
 
-      await requestLanguageSetter("testUserNonExisting", "lang", "ES");
-      await requestLanguageSetter("testUserNonExisting", "lang3", "EN");
-      await requestLanguageSetter("testUserNonExisting", "lang4", "EN");
+      await requestLanguageSetter(client, "lang", "ES");
+      await requestLanguageSetter(client, "lang3", "EN");
+      await requestLanguageSetter(client, "lang4", "EN");
 
-      let user = await userModule.findOne({OSMUser:"TestUserNonExisting"});
+      const user = await userModule.findOne({ OSMUser: "TestUserNonExisting" });
       should(user).eql({
         id: "4",
         OSMUser: "TestUserNonExisting",
@@ -238,23 +220,27 @@ describe("routes/index", function() {
         mdWeeklyAuthor: "anonymous",
         lang3: null,
         lang4: null,
-        langArray: ["ES","EN"]
+        langArray: ["ES", "EN"]
       });
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
   });
   describe("route POST /setuserconfig", function() {
-    let url = baseLink + "/setuserconfig";
-    let form = {view:'v1',option:'o1',value:'v2'};
+    const url = baseLink + "/setuserconfig";
+    const form = { view: "v1", option: "o1", value: "v2" };
     it("should set options for a view (full user)", async function () {
-      let body = await rp.post({url: url, form: form, jar: jar.testUser});
-      should(body).eql("OK");
-      let user = await userModule.findById(1);
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+
+      const body = await client.post(url, form);
+      should(body.data).eql("OK");
+      const user = await userModule.findById(1);
       should(user).eql({
         id: "1",
         OSMUser: "TestUser",
@@ -264,38 +250,48 @@ describe("routes/index", function() {
       });
     });
     it("should throw an error on missing option",
-      checkPostUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
-        user: "testUser",
-        form:  {view:'v1',option:'o1' },
+        username: "TestUser",
+        password: "TestUser",
+        form: { view: "v1", option: "o1" },
         expectedStatusCode: HttpStatus.BAD_REQUEST,
-        expectedMessage: "<h1>missing value in option</h1>"}));
+        expectedMessage: '<h1 id="errorTitle">missing value in option</h1>'
+      }));
 
     it("should throw an error on missing view",
-      checkPostUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
-        user: "testUser",
-        form:{},
+        username: "TestUser",
+        password: "TestUser",
+        form: {},
         expectedStatusCode: HttpStatus.BAD_REQUEST,
-        expectedMessage: "<h1>missing view in option</h1>"}));
+        expectedMessage: '<h1 id="errorTitle">missing view in option</h1>'
+      }));
     it("should throw an error on missing value",
-      checkPostUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
-        form:{view:'V1'},
-        user: "testUser",
+        form: { view: "V1" },
+        username: "TestUser",
+        password: "TestUser",
         expectedStatusCode: HttpStatus.BAD_REQUEST,
-        expectedMessage: "<h1>missing option in option</h1>"}));
+        expectedMessage: '<h1 id="errorTitle">missing option in option</h1>'
+      }));
     it("should deny denied access user",
-      checkPostUrlWithJar({
+      testutil.checkPostUrlWithUser({
         url: url,
-        user: "testUserDenied",
-        form:{},
+        username: "TestUserDenied",
+        password: "TestUserDenied",
+        form: {},
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should set options for a view (guest user)", async function () {
-      let body = await rp.post({url: url, form:form,jar: jar.testUserNonExisting});
-      should(body).eql("OK");
-      let user = await userModule.findById(4);
+      await client.post(baseLink + "/login", { username: "TestUserNonExisting", password: "TestUserNonExisting" });
+
+      const body = await client.post(url, form);
+      should(body.data).eql("OK");
+      const user = await userModule.findById(4);
       should(user).eql({
         id: "4",
         OSMUser: "TestUserNonExisting",
@@ -307,24 +303,30 @@ describe("routes/index", function() {
     });
   });
   describe("route GET /createblog", function() {
-    let url = baseLink + "/createblog";
+    const url = baseLink + "/createblog";
     it("should show changelog of software", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<h2>Create Blog Page</h2>");
-      body.should.containEql(" onclick=\"location.href='/blog/create'\"");
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+
+      const body = await client.get(url);
+      body.data.should.containEql("<h2>Create Blog Page</h2>");
+      body.data.should.containEql(" onclick=\"location.href='/blog/create'\"");
     });
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
     it("should deny non existing / guest user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"}));
+        expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
+      }));
   });
 });
 

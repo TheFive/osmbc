@@ -888,6 +888,10 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }
+      if (url.search(".translate.goog/") > 0) {
+        result[url] = "OK";
+        return callback();
+      }
       // check wether url is valid
       try {
         // eslint-disable-next-line no-unused-vars

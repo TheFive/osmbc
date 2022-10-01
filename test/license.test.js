@@ -89,7 +89,7 @@ let allowedLicensesProd = ["MIT",
   "WTFPL OR ISC"];
 
 let allowedLicensesDev = allowedLicensesProd.concat([
-  "LGPL-2.1+","CC-BY-3.0","LGPL","CC-BY-4.0"
+  "LGPL-2.1+","CC-BY-3.0","LGPL","CC-BY-4.0","(MIT OR GPL-3.0-or-later)","(MIT AND Zlib)"
 ]);
 
 function shouldNotUseGPL(usedLicenses){

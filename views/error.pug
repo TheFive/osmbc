@@ -1,39 +1,43 @@
 
 
 
-block content
-  h1= message
-  h2= error.status
-  pre= error.stack
-  if (error.detail)
-    pre=JSON.stringify(error.detail,null,2)
 
-  button(type="button" onclick=`location.href='${layout.htmlroot}/osmbc.html'`) OSMBC Home
-  button(type="button" onclick="goBack()")="Go Back"
-  button(type="button" onclick=`location.href='${layout.htmlroot}/logout'`) logout
+html
+  head
+    title OSMBC Error
+  body
+    h1#errorTitle=message
+    if (error.status)
+      h2#errorCode=error.status + " " + getReasonPhrase(error.status)
+    if (error.detail)
+      pre=JSON.stringify(error.detail,null,2)
 
-if (error.message == "Version Number Differs")
-  h2
-    | Important Hint for Version Conflicts
-  p
-    | In case you edited an article, this error is not a problem.
-    | Use the back function of your browser, copy the text of your change to
-    | the clipboard, and change the article again.
-  p
-    | You can even use your browser history to go back to that change.
+    button(type="button" onclick=`location.href='${layout.htmlroot}/osmbc.html'`) OSMBC Home
+    button(type="button" onclick="goBack()")="Go Back"
+    button(type="button" onclick=`location.href='${layout.htmlroot}/logout'`) logout
+
+  if (error.message == "Version Number Differs")
+    h2
+      | Important Hint for Version Conflicts
+    p
+      | In case you edited an article, this error is not a problem.
+      | Use the back function of your browser, copy the text of your change to
+      | the clipboard, and change the article again.
+    p
+      | You can even use your browser history to go back to that change.
 
 
-if (error.message == "failed to find request token in session")
-  h2
-    | Important Hint for Problems with request tokens
-  p
-    | This is almost an problem that your local cookie, the OpenStreetMap
-    | OAuth Signature, and the Cookie in OSMBC does not fit together.
-    | Please delete your local cookies for the domain osmbc.openstreetmap.de.
-    | If that does not help, delete all your OAuth Authentifications
-    | for OSMBC in your local OpenStreetMap Settings on osm.org
-  p
-    | Check the domain, it has to be osmbc.openstreetmap.de.
+  if (error.message == "failed to find request token in session")
+    h2
+      | Important Hint for Problems with request tokens
+    p
+      | This is almost an problem that your local cookie, the OpenStreetMap
+      | OAuth Signature, and the Cookie in OSMBC does not fit together.
+      | Please delete your local cookies for the domain osmbc.openstreetmap.de.
+      | If that does not help, delete all your OAuth Authentifications
+      | for OSMBC in your local OpenStreetMap Settings on osm.org
+    p
+      | Check the domain, it has to be osmbc.openstreetmap.de.
 
 
 
