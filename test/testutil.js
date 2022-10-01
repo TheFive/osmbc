@@ -19,6 +19,11 @@ const LoginPage = require("../test/PageObjectModel/loginPage.js");
 const LoginChooserPage = require("../test/PageObjectModel/loginChooserPage.js");
 
 const { Builder, Browser } = require("selenium-webdriver");
+const chrome = require('selenium-webdriver/chrome');
+const chromium = require('chromium');
+require('chromedriver');
+
+
 const { osmbcLink } = require("../util/util.js");
 
 const config = require("../config.js");
@@ -544,7 +549,19 @@ function getWrappedAxiosClient(options) {
 }
 
 async function getNewDriver(username) {
-  const driver = await new Builder().forBrowser(Browser.CHROME).build();
+  // const driver = await new Builder().forBrowser(Browser.CHROME).build();
+  let options = new chrome.Options();
+  options.setChromeBinaryPath(chromium.path);
+  options.addArguments('--headless');
+  options.addArguments('--disable-gpu');
+  options.addArguments('--window-size=1280,960');
+
+  const driver = await new Builder()
+      .forBrowser('chrome')
+      .setChromeOptions(options)
+      .build();
+  assert(driver);
+
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
   await driver.manage().setTimeouts({ implicit: 5000 });
