@@ -56,7 +56,7 @@
             <div class="col-6"><input class="form-control" id="searchField" type="text" name="search" value="new Info">
               <p class="osmbc-help-text" align="center">Please check your link for duplicates before submit it.</p>
             </div>
-            <div class="col"><button class="btn btn-large btn-primary" name="SearchNow" type="submit">Search</button></div>
+            <div class="col"><button class="btn btn-large btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
           </div>
         </form>
       </div>
@@ -423,9 +423,13 @@
         categoryEN = document.getElementById("categoryEN");
         if (categoryEN) categoryEN.onchange = onchangeCategory;
         okButton = document.getElementById("OK");
+        searchButton = document.getElementById("searchButton")
         title = document.getElementById("title");
+        searchField = document.getElementById("searchField")
         if (title) title.onchange = onchangeTitle;
         if (title) title.onkeyup = onchangeTitle;
+        if (searchField) searchField.onchange = onchangeSearch;
+        if (searchField) searchField.onkeyup = onchangeSearch;
         onchangeTitle();
         onchangeCategory();
         if (title) title.select();
@@ -451,6 +455,16 @@
         if (t.length > 5) {
           okButton.disabled = false;
         }
+      }
+
+      function onchangeSearch() {
+        if (!searchField) return;
+        var s = searchField.value.trim();
+        searchButton.disabled = true;
+        if (s.length > 1) {
+          searchButton.disabled = false;
+        }
+
       }
     </script>
   </body>

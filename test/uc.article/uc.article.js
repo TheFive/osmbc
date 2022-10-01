@@ -6,7 +6,6 @@ const path = require("path");
 const fs = require("fs");
 const nock = require("nock");
 const should = require("should");
-const config = require("../../config.js");
 const testutil = require("../testutil.js");
 const userModule = require("../../model/user.js");
 const articleModule = require("../../model/article.js");
@@ -68,10 +67,10 @@ describe("uc.article", function() {
     it("should isURL work on page", async function() {
       const file =  path.resolve(__dirname, "..", "data", "util.data.json");
       const data = JSON.parse(fs.readFileSync(file));
-      for (var i = 0; i < data.isURLArray.length; i++) {
+      for (let i = 0; i < data.isURLArray.length; i++) {
         should(await driver.executeScript("return isURL('" + data.isURLArray[i] + "')")).is.True();
       }
-      for (i = 0; i < data.isNoURLArray.length; i++) {
+      for (let i = 0; i < data.isNoURLArray.length; i++) {
         should(await driver.executeScript("return isURL('" + data.isNoURLArray[i] + "')")).is.False();
       }
     });
@@ -172,12 +171,10 @@ describe("uc.article", function() {
 
   it.skip("should calculate a new height, if to many lines are used", function(bddone) {
     // Function is skipped, it is unclear, how to deal with modified height in zombie.js
-    should(browser.evaluate("$('textarea#collection').innerHeight()")).eql(4);
-    browser.fill("#collection", "\n\nhallole\n\n\nanother row");
+
 
     // Simulate a change Event manually
-    browser.evaluate("$('textarea#collection').on('change')");
-    should(browser.evaluate("$('textarea#collection').innerHeight()")).eql(8);
+
     bddone();
   });
   describe("Change Collection", function() {
@@ -197,19 +194,6 @@ describe("uc.article", function() {
         warning: true
       });
     });
-    function checkLink(link, langVisible, langTranslation, displayLink) {
-      if (!langTranslation) langTranslation = langVisible;
-      if (!displayLink) displayLink = link;
-      let transText = "MISSING TRANSTEXT in TEST";
-      if (langVisible === "DE") transText = "automatische [Übersetzung]";
-      if (langVisible === "EN") transText = "automatic [translation]";
-      // Check the visible Link
-      browser.assert.text('#linkArea a[href="' + link + '"]', displayLink);
-
-      // Check the translation
-      browser.assert.text('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl=' + langTranslation + "&u=" + link + '"]', langVisible);
-      browser.assert.attribute('#linkArea a[href="https://translate.google.com/translate?sl=auto&tl=' + langTranslation + "&u=" + link + '"]', "ondragstart", "dragstart(event,':??-s: >   [:" + langTranslation + "-t:](" + link + "?_x_tr_sl=auto&_x_tr_tl=" + langTranslation + ")');");
-    }
     it("should ignore brackets in a collection (No Markdown)", async function() {
       const osmbcApp = new OsmbcApp(driver);
       await osmbcApp.getArticlePage().fillCollectionInput("Some collection [link](https://www.openstreetmap.org/a_brilliant_map in Markdown");
@@ -301,7 +285,7 @@ describe("uc.article", function() {
       await driver.get(osmbcLink("/article/" + articleId));
     });
     it("should warn on double links", async function() {
-      await osmbcApp.getArticlePage().fillMarkdownInput("DE","https://a.link is referenced tiwce https://a.link");
+      await osmbcApp.getArticlePage().fillMarkdownInput("DE", "https://a.link is referenced tiwce https://a.link");
       const warning = await osmbcApp.getArticlePage().getWarningMessage("DE");
       should(warning).equal("Link https://a.link is used twice in markdown");
     });
@@ -314,7 +298,7 @@ describe("uc.article", function() {
       await articlePage.fillCommentInput("Add a test comment");
       await articlePage.clickAddComment();
       await sleep(300);
-  
+
 
 
       let article = await articleModule.findById(1);
@@ -323,10 +307,10 @@ describe("uc.article", function() {
       should(article.commentList[0].text).eql("Add a test comment");
       should(article.commentList[0].user).eql("TheFive");
 
-      await articlePage.editComment(0,"And Change It");
+      await articlePage.editComment(0, "And Change It");
       await sleep(300);
-    
-    
+
+
       article = await articleModule.findById(1);
 
       should(article.commentList.length).eql(1);
@@ -337,16 +321,7 @@ describe("uc.article", function() {
   describe("Translate", function() {
     // skipped, as there is only a workaround ignoring internal translation nock
     it.skip("should call and translate an article", async function() {
-      this.timeout(maxTimer * 2);
-      await browser.visit("/article/4");
 
-      nock("http://localhost:" + config.getServerPort(), { allowUnmocked: false })
-        .post("/article/translate/deepl/de/en", "text=%5BText%5D(http%3A%2F%2Fwww.tst.%C3%A4d%2Fholla)+ist+eine+gute+Referenz.")
-        .reply(200, "[Text](http://www.test.de/holla) is a good reference.");
-      await browser.pressButton("translateDEEN");
-
-      // should(translateNock.isDone()).be.True();
-      should(browser.query("#markdownEN").value).eql("[Text](http://www.test.de/holla) is a good reference.");
     });
   });
 });

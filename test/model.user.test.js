@@ -132,7 +132,7 @@ describe("model/user", function() {
         clear: true,
         user: [{ OSMUser: "WelcomeMe", email: "none", lastAccess: (new Date()).toISOString() },
           { OSMUser: "InviteYou", email: "invite@mail.org" },
-        {OSMUser:"DeniedUser",access:"denied",email:"this.is@mymail"}]
+          { OSMUser: "DeniedUser", access: "denied", email: "this.is@mymail" }]
       }, bddone);
     });
     afterEach(function (bddone) {
@@ -263,7 +263,7 @@ describe("model/user", function() {
         user.setAndSave({ OSMUser: "InviteYou" }, { email: "none" }, function (err) {
           should.not.exist(err);
           userModule.findOne({ OSMUser: "DeniedUser" }, function(err, user) {
-            console.dir(user);
+            should.not.exist(err);
             should(user.email).eql(undefined);
             bddone();
           });

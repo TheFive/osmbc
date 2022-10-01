@@ -10,7 +10,7 @@ const layoutConst = require("../routes/layout").layoutConst;
 const async       = require("../util/async_wrap.js");
 
 const passport     = require("passport");
-const OpenStreetMapStrategy = require("passport-openstreetmap").Strategy;
+
 const LocalHtpasswdStrategy = require("passport-local-htpasswd");
 const OAuth2Strategy = require("passport-oauth2").Strategy;
 const xml2js = require("xml2js");
@@ -70,8 +70,9 @@ function initialise(app) {
   }
   app.get(htmlRoot + "/logout", function(req, res) {
     debug("logoutFunction");
-    req.logout();
-    res.redirect(htmlRoot + "/osmbc.html");
+    req.logout(function() {
+      res.redirect(htmlRoot + "/osmbc.html");
+    });
   });
 
 
@@ -114,30 +115,6 @@ function initialise(app) {
   });
 
   // Initialise all login mechisms based on config file
-  if (auth.openstreetmap.enabled) {
-    const strategy = new OpenStreetMapStrategy({
-      name: "openstreetmap",
-      consumerKey: auth.openstreetmap.OPENSTREETMAP_CONSUMER_KEY,
-      consumerSecret: auth.openstreetmap.OPENSTREETMAP_CONSUMER_SECRET,
-      callbackURL: auth.openstreetmap.callbackUrl,
-      requestTokenURL: "https://www.openstreetmap.org/oauth/request_token",
-      accessTokenURL: "https://www.openstreetmap.org/oauth/access_token",
-      userAuthorizationURL: "https://www.openstreetmap.org/oauth/authorize"
-    },
-    function (token, tokenSecret, profile, done) {
-      debug("passport.use Token Function");
-      // asynchronous verification, for effect...
-      process.nextTick(function () {
-        debug("passport.use Token Function->prozess.nextTick");
-        // To keep the example simple, the user's OpenStreetMap profile is returned to
-        // represent the logged-in user.  In a typical application, you would want
-        // to associate the OpenStreetMap account with a user record in your database,
-        // and return that user instead.
-        return done(null, profile);
-      });
-    });
-    passport.use(strategy);
-  }
   if (auth.htaccess.enabled) {
     const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: path.join(__dirname, "..", "test_pwd") });
     passport.use(strategy);
