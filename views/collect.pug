@@ -22,7 +22,7 @@ block content
               else
                 p.osmbc-help-text(align="center") Please check your link for duplicates before collect it.
           div.col
-            button.btn.btn-large.btn-primary(name="SearchNow" type="submit") Search
+            button#searchButton.btn.btn-large.btn-primary(name="SearchNow" type="submit" disabled) Search
 
 
   .row
@@ -135,9 +135,13 @@ block append scripts_to_execute
       categoryEN = document.getElementById("categoryEN");
       if (categoryEN) categoryEN.onchange = onchangeCategory;
       okButton = document.getElementById("OK");
+      searchButton = document.getElementById("searchButton")
       title = document.getElementById("title");
+      searchField = document.getElementById("searchField")
       if (title) title.onchange = onchangeTitle;
       if (title) title.onkeyup = onchangeTitle;
+      if (searchField) searchField.onchange = onchangeSearch;
+      if (searchField) searchField.onkeyup = onchangeSearch;
       onchangeTitle();
       onchangeCategory();
       if (title) title.select();
@@ -163,6 +167,15 @@ block append scripts_to_execute
       if (t.length>5) {
         okButton.disabled=false;
       }
+    }
+    function onchangeSearch() {
+      if (!searchField) return;
+      var s = searchField.value.trim();
+      searchButton.disabled = true;
+      if (s.length > 1) {
+        searchButton.disabled = false;
+      }
+      
     }
    
  
