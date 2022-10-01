@@ -131,7 +131,8 @@ describe("model/user", function() {
       testutil.importData({
         clear: true,
         user: [{ OSMUser: "WelcomeMe", email: "none", lastAccess: (new Date()).toISOString() },
-          { OSMUser: "InviteYou", email: "invite@mail.org" }]
+          { OSMUser: "InviteYou", email: "invite@mail.org" },
+        {OSMUser:"DeniedUser",access:"denied",email:"this.is@mymail"}]
       }, bddone);
     });
     afterEach(function (bddone) {
@@ -240,6 +241,32 @@ describe("model/user", function() {
           expectedErr.status = 401;
           should(err).eql(expectedErr);
           bddone();
+        });
+      });
+    });
+    it("should fail when change email for denied user (no delete)", function (bddone) {
+      userModule.findOne({ OSMUser: "DeniedUser" }, function(err, user) {
+        should.not.exist(err);
+        // First set a new EMail Address for the WelcomeMe user, by InviteYou.
+        user.setAndSave({ OSMUser: "InviteYou" }, { email: "WelcomeMe@newemail.org" }, function (err) {
+          const expectedErr = new Error("EMail address can only be changed by the user himself, after he has logged in.");
+          expectedErr.status = 401;
+          should(err).eql(expectedErr);
+          bddone();
+        });
+      });
+    });
+    it("should allow maildelete for denied users", function (bddone) {
+      userModule.findOne({ OSMUser: "DeniedUser" }, function(err, user) {
+        should.not.exist(err);
+        // First set a new EMail Address for the WelcomeMe user, by InviteYou.
+        user.setAndSave({ OSMUser: "InviteYou" }, { email: "none" }, function (err) {
+          should.not.exist(err);
+          userModule.findOne({ OSMUser: "DeniedUser" }, function(err, user) {
+            console.dir(user);
+            should(user.email).eql(undefined);
+            bddone();
+          });
         });
       });
     });

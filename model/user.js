@@ -294,11 +294,10 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
 
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
-    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) {
-      const err =  Error("EMail address can only be changed by the user himself, after he has logged in.");
-      err.status = HttpStatus.UNAUTHORIZED;
-      return callback(err);
-    }
+    const err =  Error("EMail address can only be changed by the user himself, after he has logged in.");
+    err.status = HttpStatus.UNAUTHORIZED;
+    if (self.access === "denied" && data.email !== "none") return callback(err);
+    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(err);
 
     if (data.email !== "resend" && data.email !== "none") {
       if (!emailValidator.validate(data.email)) {
