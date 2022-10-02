@@ -1,11 +1,11 @@
 "use strict";
 
-var should = require("should");
+const should = require("should");
 
-var nock = require("nock");
+const nock = require("nock");
 
-var testutil = require("./testutil.js");
-var htmltitle = require("../model/htmltitle.js");
+const testutil = require("./testutil.js");
+const htmltitle = require("../model/htmltitle.js");
 
 
 describe("model/htmltitle", function() {
@@ -19,7 +19,7 @@ describe("model/htmltitle", function() {
     bddone();
   });
   describe("linkFrom", function() {
-    let linkFrom = htmltitle.fortestonly.linkFrom;
+    const linkFrom = htmltitle.fortestonly.linkFrom;
     it("should recognize http sources", function(bddone) {
       should(linkFrom("http://twitter.com/irgendwas", "twitter.com")).be.True();
       should(linkFrom("http://forum.openstreetmap.org/viewtopic.php?id=54487", "forum.openstreetmap.org")).be.True();
@@ -41,7 +41,17 @@ describe("model/htmltitle", function() {
       should(result).eql("Bridges which aren't on any Way? / Questions and Answers");
     } catch (err) {
       should.not.exist(err);
-    }  
+    }
+  });
+  it("should work with empty title", async function() {
+    nock("https://www.test.de").get("/page").reply(200, "<title></title>");
+    const result = await htmltitle.getTitle("https://www.test.de/page");
+    should(result).eql("");
+  });
+  it("should work with linebreak in  title", async function() {
+    nock("https://www.test.de").get("/page").reply(200, "<title>line 1 \n line 2 \r\n line 3 \r last line</title>");
+    const result = await htmltitle.getTitle("https://www.test.de/page");
+    should(result).eql("line 1   line 2   line 3   last line");
   });
   it("should get title from twitter", async function() {
     const result = await htmltitle.getTitle("https://twitter.com/WeeklyOSM/status/726026930479370241");
@@ -67,7 +77,7 @@ describe("model/htmltitle", function() {
     nock("https://www.test.de")
       .get("/testdd")
       .delayConnection(3000)
-      .reply(200,"OK");
+      .reply(200, "OK");
     const result = await htmltitle.getTitle("https://www.test.de/testdd");
     should(result).eql("https://www.test.de/testdd TIMEOUT");
   });
@@ -85,5 +95,4 @@ describe("model/htmltitle", function() {
       should(err.message).eql("SSRL Test failed for URL");
     }
   });
-
 });

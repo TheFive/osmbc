@@ -1,5 +1,7 @@
 {
   "serverport": 35043,
+  "serverkey": "/Users/TheFive.osm/.localhost-ssl/localhost.key",
+  "servercert": "/Users/TheFive.osm/.localhost-ssl/localhost.crt",
 
   "postgres": {
     "initialise": true,
@@ -49,17 +51,14 @@
     {"lid":"ES","displayLong":"Spain","displayShort":"ES"},
     {"lid":"PT-PT","deeplProSource":"PT","deeplProTarget":"PT-PT","bingPro":"PT-BP"}
   ],
-  "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback",
-  "OPENSTREETMAP_CONSUMER_KEY" : "######",
-  "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
   "htmlroot":"",
   "style":"/stylesheets/style.css",
   "bootstrap":"",
   "jquery":"",
-  "font_awesome":"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0",
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
-  "url":"https://testosm.bc",
+  "cookieMaxAge": 10000,
+  "url":"http://localhost:35043",
   "SMTP":{},
   "apiKey":"testapikey",
   "apiKey.TBC":"testapikey.TBC",
@@ -88,7 +87,27 @@
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
   "urlWoErrorWhileEdit": [],
-  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":150},
+  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":500},
+  "auth": {
+    "openstreetmap": {
+      "enabled":true,
+      "OPENSTREETMAP_CONSUMER_KEY" : "######",
+      "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
+      "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback"
+    },
+    "htaccess": {
+      "enabled": true
+    },
+    "openstreetmap_oauth20": {
+      "enabled": true,
+      "authorizationURL": "https://www.openstreetmap.org/oauth2/authorize",
+      "tokenURL": "https://www.openstreetmap.org/oauth2/token",
+      "clientID": "#####",
+      "clientSecret": "#####",
+      "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap_oautb20/callback",
+      "scope": "read_prefs"
+    }
+  },
   "media folder": {
     "local": "/localMediaFOlder",
     "remote": "https://extern.site",

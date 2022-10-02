@@ -8,8 +8,6 @@ const debug    = require("debug")("OSMBC:routes:users");
 const express    = require("express");
 const router     = express.Router();
 const auth       = require("../routes/auth.js");
-const HttpError  = require("standard-http-error");
-
 
 const config   = require("../config.js");
 const language = require("../model/language.js");
@@ -254,8 +252,8 @@ function postUserId(req, res, next) {
 
   ], function(err) {
     if (!allowedToChangeUser) return res.status(403).send("Not Allowed To Post this user");
-    if (err && (err instanceof HttpError)) {
-      res.status(err.code).send(err.message);
+    if (err) {
+      next(err);
     }
 
     if (err) return next(err);

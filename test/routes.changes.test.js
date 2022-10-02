@@ -6,7 +6,6 @@
 const nock  = require("nock");
 const should = require("should");
 const request = require("request");
-const rp = require("request-promise-native");
 const HttpStatus = require("http-status-codes");
 
 var config = require("../config");
@@ -29,28 +28,13 @@ const changeid = "9"; // this has to be fix, as current test structure expects f
 describe("routes/changes", function() {
   this.timeout(this.timeout() * 2);
   let jar = {};
-  function checkUrlWithJar(options) {
-    return async function() {
-      should.exist(options.user);
-      should.exist(jar[options.user]);
-      should.exist(options.url);
-      should.exist(options.expectedMessage);
-      should.exist(options.expectedStatusCode);
-      let response = await rp.get({url: options.url, jar: jar[options.user], simple: false, resolveWithFullResponse: true});
-      response.body.should.containEql(options.expectedMessage);
-      should(response.statusCode).eql(options.expectedStatusCode);
-    };
-  }
+  
 
 
 
   before(async function () {
     await initialise.initialiseModules();
     testutil.startServerSync();
-    jar.testUser = await testutil.getUserJar("TestUser");
-    jar.testUserDenied = await testutil.getUserJar("TestUserDenied");
-    jar.hallo = await testutil.getUserJar("Hallo");
-    jar.testUserNonExisting = await testutil.getUserJar("TestUserNonExisting");
   });
 
   after(function (bddone) {
@@ -102,42 +86,50 @@ describe("routes/changes", function() {
   describe("route GET /:change_id", function() {
     let url =  baseLink + "/changes/" + changeid;
     it("should display one change id", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql("<td>2016-01-26T21:31:59.879Z (4 months ago)</td>");
-      body.should.containEql("<td>WN333</td>");
-      body.should.containEql("<td>TestUser</td>");
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+      body.data.should.containEql("<td>2016-01-26T21:31:59.879Z (4 months ago)</td>");
+      body.data.should.containEql("<td>WN333</td>");
+      body.data.should.containEql("<td>TestUser</td>");
     });
 
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
     it("should deny non existing user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"}));
   });
   describe("route GET /log", function() {
     let url = baseLink + "/changes/log";
     it("should show list", async function () {
-      let body = await rp.get({url: url, jar: jar.testUser});
-      body.should.containEql('<td><a href="/changes/2"><i class="fa fa-info-circle"></i></a></td>');
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", {username: "TestUser", password: "TestUser" });
+      let body = await client.get(url);
+      body.data.should.containEql('<td><a href="/changes/2"><i class="fa fa-info-circle"></i></a></td>');
     });
 
     it("should deny denied access user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserDenied",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"}));
     it("should deny non existing user",
-      checkUrlWithJar({
+      testutil.checkUrlWithUser({
         url: url,
-        user: "testUserNonExisting",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"}));
   });

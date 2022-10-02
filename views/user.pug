@@ -204,9 +204,11 @@ block append scripts_to_execute
       let date = new Date(chartData[i].date)
       for (let c = 0; c< chartData[i].count;c ++) heatmapData.push(date.getTime());
     }
-    var now = new Date('!{new Date().toISOString()}')
+    var startDate = new Date('!{new Date().toISOString()}')
+    startDate.setMonth(startDate.getMonth() - 12);
     $("#heatmap").github_graph({
       data:heatmapData,
+      startDate: startDate,
       texts: ["changes","change"],
       color:[
          "#218380", "#268583", "#2A8885", "#2F8A88", "#338D8A", "#388F8D", "#3C928F", "#419492", "#469795", "#4A9997",

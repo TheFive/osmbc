@@ -2,12 +2,16 @@
 
 /* jshint ignore:start */
 
-const mockdate = require("mockdate");
-const testutil = require("../testutil.js");
-const fs = require("fs");
+const mockdate   = require("mockdate");
+const testutil   = require("../testutil.js");
+const OsmbcApp   = require("../../test/PageObjectModel/osmbcApp.js");
+const { sleep }  = require("../../util/util.js");
+const should     = require("should");
 
 
-var userModule = require("../../model/user.js");
+
+
+const userModule = require("../../model/user.js");
 const initialise = require("../../util/initialise.js");
 
 
@@ -15,16 +19,12 @@ const initialise = require("../../util/initialise.js");
 
 describe("uc.access", function() {
   this.timeout(30000);
-  let bTheFive = null;
-  let bGuestUser = null;
   beforeEach(async function() {
     await testutil.clearDB();
     await initialise.initialiseModules();
     testutil.startServerSync();
-    await userModule.createNewUser({OSMUser: "TheFive", access: "full", language: "EN",email:"a@g.c"});
-    await userModule.createNewUser({OSMUser: "GuestUser", access: "guest", language: "EN"});
-    bTheFive = await testutil.getNewBrowser("TheFive");
-    bGuestUser = await testutil.getNewBrowser("GuestUser");
+    await userModule.createNewUser({ OSMUser: "TheFive", access: "full", language: "EN", email: "a@g.c" });
+    await userModule.createNewUser({ OSMUser: "GuestUser", access: "guest", language: "EN", email: "guest@guest.guest" });
   });
   before(function(bddone) {
     mockdate.set("2015-11-05");
@@ -34,135 +34,133 @@ describe("uc.access", function() {
     mockdate.reset();
     return bddone();
   });
-  afterEach(function(bddone) {
-    testutil.stopServer(bddone);
+  afterEach(async function() {
+    testutil.stopServer();
   });
 
 
-  it("should do a use case short async/await version", async function() {
-    let errors = [];
-    let b = testutil.getBrowser();
-    let homePage = "/osmbc";
-    let adminLinkSelect = "a#adminlink";
-    await bTheFive.visit(homePage);
-    bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullStartPage");
+  it("should do a use case short", async function() {
+    const driverTheFive = await testutil.getNewDriver("TheFive");
+    const errors = [];
+
+    const osmbcAppTheFive = new OsmbcApp(driverTheFive);
+
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullStartPage");
 
     // Click on admin link and compare what full user can see
-    await bTheFive.click(adminLinkSelect);
-    bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullAdminPage");
+    await osmbcAppTheFive.getMainPage().clickLinkToAdminPage();
+
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullAdminPage");
 
 
     // create a new blog and compare bloglist
-    await bTheFive.click("a#createblog");
-    await bTheFive.click("button.btn.btn-primary[type='button']");
-    bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullBlogList");
+    await osmbcAppTheFive.getAdminPage().clickCreateBlogMenu({ confirm: true });
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullBlogList");
 
     // Collect an article, search input before
-    await bTheFive.click("#collect");
-    bTheFive.fill("input#searchField", "new Info");
-    await bTheFive.click("button[name='SearchNow']");
-    bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullCollectPage");
+    await osmbcAppTheFive.getBlogListPage().clickCollect();
 
-    // Fill out collect screen click OK
-    // add some further information on article screen
-    // and compare results
-
-    // b.fill("select#categoryEN","Mapping /");
-    bTheFive.fill("#title", "This is a title of a full collected article");
-    bTheFive.fill("textarea[name='collection']", "This is the collection text");
-
-    await bTheFive.click("input#OK");
-    bTheFive.select("select#categoryEN", "Mapping");
-    bTheFive.fill("#title", "This is a title of a full collected article");
-    bTheFive.fill("#markdownEN", "This is the written text.");
-
-    await bTheFive.click("button#saveButton");
-    bTheFive.assert.expectHtmlSync(errors, "uc.access", "fullArticlePage");
+    const sacPageTheFive = osmbcAppTheFive.getSearchAndCollectPage();
+    await sacPageTheFive.fillAndStartSearch("new Info");
 
 
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullCollectPage");
+
+    await sacPageTheFive.fillTitleInput("This is a title of a full collected article");
+    await sacPageTheFive.fillCollectionInput("This is the collection text");
+    await sacPageTheFive.clickOK();
+
+    const articlePageTheFive = osmbcAppTheFive.getArticlePage();
+
+    await articlePageTheFive.fillTitleInput("This is a title of a full collected article");
+    await articlePageTheFive.selectCategory("Mapping");
+    await articlePageTheFive.fillMarkdownInput("EN", "This is the written text.");
 
 
-    // Add two comments, one for guest user, and one for @EN
-    await bTheFive.fill("textarea#comment", "This is a comment for @EN");
-    await bTheFive.click("button[name='AddComment']");
+    await articlePageTheFive.clickSave();
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullArticlePage");
+
+    await articlePageTheFive.fillCommentInput("This is a comment for @EN");
+    await articlePageTheFive.clickAddComment();
+
+    await sleep(500);
 
 
-    bTheFive.fill("textarea#comment", "This is a comment for @GuestUser");
-    await bTheFive.click("button[name='AddComment']"),
+    await articlePageTheFive.fillCommentInput("This is a comment for @GuestUser");
+    await articlePageTheFive.clickAddComment();
 
 
 
     // Guest user comes and collects an article
-    await bGuestUser.visit("/osmbc");
-    bGuestUser.assert.expectHtmlSync(errors, "uc.access", "guestStartPage");
+    const driverGuest = await testutil.getNewDriver("GuestUser");
+    const osmbcAppGuest = new OsmbcApp(driverGuest);
+    await sleep(1000);
+
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestStartPage");
 
     // Click on admin link and compare what full user can see
-    await bGuestUser.assert.elements(adminLinkSelect, 0);
+    should(await osmbcAppGuest.getMainPage().hasLinkToAdminPage()).be.false();
 
     // Collect an article, search input before
-    await bGuestUser.click("#collect");
-    bGuestUser.fill("input#searchField", "new Info");
-    await bGuestUser.click("button[name='SearchNow']");
-    bGuestUser.assert.expectHtmlSync(errors, "uc.access", "guestCollectPage");
+    await osmbcAppGuest.getMainPage().clickCollect();
 
-    // Fill out collect screen click OK
-    // add some further information on article screen
-    // and compare results
-    // bGuestUser.fill("select#categoryEN","Mapping /");
-    bGuestUser.fill("#title", "This is a title of a guest collected article");
-    bGuestUser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
-    await bGuestUser.click("input#OK");
-    bGuestUser.select("select#categoryEN", "Mapping");
-    bGuestUser.fill("#title", "This is a title of a guest collected article");
-    bGuestUser.fill("textarea[name='markdownEN']", "This is the written text.");
-    await bGuestUser.click("button#saveButton");
-    // Add two comments, one for guest user, and one for @EN
-    bGuestUser.fill("textarea#comment", "This is a comment for @EN");
-    await bGuestUser.click("button[name='AddComment']");
-    bGuestUser.fill("textarea#comment", "This is a comment for @TheFive");
-    await bGuestUser.click("button[name='AddComment']");
-    bGuestUser.assert.expectHtmlSync(errors, "uc.access", "guestArticlePage");
+    const sacPageGuest = osmbcAppGuest.getSearchAndCollectPage();
+    await sacPageGuest.fillAndStartSearch("new Info");
 
-    // --------------------------------
 
-    await bTheFive.click("a#inbox");
-    bTheFive.assert.expectHtmlSync(errors, "uc.access","fullUserInbox");
-    await bGuestUser.click("a#inbox");
-    bGuestUser.assert.expectHtmlSync(errors, "uc.access","guestUserInbox");
-    await bGuestUser.visit("/article/3");
-    bGuestUser.assert.expectHtmlSync(errors, "uc.access","guestArticle-id3-Page");
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestCollectPage");
+
+    await sacPageGuest.fillTitleInput("This is a title of a guest collected article");
+    await sacPageGuest.fillCollectionInput("This is the collection text (guest collector)");
+    await sacPageGuest.clickOK();
+
+
+    const articlePageGuest = osmbcAppGuest.getArticlePage();
+
+    await articlePageGuest.fillTitleInput("This is a title of a guest collected article");
+    await articlePageGuest.selectCategory("Mapping");
+    await articlePageGuest.fillMarkdownInput("EN", "This is the written text.");
+    await articlePageGuest.clickSave();
+
+
+
+    await articlePageGuest.fillCommentInput("This is a comment for @EN");
+    await articlePageGuest.clickAddComment();
+
+    await sleep(500);
+
+    await articlePageGuest.fillCommentInput("This is a comment for @TheFive");
+    await articlePageGuest.clickAddComment();
+
+    await sleep(500);
+
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticlePage");
+
+    // Check The Five Inbox
+
+    await articlePageTheFive.clickInboxMenu();
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullUserInbox");
+
+    // Check Guest Users Inbox
+    await articlePageGuest.clickInboxMenu();
+
+
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");
+
+    await osmbcAppGuest.getInboxPage().clickFirstArticleShown();
+
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticle-id3-Page");
     should(errors).eql([]);
+    await driverTheFive.quit();
+    await driverGuest.quit();
   });
-  it("should create a new guest user, if he logs in",async function(){
-    let errors=[];
-
-    let browser = await testutil.getNewBrowser();
-    // visiting /osmbc with unkown user shoud show login page
-
-    await  browser.visit("/osmbc");
-    browser.assert.expectHtmlSync(errors, "uc.access", "loginPage");
-    testutil.fakeNextPassportLogin("UnkownGuest");
-    await  browser.click("#login");
-    browser.assert.expectHtmlSync(errors, "uc.access", "UnkownGuestStartPage");
-
-    // Collect an article, search input before
-    await browser.click("#collect");
-    browser.fill("input#searchField", "new Info");
-    await browser.click("button[name='SearchNow']");
-
-    // Fill out collect screen click OK
-    // add some further information on article screen
-    // and compare results
-    // bGuestUser.fill("select#categoryEN","Mapping /");
-    browser.fill("#title", "This is a title of a guest collected article");
-    browser.fill("textarea[name='collection']", "This is the collection text (guest collector)");
-    await browser.click("input#OK");
-
-
-    // check with TheFive user, wether guest is registered
-    await bTheFive.visit("/osmbc");
-    bTheFive.assert.expectHtmlSync(errors, "uc.access","Home Page with Unknowm Guest");
-    should(errors).eql([]);
+  it("should create a new guest user, if he logs in", async function() {
+    // use TestUserNewGuest (allowed in test_pwd, not created as user)
+    const driver = await testutil.getNewDriver("TestUserNewGuest");
+    const osmbcApp = new OsmbcApp(driver);
+    await osmbcApp.getMainPage().clickUserIcon();
+    should(await osmbcApp.getUserPage().getUserName()).eql("TestUserNewGuest");
+    await driver.quit();
   });
 });
 /* jshint ignore:end */
