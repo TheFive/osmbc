@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.8.3](https://github.com/TheFive/osmbc/tree/3.8.3) (2022-09-22)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.2...3.8.3)
+
+**Implemented enhancements:**
+
+- use emojies for the osmcalpic Link in Event Calendar to simplify markdown [\#944](https://github.com/TheFive/osmbc/issues/944)
+
 ## [3.8.2](https://github.com/TheFive/osmbc/tree/3.8.2) (2022-08-11)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.1...3.8.2)
@@ -811,7 +819,6 @@
 **Closed issues:**
 
 - More flexible Calendar JSON Interface [\#700](https://github.com/TheFive/osmbc/issues/700)
-- Skip Bullet Skipping for Categorie Releases [\#690](https://github.com/TheFive/osmbc/issues/690)
 
 ## [2.4.3g](https://github.com/TheFive/osmbc/tree/2.4.3g) (2017-11-01)
 
@@ -867,6 +874,7 @@
 
 **Closed issues:**
 
+- Skip Bullet Skipping for Categorie Releases [\#690](https://github.com/TheFive/osmbc/issues/690)
 - Switch from Nodemailer 2.x to 4.1 [\#689](https://github.com/TheFive/osmbc/issues/689)
 
 ## [2.4.2a](https://github.com/TheFive/osmbc/tree/2.4.2a) (2017-09-12)
@@ -963,6 +971,10 @@
 - Make Calendar Date Format configurable via config.js [\#655](https://github.com/TheFive/osmbc/issues/655)
 - adding existing links to collection [\#404](https://github.com/TheFive/osmbc/issues/404)
 
+**Fixed bugs:**
+
+- CR-LF bug [\#661](https://github.com/TheFive/osmbc/issues/661)
+
 ## [2.3.4](https://github.com/TheFive/osmbc/tree/2.3.4) (2017-05-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.3.3...2.3.4)
@@ -1022,7 +1034,6 @@
 
 **Fixed bugs:**
 
-- CR-LF bug [\#661](https://github.com/TheFive/osmbc/issues/661)
 - New editor does not support one column [\#637](https://github.com/TheFive/osmbc/issues/637)
 
 **Closed issues:**
@@ -1071,6 +1082,7 @@
 
 - New Editor has problems with Calendar Article [\#636](https://github.com/TheFive/osmbc/issues/636)
 - View Changes doesn't filter on Users any longer. [\#635](https://github.com/TheFive/osmbc/issues/635)
+- Automatische Übersetzung Texte are not shown in article editor. [\#443](https://github.com/TheFive/osmbc/issues/443)
 
 ## [2.2.10](https://github.com/TheFive/osmbc/tree/2.2.10) (2017-03-08)
 
@@ -1307,6 +1319,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.9...2.0.10)
 
+**Fixed bugs:**
+
+- Copying language from already closed source fails. \(using Copy EN-\>DE\) [\#572](https://github.com/TheFive/osmbc/issues/572)
+
 ## [2.0.9](https://github.com/TheFive/osmbc/tree/2.0.9) (2016-11-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.8...2.0.9)
@@ -1320,6 +1336,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.7...2.0.8)
 
+**Implemented enhancements:**
+
+- Luxury proposal: a button to set comments on "\#solved" [\#571](https://github.com/TheFive/osmbc/issues/571)
+
 ## [2.0.7](https://github.com/TheFive/osmbc/tree/2.0.7) (2016-11-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.6...2.0.7)
@@ -1328,12 +1348,10 @@
 
 - Show Review Starter and link to Review Changes. [\#577](https://github.com/TheFive/osmbc/issues/577)
 - Tooltip for flags [\#574](https://github.com/TheFive/osmbc/issues/574)
-- Luxury proposal: a button to set comments on "\#solved" [\#571](https://github.com/TheFive/osmbc/issues/571)
 
 **Fixed bugs:**
 
 - OSMBC crashes on GET  /article/2372. \(with a dot\)  [\#576](https://github.com/TheFive/osmbc/issues/576)
-- Copying language from already closed source fails. \(using Copy EN-\>DE\) [\#572](https://github.com/TheFive/osmbc/issues/572)
 
 ## [2.0.6](https://github.com/TheFive/osmbc/tree/2.0.6) (2016-11-17)
 
@@ -1735,15 +1753,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
@@ -1864,10 +1882,6 @@
 ## [1.7.1a](https://github.com/TheFive/osmbc/tree/1.7.1a) (2016-05-03)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1...1.7.1a)
-
-**Fixed bugs:**
-
-- Automatische Übersetzung Texte are not shown in article editor. [\#443](https://github.com/TheFive/osmbc/issues/443)
 
 ## [1.7.1](https://github.com/TheFive/osmbc/tree/1.7.1) (2016-05-02)
 
@@ -3182,6 +3196,7 @@
 
 **Implemented enhancements:**
 
+- Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
 - Allow mentioning users [\#82](https://github.com/TheFive/osmbc/issues/82)
 - Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
 
@@ -3191,7 +3206,6 @@
 
 **Implemented enhancements:**
 
-- Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
 - open a second view in a second tab  [\#86](https://github.com/TheFive/osmbc/issues/86)
 
 **Fixed bugs:**
