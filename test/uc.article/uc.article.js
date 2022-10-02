@@ -297,7 +297,7 @@ describe("uc.article", function() {
       const articlePage = osmbcApp.getArticlePage();
       await articlePage.fillCommentInput("Add a test comment");
       await articlePage.clickAddComment();
-      await sleep(300);
+      await sleep(500);
 
 
 

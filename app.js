@@ -152,16 +152,16 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 
 // first register the unsecured path, with no cookie need.
 
-app.use(htmlRoot + "/bower_components/bootstrap", express.static(path.join(__dirname, "/node_modules/bootstrap")));
-app.use(htmlRoot + "/bower_components/bootstrap-select", express.static(path.join(__dirname, "/node_modules/bootstrap-select")));
+app.use(htmlRoot + "/bower_components/bootstrap/dist", express.static(path.join(__dirname, "/node_modules/bootstrap/dist")));
+app.use(htmlRoot + "/bower_components/bootstrap-select/dist", express.static(path.join(__dirname, "/node_modules/bootstrap-select/dist")));
 app.use(htmlRoot + "/bower_components/font-awesome", express.static(path.join(__dirname, "/node_modules/font-awesome")));
-app.use(htmlRoot + "/bower_components/jquery", express.static(path.join(__dirname, "/node_modules/jquery")));
-app.use(htmlRoot + "/bower_components/d3", express.static(path.join(__dirname, "/node_modules/d3")));
-app.use(htmlRoot + "/bower_components/markdown-it", express.static(path.join(__dirname, "/node_modules/markdown-it")));
-app.use(htmlRoot + "/bower_components/markdown-it-imsize", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize")));
-app.use(htmlRoot + "/bower_components/markdown-it-sup", express.static(path.join(__dirname, "/node_modules/markdown-it-sup")));
-app.use(htmlRoot + "/bower_components/markdown-it-emoji", express.static(path.join(__dirname, "/node_modules/markdown-it-emoji")));
-app.use(htmlRoot + "/bower_components/moment", express.static(path.join(__dirname, "/node_modules/moment")));
+app.use(htmlRoot + "/bower_components/jquery/dist", express.static(path.join(__dirname, "/node_modules/jquery/dist")));
+app.use(htmlRoot + "/bower_components/d3/dist", express.static(path.join(__dirname, "/node_modules/d3/dist")));
+app.use(htmlRoot + "/bower_components/markdown-it/dist", express.static(path.join(__dirname, "/node_modules/markdown-it/dist")));
+app.use(htmlRoot + "/bower_components/markdown-it-imsize/dist", express.static(path.join(__dirname, "/node_modules/markdown-it-imsize/dist")));
+app.use(htmlRoot + "/bower_components/markdown-it-sup/dist", express.static(path.join(__dirname, "/node_modules/markdown-it-sup/dist")));
+app.use(htmlRoot + "/bower_components/markdown-it-emoji/dist", express.static(path.join(__dirname, "/node_modules/markdown-it-emoji/dist")));
+app.use(htmlRoot + "/bower_components/moment/dist", express.static(path.join(__dirname, "/node_modules/moment/dist")));
 
 
 app.use(htmlRoot, express.static(path.join(__dirname, "public")));
