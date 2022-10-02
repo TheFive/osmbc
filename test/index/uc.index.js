@@ -13,11 +13,10 @@ const blogModule = require("../../model/blog.js");
 const initialise = require("../../util/initialise.js");
 const MainPage = require("../../test/PageObjectModel/mainPage.js");
 const AdminPage = require("../../test/PageObjectModel/adminPage.js");
-const ErrorPage = require("../../test/PageObjectModel/errorPage.js");
 
 const mockdate = require("mockdate");
 
-const { Builder, Browser, By, Key, until } = require("selenium-webdriver");
+const { By } = require("selenium-webdriver");
 
 
 const { osmbcLink, sleep } = require("../../util/util.js");
@@ -74,7 +73,7 @@ describe("uc/index", function() {
         await adminPage.assertPage();
         should(await adminPage.getFirstHeader()).eql("Configuration");
 
-        testutil.expectHtml(driver, "index", "admin_home");
+        await testutil.expectHtml(driver, "index", "admin_home");
       });
     });
     describe("Not Defined Page", function() {
@@ -104,7 +103,7 @@ describe("uc/index", function() {
         await (await driver.findElement(By.id("lang_DE"))).click();
         await sleep(1000);
 
-        testutil.expectHtml(driver, "index", "switchedToEnglishAndGerman");
+        await testutil.expectHtml(driver, "index", "switchedToEnglishAndGerman");
       });
       it("should set the language both equal", async function() {
         await driver.get(osmbcLink("/osmbc"));
@@ -122,7 +121,7 @@ describe("uc/index", function() {
 
         await sleep(1000);
 
-        testutil.expectHtml(driver, "index", "switchedToEnglishAndEnglish");
+        await testutil.expectHtml(driver, "index", "switchedToEnglishAndEnglish");
       });
       it("should store a language set", async function() {
         await driver.get(osmbcLink("/osmbc"));
@@ -141,7 +140,7 @@ describe("uc/index", function() {
         should(user.languageSet).eql("A Name To Save");
         should(user.getLanguages()).deepEqual(["EN"]);
 
-        testutil.expectHtml(driver, "index", "savedANewLanguageSet");
+        await testutil.expectHtml(driver, "index", "savedANewLanguageSet");
       });
     });
   });
@@ -176,12 +175,11 @@ describe("uc/index", function() {
         // browser html has to be tested
       }
 
-      const errorPage = new ErrorPage(driver);
 
 
       // await errorPage.assertPage();
       // should(await errorPage.getErrorText()).eql("OSM User &gt;OldUserAway&lt; has no access rights");
-      testutil.expectHtml(driver, "index", "denied user");
+      await testutil.expectHtml(driver, "index", "denied user");
     });
   });
 });

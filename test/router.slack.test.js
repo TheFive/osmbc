@@ -15,7 +15,6 @@ const articleModule = require("../model/article.js");
 
 describe("router/slack", function() {
   let link;
-  let server;
   let userName;
   let userId;
 
@@ -34,6 +33,7 @@ describe("router/slack", function() {
   async function findArticle(a) {
     const articleList = await articleModule.find(a);
     should(articleList.length).eql(1);
+    return articleList[0];
   }
 
 
@@ -51,7 +51,6 @@ describe("router/slack", function() {
     initialise.initialiseModules(bddone);
   });
   after(function(bddone) {
-    server.close();
     testutil.nockHtmlPagesClear();
     nock.cleanAll();
     return bddone();
@@ -75,10 +74,7 @@ describe("router/slack", function() {
   });
   describe("unauthorised access", async function() {
     it("should ignore request with wrong API Key", async function () {
-      console.dir(link);
       const body = await axios.post(link, {}, { validateStatus: () => true });
-      console.dir("lololo");
-
       should(body.status).eql(401);
     });
     it("should ignore request without known user", async function () {
@@ -97,10 +93,18 @@ describe("router/slack", function() {
       userName = "TestSlackUseTBC";
       userId = "55";
       await talk("http://forum.openstreetmap.org/viewtopic.php?id=53173", "Article: [Internationale Admingrenzen 2016 / users: Germany](http://localhost:35043/article/1) created in your TBC Folder.\n");
-
       // search for the already exists article, that only should exist ONCE
       const article = await findArticle({ title: "Internationale Admingrenzen 2016 / users: Germany", collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173", blog: "TBC" });
-      should(article).is.not.null;
+      should(article).eql({
+        id: "1",
+        _blog: null,
+        version: 2,
+        title: "Internationale Admingrenzen 2016 / users: Germany",
+        collection: "http://forum.openstreetmap.org/viewtopic.php?id=53173",
+        firstCollector: "TestUseTBC",
+        categoryEN: "-- no category yet --",
+        blog: "TBC"
+      });
     });
     it("should store an URL variant 2", async function() {
       userName = "TestSlackUseTBC";

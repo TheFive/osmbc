@@ -282,7 +282,6 @@ describe("routes/blog", function() {
       should(blog.reviewCommentDE).is.undefined();
     });
     it("should close a language", async function () {
-      console.dir("lololo")
       const client = testutil.getWrappedAxiosClient();
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, { lang: "DE", action: "closelang" }, { headers: { referrer: baseLink + "/blog/WN333" } });

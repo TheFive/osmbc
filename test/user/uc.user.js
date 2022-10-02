@@ -220,7 +220,6 @@ describe("views/user", function() {
     await osmbcApp.openMainPage();
 
     should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox.");
-    console.dir(link);
 
     await driver.get(link);
     result = await userModule.findById(1);

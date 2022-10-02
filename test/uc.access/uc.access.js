@@ -50,12 +50,12 @@ describe("uc.access", function() {
     // Click on admin link and compare what full user can see
     await osmbcAppTheFive.getMainPage().clickLinkToAdminPage();
 
-    testutil.expectHtml(driverTheFive, errors, "uc.access", "fullAdminPage");
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullAdminPage");
 
 
     // create a new blog and compare bloglist
     await osmbcAppTheFive.getAdminPage().clickCreateBlogMenu({ confirm: true });
-    testutil.expectHtml(driverTheFive, errors, "uc.access", "fullBlogList");
+    await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullBlogList");
 
     // Collect an article, search input before
     await osmbcAppTheFive.getBlogListPage().clickCollect();
@@ -145,11 +145,11 @@ describe("uc.access", function() {
     await articlePageGuest.clickInboxMenu();
 
 
-    testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");
 
     await osmbcAppGuest.getInboxPage().clickFirstArticleShown();
 
-    testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticle-id3-Page");
+    await testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticle-id3-Page");
     should(errors).eql([]);
     await driverTheFive.quit();
     await driverGuest.quit();

@@ -85,7 +85,7 @@ describe("uc/blog", function() {
 
       await osmbcAppTheFive.getBlogListPage().clickBlogInList("WN251");
 
-      testutil.expectHtml(driverTheFive, errors, "blog", "WN251OpenMode");
+      await testutil.expectHtml(driverTheFive, errors, "blog", "WN251OpenMode");
       const blogPage = osmbcAppTheFive.getBlogPage();
       await blogPage.clickEditBlogDetail();
 
@@ -104,7 +104,7 @@ describe("uc/blog", function() {
 
       // go to the blog view with the articles
 
-      testutil.expectHtml(driverTheFive, errors, "blog", "WN251EditMode");
+      await testutil.expectHtml(driverTheFive, errors, "blog", "WN251EditMode");
 
 
       // Start Review for blog
@@ -214,7 +214,7 @@ describe("uc/blog", function() {
 
 
         await blogPage.clickOnArticle("jeden Tag...");
-        sleep(750);
+        sleep(1000);
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
         sleep(500);

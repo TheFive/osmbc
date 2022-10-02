@@ -2,6 +2,7 @@
 
 const { By } = require("selenium-webdriver");
 const { osmbcLink } = require("../../util/util.js");
+const should = require("should");
 
 const Page = require("./page.js");
 

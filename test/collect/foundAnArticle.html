@@ -1,27 +1,26 @@
-<html lang="en"><head>
+<html lang="en">
+
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>TESTBC</title>
-    <!-- Bootstrap core CSS-->
+    <title>TESTBC</title><!-- Bootstrap core CSS-->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   </head>
+
   <body>
     <!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
       <ul class="navbar-nav mr-auto"></ul>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a>
-          </li>
+          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
           <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
-          <li class="navbar-item active">
-          </li>
+          <li class="navbar-item active"></li>
           <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/blog">blog<span class="badge badge-pill osmbcbadge-lang">3</span><span class="badge badge-pill osmbcbadge-lang2">4</span></a></li>
           <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
             <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
@@ -50,8 +49,7 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a>
               <div class="dropdown-divider"></div>
               <form class="p-1">
-                <div class="form-group">
-                  <input class="input form-control" id="newSetToBeSaved" type="text">
+                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
                   <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
                 </div>
               </form>
@@ -62,137 +60,121 @@
       </div>
     </nav>
     <div class="container-fluid">
-      <p>
-        </p><div>
-          <form name="search" action="/article/searchandcreate" method="get">
-            <div class="row">
-              <div class="col-3"></div>
-              <div class="col-6">
-                <input class="form-control" id="searchField" type="text" name="search" value="http://www.test.dä/holla">
-                <p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>
-              </div>
-              <div class="col">
-                <button class="btn btn-large btn-primary" name="SearchNow" type="submit">Search</button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="row">
-          <p id="articleCounter"><a style="color:Gray;">
-               Displaying 2 of 2 results.</a>
-          </p>
-          <table class="table table-striped table-sm table-responsive">
-            <thead>
-              <tr> 
-                <th>Blog</th>
-                <th>Title</th>
-                <th class="hidden-xs">Cat (EN)</th>
-                <th class="hidden-xs">Collection</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr onclick="$('.class_3').toggleClass('d-none');">
-                <td><i class="fa fa-caret-right class_3"></i><i class="fa fa-caret-down d-none class_3"></i><a href="/blog/blog">blog</a></td>
-                <td><a href="/article/3">No Title</a></td>
-                <td class="hidden-xs"></td>
-                <td class="pre">http://www.test.dä/holla</td>
-              </tr>
-              <tr class="d-none class_3">
-                <td></td>
-                <td colspan="1"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
-</td>
-                <td colspan="2"><p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
-</td>
-              </tr>
-              <tr onclick="$('.class_5').toggleClass('d-none');">
-                <td><i class="fa fa-caret-right class_5"></i><i class="fa fa-caret-down d-none class_5"></i><a href="/blog/blog">blog</a></td>
-                <td><a href="/article/5">No Title</a></td>
-                <td class="hidden-xs"></td>
-                <td class="pre">Link1: http://www.test.dä/holla and other</td>
-              </tr>
-              <tr class="d-none class_5">
-                <td></td>
-                <td colspan="1"></td>
-                <td colspan="2"></td>
-              </tr>
-            </tbody>
-          </table>
-          <form name="input" id="input" action="/article/create" method="post">
-            <h2>
-               Create Article </h2>
-            <div class="row">
-              <div class="col-md-6">
-                <div> 
-                  <div class="row">
-                    <div class="col-md-2">Blog <br></div>
-                    <div class="col-md-10">
-                      <select class="form-control af" id="blog" name="blog">
-                        <option value="blog">blog (Edit)</option>
-                        <option value="Future">Future </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-2">Category <br></div>
-                    <div class="col-md-10">
-                      <select class="form-control" id="categoryEN" name="categoryEN" style="background-color: rgb(253, 198, 205);">
-                        <option value="-- no category yet --">-- noch keine Kategorie -- / -- no category yet --</option>
-                        <option value="Picture">Bild / Picture</option>
-                        <option value="[Actual Category]">[Aktuelle Kategorie] / [Actual Category]</option>
-                        <option value="About us">In eigener Sache / About us</option>
-                        <option value="Weekly exercise:">Wochenaufruf / Weekly exercise:</option>
-                        <option value="Mapping">Mapping / Mapping</option>
-                        <option value="Community">Community / Community</option>
-                        <option value="Imports">Importe / Imports</option>
-                        <option value="OpenStreetMap Foundation">OpenStreetMap Foundation / OpenStreetMap Foundation</option>
-                        <option value="Events">Veranstaltungen / Events</option>
-                        <option value="Humanitarian OSM">Humanitarian OSM / Humanitarian OSM</option>
-                        <option value="Maps">Karten / Maps</option>
-                        <option value="switch2OSM">switch2OSM / switch2OSM</option>
-                        <option value="Open Data">Open-Data / Open Data</option>
-                        <option value="Licences">Lizenzen / Licences</option>
-                        <option value="Software">Programme / Software</option>
-                        <option value="Programming">Programmierung / Programming</option>
-                        <option value="Releases">Releases / Releases</option>
-                        <option value="Did you know …">Kennst du schon … / Did you know …</option>
-                        <option value="Other “geo” things">Weitere Themen mit Geo-Bezug / Other “geo” things</option>
-                        <option value="Upcoming Events">Wochenvorschau / Upcoming Events</option>
-                        <option value="--unpublished--">--unveröffentlicht-- / --unpublished--</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="row">
-                  <div class="col-md-7">
-                    <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
-                  </div>
-                  <div class="col-md-5">
-                    <input class="btn btn-large btn-primary" type="submit" id="OK" value="OK"><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-1">Title <br></div>
-              <div class="col-md-11">
-                <textarea class="form-control" id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="">Something is wrong with url</textarea>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-1">Collection <br>
-              </div>
-              <div class="col-md-11">
-                <textarea class="form-control" name="collection" rows="7" placeholder="put your link or info here">http://www.test.dä/holla
-Please Review URL: SSRL Test failed for URL</textarea>
-              </div>
-            </div>
-          </form>
-        </div>
       <p></p>
-    </div>
-    <!-- /container-->
+      <div>
+        <form name="search" action="/article/searchandcreate" method="get">
+          <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6"><input class="form-control" id="searchField" type="text" name="search" value="http://www.test.dä/holla">
+              <p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>
+            </div>
+            <div class="col"><button class="btn btn-large btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
+          </div>
+        </form>
+      </div>
+      <div class="row">
+        <p id="articleCounter"><a style="color:Gray;"> Displaying 2 of 2 results.</a></p>
+        <table class="table table-striped table-sm table-responsive">
+          <thead>
+            <tr>
+              <th>Blog</th>
+              <th>Title</th>
+              <th class="hidden-xs">Cat (EN)</th>
+              <th class="hidden-xs">Collection</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="$('.class_3').toggleClass('d-none');">
+              <td><i class="fa fa-caret-right class_3"></i><i class="fa fa-caret-down d-none class_3"></i><a href="/blog/blog">blog</a></td>
+              <td><a href="/article/3">No Title</a></td>
+              <td class="hidden-xs"></td>
+              <td class="pre">http://www.test.dä/holla</td>
+            </tr>
+            <tr class="d-none class_3">
+              <td></td>
+              <td colspan="1">
+                <p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lorem ipsum dolores.</p>
+              </td>
+              <td colspan="2">
+                <p><a target="_blank" href="http://www.test.xn--d-0fa/holla">Text</a> lerom upsim deloros.</p>
+              </td>
+            </tr>
+            <tr onclick="$('.class_5').toggleClass('d-none');">
+              <td><i class="fa fa-caret-right class_5"></i><i class="fa fa-caret-down d-none class_5"></i><a href="/blog/blog">blog</a></td>
+              <td><a href="/article/5">No Title</a></td>
+              <td class="hidden-xs"></td>
+              <td class="pre">Link1: http://www.test.dä/holla and other</td>
+            </tr>
+            <tr class="d-none class_5">
+              <td></td>
+              <td colspan="1"></td>
+              <td colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+        <form name="input" id="input" action="/article/create" method="post">
+          <h2> Create Article </h2>
+          <div class="row">
+            <div class="col-md-6">
+              <div>
+                <div class="row">
+                  <div class="col-md-2">Blog <br></div>
+                  <div class="col-md-10"><select class="form-control af" id="blog" name="blog">
+                      <option value="blog">blog (Edit)</option>
+                      <option value="Future">Future </option>
+                    </select></div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Category <br></div>
+                  <div class="col-md-10"><select class="form-control" id="categoryEN" name="categoryEN" style="background-color: rgb(253, 198, 205);">
+                      <option value="-- no category yet --">-- noch keine Kategorie -- / -- no category yet --</option>
+                      <option value="Picture">Bild / Picture</option>
+                      <option value="[Actual Category]">[Aktuelle Kategorie] / [Actual Category]</option>
+                      <option value="About us">In eigener Sache / About us</option>
+                      <option value="Weekly exercise:">Wochenaufruf / Weekly exercise:</option>
+                      <option value="Mapping">Mapping / Mapping</option>
+                      <option value="Community">Community / Community</option>
+                      <option value="Imports">Importe / Imports</option>
+                      <option value="OpenStreetMap Foundation">OpenStreetMap Foundation / OpenStreetMap Foundation</option>
+                      <option value="Events">Veranstaltungen / Events</option>
+                      <option value="Humanitarian OSM">Humanitarian OSM / Humanitarian OSM</option>
+                      <option value="Maps">Karten / Maps</option>
+                      <option value="switch2OSM">switch2OSM / switch2OSM</option>
+                      <option value="Open Data">Open-Data / Open Data</option>
+                      <option value="Licences">Lizenzen / Licences</option>
+                      <option value="Software">Programme / Software</option>
+                      <option value="Programming">Programmierung / Programming</option>
+                      <option value="Releases">Releases / Releases</option>
+                      <option value="Did you know …">Kennst du schon … / Did you know …</option>
+                      <option value="Other “geo” things">Weitere Themen mit Geo-Bezug / Other “geo” things</option>
+                      <option value="Upcoming Events">Wochenvorschau / Upcoming Events</option>
+                      <option value="--unpublished--">--unveröffentlicht-- / --unpublished--</option>
+                    </select></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-7">
+                  <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
+                </div>
+                <div class="col-md-5"><input class="btn btn-large btn-primary" type="submit" id="OK" value="OK"><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">Title <br></div>
+            <div class="col-md-11"><textarea class="form-control" id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="">Something is wrong with url</textarea></div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">Collection <br></div>
+            <div class="col-md-11"><textarea class="form-control" name="collection" rows="7" placeholder="put your link or info here">http://www.test.dä/holla
+Please Review URL: SSRL Test failed for URL</textarea></div>
+          </div>
+        </form>
+      </div>
+      <p></p>
+    </div><!-- /container-->
     <!-- Bootstrap core JavaScript-->
     <!-- ==================================================-->
     <!-- Placed at the end of the document so the pages load faster-->
@@ -200,74 +182,342 @@ Please Review URL: SSRL Test failed for URL</textarea>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="/javascripts/osmbc_staff.js"></script>
-  
-
-
-  
     <title>Something is wrong with url</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
-  
-  
+    <script nonce="">
+      // Init This Window with jQuery ready Callback
+      $(document).ready(init2);
+      window.htmlroot = "";
 
-<script nonce="">
-  // Init This Window with jQuery ready Callback
-  $(document).ready(init2);
-  window.htmlroot = "";
-  function init2() {
-    $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
-  }
-  
-  
-  
-  
-</script>
-<script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
-<script nonce="">
-  window.onload = init;
-  var placeholder = {"-- no category yet --":"If you do not have any idea, which category to use.","[Actual Category]":"This category does not have to exist in every blog. Use this category for actual events like SOTM","About us":"Use seldom, then on the top","Weekly exerciseEN:":"Category for the German weekly exercise","Mapping":"Quality assurance, editors, maps for mapper, tools for mapping, tagging","Community":"articles from the community, that does not fit in any other category","Imports":"discussions, announcements about imports","OpenStreetMap Foundation":"articles about the OSMF or local OpenStreetMap chapter","Events":"Announcements, reports about an event","Humanitarian OSM":"Information about HOT & Missing maps","Maps":"Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!","#switch2OSM":"Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n","Open Data":"Information about open data","Licences":"Information about juridicial topics","Software":"Programs for non programmers (without OSM editors)","Programming":"Information about software development","Did you know …":"Any thing which is interesting for OSM User. No longer known article and beginner tools.","Other “geo” things":"Information, that mostly have nothing to do with OSM...","Not Translated":"...","--unpublished--":"Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"};
-  var catArray = [{"EN":"-- no category yet --","DE":"-- noch keine Kategorie --","ES":"-- no category yet --","FR":"-- no category yet --","CZ":"-- no category yet --","PT":"-- no category yet --","RU":"-- no category yet --","JP":"-- no category yet --","ID":"-- no category yet --","TR":"-- no category yet --"},{"EN":"Picture","DE":"Bild","ES":"Picture","FR":"Picture","CZ":"Picture","PT":"Picture","JP":"Picture","ID":"Picture","TR":"Picture"},{"EN":"[Actual Category]","DE":"[Aktuelle Kategorie]","ES":"[Corriente]","FR":"[Actualité]","CZ":"[Actual Category]","PT":"[Categoria atual]","RU":"[Текущая категория]","JP":"[Actual Category]","ID":"[Actual Category]","TR":"[Actual Category]"},{"EN":"About us","DE":"In eigener Sache","ES":"Acerca de nosotros","FR":"À notre propos","CZ":"About us","PT":"Sobre nós","RU":"О нас","JP":"私たちについて","ID":"Tentang kami","TR":"Hakkımızda"},{"EN":"Weekly exercise:","DE":"Wochenaufruf","ES":"Not Translated","FR":"Not Translated","CZ":"Not Translated","PT":"Não traduzido","RU":"Еженедельные заданияАнгл","JP":"Not Translated","ID":"Not Translated","TR":"Not Translated"},{"EN":"Mapping","DE":"Mapping","ES":"Mapeando","FR":"Cartographie","CZ":"Mapování","PT":"Mapeamento","RU":"Картографирование","JP":"マッピング","ID":"Pemetaan","TR":"Haritalama"},{"EN":"Community","DE":"Community","ES":"Comunidad","FR":"Communauté","CZ":"Komunita","PT":"Comunidade","RU":"Сообщество","JP":"コミュニティ","ID":"Komunitas","TR":"Topluluk"},{"EN":"Imports","DE":"Importe","ES":"Importaciones","FR":"Importation","CZ":"Imports","PT":"Importações","RU":"Импорты","JP":"インポート","ID":"Imports","TR":"İçe Aktarımlar"},{"EN":"OpenStreetMap Foundation","DE":"OpenStreetMap Foundation","ES":"Fundación OpenStreetMap","FR":"Fondation OpenStreetMap","CZ":"OpenStreetMap Foundation","PT":"Fundação OpenStreetMap","RU":"Фонд OpenStreetMap","JP":"OpenStreetMap Foundation","ID":"Yayasan OpenStreetMap","TR":"OpenStreetMap Foundation"},{"EN":"Events","DE":"Veranstaltungen","ES":"Eventos","FR":"Événements","CZ":"Události","PT":"Eventos","RU":"События","JP":"イベント","ID":"Kegiatan","TR":"Etkinlikler"},{"EN":"Humanitarian OSM","DE":"Humanitarian OSM","ES":"OSM Humanitario","FR":"OSM et l'humanitaire","CZ":"Humanitární OSM","PT":"OSM Humanitário","RU":"Гуманитарный OSM","JP":"OSM人道支援","ID":"OSM untuk Kemanusiaann","TR":"İnsani OSM"},{"EN":"Maps","DE":"Karten","ES":"Mapas","FR":"Cartes","CZ":"Mapy","PT":"Mapas","RU":"Карты","JP":"地図","ID":"Peta","TR":"Haritalar"},{"EN":"switch2OSM","DE":"switch2OSM","ES":"switch2OSM","FR":"switch2OSM","CZ":"switch2OSM","PT":"switch2OSM","RU":"switch2OSM","JP":"switch2OSM","ID":"switch2OSM","TR":"switch2OSM"},{"EN":"Open Data","DE":"Open-Data","ES":"Datos Abiertos","FR":"Ouverture des données","CZ":"Otevřená Data","PT":"Dados abertos","RU":"Открытые данные","JP":"オープンデータ","ID":"Open Data","TR":"Özgür Veri"},{"EN":"Licences","DE":"Lizenzen","ES":"Licencias","FR":"Licences","CZ":"Licences","PT":"Licenças","RU":"Лицензии","JP":"ライセンス","ID":"Lisensi","TR":"Lisanslar"},{"EN":"Software","DE":"Programme","ES":"Software","FR":"Applications","CZ":"Software","PT":"Software","RU":"Программы","JP":"ソフトウェア","ID":"Software","TR":"Yazılım"},{"EN":"Programming","DE":"Programmierung","ES":"Software","FR":"Applications","CZ":"Programming","PT":"Desenvolvimento","RU":"Программирование","JP":"プログラミング","ID":"Software","TR":"Programlama"},{"EN":"Releases","DE":"Releases","ES":"Releases","FR":"Releases","CZ":"Releases","PT":"Releases","RU":"Releases","JP":"Releases","ID":"Releases","TR":"Releases"},{"EN":"Did you know …","DE":"Kennst du schon …","ES":"Sabías que …","FR":"Connaissez-vous …","CZ":"Věděli jste …","PT":"Você sabia...","RU":"А вы знаете … ","JP":"…ご存知でしたか？","ID":"Apakah anda tahu …","TR":"Biliyor muydunuz?…"},{"EN":"Other “geo” things","DE":"Weitere Themen mit Geo-Bezug","ES":"Otras cosas “geo”","FR":"Autres sujets géographiques","CZ":"Ostatní “geo” záležitosti","PT":"Outras coisas “geo”","RU":"Другие “гео” события","JP":"その他の “ジオ” な事柄","ID":"Berita “geo” lainnya","TR":"Diğer “yersel” şeyler"},{"EN":"Upcoming Events","DE":"Wochenvorschau","ES":"Próximos eventos","FR":"Upcoming Events","CZ":"blížící se akce","PT":"Próximos eventos","RU":"Предстоящие события","JP":"今後のイベント","ID":"Upcoming Events","TR":"Gelecek etkinlikler"},{"EN":"--unpublished--","DE":"--unveröffentlicht--","ES":"--unpublished--","FR":"--unpublished--","CZ":"--unpublished--","PT":"--não publicado--","RU":"--не опубликовано--","JP":"--未発表--","ID":"--unpublished--","TR":"--unpublished--"}];
-  var noCategorie = "no categorie";
-  if (catArray && catArray[0] && catArray[0].EN ) noCategorie = catArray[0].EN;
-  
-  
-  function init() {
-  
-  
-    categoryDisplay = document.getElementById("categoryDisplay");
-    categoryEN = document.getElementById("categoryEN");
-    if (categoryEN) categoryEN.onchange = onchangeCategory;
-    okButton = document.getElementById("OK");
-    title = document.getElementById("title");
-    if (title) title.onchange = onchangeTitle;
-    if (title) title.onkeyup = onchangeTitle;
-    onchangeTitle();
-    onchangeCategory();
-    if (title) title.select();
-  }
-  
-  function onchangeCategory() {
-    if (!categoryEN) return;
-    var c = categoryEN.value;
-    if (c === noCategorie) {
-      categoryEN.style.backgroundColor = "#FDC6CD";
-    } else {
-      categoryEN.style.backgroundColor = "";
-    }
-    if (placeholder[c]) {
-       categoryDisplay.innerHTML = placeholder[c];    
+      function init2() {
+        $("#mailalert").animate({
+          height: '200px',
+          fontSize: "40px"
+        }, 1000)
       }
-  }
-  
-  function onchangeTitle() {
-    if (!title) return;
-    var t = title.value.trim();
-    okButton.disabled = true;
-    if (t.length>5) {
-      okButton.disabled=false;
-    }
-  }
-  
-  
-         
-              
-</script></body></html>
+    </script>
+    <script src="/bower_components/markdown-it/dist/markdown-it.min.js"></script>
+    <script nonce="">
+      window.onload = init;
+      var placeholder = {
+        "-- no category yet --": "If you do not have any idea, which category to use.",
+        "[Actual Category]": "This category does not have to exist in every blog. Use this category for actual events like SOTM",
+        "About us": "Use seldom, then on the top",
+        "Weekly exerciseEN:": "Category for the German weekly exercise",
+        "Mapping": "Quality assurance, editors, maps for mapper, tools for mapping, tagging",
+        "Community": "articles from the community, that does not fit in any other category",
+        "Imports": "discussions, announcements about imports",
+        "OpenStreetMap Foundation": "articles about the OSMF or local OpenStreetMap chapter",
+        "Events": "Announcements, reports about an event",
+        "Humanitarian OSM": "Information about HOT & Missing maps",
+        "Maps": "Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!",
+        "#switch2OSM": "Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n",
+        "Open Data": "Information about open data",
+        "Licences": "Information about juridicial topics",
+        "Software": "Programs for non programmers (without OSM editors)",
+        "Programming": "Information about software development",
+        "Did you know …": "Any thing which is interesting for OSM User. No longer known article and beginner tools.",
+        "Other “geo” things": "Information, that mostly have nothing to do with OSM...",
+        "Not Translated": "...",
+        "--unpublished--": "Articles, that should not be published, but keep their relation to the blog (otherwise use the trash)"
+      };
+      var catArray = [{
+        "EN": "-- no category yet --",
+        "DE": "-- noch keine Kategorie --",
+        "ES": "-- no category yet --",
+        "FR": "-- no category yet --",
+        "CZ": "-- no category yet --",
+        "PT": "-- no category yet --",
+        "RU": "-- no category yet --",
+        "JP": "-- no category yet --",
+        "ID": "-- no category yet --",
+        "TR": "-- no category yet --"
+      }, {
+        "EN": "Picture",
+        "DE": "Bild",
+        "ES": "Picture",
+        "FR": "Picture",
+        "CZ": "Picture",
+        "PT": "Picture",
+        "JP": "Picture",
+        "ID": "Picture",
+        "TR": "Picture"
+      }, {
+        "EN": "[Actual Category]",
+        "DE": "[Aktuelle Kategorie]",
+        "ES": "[Corriente]",
+        "FR": "[Actualité]",
+        "CZ": "[Actual Category]",
+        "PT": "[Categoria atual]",
+        "RU": "[Текущая категория]",
+        "JP": "[Actual Category]",
+        "ID": "[Actual Category]",
+        "TR": "[Actual Category]"
+      }, {
+        "EN": "About us",
+        "DE": "In eigener Sache",
+        "ES": "Acerca de nosotros",
+        "FR": "À notre propos",
+        "CZ": "About us",
+        "PT": "Sobre nós",
+        "RU": "О нас",
+        "JP": "私たちについて",
+        "ID": "Tentang kami",
+        "TR": "Hakkımızda"
+      }, {
+        "EN": "Weekly exercise:",
+        "DE": "Wochenaufruf",
+        "ES": "Not Translated",
+        "FR": "Not Translated",
+        "CZ": "Not Translated",
+        "PT": "Não traduzido",
+        "RU": "Еженедельные заданияАнгл",
+        "JP": "Not Translated",
+        "ID": "Not Translated",
+        "TR": "Not Translated"
+      }, {
+        "EN": "Mapping",
+        "DE": "Mapping",
+        "ES": "Mapeando",
+        "FR": "Cartographie",
+        "CZ": "Mapování",
+        "PT": "Mapeamento",
+        "RU": "Картографирование",
+        "JP": "マッピング",
+        "ID": "Pemetaan",
+        "TR": "Haritalama"
+      }, {
+        "EN": "Community",
+        "DE": "Community",
+        "ES": "Comunidad",
+        "FR": "Communauté",
+        "CZ": "Komunita",
+        "PT": "Comunidade",
+        "RU": "Сообщество",
+        "JP": "コミュニティ",
+        "ID": "Komunitas",
+        "TR": "Topluluk"
+      }, {
+        "EN": "Imports",
+        "DE": "Importe",
+        "ES": "Importaciones",
+        "FR": "Importation",
+        "CZ": "Imports",
+        "PT": "Importações",
+        "RU": "Импорты",
+        "JP": "インポート",
+        "ID": "Imports",
+        "TR": "İçe Aktarımlar"
+      }, {
+        "EN": "OpenStreetMap Foundation",
+        "DE": "OpenStreetMap Foundation",
+        "ES": "Fundación OpenStreetMap",
+        "FR": "Fondation OpenStreetMap",
+        "CZ": "OpenStreetMap Foundation",
+        "PT": "Fundação OpenStreetMap",
+        "RU": "Фонд OpenStreetMap",
+        "JP": "OpenStreetMap Foundation",
+        "ID": "Yayasan OpenStreetMap",
+        "TR": "OpenStreetMap Foundation"
+      }, {
+        "EN": "Events",
+        "DE": "Veranstaltungen",
+        "ES": "Eventos",
+        "FR": "Événements",
+        "CZ": "Události",
+        "PT": "Eventos",
+        "RU": "События",
+        "JP": "イベント",
+        "ID": "Kegiatan",
+        "TR": "Etkinlikler"
+      }, {
+        "EN": "Humanitarian OSM",
+        "DE": "Humanitarian OSM",
+        "ES": "OSM Humanitario",
+        "FR": "OSM et l'humanitaire",
+        "CZ": "Humanitární OSM",
+        "PT": "OSM Humanitário",
+        "RU": "Гуманитарный OSM",
+        "JP": "OSM人道支援",
+        "ID": "OSM untuk Kemanusiaann",
+        "TR": "İnsani OSM"
+      }, {
+        "EN": "Maps",
+        "DE": "Karten",
+        "ES": "Mapas",
+        "FR": "Cartes",
+        "CZ": "Mapy",
+        "PT": "Mapas",
+        "RU": "Карты",
+        "JP": "地図",
+        "ID": "Peta",
+        "TR": "Haritalar"
+      }, {
+        "EN": "switch2OSM",
+        "DE": "switch2OSM",
+        "ES": "switch2OSM",
+        "FR": "switch2OSM",
+        "CZ": "switch2OSM",
+        "PT": "switch2OSM",
+        "RU": "switch2OSM",
+        "JP": "switch2OSM",
+        "ID": "switch2OSM",
+        "TR": "switch2OSM"
+      }, {
+        "EN": "Open Data",
+        "DE": "Open-Data",
+        "ES": "Datos Abiertos",
+        "FR": "Ouverture des données",
+        "CZ": "Otevřená Data",
+        "PT": "Dados abertos",
+        "RU": "Открытые данные",
+        "JP": "オープンデータ",
+        "ID": "Open Data",
+        "TR": "Özgür Veri"
+      }, {
+        "EN": "Licences",
+        "DE": "Lizenzen",
+        "ES": "Licencias",
+        "FR": "Licences",
+        "CZ": "Licences",
+        "PT": "Licenças",
+        "RU": "Лицензии",
+        "JP": "ライセンス",
+        "ID": "Lisensi",
+        "TR": "Lisanslar"
+      }, {
+        "EN": "Software",
+        "DE": "Programme",
+        "ES": "Software",
+        "FR": "Applications",
+        "CZ": "Software",
+        "PT": "Software",
+        "RU": "Программы",
+        "JP": "ソフトウェア",
+        "ID": "Software",
+        "TR": "Yazılım"
+      }, {
+        "EN": "Programming",
+        "DE": "Programmierung",
+        "ES": "Software",
+        "FR": "Applications",
+        "CZ": "Programming",
+        "PT": "Desenvolvimento",
+        "RU": "Программирование",
+        "JP": "プログラミング",
+        "ID": "Software",
+        "TR": "Programlama"
+      }, {
+        "EN": "Releases",
+        "DE": "Releases",
+        "ES": "Releases",
+        "FR": "Releases",
+        "CZ": "Releases",
+        "PT": "Releases",
+        "RU": "Releases",
+        "JP": "Releases",
+        "ID": "Releases",
+        "TR": "Releases"
+      }, {
+        "EN": "Did you know …",
+        "DE": "Kennst du schon …",
+        "ES": "Sabías que …",
+        "FR": "Connaissez-vous …",
+        "CZ": "Věděli jste …",
+        "PT": "Você sabia...",
+        "RU": "А вы знаете … ",
+        "JP": "…ご存知でしたか？",
+        "ID": "Apakah anda tahu …",
+        "TR": "Biliyor muydunuz?…"
+      }, {
+        "EN": "Other “geo” things",
+        "DE": "Weitere Themen mit Geo-Bezug",
+        "ES": "Otras cosas “geo”",
+        "FR": "Autres sujets géographiques",
+        "CZ": "Ostatní “geo” záležitosti",
+        "PT": "Outras coisas “geo”",
+        "RU": "Другие “гео” события",
+        "JP": "その他の “ジオ” な事柄",
+        "ID": "Berita “geo” lainnya",
+        "TR": "Diğer “yersel” şeyler"
+      }, {
+        "EN": "Upcoming Events",
+        "DE": "Wochenvorschau",
+        "ES": "Próximos eventos",
+        "FR": "Upcoming Events",
+        "CZ": "blížící se akce",
+        "PT": "Próximos eventos",
+        "RU": "Предстоящие события",
+        "JP": "今後のイベント",
+        "ID": "Upcoming Events",
+        "TR": "Gelecek etkinlikler"
+      }, {
+        "EN": "--unpublished--",
+        "DE": "--unveröffentlicht--",
+        "ES": "--unpublished--",
+        "FR": "--unpublished--",
+        "CZ": "--unpublished--",
+        "PT": "--não publicado--",
+        "RU": "--не опубликовано--",
+        "JP": "--未発表--",
+        "ID": "--unpublished--",
+        "TR": "--unpublished--"
+      }];
+      var noCategorie = "no categorie";
+      if (catArray && catArray[0] && catArray[0].EN) noCategorie = catArray[0].EN;
+
+
+      function init() {
+
+
+        categoryDisplay = document.getElementById("categoryDisplay");
+        categoryEN = document.getElementById("categoryEN");
+        if (categoryEN) categoryEN.onchange = onchangeCategory;
+        okButton = document.getElementById("OK");
+        searchButton = document.getElementById("searchButton")
+        title = document.getElementById("title");
+        searchField = document.getElementById("searchField")
+        if (title) title.onchange = onchangeTitle;
+        if (title) title.onkeyup = onchangeTitle;
+        if (searchField) searchField.onchange = onchangeSearch;
+        if (searchField) searchField.onkeyup = onchangeSearch;
+        onchangeTitle();
+        onchangeCategory();
+        if (title) title.select();
+      }
+
+      function onchangeCategory() {
+        if (!categoryEN) return;
+        var c = categoryEN.value;
+        if (c === noCategorie) {
+          categoryEN.style.backgroundColor = "#FDC6CD";
+        } else {
+          categoryEN.style.backgroundColor = "";
+        }
+        if (placeholder[c]) {
+          categoryDisplay.innerHTML = placeholder[c];
+        }
+      }
+
+      function onchangeTitle() {
+        if (!title) return;
+        var t = title.value.trim();
+        okButton.disabled = true;
+        if (t.length > 5) {
+          okButton.disabled = false;
+        }
+      }
+
+      function onchangeSearch() {
+        if (!searchField) return;
+        var s = searchField.value.trim();
+        searchButton.disabled = true;
+        if (s.length > 1) {
+          searchButton.disabled = false;
+        }
+
+      }
+    </script>
+  </body>
+
+</html>

@@ -19,6 +19,7 @@ const LoginPage = require("../test/PageObjectModel/loginPage.js");
 const LoginChooserPage = require("../test/PageObjectModel/loginChooserPage.js");
 
 const { Builder, Browser } = require("selenium-webdriver");
+const chrome = require("selenium-webdriver/chrome");
 const { osmbcLink } = require("../util/util.js");
 
 const config = require("../config.js");
@@ -544,7 +545,11 @@ function getWrappedAxiosClient(options) {
 }
 
 async function getNewDriver(username) {
-  const driver = await new Builder().forBrowser(Browser.CHROME).build();
+  const chromeOptions = new chrome.Options();
+  chromeOptions.addArguments("headless");
+  chromeOptions.addArguments("window-size=1920,1080");
+
+  const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
   await driver.manage().setTimeouts({ implicit: 5000 });
@@ -559,7 +564,7 @@ async function getNewDriver(username) {
     await loginPage.typePassword(username);
     await loginPage.clickOK();
   } catch (err) {
-    console.dir(err);
+    console.error(err);
   // eslint-disable-next-line no-empty
   } finally {};
   return driver;

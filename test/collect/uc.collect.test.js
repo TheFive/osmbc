@@ -79,14 +79,14 @@ describe("uc/collect", function() {
       await (driver.findElement(By.name("title"))).sendKeys("Test Title for Article");
       await (await driver.findElement(By.id("OK"))).click();
 
-      testutil.expectHtml(driver, "collect", "editPageAfterCollect");
+      await testutil.expectHtml(driver, "collect", "editPageAfterCollect");
     });
     it("should search and find existing article", async function() {
       await driver.get(osmbcLink("/article/create"));
       await (driver.findElement(By.id("searchField"))).sendKeys("http://www.test.dä/holla");
       await (await driver.findElement(By.name("SearchNow"))).click();
 
-      testutil.expectHtml(driver, "collect", "foundAnArticle");
+      await testutil.expectHtml(driver, "collect", "foundAnArticle");
     });
   });
 });

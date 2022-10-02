@@ -33,7 +33,7 @@ module.exports = class Page {
   }
 
   async getCtrlA() {
-    // console.dir(await this._driver.getCapabilities().getPlatform().toString());
+    // await this._driver.getCapabilities().getPlatform().toString());
     // const cmdCtrl = await this._driver.getCapabilities().platformName.contains('mac') ? Key.COMMAND : Key.CONTROL;
 
     // Use Command for Mac, get decision based on platform with a similar solution than in the above comment.
@@ -44,7 +44,7 @@ module.exports = class Page {
   async selectTextInField(field, from, to) {
     await field.sendKeys(this.getCtrlA());
     await field.sendKeys(Key.ARROW_LEFT);
-    for (let i = 0; i<from; i++) {
+    for (let i = 0; i < from; i++) {
       await field.sendKeys(Key.ARROW_RIGHT);
     }
     for (let i = from; i < to; i++) {
