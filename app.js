@@ -88,7 +88,8 @@ app.use((req, res, next) => {
       imgSrc: ["*"],
       styleSrc: ["'self' 'unsafe-inline'"],
       upgradeInsecureRequests: [],
-      scriptSrc: ["'self'", "'unsafe-inline'"] //, `'nonce-${res.locals.cspNonce}'`
+      scriptSrc: ["'self'", "'unsafe-inline'"] ,//, `'nonce-${res.locals.cspNonce}'`
+      scriptSrcAttr: ["'self'", "'unsafe-inline'"] //, `'nonce-${res.locals.cspNonce}'`
     }
   });
   cspMiddleware(res, res, next);

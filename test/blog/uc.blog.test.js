@@ -82,6 +82,7 @@ describe("uc/blog", function() {
       await osmbcAppTheFive.openAdminPage();
 
       await osmbcAppTheFive.getAdminPage().clickCreateBlogMenu({ confirm: true });
+      await sleep(300);
 
       await osmbcAppTheFive.getBlogListPage().clickBlogInList("WN251");
 
