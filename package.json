@@ -7,9 +7,10 @@
     "start": "NODE_ENV=development node ./bin/www",
     "test": "NODE_ENV=test TEST_HEADLESS=TRUE mocha",
     "staticHtmlServer": "NODE_ENV=development node ./staticFileServer.js",
-    "postinstall":"node ./postinstall.js"
+    "postinstall": "node ./postinstall.js"
   },
   "dependencies": {
+    "@braintree/sanitize-url": "^6.0.0",
     "animated-gif-detector": "1.2.x",
     "async": "3.2.x",
     "axios": "^0.27.2",
