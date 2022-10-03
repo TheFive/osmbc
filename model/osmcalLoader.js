@@ -79,7 +79,6 @@ async function loadEvents(lang) {
       }
       if (loc && !loc.error) nominatimCache.set(requestString, loc);
     }
-    console.dir(loc);
     if (loc && loc.name) event.town = loc.name; else event.town = "no location";
 
     // special fix for not delivering town (e.g. Berlin)
