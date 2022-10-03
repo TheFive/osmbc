@@ -1,3 +1,4 @@
 {
-  "recursive":true
+  "recursive":true,
+  "reporter":"dot"
 }

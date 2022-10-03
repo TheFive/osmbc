@@ -10,7 +10,6 @@
     "postinstall": "node ./postinstall.js"
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^6.0.0",
     "animated-gif-detector": "1.2.x",
     "async": "3.2.x",
     "axios": "^0.27.2",

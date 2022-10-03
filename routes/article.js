@@ -33,7 +33,6 @@ const htmltitle     = require("../model/htmltitle.js");
 const translator    = require("../model/translator.js");
 
 const auth          = require("../routes/auth.js");
-const sanitizeUrl   = require("@braintree/sanitize-url");
 
 
 require("jstransformer")(require("jstransformer-markdown-it"));
@@ -879,17 +878,8 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }
-      url = sanitizeUrl(url);
       // Do not test google translate links
       // this test is generating to much false positive
-      if (url.startsWith("https://translate.google.com")) {
-        result[url] = "OK";
-        return callback();
-      }
-      if (url.startsWith("https://translate.google.de")) {
-        result[url] = "OK";
-        return callback();
-      }
       if (url.search(".translate.goog/") > 0) {
         result[url] = "OK";
         return callback();
