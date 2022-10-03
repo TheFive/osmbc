@@ -98,6 +98,7 @@ describe("views/user", function() {
 
     await adminPage.assertPage();
     await adminPage.clickCreateUserMenu();
+    await sleep(300);
 
     await userPage.assertPage();
     await userPage.fillOSMUser("TestUser");
