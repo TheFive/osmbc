@@ -206,7 +206,7 @@ describe("uc/blog", function() {
         await blogPage.clickShowColoredUserCheckbox();
         await sleep(500);
         await blogPage.clickShowLanguagesCheckbox();
-        sleep(500);
+        await sleep(500);
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
 
@@ -222,7 +222,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle("jeden Tag...");
 
         await blogPage.clickBlogMenu("WN290");
-        sleep(500);
+        sleep(750);
 
         should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
 

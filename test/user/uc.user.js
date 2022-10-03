@@ -16,6 +16,7 @@ const { osmbcLink } = require("../../util/util.js");
 
 const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
 
+const { sleep }    = require("../../util/util.js");
 
 
 
@@ -130,6 +131,7 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
+    await sleep(1000);
 
 
 
