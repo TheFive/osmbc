@@ -12,9 +12,9 @@ const articleModule = require("../../model/article.js");
 const blogModule = require("../../model/blog.js");
 
 
-const { osmbcLink, sleep } = require("../../util/util.js");
+const { osmbcLink } = require("../../util/util.js");
 
-const { Builder, Browser, By, Key, until } = require("selenium-webdriver");
+const { By } = require("selenium-webdriver");
 
 
 
@@ -30,6 +30,7 @@ describe("uc/collect", function() {
   });
   after(async function() {
     mockdate.reset();
+    nock.cleanAll();
   });
 
   beforeEach(async function() {
@@ -54,10 +55,6 @@ describe("uc/collect", function() {
   afterEach(async function() {
     if (this.currentTest.state !== "failed") await driver.quit();
     await testutil.stopServer();
-  });
-
-  after(async function() {
-    nock.cleanAll();
   });
 
   describe("Menu Fuctions", function() {

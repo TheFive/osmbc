@@ -117,7 +117,7 @@ block content
               textarea.form-control(name="collection",rows=7,placeholder="put your link or info here")=collection
 
 block append scripts_to_load                
-  script(src=layout.path("markdown-it")+'/markdown-it.min.js')
+  script(src=layout.htmlroot + "/javascripts/markdown-it.min.js")
 
 block append scripts_to_execute
   script(nonce=cspNonce).

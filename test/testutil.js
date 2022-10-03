@@ -546,7 +546,7 @@ function getWrappedAxiosClient(options) {
 
 async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
-  chromeOptions.addArguments("headless");
+  if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless");
   chromeOptions.addArguments("window-size=1920,1080");
 
   const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();

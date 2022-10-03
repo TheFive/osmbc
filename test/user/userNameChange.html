@@ -68,91 +68,35 @@
             <option value="true">on</option>
             <option value="false" selected="selected">off</option>
           </select><label class="col d-none d-md-block form-text">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="mailComment">Mail defined comments</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailComment" id="mailComment" multiple="multiple">
-              <option id="mailComment_DE" value="DE">DE</option>
-              <option id="mailComment_EN" value="EN">EN</option>
-              <option id="mailComment_ES" value="ES">ES</option>
-              <option id="mailComment_PT-PT" value="PT-PT">PT-PT</option>
-              <option id="mailComment_TestUser" value="TestUser">TestUser</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" data-id="mailComment" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
-                </div>
-              </div>
-            </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-1" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
-              </div>
-            </div>
-          </div><label class="col d-none d-md-block form-text">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</label>
-        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="mailComment">Mail defined comments</label><select class="col-5 selectpicker" name="mailComment" id="mailComment" multiple="multiple">
+            <option id="mailComment_DE" value="DE">DE</option>
+            <option id="mailComment_EN" value="EN">EN</option>
+            <option id="mailComment_ES" value="ES">ES</option>
+            <option id="mailComment_PT-PT" value="PT-PT">PT-PT</option>
+            <option id="mailComment_TestUser" value="TestUser">TestUser</option>
+          </select><label class="col d-none d-md-block form-text">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</label></div>
         <div class="row mb-3"><label class="col col-form-label" for="mailCommentGeneral">Thread Mentioning</label><select class="col-5 form-control" id="mailCommentGeneral" name="mailCommentGeneral">
             <option value="false" selected="selected">off</option>
             <option value="true">on</option>
           </select><label class="col d-none d-md-block form-text">Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="mailBlogLanguageStatusChange">Mail Change in Review Status</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange" multiple="multiple">
-              <option id="mailBlogLanguageStatusChange_DE" value="DE">DE</option>
-              <option id="mailBlogLanguageStatusChange_EN" value="EN">EN</option>
-              <option id="mailBlogLanguageStatusChange_ES" value="ES">ES</option>
-              <option id="mailBlogLanguageStatusChange_PT-PT" value="PT-PT">PT-PT</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-2" aria-haspopup="listbox" aria-expanded="false" data-id="mailBlogLanguageStatusChange" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
-                </div>
-              </div>
-            </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-2" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
-              </div>
-            </div>
-          </div><label class="col d-none d-md-block form-text">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</label>
-        </div>
-        <div class="row mb-3"><label class="col col-form-label" for="translationServices">Translation Services Used (One to One)</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="translationServices" id="translationServices" multiple="multiple">
-              <option id="translationServices_bingPro" value="bingPro">Microsoft Translator</option>
-              <option id="translationServices_deeplPro" value="deeplPro">Deepl Translator API</option>
-              <option id="translationServices_deepl" value="deepl">DeeplTranslator Online</option>
-              <option id="translationServices_copy" value="copy">Simple Text Copy</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-3" aria-haspopup="listbox" aria-expanded="false" data-id="translationServices" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
-                </div>
-              </div>
-            </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-3" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
-              </div>
-            </div>
-          </div><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. (one language to one language)</label>
-        </div>
-        <div class="row mb-3"><label class="col col-form-label" for="translationServicesMany">Translation Services Used (One to Many)</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="translationServicesMany" id="translationServicesMany" multiple="multiple">
-              <option id="translationServicesMany_bingPro" value="bingPro">Microsoft Translator</option>
-              <option id="translationServicesMany_deeplPro" value="deeplPro">Deepl Translator API</option>
-              <option id="translationServicesMany_deepl" value="deepl">DeeplTranslator Online</option>
-              <option id="translationServicesMany_copy" value="copy">Simple Text Copy</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-4" aria-haspopup="listbox" aria-expanded="false" data-id="translationServicesMany" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
-                </div>
-              </div>
-            </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-4" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
-              </div>
-            </div>
-          </div><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. one language to many open languages</label>
-        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="mailBlogLanguageStatusChange">Mail Change in Review Status</label><select class="col-5 selectpicker" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange" multiple="multiple">
+            <option id="mailBlogLanguageStatusChange_DE" value="DE">DE</option>
+            <option id="mailBlogLanguageStatusChange_EN" value="EN">EN</option>
+            <option id="mailBlogLanguageStatusChange_ES" value="ES">ES</option>
+            <option id="mailBlogLanguageStatusChange_PT-PT" value="PT-PT">PT-PT</option>
+          </select><label class="col d-none d-md-block form-text">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</label></div>
+        <div class="row mb-3"><label class="col col-form-label" for="translationServices">Translation Services Used (One to One)</label><select class="col-5 selectpicker" name="translationServices" id="translationServices" multiple="multiple">
+            <option id="translationServices_bingPro" value="bingPro">Microsoft Translator</option>
+            <option id="translationServices_deeplPro" value="deeplPro">Deepl Translator API</option>
+            <option id="translationServices_deepl" value="deepl">DeeplTranslator Online</option>
+            <option id="translationServices_copy" value="copy">Simple Text Copy</option>
+          </select><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. (one language to one language)</label></div>
+        <div class="row mb-3"><label class="col col-form-label" for="translationServicesMany">Translation Services Used (One to Many)</label><select class="col-5 selectpicker" name="translationServicesMany" id="translationServicesMany" multiple="multiple">
+            <option id="translationServicesMany_bingPro" value="bingPro">Microsoft Translator</option>
+            <option id="translationServicesMany_deeplPro" value="deeplPro">Deepl Translator API</option>
+            <option id="translationServicesMany_deepl" value="deepl">DeeplTranslator Online</option>
+            <option id="translationServicesMany_copy" value="copy">Simple Text Copy</option>
+          </select><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. one language to many open languages</label></div>
         <div class="row mb-3"><label class="col col-form-label" for="SlackUser">Mattermost User</label><input class="col-5 form-control" name="SlackUser" id="SlackUser" value=""><label class="col d-none d-md-block form-text">Username in the slack for using the collect feature.</label></div>
         <div class="row mb-3"><label class="col col-form-label" for="languageCount">Num Languages</label><select class="col-5 form-control" id="languageCount" name="languageCount">
             <option value="two" selected="selected">two</option>
