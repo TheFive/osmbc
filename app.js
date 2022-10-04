@@ -88,7 +88,7 @@ app.use((req, res, next) => {
       imgSrc: ["*"],
       styleSrc: ["'self' 'unsafe-inline'"],
       upgradeInsecureRequests: [],
-      scriptSrc: ["'self'", "'unsafe-inline'"] ,//, `'nonce-${res.locals.cspNonce}'`
+      scriptSrc: ["'self'", "'unsafe-inline'"], //, `'nonce-${res.locals.cspNonce}'`
       scriptSrcAttr: ["'self'", "'unsafe-inline'"] //, `'nonce-${res.locals.cspNonce}'`
     }
   });
@@ -99,6 +99,7 @@ app.use(
     policy: "same-origin"
   })
 );
+app.use(helmet.crossOriginEmbedderPolicy({ policy: "credentialless" }));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
