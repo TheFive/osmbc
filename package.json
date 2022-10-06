@@ -26,7 +26,7 @@
     "debug": "4.3.x",
     "deferred": "0.7.x",
     "diff": "5.1.x",
-    "email-templates": "8.0.x",
+    "email-templates": "10.0.x",
     "email-validator": "2.0.x",
     "express": "4.18.x",
     "express-fileupload": "1.4.x",
