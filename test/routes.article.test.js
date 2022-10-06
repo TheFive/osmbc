@@ -22,28 +22,7 @@ const testutil = require("./testutil.js");
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
 
-describe("routes/articleInternal", function() {
-  const fixMarkdownLinks = articleRouterForTestOnly.fixMarkdownLinks;
-  describe("fixMarkdownLinks", function() {
-    it("should do not change without error", function(bddone) {
-      should(fixMarkdownLinks("Simple Text")).eql("Simple Text");
-      should(fixMarkdownLinks("Simple Text with a [link](links.links).")).eql("Simple Text with a [link](links.links).");
-      bddone();
-    });
-    it("should fix missing leading space", function(bddone) {
-      should(fixMarkdownLinks("Simple Text with a[link](links.links)")).eql("Simple Text with a [link](links.links)");
-      bddone();
-    });
-    it("should fix missing ending space", function(bddone) {
-      should(fixMarkdownLinks("Simple Text with a [link](links.links)written.")).eql("Simple Text with a [link](links.links) written.");
-      bddone();
-    });
-    it("should fix a space in link", function(bddone) {
-      should(fixMarkdownLinks("Simple Text with a [link] (links.links).")).eql("Simple Text with a [link](links.links).");
-      bddone();
-    });
-  });
-});
+
 
 describe("routes/article", function() {
   this.timeout(this.timeout() * 10);
@@ -90,6 +69,28 @@ describe("routes/article", function() {
   });
   afterEach(function(bddone) {
     return bddone();
+  });
+  describe("routes/articleInternal", function() {
+    const fixMarkdownLinks = articleRouterForTestOnly.fixMarkdownLinks;
+    describe("fixMarkdownLinks", function() {
+      it("should do not change without error", function(bddone) {
+        should(fixMarkdownLinks("Simple Text")).eql("Simple Text");
+        should(fixMarkdownLinks("Simple Text with a [link](links.links).")).eql("Simple Text with a [link](links.links).");
+        bddone();
+      });
+      it("should fix missing leading space", function(bddone) {
+        should(fixMarkdownLinks("Simple Text with a[link](links.links)")).eql("Simple Text with a [link](links.links)");
+        bddone();
+      });
+      it("should fix missing ending space", function(bddone) {
+        should(fixMarkdownLinks("Simple Text with a [link](links.links)written.")).eql("Simple Text with a [link](links.links) written.");
+        bddone();
+      });
+      it("should fix a space in link", function(bddone) {
+        should(fixMarkdownLinks("Simple Text with a [link] (links.links).")).eql("Simple Text with a [link](links.links).");
+        bddone();
+      });
+    });
   });
   describe("route GET /article/:id", function() {
     const url = baseLink + "/article/" + id;

@@ -780,7 +780,7 @@ function createArticle(req, res, next) {
   const placeholder = configModule.getPlaceholder();
   const proto = {};
   if (typeof (req.query.blog) !== "undefined") {
-    proto.blog = req.query.blog;
+    proto.blog = blogModule.sanitizeBlogKey(req.query.blog);
   }
   if (typeof (req.query.categoryEN) !== "undefined") {
     proto.categoryEN = req.query.categoryEN;
@@ -920,7 +920,7 @@ function urlExist(req, res) {
 function renderList(req, res, next) {
   debug("renderList");
   req.session.articleReturnTo = req.originalUrl;
-  const blog = req.query.blog;
+  const blog = blogModule.sanitizeBlogKey(req.query.blog);
   const user = req.query.user;
   const property = req.query.property;
   const myArticles = (req.query.myArticles === "true");

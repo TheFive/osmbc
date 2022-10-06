@@ -34,6 +34,13 @@ function getGlobalCategories() {
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
 }
 
+
+function sanitizeBlogKey(blog) {
+  if (blog === undefined || blog === null) return blog;
+  const str = blog.replace(/[^WN0-9]/gim, "");
+  return str.trim();
+}
+
 function Blog(proto) {
   debug("Blog");
   this.id = 0;
@@ -1065,6 +1072,8 @@ module.exports.create = create;
 module.exports.createNewBlog = createNewBlog;
 
 module.exports.autoCloseBlog = autoCloseBlog;
+
+module.exports.sanitizeBlogKey = sanitizeBlogKey;
 
 // sort article
 module.exports.sortArticles = sortArticles;
