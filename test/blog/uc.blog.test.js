@@ -47,7 +47,7 @@ describe("uc/blog", function() {
   });
   const nocklist = [];
   beforeEach(async function() {
-    const list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog", "DataWN290LinkList.txt"), "UTF8"));
+    const list = yaml.load(fs.readFileSync(path.resolve(__dirname, "..", "blog", "DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item) {
       const url = new URL(item);
       let path = url.pathname;

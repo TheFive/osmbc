@@ -94,11 +94,7 @@ app.use((req, res, next) => {
   });
   cspMiddleware(res, res, next);
 });
-app.use(
-  helmet.referrerPolicy({
-    policy: "same-origin"
-  })
-);
+app.use(helmet.referrerPolicy({ policy: "same-origin" }));
 app.use(helmet.crossOriginEmbedderPolicy({ policy: "credentialless" }));
 
 // view engine setup

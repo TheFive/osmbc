@@ -17,6 +17,7 @@ rules:
   no-multiple-empty-lines: 0
   space-before-function-paren: 0
   no-multi-str: 0
+  object-shorthand: 0
   new-cap: [2,{ "newIsCapExceptions": ["moment"] ,capIsNewExceptions:["True","Router","False"] }]
   no-useless-escape: 0
   default-case-last: 2

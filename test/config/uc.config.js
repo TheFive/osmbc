@@ -44,7 +44,7 @@ describe("uc/config", function() {
       should(err.message).eql("Server returned status code 500 from http://localhost:35043/config/calendartranslation");
     }
     const source = await driver.getPageSource();
-    should(source).containEql("YAMLException: duplicated mapping key at line 8, column 3:");
+    should(source).containEql("YAMLException: duplicated mapping key (8:3)");
   });
   it("should open and save calendartranslation", async function() {
     await driver.get(osmbcLink("/config/calendartranslation"));

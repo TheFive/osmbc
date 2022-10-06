@@ -24,6 +24,7 @@ const { sleep }    = require("../../util/util.js");
 
 describe("views/user", function() {
   this.timeout(300000);
+  this.retries(2);
   let driver;
   let mailChecker;
   beforeEach(async function() {
