@@ -11,7 +11,10 @@ const htmlRoot = config.htmlRoot();
 const url = config.url();
 
 
-
+function sanitizeString(str) {
+  str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
+  return str.trim();
+}
 
 const markdown = require("markdown-it")()
   .use(require("markdown-it-emoji"))
@@ -144,6 +147,7 @@ exports.requireTypes = requireTypes;
 exports.linkify = linkify;
 exports.isTrue = isTrue;
 exports.dateFormat = dateFormat;
+exports.sanitizeString = sanitizeString;
 
 
 // Convert MD to HTML, and mark all http(s) links as hyperlinks.

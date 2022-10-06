@@ -14,6 +14,7 @@ const childProcess = require("child_process");
 const logger = require("../config.js").logger;
 const osmcalloader = require("../model/osmcalLoader.js");
 const sanitize = require("sanitize-filename");
+const sanitizeString = require("../util/util.js").sanitizeString;
 
 
 
@@ -170,7 +171,7 @@ function renderScript(req, res) {
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
-    if (err) return res.status(500).send(err);
+    if (err) return res.status(500).send(sanitizeString(err.message));
     res.render("script_execute_page", {
       layout: res.rendervar.layout,
       configuration: configuration,
@@ -187,7 +188,7 @@ function executeScript(req, res, next) {
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
-    if (err) return res.status(500).send(err);
+    if (err) return res.status(500).send(sanitizeString(err.message));
 
     const logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH_mm_ss");
     const logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
@@ -252,7 +253,7 @@ function executeScript(req, res, next) {
         cp = childProcess.execFile(script, args, options);
       } catch (err) {
         logger.error(err);
-        return res.status(500).send(err);
+        return res.status(500).send(sanitizeString(err.message));
       }
       function logError(err) {
         if (err) logger.error(err);
@@ -279,7 +280,7 @@ function executeScript(req, res, next) {
         return next(err);
       }
       fs.appendFile(logFileRunning, "Script Started: " + script + " " + JSON.stringify(args), function(err) {
-        if (err) return res.status(500).send(err);
+        if (err) return res.status(500).send(sanitizeString(err.message));
         res.redirect(htmlroot + "/tool/scripts/log/" + logFileBase);
       });
     });

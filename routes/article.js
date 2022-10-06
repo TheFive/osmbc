@@ -65,13 +65,13 @@ function getArticleFromID(req, res, next, id) {
   assert(id);
   const idNumber = Number(id);
   if ("" + idNumber !== id) {
-    return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist (conversion error)");
+    return res.status(HttpStatus.NOT_FOUND).send("Check Article ID in Url, it is not a number (conversion error)");
   }
   articleModule.findById(idNumber, function(err, result) {
     debug("getArticleFromID->findById");
     if (err) return next(err);
     if (!result) {
-      return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist");
+      return res.status(HttpStatus.NOT_FOUND).send("Article ID " + idNumber + " does not exist");
     }
     req.article = result;
     next();
