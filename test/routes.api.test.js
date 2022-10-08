@@ -10,7 +10,6 @@ const axios = require("axios");
 
 const testutil = require("../test/testutil.js");
 
-require("jstransformer-verbatim");
 
 
 
