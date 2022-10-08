@@ -12,9 +12,9 @@ block all
       link(rel='icon', href='/favicon.ico')
       title=layout.title
       // Bootstrap core CSS
-      link(href=layout.path("bootstrap")+'/css/bootstrap.min.css', rel='stylesheet')
-      link(href=path("bootstrap-select")+'/css/bootstrap-select.min.css', rel='stylesheet')
-      link(href=layout.path("font-awesome")+"/css/font-awesome.min.css" rel='stylesheet')
+      link(href=layout.htmlroot + "/stylesheets/bootstrap.min.css", rel='stylesheet')
+      link(href=layout.htmlroot + "/stylesheets/bootstrap-select.min.css", rel='stylesheet')
+      link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css" rel='stylesheet')
 
     body
 
@@ -68,10 +68,10 @@ block all
         // ==================================================
         // Placed at the end of the document so the pages load faster
 
-        script(src=layout.path("jquery")+'/jquery.min.js')
-        script(src=layout.path("bootstrap")+'/js/bootstrap.bundle.min.js')
-        script(src=layout.path("bootstrap-select")+'/js/bootstrap-select.min.js')
-        script(src=layout.path("public") + "/javascripts/osmbc_staff.js")
+        script(src=layout.htmlroot + "/javascripts/jquery.min.js")
+        script(src=layout.htmlroot + "/javascripts/bootstrap.bundle.min.js")
+        script(src=layout.htmlroot + "/javascripts/bootstrap-select.min.js")
+        script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
 
   doctype html
   html

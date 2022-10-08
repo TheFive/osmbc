@@ -149,6 +149,10 @@ exports.getValue = function(key, options) {
     logger.error("Missing Value in config.*.json. Name: '" + key + "'");
     process.exit(1);
   }
+  if (options && options.checkFunction && options.checkFunction(result) === false) {
+    logger.error("Check Function Fail in config.*.json. Name: '" + key + "'");
+    process.exit(1);
+  }
   if (options && options.deprecated && typeof result !== "undefined") {
     logger.error("Deprecated Value in config.*.json. Name: '" + key + "'");
     process.exit(1);

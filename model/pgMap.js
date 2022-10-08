@@ -270,16 +270,10 @@ module.exports.find = function find(module, obj, order, callback) {
   }
 
   assert(typeof (callback) === "function");
-
   debug("Connecting to DB");
-
   const table = module.table;
   const sqlQuery = generateQuery(table, obj, order);
   debug("Query: %s", sqlQuery);
-
-
-
-
 
   if (obj && obj.params) {
     db.query(sqlQuery, obj.params, convertResultFunction(module, callback));

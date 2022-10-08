@@ -20,7 +20,6 @@ const blogModule = require("../model/blog.js");
 
 const testutil   = require("../test/testutil.js");
 
-require("jstransformer-verbatim");
 
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
@@ -546,6 +545,15 @@ describe("routes/blog", function() {
       const expectation = fs.readFileSync(file, "UTF8");
 
       should(testutil.equalHtml(body.data, expectation)).be.True();
+    });
+    it("should get a header preview", async function () {
+      await testutil.importData("data/views.blog.export.1.json");
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/previewHeader");
+
+      should(body.data).eql("[:de]Wochennotiz OG[:en]weeklyOSM OG[:es]semanarioOSM OG[:]");
     });
     it("should get a preview in the markdown format ", async function () {
       await testutil.importData(path.resolve(__dirname, "data", "views.blog.export.1.json"));

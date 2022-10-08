@@ -35,7 +35,6 @@ const translator    = require("../model/translator.js");
 const auth          = require("../routes/auth.js");
 
 
-require("jstransformer")(require("jstransformer-markdown-it"));
 
 
 const axios = require("axios");
@@ -65,13 +64,13 @@ function getArticleFromID(req, res, next, id) {
   assert(id);
   const idNumber = Number(id);
   if ("" + idNumber !== id) {
-    return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist (conversion error)");
+    return res.status(HttpStatus.NOT_FOUND).send("Check Article ID in Url, it is not a number (conversion error)");
   }
   articleModule.findById(idNumber, function(err, result) {
     debug("getArticleFromID->findById");
     if (err) return next(err);
     if (!result) {
-      return res.status(HttpStatus.NOT_FOUND).send("Article ID " + id + " does not exist");
+      return res.status(HttpStatus.NOT_FOUND).send("Article ID " + idNumber + " does not exist");
     }
     req.article = result;
     next();
@@ -780,7 +779,7 @@ function createArticle(req, res, next) {
   const placeholder = configModule.getPlaceholder();
   const proto = {};
   if (typeof (req.query.blog) !== "undefined") {
-    proto.blog = req.query.blog;
+    proto.blog = blogModule.sanitizeBlogKey(req.query.blog);
   }
   if (typeof (req.query.categoryEN) !== "undefined") {
     proto.categoryEN = req.query.categoryEN;
@@ -880,14 +879,6 @@ function urlExist(req, res) {
       }
       // Do not test google translate links
       // this test is generating to much false positive
-      if (url.startsWith("https://translate.google.com")) {
-        result[url] = "OK";
-        return callback();
-      }
-      if (url.startsWith("https://translate.google.de")) {
-        result[url] = "OK";
-        return callback();
-      }
       if (url.search(".translate.goog/") > 0) {
         result[url] = "OK";
         return callback();
@@ -928,7 +919,7 @@ function urlExist(req, res) {
 function renderList(req, res, next) {
   debug("renderList");
   req.session.articleReturnTo = req.originalUrl;
-  const blog = req.query.blog;
+  const blog = blogModule.sanitizeBlogKey(req.query.blog);
   const user = req.query.user;
   const property = req.query.property;
   const myArticles = (req.query.myArticles === "true");

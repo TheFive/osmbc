@@ -290,32 +290,33 @@ const blogTitleForExport = config.getValue("Blog Title For Export", { mustExist:
 
 function renderBlogPreviewHeader(req, res, next) {
   debug("renderBlogPreviewHeader");
-  req.session.articleReturnTo = req.originalUrl;
-  const blog = req.blog;
-  if (!blog) return next();
+  try {
+    req.session.articleReturnTo = req.originalUrl;
+    const blog = req.blog;
+    if (!blog) return next();
 
-  function isClosed(lang) {
-    if (blog["close" + lang] === true) return true;
-    else return false;
-  }
-  function listify(result, value, index) {
-    if (index === 0) return value;
-    return result + "-" + value;
-  }
-  const lang = language.getLid().filter(isClosed);
+    function listify(result, value, index) {
+      if (index === 0) return value;
+      return result + "-" + value;
+    }
+    const lang = language.getLid();
 
-  const translation = configModule.getConfig("categorytranslation");
+    const translation = configModule.getConfig("categorytranslation");
 
-  const titleTrans = translation.filter(function isTitle(trans) { if (trans.EN === blogTitleForExport) return true; else return false; });
-  if (titleTrans.length === 1) {
-    const map = titleTrans[0];
-    const number = blog.name.substring(2, 99);
-    let content = "";
-    lang.forEach((value) => { content = content + `[:${language.wpExportName(value).toLowerCase()}]${map[value]} ${number}`; });
-    content = content + "[:]";
-    return res.attachment(`Header ${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.txt`).end(content);
+    const titleTrans = translation.filter(function isTitle(trans) { if (trans.EN === blogTitleForExport) return true; else return false; });
+    if (titleTrans.length === 1) {
+      const map = titleTrans[0];
+      const number = blog.name.substring(2, 99);
+      let content = "";
+      lang.forEach((value) => { if (map[value]) content = content + `[:${language.wpExportName(value).toLowerCase()}]${map[value]} ${number}`; });
+      content = content + "[:]";
+      return res.attachment(`Header ${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.txt`).end(content);
+    }
+    res.next(new Error("Categorie Translation is missing Tile"));
+  } catch (err) {
+    console.error(err);
+    return next(err);
   }
-  res.next(new Error("Categorie Translation is missing Tile"));
 }
 
 function setReviewComment(req, res, next) {
@@ -566,7 +567,7 @@ function editBlogId(req, res) {
   if (params.edit && params.edit === "false") {
     res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   }
-  blog._categories_yaml = yaml.safeDump(blog.categories);
+  blog._categories_yaml = yaml.dump(blog.categories);
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};

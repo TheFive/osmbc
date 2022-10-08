@@ -52,8 +52,14 @@ function readCache() {
 async function loadEvents(lang) {
   readCache();
   const url = "https://osmcal.org/api/v2/events/";
-  let request = await axios.get(url);
-  let json = request.data;
+  let json;
+  let request;
+  try {
+    request = await axios.get(url);
+    json = request.data;
+  } catch (err) {
+    // ignore error
+  }
   if (!Array.isArray(json)) json = [{ name: "osmcal did not reply with Eventlist" }];
   let event;
   for (event of json) {
@@ -65,17 +71,21 @@ async function loadEvents(lang) {
 
     let loc = nominatimCache.get(requestString);
     if (loc === undefined) {
-      request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
-      loc = request.data;
+      try {
+        request = await axios.get(requestString, { headers: { "User-Agent": "OSMBC Calendar Generator" } });
+        loc = request.data;
+      } catch (err) {
+        // ignore axios error
+      }
       if (loc && !loc.error) nominatimCache.set(requestString, loc);
     }
-    if (loc.name) event.town = loc.name;
+    if (loc && loc.name) event.town = loc.name; else event.town = "no location";
 
     // special fix for not delivering town (e.g. Berlin)
 
-    if (loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
-    if (loc.address && loc.address.country) event.country = loc.address.country;
-    if (loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
+    if (loc && loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
+    if (loc && loc.address && loc.address.country) event.country = loc.address.country;
+    if (loc && loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
   }
   storeCache();
   return json;

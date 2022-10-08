@@ -121,7 +121,7 @@ Config.prototype.getJSON = function getJSON() {
   }
   if (this.type === "yaml") {
     try {
-      this.json = yaml.safeLoad(this.yaml);
+      this.json = yaml.load(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
       if (this.name === "languageflags") this.json = freshupEmoji(this.json);
       return this.json;

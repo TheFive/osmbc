@@ -47,7 +47,7 @@ describe("uc/blog", function() {
   });
   const nocklist = [];
   beforeEach(async function() {
-    const list = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, "..", "blog", "DataWN290LinkList.txt"), "UTF8"));
+    const list = yaml.load(fs.readFileSync(path.resolve(__dirname, "..", "blog", "DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item) {
       const url = new URL(item);
       let path = url.pathname;
@@ -82,6 +82,7 @@ describe("uc/blog", function() {
       await osmbcAppTheFive.openAdminPage();
 
       await osmbcAppTheFive.getAdminPage().clickCreateBlogMenu({ confirm: true });
+      await sleep(300);
 
       await osmbcAppTheFive.getBlogListPage().clickBlogInList("WN251");
 
@@ -206,7 +207,7 @@ describe("uc/blog", function() {
         await blogPage.clickShowColoredUserCheckbox();
         await sleep(500);
         await blogPage.clickShowLanguagesCheckbox();
-        sleep(500);
+        await sleep(500);
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
 
@@ -222,7 +223,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle("jeden Tag...");
 
         await blogPage.clickBlogMenu("WN290");
-        sleep(500);
+        sleep(750);
 
         should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
 

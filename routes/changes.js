@@ -5,6 +5,7 @@ const assert    = require("assert").strict;
 const router    = express.Router();
 const debug     = require("debug")("OSMBC:routes:changes");
 const logModule = require("../model/logModule.js");
+const blogModule = require("../model/blog.js");
 const jsdiff    = require("diff");
 const auth      = require("../routes/auth.js");
 
@@ -40,7 +41,7 @@ function renderHistoryLog(req, res, next) {
   const date = req.query.date;
   const user = req.query.user;
   const table = req.query.table;
-  const blog = req.query.blog;
+  const blog = blogModule.sanitizeBlogKey(req.query.blog);
   const property = req.query.property;
   const oid = req.query.oid;
 

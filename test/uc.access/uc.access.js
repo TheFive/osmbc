@@ -143,6 +143,7 @@ describe("uc.access", function() {
 
     // Check Guest Users Inbox
     await articlePageGuest.clickInboxMenu();
+    await sleep(350);
 
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");

@@ -16,6 +16,7 @@ const { osmbcLink } = require("../../util/util.js");
 
 const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
 
+const { sleep }    = require("../../util/util.js");
 
 
 
@@ -23,6 +24,7 @@ const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
 
 describe("views/user", function() {
   this.timeout(300000);
+  this.retries(2);
   let driver;
   let mailChecker;
   beforeEach(async function() {
@@ -97,6 +99,7 @@ describe("views/user", function() {
 
     await adminPage.assertPage();
     await adminPage.clickCreateUserMenu();
+    await sleep(300);
 
     await userPage.assertPage();
     await userPage.fillOSMUser("TestUser");
@@ -130,6 +133,7 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
+    await sleep(1000);
 
 
 
