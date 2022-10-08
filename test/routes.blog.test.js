@@ -544,7 +544,7 @@ describe("routes/blog", function() {
       const file = path.resolve(__dirname, "data", "views.blog.export.1.html");
       const expectation = fs.readFileSync(file, "UTF8");
 
-      should(testutil.equalHtml(body.data, expectation)).be.True();
+      should(body.data).eql(expectation);
     });
     it("should get a header preview", async function () {
       await testutil.importData("data/views.blog.export.1.json");
@@ -566,7 +566,7 @@ describe("routes/blog", function() {
       const file = path.resolve(__dirname, "data", "views.blog.export.1.md");
       const expectation = fs.readFileSync(file, "UTF8");
 
-      should(testutil.equalHtml(body.data, expectation)).be.True();
+      should(body.data).eql(expectation);
     });
   });
 

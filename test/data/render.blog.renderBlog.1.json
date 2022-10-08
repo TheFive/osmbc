@@ -8,5 +8,5 @@
   "testBlogName":"BLOG",
   "lang":"DE",
   "testBlogResultMarkdownDE":"## Mapping\n* Dies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n",
-  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01.02.2015-08.02.2015</p>\n<h2 id=\"blog_mapping\">Mapping</h2>\n<ul>\n<li id=\"blog_1\">\nDies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n</li>\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von TESTER.</i></p>\n"
+  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01.02.2015-08.02.2015</p>\n<h2 id=\"blog_mapping\">Mapping</h2>\n<ul>\n<li id=\"blog_1\">\nDies ist ein kleiner Testartikel. Der muss aber ein bischen länger sein, damit der Test klappt.\n</li>\n\n\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von TESTER.</i></p>\n"
 }
