@@ -39,11 +39,6 @@ const mailReceiver   = require("../notification/mailReceiver.js");
 const messageCenter  = require("../notification/messageCenter.js");
 
 
-const xmldom = require("xmldom");
-const domparser = new (xmldom.DOMParser)();
-const domcompare = require("dom-compare").compare;
-
-
 // set Test Standard to ignore prototypes for should
 should.config.checkProtoEql = false;
 
@@ -321,34 +316,7 @@ exports.checkData = function checkData(data, callback) {
   ], function(err) { callback(err, data); });
 };
 
-// Comparing 2 HTML Trees with JSDOM and DomCompare
-// the result gives getResult()=true, if the trees are equal
-// result.getDifferences() is an array with the differences
-// dom-compare offers an GroupingReporter to display the differences
-// in more detail.
 
-const HtmlDiffer = require("html-differ").HtmlDiffer;
-const htmlDiffer = new HtmlDiffer({});
-
-exports.equalHtml = function equalHtml(actualHTML, expectedHTML) {
-  const diff = (htmlDiffer.diffHtml(actualHTML, expectedHTML));
-
-  if (diff.length === 1) return true;
-
-  const colors = require("colors/safe");
-  colors.enabled = true;
-
-  diff.forEach(function(part) {
-    // green for additions, red for deletions
-    // grey for common parts
-    if (part.added) {
-      console.info(colors.green(part.value));
-    } else if (part.removed) {
-      console.info(colors.red(part.value));
-    } else console.info(colors.grey(part.value));
-  });
-  return false;
-};
 
 
 // This function reads the data directory (as a subdirectory of test directory)
@@ -454,28 +422,7 @@ module.exports.expectHtml = async function expectHtml(driver, errorList, givenPa
 
     return;
   }
-  const expectedDom = domparser.parseFromString(expected);
-  const actualDom = domparser.parseFromString(source);
 
-  const result = domcompare(expectedDom, actualDom);
-  if (result.getResult()) {
-    if (process.env.TEST_RENAME_DOMEQUAL === "TRUE") {
-      fs.writeFileSync(expectedFile, source, "UTF8");
-      try {
-        fs.unlinkSync(actualFile + ".dceql");
-      } catch (err) {}
-      console.info(expectedFile + " is domequal to result, original was changed.");
-      return;
-    } else {
-      // files are different, but dom equal
-      fs.writeFileSync(actualFile + ".dceql", source, "UTF8");
-      try {
-        fs.unlinkSync(actualFile);
-      } catch (err) {}
-      console.info(expectedFile + " is domequal to result. Use TEST_RENAME_DOMEQUAL=TRUE to modify expected file.");
-      return;
-    }
-  }
   // there is a difference, so create the actual data as file
   // do easier fix the test.
   fs.writeFileSync(actualFile, source, "UTF8");
