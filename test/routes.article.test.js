@@ -980,10 +980,10 @@ describe("routes/article", function() {
       const sitecall = nock("https://www.site.ort")
         .get("/apage")
         .reply(200, "OK");
-        const sitecall1 = nock("https://www.site.ort2")
+      const sitecall1 = nock("https://www.site.ort2")
         .get("/apage")
         .reply(404, " Not OK");
-        const sitecall2 = nock("https://www.site.ort2")
+      const sitecall2 = nock("https://www.site.ort2")
         .get("/äpäge")
         .reply(200, "OK");
 
@@ -1000,7 +1000,7 @@ describe("routes/article", function() {
       should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
       should(sitecall1.isDone()).be.true();
-      should(sitecall1.isDone()).be.true();
+      should(sitecall2.isDone()).be.true();
     });
 
     it("should run with full access user with error and string param", async function () {

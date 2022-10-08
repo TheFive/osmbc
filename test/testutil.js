@@ -147,6 +147,7 @@ exports.importData = function importData(data, callback) {
             db.query.bind(null, "delete from blog;"),
             db.query.bind(null, "delete from article;"),
             db.query.bind(null, "delete from changes;"),
+            db.query.bind(null, "delete from config;"),
             db.query.bind(null, "ALTER SEQUENCE usert_id_seq RESTART WITH 1;"),
             db.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
             db.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
