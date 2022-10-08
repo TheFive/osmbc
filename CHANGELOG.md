@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.0.0](https://github.com/TheFive/osmbc/tree/4.0.0) (2022-10-02)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.3...4.0.0)
+
+**Implemented enhancements:**
+
+- Allow Editors to remove Mail Adress in denied mode [\#947](https://github.com/TheFive/osmbc/issues/947)
+
+**Fixed bugs:**
+
+- Add article with multiline title results in a broken link [\#949](https://github.com/TheFive/osmbc/issues/949)
+- empty search gives cryptic error message [\#948](https://github.com/TheFive/osmbc/issues/948)
+
+**Security fixes:**
+
+- Switch to OAuth2 API upgrade passport to 0.5.0 [\#881](https://github.com/TheFive/osmbc/issues/881)
+
 ## [3.8.3](https://github.com/TheFive/osmbc/tree/3.8.3) (2022-09-22)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.2...3.8.3)
@@ -1082,7 +1099,6 @@
 
 - New Editor has problems with Calendar Article [\#636](https://github.com/TheFive/osmbc/issues/636)
 - View Changes doesn't filter on Users any longer. [\#635](https://github.com/TheFive/osmbc/issues/635)
-- Automatische Übersetzung Texte are not shown in article editor. [\#443](https://github.com/TheFive/osmbc/issues/443)
 
 ## [2.2.10](https://github.com/TheFive/osmbc/tree/2.2.10) (2017-03-08)
 
@@ -1336,10 +1352,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.7...2.0.8)
 
-**Implemented enhancements:**
-
-- Luxury proposal: a button to set comments on "\#solved" [\#571](https://github.com/TheFive/osmbc/issues/571)
-
 ## [2.0.7](https://github.com/TheFive/osmbc/tree/2.0.7) (2016-11-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.6...2.0.7)
@@ -1348,6 +1360,7 @@
 
 - Show Review Starter and link to Review Changes. [\#577](https://github.com/TheFive/osmbc/issues/577)
 - Tooltip for flags [\#574](https://github.com/TheFive/osmbc/issues/574)
+- Luxury proposal: a button to set comments on "\#solved" [\#571](https://github.com/TheFive/osmbc/issues/571)
 
 **Fixed bugs:**
 
@@ -1511,6 +1524,7 @@
 **Implemented enhancements:**
 
 - Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
+- Trim email address before saving to avoid unseeable email incorrect errors [\#525](https://github.com/TheFive/osmbc/issues/525)
 - Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
 
 ## [1.9.3a](https://github.com/TheFive/osmbc/tree/1.9.3a) (2016-09-30)
@@ -1526,10 +1540,6 @@
 ## [1.9.3](https://github.com/TheFive/osmbc/tree/1.9.3) (2016-09-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...1.9.3)
-
-**Implemented enhancements:**
-
-- Trim email address before saving to avoid unseeable email incorrect errors [\#525](https://github.com/TheFive/osmbc/issues/525)
 
 **Fixed bugs:**
 
@@ -1753,15 +1763,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
-
-## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
 
 ## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+
+## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
 
 **Fixed bugs:**
 
@@ -1882,6 +1892,10 @@
 ## [1.7.1a](https://github.com/TheFive/osmbc/tree/1.7.1a) (2016-05-03)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.7.1...1.7.1a)
+
+**Fixed bugs:**
+
+- Automatische Übersetzung Texte are not shown in article editor. [\#443](https://github.com/TheFive/osmbc/issues/443)
 
 ## [1.7.1](https://github.com/TheFive/osmbc/tree/1.7.1) (2016-05-02)
 
@@ -3159,6 +3173,7 @@
 **Implemented enhancements:**
 
 - Convert markdown to markdownDE [\#94](https://github.com/TheFive/osmbc/issues/94)
+- Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
 
 **Fixed bugs:**
 
@@ -3198,7 +3213,6 @@
 
 - Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
 - Allow mentioning users [\#82](https://github.com/TheFive/osmbc/issues/82)
-- Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
 
 ## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
 
