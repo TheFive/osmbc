@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.2](https://github.com/TheFive/osmbc/tree/4.0.2) (2022-10-08)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.1...4.0.2)
+
 ## [4.0.1](https://github.com/TheFive/osmbc/tree/4.0.1) (2022-10-08)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.0...4.0.1)
@@ -193,13 +197,13 @@
 - Deepl API User used in History should not be shown in Final Product [\#879](https://github.com/TheFive/osmbc/issues/879)
 - Set No Translation does not work full in 3 and 4 Languages editor. [\#788](https://github.com/TheFive/osmbc/issues/788)
 
-**Closed issues:**
-
-- Remove the picutre "Here the stati of OSMBC will be described"  [\#894](https://github.com/TheFive/osmbc/issues/894)
-
 ## [3.6.9b](https://github.com/TheFive/osmbc/tree/3.6.9b) (2022-01-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.69a...3.6.9b)
+
+**Closed issues:**
+
+- Remove the picutre "Here the stati of OSMBC will be described"  [\#894](https://github.com/TheFive/osmbc/issues/894)
 
 ## [3.69a](https://github.com/TheFive/osmbc/tree/3.69a) (2021-12-28)
 
@@ -551,6 +555,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
 
+**Closed issues:**
+
+- Filter for Calendar [\#766](https://github.com/TheFive/osmbc/issues/766)
+
 ## [3.3.1a](https://github.com/TheFive/osmbc/tree/3.3.1a) (2018-03-31)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1...3.3.1a)
@@ -566,10 +574,6 @@
 **Fixed bugs:**
 
 - Users that are logged in to OSMWW generates \[object object\] guests in OSMBC. [\#764](https://github.com/TheFive/osmbc/issues/764)
-
-**Closed issues:**
-
-- Filter for Calendar [\#766](https://github.com/TheFive/osmbc/issues/766)
 
 ## [3.3.0](https://github.com/TheFive/osmbc/tree/3.3.0) (2018-03-24)
 
@@ -1740,7 +1744,6 @@
 **Implemented enhancements:**
 
 - Send full markdown to google translate. [\#473](https://github.com/TheFive/osmbc/issues/473)
-- add link to translate innerText of markdown with google translate. [\#470](https://github.com/TheFive/osmbc/issues/470)
 
 **Fixed bugs:**
 
@@ -1753,6 +1756,10 @@
 ## [1.8.5](https://github.com/TheFive/osmbc/tree/1.8.5) (2016-06-05)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4h...1.8.5)
+
+**Implemented enhancements:**
+
+- add link to translate innerText of markdown with google translate. [\#470](https://github.com/TheFive/osmbc/issues/470)
 
 **Fixed bugs:**
 
@@ -2409,7 +2416,6 @@
 **Fixed bugs:**
 
 - Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
-- Error Handler layout looks broken. Jade files are not used. [\#305](https://github.com/TheFive/osmbc/issues/305)
 
 ## [0.7.3b](https://github.com/TheFive/osmbc/tree/0.7.3b) (2016-02-10)
 
@@ -2423,6 +2429,7 @@
 
 - Renaming & saving a blog results in crash. [\#310](https://github.com/TheFive/osmbc/issues/310)
 - Blog History is written now for autocreate, but with ID -1. [\#309](https://github.com/TheFive/osmbc/issues/309)
+- Error Handler layout looks broken. Jade files are not used. [\#305](https://github.com/TheFive/osmbc/issues/305)
 
 ## [0.7.3a](https://github.com/TheFive/osmbc/tree/0.7.3a) (2016-02-09)
 
@@ -2719,6 +2726,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
 
+**Fixed bugs:**
+
+- below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
+
 ## [0.5.2](https://github.com/TheFive/osmbc/tree/0.5.2) (2015-12-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.1...0.5.2)
@@ -2730,7 +2741,6 @@
 
 **Fixed bugs:**
 
-- below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
 - include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
 
 ## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
@@ -3084,11 +3094,14 @@
 **Implemented enhancements:**
 
 - Show status of the blog in every language. [\#132](https://github.com/TheFive/osmbc/issues/132)
-- Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
 
 ## [0.3.4](https://github.com/TheFive/osmbc/tree/0.3.4) (2015-11-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.3...0.3.4)
+
+**Implemented enhancements:**
+
+- Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
 
 ## [0.3.3](https://github.com/TheFive/osmbc/tree/0.3.3) (2015-11-07)
 
