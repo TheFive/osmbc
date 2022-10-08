@@ -35,7 +35,6 @@ const translator    = require("../model/translator.js");
 const auth          = require("../routes/auth.js");
 
 
-require("jstransformer")(require("jstransformer-markdown-it"));
 
 
 const axios = require("axios");

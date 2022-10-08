@@ -20,7 +20,6 @@ const blogModule = require("../model/blog.js");
 
 const testutil   = require("../test/testutil.js");
 
-require("jstransformer-verbatim");
 
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
