@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.1](https://github.com/TheFive/osmbc/tree/4.0.1) (2022-10-08)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.0...4.0.1)
+
+**Implemented enhancements:**
+
+- Export all Headers for the WP export [\#955](https://github.com/TheFive/osmbc/issues/955)
+
+**Security fixes:**
+
+- Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
+- Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
+
 ## [4.0.0](https://github.com/TheFive/osmbc/tree/4.0.0) (2022-10-02)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.8.3...4.0.0)
@@ -180,13 +193,13 @@
 - Deepl API User used in History should not be shown in Final Product [\#879](https://github.com/TheFive/osmbc/issues/879)
 - Set No Translation does not work full in 3 and 4 Languages editor. [\#788](https://github.com/TheFive/osmbc/issues/788)
 
-## [3.6.9b](https://github.com/TheFive/osmbc/tree/3.6.9b) (2022-01-09)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/3.69a...3.6.9b)
-
 **Closed issues:**
 
 - Remove the picutre "Here the stati of OSMBC will be described"  [\#894](https://github.com/TheFive/osmbc/issues/894)
+
+## [3.6.9b](https://github.com/TheFive/osmbc/tree/3.6.9b) (2022-01-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/3.69a...3.6.9b)
 
 ## [3.69a](https://github.com/TheFive/osmbc/tree/3.69a) (2021-12-28)
 
@@ -538,10 +551,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1a...3.3.1b)
 
-**Closed issues:**
-
-- Filter for Calendar [\#766](https://github.com/TheFive/osmbc/issues/766)
-
 ## [3.3.1a](https://github.com/TheFive/osmbc/tree/3.3.1a) (2018-03-31)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.1...3.3.1a)
@@ -557,6 +566,10 @@
 **Fixed bugs:**
 
 - Users that are logged in to OSMWW generates \[object object\] guests in OSMBC. [\#764](https://github.com/TheFive/osmbc/issues/764)
+
+**Closed issues:**
+
+- Filter for Calendar [\#766](https://github.com/TheFive/osmbc/issues/766)
 
 ## [3.3.0](https://github.com/TheFive/osmbc/tree/3.3.0) (2018-03-24)
 
@@ -1524,7 +1537,6 @@
 **Implemented enhancements:**
 
 - Remove \[OSMUsername\] from articlecdisplay e.g. In overview [\#530](https://github.com/TheFive/osmbc/issues/530)
-- Trim email address before saving to avoid unseeable email incorrect errors [\#525](https://github.com/TheFive/osmbc/issues/525)
 - Give a cookie hint on message: failed to find request token in session [\#524](https://github.com/TheFive/osmbc/issues/524)
 
 ## [1.9.3a](https://github.com/TheFive/osmbc/tree/1.9.3a) (2016-09-30)
@@ -1540,6 +1552,10 @@
 ## [1.9.3](https://github.com/TheFive/osmbc/tree/1.9.3) (2016-09-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.9.2e...1.9.3)
+
+**Implemented enhancements:**
+
+- Trim email address before saving to avoid unseeable email incorrect errors [\#525](https://github.com/TheFive/osmbc/issues/525)
 
 **Fixed bugs:**
 
@@ -1724,6 +1740,7 @@
 **Implemented enhancements:**
 
 - Send full markdown to google translate. [\#473](https://github.com/TheFive/osmbc/issues/473)
+- add link to translate innerText of markdown with google translate. [\#470](https://github.com/TheFive/osmbc/issues/470)
 
 **Fixed bugs:**
 
@@ -1736,10 +1753,6 @@
 ## [1.8.5](https://github.com/TheFive/osmbc/tree/1.8.5) (2016-06-05)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4h...1.8.5)
-
-**Implemented enhancements:**
-
-- add link to translate innerText of markdown with google translate. [\#470](https://github.com/TheFive/osmbc/issues/470)
 
 **Fixed bugs:**
 
@@ -1763,15 +1776,15 @@
 
 ## [1.8.4f](https://github.com/TheFive/osmbc/tree/1.8.4f) (2016-05-26)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4f)
-
-## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
-
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4d)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4e...1.8.4f)
 
 ## [1.8.4e](https://github.com/TheFive/osmbc/tree/1.8.4e) (2016-05-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4e)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4d...1.8.4e)
+
+## [1.8.4d](https://github.com/TheFive/osmbc/tree/1.8.4d) (2016-05-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/1.8.4b...1.8.4d)
 
 **Fixed bugs:**
 
@@ -2396,6 +2409,7 @@
 **Fixed bugs:**
 
 - Blog Charts are not recalculated and frozen. [\#312](https://github.com/TheFive/osmbc/issues/312)
+- Error Handler layout looks broken. Jade files are not used. [\#305](https://github.com/TheFive/osmbc/issues/305)
 
 ## [0.7.3b](https://github.com/TheFive/osmbc/tree/0.7.3b) (2016-02-10)
 
@@ -2409,7 +2423,6 @@
 
 - Renaming & saving a blog results in crash. [\#310](https://github.com/TheFive/osmbc/issues/310)
 - Blog History is written now for autocreate, but with ID -1. [\#309](https://github.com/TheFive/osmbc/issues/309)
-- Error Handler layout looks broken. Jade files are not used. [\#305](https://github.com/TheFive/osmbc/issues/305)
 
 ## [0.7.3a](https://github.com/TheFive/osmbc/tree/0.7.3a) (2016-02-09)
 
@@ -3071,14 +3084,11 @@
 **Implemented enhancements:**
 
 - Show status of the blog in every language. [\#132](https://github.com/TheFive/osmbc/issues/132)
+- Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
 
 ## [0.3.4](https://github.com/TheFive/osmbc/tree/0.3.4) (2015-11-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.3.3...0.3.4)
-
-**Implemented enhancements:**
-
-- Better UX for status change of a blog. [\#130](https://github.com/TheFive/osmbc/issues/130)
 
 ## [0.3.3](https://github.com/TheFive/osmbc/tree/0.3.3) (2015-11-07)
 
@@ -3173,7 +3183,6 @@
 **Implemented enhancements:**
 
 - Convert markdown to markdownDE [\#94](https://github.com/TheFive/osmbc/issues/94)
-- Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
 
 **Fixed bugs:**
 
@@ -3213,6 +3222,7 @@
 
 - Add Romanian Flag to Flag List [\#91](https://github.com/TheFive/osmbc/issues/91)
 - Allow mentioning users [\#82](https://github.com/TheFive/osmbc/issues/82)
+- Hide commentStatus in article edit when no comment is given. [\#72](https://github.com/TheFive/osmbc/issues/72)
 
 ## [0.2.26](https://github.com/TheFive/osmbc/tree/0.2.26) (2015-10-20)
 
