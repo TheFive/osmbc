@@ -27,7 +27,6 @@ const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot(
 describe("routes/article", function() {
   this.timeout(this.timeout() * 10);
   const id = 2;
-  const jar = {};
 
   before(async function () {
     await initialise.initialiseModules();
@@ -929,7 +928,7 @@ describe("routes/article", function() {
     const url = baseLink + "/article/translate/deeplPro/DE/EN";
     const form = { text: "Dies ist ein deutscher Text." };
     let stub;
-    beforeEach(function() {
+    beforeEach(async function() {
       stub = sinon.stub(bingTranslatorForTestOnly.msTransClient, "translate").callsFake(function(params, callback) {
         should(params.from).eql("DE");
         should(params.to).eql("EN");
@@ -940,7 +939,7 @@ describe("routes/article", function() {
         .post("/v2/translate", "auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDies%20ist%20ein%20deutscher%20Text.%3C%2Fp%3E%0A")
         .reply(200, { translations: [{ text: "This is an english text.", source_lang: "DE", target_lang: "EN" }] });
     });
-    afterEach(function() {
+    afterEach(async function() {
       stub.restore();
     });
 
@@ -980,12 +979,6 @@ describe("routes/article", function() {
       form = { urls: ["https://www.site.ort/apage", "https://www.site.ort2/apage", "https://www.site.ort2/äpäge"] };
       const sitecall = nock("https://www.site.ort")
         .get("/apage")
-        .reply(200, "OK");
-      const sitecall2 = nock("https://www.site.ort2")
-        .get("/apage")
-        .reply(404, "Page Not Found");
-      const sitecall3 = nock("https://www.site.ort2")
-        .get("/äpäge")
         .reply(200, "OK");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
@@ -1065,7 +1058,6 @@ describe("routes/article", function() {
         password: "TestUserDenied",
         json: true,
         expectedStatusCode: HttpStatus.FORBIDDEN,
-        json: true,
         expectedMessage: "OSM User >TestUserDenied< has no access rights"
       }));
     it("should use guest user for non existing users", async function () {
