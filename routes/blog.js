@@ -308,7 +308,7 @@ function renderBlogPreviewHeader(req, res, next) {
       const map = titleTrans[0];
       const number = blog.name.substring(2, 99);
       let content = "";
-      lang.forEach((value) => { content = content + `[:${language.wpExportName(value).toLowerCase()}]${map[value]} ${number}`; });
+      lang.forEach((value) => { if (map[value]) content = content + `[:${language.wpExportName(value).toLowerCase()}]${map[value]} ${number}`; });
       content = content + "[:]";
       return res.attachment(`Header ${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.txt`).end(content);
     }

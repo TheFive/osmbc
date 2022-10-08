@@ -552,8 +552,8 @@ describe("routes/blog", function() {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
       const body = await client.get(baseLink + "/blog/BLOG/previewHeader");
-      
-      should(body.data).eql("[:de]Wochennotiz OG[:en]weeklyOSM OG[:es]semanarioOSM OG[:pt-pt]semanárioOSM OG[:]");
+
+      should(body.data).eql("[:de]Wochennotiz OG[:en]weeklyOSM OG[:es]semanarioOSM OG[:]");
     });
     it("should get a preview in the markdown format ", async function () {
       await testutil.importData(path.resolve(__dirname, "data", "views.blog.export.1.json"));
