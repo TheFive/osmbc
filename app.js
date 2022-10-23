@@ -230,12 +230,13 @@ app.use(function(err, req, res, next) {
   }
   res.status(err.status || 500);
   if (err.type && err.type === "API") return res.send(err.message);
+  const prodErr = { message: err.message, status: err.status };
   try {
     const errHtml = pug.renderFile(path.join(__dirname, "views", "error.pug"),
       {
         message: err.message ?? "no err message",
         detail: err.detail ?? null,
-        error: (app.get("env") !== "production") ? err : null,
+        error: (app.get("env") !== "production") ? err : prodErr,
         nonce: res.locals.cspNonce,
         layout: layoutConst,
         getReasonPhrase: HttpStatus.getReasonPhrase
