@@ -11,7 +11,7 @@ const config        = require("../config.js");
 const language      = require("../model/language.js");
 
 const version       = require("../version.js");
-const markdown      = require("markdown-it")();
+const mdUtil        = require("../util/md_util");
 
 const blogModule    = require("../model/blog.js");
 const userModule    = require("../model/user.js");
@@ -37,7 +37,6 @@ const layoutConst = {
   htmlroot: htmlRoot,
   url: url,
   moment: moment,
-  markdown: markdown,
   util: util,
   appName: appName,
   osmbc_version: version.osmbc_version,
@@ -166,6 +165,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
+    const markdown = mdUtil.osmbcMarkdown();
 
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
@@ -185,6 +185,7 @@ function prepareRenderLayout(req, res, next) {
       tbc: result.tbc,
       activeLanguages: activeLanguages,
       style: style,
+      markdown: markdown,
       user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),
