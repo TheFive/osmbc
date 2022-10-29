@@ -175,7 +175,10 @@ function clearDB(options, callback) {
     function(done) { ct(session.pg, pgOptions, done); }
 
   ], function(err) {
-    if (err) console.error(err);
+    if (err) {
+      console.error("Error in Clear DB (createDB.js)");
+      console.error(err);
+    }
     callback();
   });
 }
@@ -183,7 +186,10 @@ function clearDB(options, callback) {
 clearDB(pgOptions, function() {
   if (program.addUser) {
     userModule.createNewUser({ OSMUser: program.addUser, access: "full" }, function (err, result) {
-      if (err) return console.error(err);
+      if (err) return {
+        console.error("Error Clearing Database (in createDB.js)");
+        console.error(err);
+      }
       result.save(function () {
         console.info("User " + program.addUser + " created. Ready.");
       });

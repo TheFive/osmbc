@@ -148,12 +148,23 @@ describe("notification/mailReceiver", function() {
             to: "UserAllComment@mail.bc",
             subject: "[TESTBC] WN278 comment: To Add A Comment"
           };
-          let result = mailChecker.getCall(0).args[0];
-          should(result).eql(expectedMail);
+          const expectedMail2 = {
+            html: '<h2>Change in article of WN278</h2><p>Article <a href="http://localhost:35043/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for @forename surname and @EN</p>',
+            text: "CHANGE IN ARTICLE OF WN278\n\nArticle To Add A Comment [http://localhost:35043/article/1] was changed by\ntestuser\n\n\nCOMMENT WAS ADDED\n\nInformation for @forename surname and @EN",
+            from: "noreply@gmail.com",
+            to: "forename.surname@mail.com",
+            subject: "[TESTBC] WN278 comment: To Add A Comment"
+          };
 
-          result = mailChecker.getCall(1).args[0];
-          expectedMail.to = "forename.surname@mail.com";
-          should(result).eql(expectedMail);
+          let result1 = mailChecker.getCall(0).args[0];
+          let result2 = mailChecker.getCall(1).args[0];
+
+          if (result1.to !== "UserAllComment@mail.bc") {
+            result1 = result2;
+            result2 = mailChecker.getCall(0).args[0];
+          }
+          should(expectedMail).deepEqual(result1);
+          should(expectedMail2).deepEqual(result2);
           bddone();
         });
       });

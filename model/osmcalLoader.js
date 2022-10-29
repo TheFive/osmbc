@@ -42,10 +42,15 @@ function storeCache() {
 const cacheLoaded = false;
 function readCache() {
   if (cacheLoaded) return;
-  const dumpstring = fs.readFileSync(nominatimCacheFile);
-  const dump = JSON.parse(dumpstring);
-  for (const k in dump) {
-    nominatimCache.set(k, dump[k]);
+  try {
+    const dumpstring = fs.readFileSync(nominatimCacheFile);
+    const dump = JSON.parse(dumpstring);
+    for (const k in dump) {
+      nominatimCache.set(k, dump[k]);
+    }
+  } catch (err) {
+    if (err.code !== "ENOENT");
+    throw err;
   }
 }
 

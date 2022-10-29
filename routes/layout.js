@@ -17,9 +17,6 @@ const blogModule    = require("../model/blog.js");
 const userModule    = require("../model/user.js");
 
 const htmlRoot      = config.htmlRoot();
-const bootstrap     = config.getValue("bootstrap", { type: "string" });
-const jquery        = config.getValue("jquery", { type: "string" });
-const fontAwesome   = config.getValue("font_awesome", { type: "string" });
 const appName       = config.getValue("AppName", { mustExist: true });
 
 
@@ -39,7 +36,6 @@ function calculateUnreadMessages(list, user) {
 const layoutConst = {
   htmlroot: htmlRoot,
   url: url,
-  path: path,
   moment: moment,
   markdown: markdown,
   util: util,
@@ -49,20 +45,6 @@ const layoutConst = {
   auth: config.getValue("auth", { mustExist: true })
 };
 
-
-function path(component) {
-  if (component === "bootstrap" && bootstrap) return bootstrap;
-  if (component === "jquery" && jquery) return jquery;
-  if (component === "font-awesome" && fontAwesome) return fontAwesome;
-  if (component === "public") return htmlRoot;
-
-  let dist = "/dist";
-  if (component === "font-awesome") dist = "";
-  if (component === "calendar-heatmap") dist = "";
-  if (component === "moment") dist = "";
-  return htmlRoot + "/bower_components/" + component + dist;
-}
-module.path = path;
 
 
 
@@ -221,7 +203,6 @@ function prepareRenderLayout(req, res, next) {
 
 // Export Render Functions for testing purposes
 exports.prepareRenderLayout = prepareRenderLayout;
-exports.path = path;
 
 
 
