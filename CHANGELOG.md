@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.3](https://github.com/TheFive/osmbc/tree/4.0.3) (2022-10-29)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.2...4.0.3)
+
+**Fixed bugs:**
+
+- Error Handling is not giving enough information in production mode [\#962](https://github.com/TheFive/osmbc/issues/962)
+
 ## [4.0.2](https://github.com/TheFive/osmbc/tree/4.0.2) (2022-10-08)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.1...4.0.2)
@@ -2726,10 +2734,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.2...0.5.3)
 
-**Fixed bugs:**
-
-- below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
-
 ## [0.5.2](https://github.com/TheFive/osmbc/tree/0.5.2) (2015-12-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.5.1...0.5.2)
@@ -2741,6 +2745,7 @@
 
 **Fixed bugs:**
 
+- below the \*Próximos eventos\*  [\#236](https://github.com/TheFive/osmbc/issues/236)
 - include new blogstatus\_3.pdf please [\#234](https://github.com/TheFive/osmbc/issues/234)
 
 ## [0.5.1](https://github.com/TheFive/osmbc/tree/0.5.1) (2015-12-28)
