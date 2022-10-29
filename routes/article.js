@@ -73,7 +73,7 @@ function getArticleFromID(req, res, next, id) {
       return res.status(HttpStatus.NOT_FOUND).send("Article ID " + idNumber + " does not exist");
     }
     req.article = result;
-    next();
+    return next();
   });
 }
 
@@ -480,8 +480,7 @@ function postArticle(req, res, next) {
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
       if (err) {
-        next(err);
-        return;
+        return next(err);
       }
       res.redirect(returnToUrl);
     });
@@ -526,8 +525,7 @@ function postArticleNoTranslation(req, res, next) {
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
       if (err) {
-        next(err);
-        return;
+        return next(err);
       }
       res.redirect(returnToUrl);
     });
@@ -611,8 +609,7 @@ function postArticleWithOldValues(req, res, next) {
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
       if (err) {
-        next(err);
-        return;
+        return next(err);
       }
       res.redirect(returnToUrl);
     });
@@ -639,8 +636,7 @@ function postNewComment(req, res, next) {
   article.addCommentFunction(req.user, comment, function(err) {
     debug("postNewComment->setValues->addComment");
     if (err) {
-      next(err);
-      return;
+      return next(err);
     }
     if (req.query.reload === "false") {
       res.end("OK");
@@ -708,8 +704,7 @@ function postEditComment(req, res, next) {
   article.editComment(req.user, number, comment, function(err) {
     debug("postNewComment->setValues->addComment");
     if (err) {
-      next(err);
-      return;
+      return next(err);
     }
     if (req.query.reload === "false") {
       res.end("OK");
@@ -731,8 +726,7 @@ function markCommentRead(req, res, next) {
   article.markCommentRead(req.user, number, function(err) {
     debug("markCommentRead->markCommentRead");
     if (err) {
-      next(err);
-      return;
+      return next(err);
     }
     let returnToUrl  = htmlroot + "/article/" + article.id;
 
@@ -765,8 +759,7 @@ function doAction(req, res, next) {
   article[action](req.user, tag, function(err) {
     debug("doAction->%s callback", action);
     if (err) {
-      next(err);
-      return;
+      return next(err);
     }
     res.end("OK");
   });

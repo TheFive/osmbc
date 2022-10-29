@@ -9,8 +9,8 @@ html
     h1#errorTitle=message
     if (error && error.status)
       h2#errorCode=error.status + " " + getReasonPhrase(error.status)
-    if (error && error.detail)
-      pre=JSON.stringify(error.detail,null,2)
+    if (error && error.stack)
+      pre=error.stack
 
     button(type="button" onclick=`location.href='${layout.htmlroot}/osmbc.html'`) OSMBC Home
     button(type="button" onclick="goBack()")="Go Back"

@@ -143,7 +143,7 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
   app.use(morgan(logInfoTemplate, { immediate: true }));
   app.use(function(req, res, next) {
     console.info("Cookies: ", req.cookies);
-    next();
+    return next();
   });
 }
 
@@ -216,7 +216,7 @@ app.use(function(req, res, next) {
   debug("app.use Error Handler");
   const err = new Error("Page Not Found " + req.url);
   err.status = 404;
-  next(err);
+  return next(err);
 });
 
 
@@ -224,6 +224,10 @@ app.use(function(req, res, next) {
 
 app.use(function(err, req, res, next) {
   debug("Express Error Handler");
+  if (res.headersSent) {
+    return next(err);
+  }
+  logger.error("Logging Error Stack");
   logger.error("Error Message " + err.message);
   if (app.get("env") !== "production") {
     logger.error(err.stack);
@@ -242,8 +246,14 @@ app.use(function(err, req, res, next) {
         getReasonPhrase: HttpStatus.getReasonPhrase
 
       });
+    res.set({
+      "Content-Type": "text/html"
+    });
     res.send(errHtml);
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error("Application Error Handler failed");
+    console.error(err);
+  }
 });
 
 

@@ -336,7 +336,6 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
             const err = new Error("User >" + data.OSMUser + "< already exists.");
             err.status = HttpStatus.CONFLICT;
             return cb(err);
-            // return cb(new Error("User >" + data.OSMUser + "< already exists."));
           } else return cb();
         });
       } else return cb();

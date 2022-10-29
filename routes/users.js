@@ -253,10 +253,8 @@ function postUserId(req, res, next) {
   ], function(err) {
     if (!allowedToChangeUser) return res.status(403).send("Not Allowed To Post this user");
     if (err) {
-      next(err);
+      return next(err);
     }
-
-    if (err) return next(err);
     res.redirect(htmlroot + "/usert/" + id);
   });
 }

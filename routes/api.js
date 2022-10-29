@@ -32,7 +32,7 @@ function checkApiKey(req, res, next) {
       return next(err);
     }
     req.user = user;
-    next();
+    return next();
   });
 }
 

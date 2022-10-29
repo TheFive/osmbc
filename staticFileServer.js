@@ -32,6 +32,7 @@ const server = httpServer.createServer(options, app);
 try {
   server.listen(PORT, () => console.log(`Server listening on port: ${PORT}`));
 } catch (err) {
+  console.error("Error occured in Listen Loop");
   console.error(err);
 }
 

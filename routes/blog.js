@@ -314,6 +314,7 @@ function renderBlogPreviewHeader(req, res, next) {
     }
     res.next(new Error("Categorie Translation is missing Tile"));
   } catch (err) {
+    console.error("Error in renderBlogPreviewHeader");
     console.error(err);
     return next(err);
   }
