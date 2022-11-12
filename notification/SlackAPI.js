@@ -8,7 +8,7 @@ const logger    = require("../config.js").logger;
 
 const agentOptions = {
 
-  rejectUnauthorized: false
+  rejectUnauthorized: true
 };
 
 const agent = new https.Agent(agentOptions);

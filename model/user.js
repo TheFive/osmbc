@@ -11,9 +11,8 @@ const random         = require("randomstring");
 const emailValidator = require("email-validator");
 const config         = require("../config.js");
 const cheerio        = require("cheerio");
-const request        = require("request");
+const axios          = require("axios");
 const logger         = require("../config.js").logger;
-const animated       = require("animated-gif-detector");
 const HttpStatus     = require("http-status-codes");
 
 // generate an user object, use Prototpye
@@ -87,13 +86,13 @@ function cacheOSMAvatar(osmuser, callback) {
   if (process.env.NODE_ENV === "test") return callback();
   if (avatarCache[osmuser]) return callback();
   const requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
-  request({ url: requestString, timeout: 10000, followRedirect: false }, function(err, response, body) {
-    if (err && err.message !== "ETIMEDOUT") {
-      const error = new Error("User " + osmuser + " avatar could not be loaded.");
-      return callback(error, null);
-    }
-    if (body) {
-      const c = cheerio.load(body);
+  axios({
+    method: "GET",
+    url: requestString,
+    timeout: 1000
+  }).then(function(response) {
+    if (response.data) {
+      const c = cheerio.load(response.data);
       let avatarLink = c(".user_image").attr("src");
       const title = c("title").text();
       if (title === "No such user | OpenStreetMap") return callback();
@@ -102,12 +101,12 @@ function cacheOSMAvatar(osmuser, callback) {
       }
       if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
       avatarCache[osmuser] = avatarLink;
-      request(avatarLink)
-        .pipe(animated())
-        .on("animated", function() {
-          console.info(osmuser + " uses animated gif, will be exchanged by a default");
-          avatarCache[osmuser] = "https://www.openstreetmap.org/assets/users/images/large-afe7442b856c223cca92b1a16d96a3266ec0c86cac8031269e90ef93562adb72.png";
-        });
+    }
+    return callback();
+  }).catch(function(err) {
+    if (err.message !== "ETIMEDOUT") {
+      const error = new Error("User " + osmuser + " avatar could not be loaded.");
+      return callback(error, null);
     }
     return callback();
   });
