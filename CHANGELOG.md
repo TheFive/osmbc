@@ -1,11 +1,24 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.0.5](https://github.com/TheFive/osmbc/tree/4.0.5) (2022-11-12)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.3...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.4...4.0.5)
 
 **Fixed bugs:**
 
+- Delete Review and Close Blog Status Functions returning OK [\#965](https://github.com/TheFive/osmbc/issues/965)
+
+**Security fixes:**
+
+- Allow Letsencypt certificate for Mattermost [\#964](https://github.com/TheFive/osmbc/issues/964)
+
+## [4.0.4](https://github.com/TheFive/osmbc/tree/4.0.4) (2022-11-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.3...4.0.4)
+
+**Fixed bugs:**
+
+- Check, why MD is not completly interpreted in preview page of automatictranslatetext config. [\#963](https://github.com/TheFive/osmbc/issues/963)
 - Nominatim Cache File is not generated if not exist [\#958](https://github.com/TheFive/osmbc/issues/958)
 
 ## [4.0.3](https://github.com/TheFive/osmbc/tree/4.0.3) (2022-10-29)
@@ -94,6 +107,10 @@
 
 - Enable Formality Parameter for languages in Config File \(Deepl Pro\) [\#935](https://github.com/TheFive/osmbc/issues/935)
 
+**Fixed bugs:**
+
+- Distinguish between Source and target lang in deeplPro config. [\#936](https://github.com/TheFive/osmbc/issues/936)
+
 ## [3.7.2.d](https://github.com/TheFive/osmbc/tree/3.7.2.d) (2022-06-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.7.2c...3.7.2.d)
@@ -116,7 +133,6 @@
 
 **Fixed bugs:**
 
-- Distinguish between Source and target lang in deeplPro config. [\#936](https://github.com/TheFive/osmbc/issues/936)
 - url Check fails in case of non standard characters in URL. [\#931](https://github.com/TheFive/osmbc/issues/931)
 
 **Security fixes:**
@@ -292,6 +308,7 @@
 **Fixed bugs:**
 
 - Language Switcher not working in Admin Area [\#859](https://github.com/TheFive/osmbc/issues/859)
+- Checkbox Show Read Messages can be selected in Inbox [\#858](https://github.com/TheFive/osmbc/issues/858)
 - Consolidation of two links to Help [\#693](https://github.com/TheFive/osmbc/issues/693)
 
 **Closed issues:**
@@ -304,7 +321,6 @@
 
 **Fixed bugs:**
 
-- Checkbox Show Read Messages can be selected in Inbox [\#858](https://github.com/TheFive/osmbc/issues/858)
 - Cannot edit own comment [\#856](https://github.com/TheFive/osmbc/issues/856)
 - Calender Flags are shown in Article Link Control [\#855](https://github.com/TheFive/osmbc/issues/855)
 - syntax error at or near "imaginaire" [\#831](https://github.com/TheFive/osmbc/issues/831)
@@ -339,6 +355,10 @@
 
 - Superscript is not supported by deepl auto translation [\#840](https://github.com/TheFive/osmbc/issues/840)
 
+**Closed issues:**
+
+- Check automatic translation links after translation to point to the correct language. [\#825](https://github.com/TheFive/osmbc/issues/825)
+
 ## [3.4.4b](https://github.com/TheFive/osmbc/tree/3.4.4b) (2020-08-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4a...3.4.4b)
@@ -364,10 +384,6 @@
 
 - Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
 
-**Closed issues:**
-
-- Check automatic translation links after translation to point to the correct language. [\#825](https://github.com/TheFive/osmbc/issues/825)
-
 ## [3.4.4](https://github.com/TheFive/osmbc/tree/3.4.4) (2020-06-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.3...3.4.4)
@@ -391,6 +407,7 @@
 **Closed issues:**
 
 - Switch Library Deepl-Translator to Deepl-Client [\#821](https://github.com/TheFive/osmbc/issues/821)
+- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.11](https://github.com/TheFive/osmbc/tree/3.3.11) (2020-05-01)
 
@@ -474,10 +491,6 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
 
-**Closed issues:**
-
-- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
-
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6...3.3.6a)
@@ -499,10 +512,6 @@
 - Wortliga Textanalyse \(german blog\) link is not working \(http issue\) [\#783](https://github.com/TheFive/osmbc/issues/783)
 - The Review Comment field is to small. [\#782](https://github.com/TheFive/osmbc/issues/782)
 
-**Closed issues:**
-
-- Remove express-debug as it is not maintained [\#779](https://github.com/TheFive/osmbc/issues/779)
-
 ## [3.3.5](https://github.com/TheFive/osmbc/tree/3.3.5) (2018-08-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.4...3.3.5)
@@ -514,6 +523,7 @@
 **Closed issues:**
 
 - Collecting new article links on mobile [\#781](https://github.com/TheFive/osmbc/issues/781)
+- EMAIL for Guest on the first page [\#780](https://github.com/TheFive/osmbc/issues/780)
 
 ## [3.3.4](https://github.com/TheFive/osmbc/tree/3.3.4) (2018-08-12)
 
@@ -526,7 +536,7 @@
 
 **Closed issues:**
 
-- EMAIL for Guest on the first page [\#780](https://github.com/TheFive/osmbc/issues/780)
+- Remove express-debug as it is not maintained [\#779](https://github.com/TheFive/osmbc/issues/779)
 
 ## [3.3.3](https://github.com/TheFive/osmbc/tree/3.3.3) (2018-07-24)
 
@@ -546,7 +556,6 @@
 **Closed issues:**
 
 - Add encoding to Content-type header to /blog/$issue/preview?download=true [\#776](https://github.com/TheFive/osmbc/issues/776)
-- Spelling errors [\#769](https://github.com/TheFive/osmbc/issues/769)
 
 ## [3.3.2c](https://github.com/TheFive/osmbc/tree/3.3.2c) (2018-05-12)
 
@@ -555,6 +564,10 @@
 ## [3.3.2b](https://github.com/TheFive/osmbc/tree/3.3.2b) (2018-05-10)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.2...3.3.2b)
+
+**Closed issues:**
+
+- Spelling errors [\#769](https://github.com/TheFive/osmbc/issues/769)
 
 ## [3.3.2](https://github.com/TheFive/osmbc/tree/3.3.2) (2018-04-30)
 
@@ -583,7 +596,6 @@
 **Implemented enhancements:**
 
 - Add LOG\_PATH and SCRIPT\_PATH as environment Variables to bash API call. [\#765](https://github.com/TheFive/osmbc/issues/765)
-- Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
 
 **Fixed bugs:**
 
@@ -596,6 +608,7 @@
 **Implemented enhancements:**
 
 - Implement Interface to call Scripts. [\#763](https://github.com/TheFive/osmbc/issues/763)
+- Disallow Guests collecting in Blogs, that are not open. [\#762](https://github.com/TheFive/osmbc/issues/762)
 
 **Fixed bugs:**
 
@@ -1193,6 +1206,7 @@
 **Fixed bugs:**
 
 - Generation of Slack links has problems with \< or \> in title. [\#619](https://github.com/TheFive/osmbc/issues/619)
+- If Slack connection is broken, no change of data is possible. [\#351](https://github.com/TheFive/osmbc/issues/351)
 
 ## [2.2.5a](https://github.com/TheFive/osmbc/tree/2.2.5a) (2017-02-12)
 
@@ -2087,7 +2101,6 @@
 
 - Display only the first 15 results of a search. Show rest on demand. [\#409](https://github.com/TheFive/osmbc/issues/409)
 - Parse \<big\> statement in calendar. [\#407](https://github.com/TheFive/osmbc/issues/407)
-- Allow markdown in collection. [\#405](https://github.com/TheFive/osmbc/issues/405)
 
 **Fixed bugs:**
 
@@ -2100,6 +2113,7 @@
 **Implemented enhancements:**
 
 - Allow markdown in comments. [\#406](https://github.com/TheFive/osmbc/issues/406)
+- Allow markdown in collection. [\#405](https://github.com/TheFive/osmbc/issues/405)
 
 **Fixed bugs:**
 
@@ -2328,7 +2342,6 @@
 
 **Fixed bugs:**
 
-- If Slack connection is broken, no change of data is possible. [\#351](https://github.com/TheFive/osmbc/issues/351)
 - Links to drag and drop \(a killer feature\) missing since update to 8.0 [\#345](https://github.com/TheFive/osmbc/issues/345)
 
 ## [0.8.0a](https://github.com/TheFive/osmbc/tree/0.8.0a) (2016-02-21)
@@ -3157,6 +3170,7 @@
 **Fixed bugs:**
 
 - History tables destroys views on mobile phones. [\#106](https://github.com/TheFive/osmbc/issues/106)
+- Show CR \(linebreak\) in Collection [\#99](https://github.com/TheFive/osmbc/issues/99)
 
 ## [0.2.28g](https://github.com/TheFive/osmbc/tree/0.2.28g) (2015-10-31)
 
@@ -3209,7 +3223,6 @@
 **Fixed bugs:**
 
 - Problem with ' in a blog name. [\#103](https://github.com/TheFive/osmbc/issues/103)
-- Show CR \(linebreak\) in Collection [\#99](https://github.com/TheFive/osmbc/issues/99)
 
 ## [0.2.28](https://github.com/TheFive/osmbc/tree/0.2.28) (2015-10-23)
 
