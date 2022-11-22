@@ -10,7 +10,7 @@ const util          = require("../util/util.js");
 const config        = require("../config.js");
 const language      = require("../model/language.js");
 
-const version       = require("../version.js");
+const packageConfig = require("../package.json");
 const mdUtil        = require("../util/md_util");
 
 const blogModule    = require("../model/blog.js");
@@ -39,7 +39,7 @@ const layoutConst = {
   moment: moment,
   util: util,
   appName: appName,
-  osmbc_version: version.osmbc_version,
+  osmbc_version: (process.env.NODE_ENV !== "test") ? packageConfig.version : "T.V.S",
   title: appName,
   auth: config.getValue("auth", { mustExist: true })
 };
