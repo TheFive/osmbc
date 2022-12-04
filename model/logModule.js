@@ -34,8 +34,17 @@ module.exports.log = function log(object, callback) {
 
 
 module.exports.find = function(obj1, obj2, callback) {
-  debug("find");
-  pgMap.find(this, obj1, obj2, callback);
+  const self = this;
+  function _find(obj1, obj2, callback) {
+    debug("find");
+    pgMap.find(self, obj1, obj2, callback);
+  }
+  if (callback) {
+    return _find(obj1, obj2, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _find(obj1, obj2, (err, result) => (err) ? reject(err) : resolve(result));
+  });
 };
 module.exports.findById = function(id, callback) {
   debug("findById");

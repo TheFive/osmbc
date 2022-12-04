@@ -28,45 +28,67 @@ describe("model/config", function() {
     should(c.brasil).eql("http://blog.openstreetmap.de/wp-uploads/2016/03/br.svg");
     bddone();
   });
-  it("should have stored initialised value", function (bddone) {
-    testutil.findJSON("config", { name: "calendarflags" }, function(err, result) {
-      should.not.exist(err);
-      should.exist(result);
-      should(result.type).eql("yaml");
-      bddone();
-    });
+  it("should have stored initialised value", async function () {
+    const result = await testutil.findJSON("config", { name: "calendarflags" });
+    should.exist(result);
+    should(result.type).eql("yaml");
   });
 
 
 
   describe("setAndSave", function() {
-    beforeEach(function(bddone) {
-      async.series([
-        testutil.clearDB
-      ], bddone);
+    beforeEach(async function() {
+      await testutil.clearDB();
     });
-    it("should set only the one Value in the database", function (bddone) {
-      let changeConfig;
-      configModule.getConfigObject("calendarflags", function(err, result) {
-        should.not.exist(err);
-        should.exist(result);
-        changeConfig = result;
-        const id = changeConfig.id;
-        changeConfig.yaml = "not logged";
-        changeConfig.setAndSave({ OSMUser: "user" }, { version: 1, yaml: "not logged" }, function(err) {
-          should.not.exist(err);
-          testutil.findJSON("config", { name: "calendarflags" }, function(err, result) {
-            should.not.exist(err);
-            should(result).eql({ id: id, yaml: "not logged", version: 2, name: "calendarflags", type: "yaml" });
-            logModule.find({}, { column: "property" }, function (err, result) {
-              should.not.exist(err);
-              should.exist(result);
-              should(result.length).equal(0);
-              bddone();
-            });
-          });
-        });
-      });
+    it("should set only the one Value in the database", async function () {
+      let result = await configModule.getConfigObject("calendarflags");
+      should.exist(result);
+      const changeConfig = result;
+      const id = changeConfig.id;
+      changeConfig.yaml = "not logged";
+      await changeConfig.setAndSave({ OSMUser: "user" }, { version: 1, yaml: "not logged" });
+
+      result = await testutil.findJSON("config", { name: "calendarflags" });
+
+      should(result).eql({ id: id, yaml: "not logged", version: 2, name: "calendarflags", type: "yaml" });
+      result = await logModule.find({}, { column: "property" });
+
+      should.exist(result);
+      should(result.length).equal(0);
+    });
+  });
+  const yamlData = `
+  pictures: 
+    title: "#BlogName# Pictures"
+    collection: sample Collection
+    markdownDE: sample
+    notUsedKey: valueOfNotUsedKey
+  pictures2: 
+    title: "#BlogName# Pictures2"
+  `;
+  it("should only set allowed values for newArticles", async function() {
+    const newArticlesConfig = await configModule.getConfigObject("newArticles");
+    should.exist(newArticlesConfig);
+    const id = newArticlesConfig.id;
+    await newArticlesConfig.setAndSave({ OSMUser: "user" }, { version: 1, yaml: yamlData });
+    const result = await configModule.getConfigObject("newArticles");
+    // call json to create in memory.
+    result.getJSON();
+    should(result).eql({
+      id: id,
+      yaml: "\n  pictures: \n    title: \"#BlogName# Pictures\"\n    collection: sample Collection\n    markdownDE: sample\n    notUsedKey: valueOfNotUsedKey\n  pictures2: \n    title: \"#BlogName# Pictures2\"\n  ",
+      version: 2,
+      name: "newArticles",
+      type: "yaml",
+      json: {
+        pictures: {
+          collection: "sample Collection",
+          title: "#BlogName# Pictures"
+        },
+        pictures2: {
+          title: "#BlogName# Pictures2"
+        }
+      }
     });
   });
 });

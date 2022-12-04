@@ -121,7 +121,7 @@ describe("routes/index", function() {
         access: "full",
         version: 2,
         lastAccess: "2016-05-25T20:00:00.000Z",
-        lastChangeLogView: "1.8.4"
+        lastChangeLogView: "T.V.S"
       });
     });
     it("should deny denied access user",

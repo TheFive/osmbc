@@ -60,6 +60,7 @@ function renderConfigName(req, res, next) {
     if (name === "languageflags") jadeFile = "calendarflags";
     if (name === "calendartranslation") jadeFile = name;
     if (name === "editorstrings") jadeFile = name;
+    if (name === "newArticles") jadeFile = "config";
     if (name === "categorytranslation") jadeFile = name;
     if (name === "automatictranslatetext") jadeFile = name;
     if (name === "slacknotification") jadeFile = name;

@@ -247,21 +247,24 @@ function initialise(callback) {
   debug("initialise");
   slackhook = config.getValue("slacktool");
   messageCenter.initialise();
-  const channelList = configModule.getConfigObject("slacknotification").getJSON();
+  configModule.getConfigObject("slacknotification", function(err, slackConfig) {
+    if (err) return callback(err);
+    const channelList = slackConfig.getJSON();
 
-  channelReceiverMap = {};
-  for (let i = 0; i < channelList.length; i++) {
-    const channel = channelList[i];
-    if (channel.channel.substring(0, 1) !== "#") continue;
-    channelReceiverMap["Slack Connection " + i] = new ConfigFilter(channel, new SlackReceiver(channel.slack + channel.channel, channel.slack, channel.channel));
-  }
-  iteratorReceiver.receiverMap = channelReceiverMap;
-  assert(messageCenter.global);
-  if (!registered) {
-    messageCenter.global.registerReceiver(iteratorReceiver);
-    registered = true;
-  }
-  if (callback) return callback();
+    channelReceiverMap = {};
+    for (let i = 0; i < channelList.length; i++) {
+      const channel = channelList[i];
+      if (channel.channel.substring(0, 1) !== "#") continue;
+      channelReceiverMap["Slack Connection " + i] = new ConfigFilter(channel, new SlackReceiver(channel.slack + channel.channel, channel.slack, channel.channel));
+    }
+    iteratorReceiver.receiverMap = channelReceiverMap;
+    assert(messageCenter.global);
+    if (!registered) {
+      messageCenter.global.registerReceiver(iteratorReceiver);
+      registered = true;
+    }
+    if (callback) return callback();
+  });
 }
 
 
