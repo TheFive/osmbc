@@ -124,6 +124,7 @@ Config.prototype.getJSON = function getJSON() {
       this.json = yaml.load(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
       if (this.name === "languageflags") this.json = freshupEmoji(this.json);
+      checkAndRepair[this.name](this);
       return this.json;
     } catch (err) {
       return { error: "YAML convert error for: " + this.name + " ", errorMessage: err };
@@ -282,69 +283,85 @@ const checkAndRepair = {
     let v = c.getJSON();
     if (!v) v = [];
     c.json = v;
+  },
+  newArticles: function(c) {
+    let v = c.getJSON();
+    if (!v) v = {};
+    for (const k in v) {
+      for (const k2 in v[k]) {
+        if (["collection", "title", "categoryEN"].indexOf(k2) >= 0) continue;
+        delete v[k][k2];
+      }
+    }
+    c.json = v;
   }
 };
 
 
 Config.prototype.setAndSave = function setAndSave(user, data, callback) {
-  debug("setAndSave");
-
-  util.requireTypes([user, data, callback], ["object", "object", "function"]);
-
   const self = this;
+  function _configSetAndSave(user, data, callback) {
+    debug("setAndSave");
+    util.requireTypes([user, data, callback], ["object", "object", "function"]);
+    // try to convert YAML if necessary
 
-  // try to convert YAML if necessary
-
-  delete self.json;
-
-
-  async.eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
-    // There is no Value for the key, so do nothing
-    if (typeof (value) === "undefined") return cbEachOf();
-
-    // The Value to be set, is the same then in the object itself
-    // so do nothing
-    if (value === self[key]) return cbEachOf();
-    if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
-    if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
+    delete self.json;
 
 
-    debug("Set Key %s to value >>%s<<", key, value);
-    debug("Old Value Was >>%s<<", self[key]);
+    async.eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
+      // There is no Value for the key, so do nothing
+      if (typeof (value) === "undefined") return cbEachOf();
+
+      // The Value to be set, is the same then in the object itself
+      // so do nothing
+      if (value === self[key]) return cbEachOf();
+      if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
+      if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
 
 
-    async.series([
-      function calculateID(cb) {
-        if (self.id !== 0) return cb();
-        self.save(cb);
-      },
-      function(cb) {
-        // do not log validation key in logfile
-        const toValue = value;
+      debug("Set Key %s to value >>%s<<", key, value);
+      debug("Old Value Was >>%s<<", self[key]);
 
-        messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue }, cb);
-      },
-      function(cb) {
-        self[key] = value;
-        cb();
+
+      async.series([
+        function calculateID(cb) {
+          if (self.id !== 0) return cb();
+          self.save(cb);
+        },
+        function(cb) {
+          // do not log validation key in logfile
+          const toValue = value;
+
+          messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue }, cb);
+        },
+        function(cb) {
+          self[key] = value;
+          cb();
+        }
+      ], function(err) {
+        cbEachOf(err);
+      });
+    }, function setAndSaveFinalCB(err) {
+      debug("setAndSaveFinalCB");
+      if (err) return callback(err);
+      checkAndRepair[self.name](self);
+      if (self.json && self.json.error) {
+        return callback(new Error(self.json.errorMessage));
       }
-    ], function(err) {
-      cbEachOf(err);
-    });
-  }, function setAndSaveFinalCB(err) {
-    debug("setAndSaveFinalCB");
-    if (err) return callback(err);
-    checkAndRepair[self.name](self);
-    if (self.json && self.json.error) {
-      return callback(new Error(self.json.errorMessage));
-    }
-    actualiseConfigMap(self);
+      actualiseConfigMap(self);
 
-    if (self.name === "slacknotification") {
-      // Reinitialise Slack Receiver if something is changed on slack notification.
-      slackReceiver.initialise();
-    }
-    self.save(callback);
+      if (self.name === "slacknotification") {
+        // Reinitialise Slack Receiver if something is changed on slack notification.
+        slackReceiver.initialise();
+      }
+      self.save(callback);
+    });
+  }
+  if (callback) {
+    return _configSetAndSave(user, data, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _configSetAndSave(user, data, (err) => { (err) ? reject(err) : resolve(); });
   });
 };
 
@@ -408,7 +425,8 @@ function initialise(callback) {
       initConfigElement.bind(null, "automatictranslatetext"),
       initConfigElement.bind(null, "votes"),
       initConfigElement.bind(null, "eventsfilter"),
-      initConfigElement.bind(null, "ignoreforsearch")
+      initConfigElement.bind(null, "ignoreforsearch"),
+      initConfigElement.bind(null, "newArticles")
     ],
     function final(err) {
       debug("finalFunction initialise");
@@ -432,23 +450,31 @@ module.exports.getConfig = function(text) {
 };
 
 module.exports.getConfigObject = function(text, callback) {
-  debug("exports.getConfigObject");
-  let config = null;
-  assert(configMap);
-  if (configMap[text]) {
-    config = configMap[text];
-  } else {
-    for (const key in configMap) {
-      const c = configMap[key];
-      if (c.id === text) {
-        config = c;
-        break;
+  function _getConfigObject(text, callback) {
+    debug("exports.getConfigObject");
+    let config = null;
+    assert(configMap);
+    if (configMap[text]) {
+      config = configMap[text];
+    } else {
+      for (const key in configMap) {
+        const c = configMap[key];
+        if (c.id === text) {
+          config = c;
+          break;
+        }
       }
     }
+    assert(config);
+    if (callback) return callback(null, config);
+    return config;
   }
-  assert(config);
-  if (callback) return callback(null, config);
-  return config;
+  if (callback) {
+    return _getConfigObject(text, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _getConfigObject(text, (err, result) => (err) ? reject(err) : resolve(result));
+  });
 };
 
 module.exports.initialise = initialise;

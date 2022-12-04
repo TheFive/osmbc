@@ -63,9 +63,19 @@ exports.getJsonWithId = function getJsonWithId(table, id, cb) {
 // without using the model source, and is intended to used in
 // mocha tests.
 function internCreate() { return {}; }
+
 exports.findJSON = function findJSON(table, obj, cb) {
-  debug("findJSON");
-  pgMap.findOne({ table: table, create: internCreate }, obj, cb);
+  function _findJSON(table, obj, cb) {
+    debug("findJSON");
+    pgMap.findOne({ table: table, create: internCreate }, obj, cb);
+  }
+  if (cb) {
+    return _findJSON(table, obj, cb);
+  }
+
+  return new Promise((resolve, reject) => {
+    _findJSON(table, obj, (err, result) => (err) ? reject(err) : resolve(result));
+  });
 };
 
 // This function is used to clean up the tables in the test module

@@ -379,30 +379,30 @@ function createNewBlog(user, proto, noArticle, callback) {
       // create an Empty blog and simualte an id != 0
       const emptyBlog = exports.create();
       emptyBlog.id = -1;
+      const newArticles = configModule.getConfig("newArticles");
 
-      async.series([
-        function createCalendar(cb) {
+      async.eachOf(newArticles,
+        function createArticle(value, key, cb) {
           if (noArticle) return cb();
-          articleModule.createNewArticle({ blog: blog.name, categoryEN: "Upcoming Events", title: blog.name + " Upcoming Events" }, cb);
+          const newArticle = { blog: blog.name };
+          for (const k in value) {
+            newArticle[k] = value[k].replaceAll("#BlogName#", blog.name);
+          }
+          articleModule.createNewArticle(newArticle, cb);
         },
-        function createCalendar(cb) {
-          if (noArticle) return cb();
-          articleModule.createNewArticle({ blog: blog.name, categoryEN: "Picture", title: blog.name + " Picture" }, cb);
-        }
-      ],
-      function finalFunction(err) {
-        if (err) return callback(err);
-        blog.save(function feedback(err, savedblog) {
+        function finalFunction(err) {
           if (err) return callback(err);
-          emptyBlog.id = savedblog.id;
-          messageCenter.global.updateBlog(user, emptyBlog, change, function(err) {
-            if (err) {
-              return callback(err);
-            }
-            return callback(null, savedblog);
+          blog.save(function feedback(err, savedblog) {
+            if (err) return callback(err);
+            emptyBlog.id = savedblog.id;
+            messageCenter.global.updateBlog(user, emptyBlog, change, function(err) {
+              if (err) {
+                return callback(err);
+              }
+              return callback(null, savedblog);
+            });
           });
         });
-      });
     });
   }
   if (callback) {
