@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.6](https://github.com/TheFive/osmbc/tree/4.0.6) (2022-11-13)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.5...4.0.6)
+
+**Fixed bugs:**
+
+- Typos on login page [\#967](https://github.com/TheFive/osmbc/issues/967)
+
 ## [4.0.5](https://github.com/TheFive/osmbc/tree/4.0.5) (2022-11-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.4...4.0.5)
@@ -308,7 +316,6 @@
 **Fixed bugs:**
 
 - Language Switcher not working in Admin Area [\#859](https://github.com/TheFive/osmbc/issues/859)
-- Checkbox Show Read Messages can be selected in Inbox [\#858](https://github.com/TheFive/osmbc/issues/858)
 - Consolidation of two links to Help [\#693](https://github.com/TheFive/osmbc/issues/693)
 
 **Closed issues:**
@@ -321,6 +328,7 @@
 
 **Fixed bugs:**
 
+- Checkbox Show Read Messages can be selected in Inbox [\#858](https://github.com/TheFive/osmbc/issues/858)
 - Cannot edit own comment [\#856](https://github.com/TheFive/osmbc/issues/856)
 - Calender Flags are shown in Article Link Control [\#855](https://github.com/TheFive/osmbc/issues/855)
 - syntax error at or near "imaginaire" [\#831](https://github.com/TheFive/osmbc/issues/831)
@@ -355,10 +363,6 @@
 
 - Superscript is not supported by deepl auto translation [\#840](https://github.com/TheFive/osmbc/issues/840)
 
-**Closed issues:**
-
-- Check automatic translation links after translation to point to the correct language. [\#825](https://github.com/TheFive/osmbc/issues/825)
-
 ## [3.4.4b](https://github.com/TheFive/osmbc/tree/3.4.4b) (2020-08-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.4a...3.4.4b)
@@ -384,6 +388,10 @@
 
 - Translation with picture results in unnecessary escapes [\#826](https://github.com/TheFive/osmbc/issues/826)
 
+**Closed issues:**
+
+- Check automatic translation links after translation to point to the correct language. [\#825](https://github.com/TheFive/osmbc/issues/825)
+
 ## [3.4.4](https://github.com/TheFive/osmbc/tree/3.4.4) (2020-06-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.4.3...3.4.4)
@@ -407,7 +415,6 @@
 **Closed issues:**
 
 - Switch Library Deepl-Translator to Deepl-Client [\#821](https://github.com/TheFive/osmbc/issues/821)
-- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.11](https://github.com/TheFive/osmbc/tree/3.3.11) (2020-05-01)
 
@@ -490,6 +497,10 @@
 ## [3.3.7](https://github.com/TheFive/osmbc/tree/3.3.7) (2018-10-21)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.3.6a...3.3.7)
+
+**Closed issues:**
+
+- Full tab does not show up on smartphones [\#794](https://github.com/TheFive/osmbc/issues/794)
 
 ## [3.3.6a](https://github.com/TheFive/osmbc/tree/3.3.6a) (2018-10-06)
 
@@ -596,6 +607,7 @@
 **Implemented enhancements:**
 
 - Add LOG\_PATH and SCRIPT\_PATH as environment Variables to bash API call. [\#765](https://github.com/TheFive/osmbc/issues/765)
+- Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
 
 **Fixed bugs:**
 
@@ -617,10 +629,6 @@
 ## [3.2.1a](https://github.com/TheFive/osmbc/tree/3.2.1a) (2018-03-17)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/3.2.1...3.2.1a)
-
-**Implemented enhancements:**
-
-- Access Denied, please add information to "contact the team" [\#760](https://github.com/TheFive/osmbc/issues/760)
 
 **Fixed bugs:**
 
@@ -1225,6 +1233,10 @@
 - Warn if a link is collected but no category given [\#616](https://github.com/TheFive/osmbc/issues/616)
 - Position of button Edit Block Area in new calendar tool [\#599](https://github.com/TheFive/osmbc/issues/599)
 
+**Fixed bugs:**
+
+- links in edit-mode of an article disappear if one the two languages is closed [\#589](https://github.com/TheFive/osmbc/issues/589)
+
 ## [2.2.4](https://github.com/TheFive/osmbc/tree/2.2.4) (2017-02-07)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.2.3...2.2.4)
@@ -1304,6 +1316,10 @@
 
 - Change Blogs in Menu Bar [\#598](https://github.com/TheFive/osmbc/issues/598)
 
+**Fixed bugs:**
+
+- Do not generate not found WP User links [\#588](https://github.com/TheFive/osmbc/issues/588)
+
 ## [2.1.7](https://github.com/TheFive/osmbc/tree/2.1.7) (2016-12-31)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.1.6...2.1.7)
@@ -1317,7 +1333,6 @@
 **Fixed bugs:**
 
 - Not Found Towns in geonames leads to convert errors in OSMBC Calendar tool [\#593](https://github.com/TheFive/osmbc/issues/593)
-- Do not generate not found WP User links [\#588](https://github.com/TheFive/osmbc/issues/588)
 
 ## [2.1.6](https://github.com/TheFive/osmbc/tree/2.1.6) (2016-12-31)
 
@@ -1369,10 +1384,6 @@
 ## [2.1.0](https://github.com/TheFive/osmbc/tree/2.1.0) (2016-12-11)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/2.0.10...2.1.0)
-
-**Fixed bugs:**
-
-- links in edit-mode of an article disappear if one the two languages is closed [\#589](https://github.com/TheFive/osmbc/issues/589)
 
 ## [2.0.10](https://github.com/TheFive/osmbc/tree/2.0.10) (2016-12-10)
 
@@ -1449,7 +1460,6 @@
 
 **Fixed bugs:**
 
-- Vote list in overview sometimes takes content of article the line before. [\#560](https://github.com/TheFive/osmbc/issues/560)
 - visitors today [\#559](https://github.com/TheFive/osmbc/issues/559)
 
 ## [2.0.1](https://github.com/TheFive/osmbc/tree/2.0.1) (2016-10-24)
@@ -1461,6 +1471,10 @@
 - Implement an easy possibility to look after another langauge in the article editor. [\#557](https://github.com/TheFive/osmbc/issues/557)
 - In history list, make OID clickable to the object itself \(not the change object\) [\#556](https://github.com/TheFive/osmbc/issues/556)
 - Set the Page Title do something more meaningfull. [\#555](https://github.com/TheFive/osmbc/issues/555)
+
+**Fixed bugs:**
+
+- Vote list in overview sometimes takes content of article the line before. [\#560](https://github.com/TheFive/osmbc/issues/560)
 
 ## [2.0.0](https://github.com/TheFive/osmbc/tree/2.0.0) (2016-10-21)
 
@@ -2301,7 +2315,6 @@
 - Check emal sending on new comment style [\#353](https://github.com/TheFive/osmbc/issues/353)
 - Don't send messages if a blog will be totally closed [\#352](https://github.com/TheFive/osmbc/issues/352)
 - proposal: a button to fill in all the other languages with "no translation" would be fine [\#315](https://github.com/TheFive/osmbc/issues/315)
-- Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 
 ## [0.8.3](https://github.com/TheFive/osmbc/tree/0.8.3) (2016-02-24)
 
@@ -3285,6 +3298,10 @@
 ## [0.2.24a](https://github.com/TheFive/osmbc/tree/0.2.24a) (2015-10-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/0.2.24...0.2.24a)
+
+**Implemented enhancements:**
+
+- Better CreateDB script for install purposes [\#66](https://github.com/TheFive/osmbc/issues/66)
 
 **Fixed bugs:**
 
