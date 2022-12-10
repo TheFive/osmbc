@@ -40,7 +40,6 @@
     "iconv-lite": "0.6.x",
     "jquery": "3.6.x",
     "js-yaml": "^4.1.x",
-    "lru-cache": "7.14.x",
     "markdown-it": "13.0.x",
     "markdown-it-emoji": "^2.0.2",
     "markdown-it-imsize": "2.0.x",
