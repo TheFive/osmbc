@@ -1,8 +1,8 @@
 "use strict";
 
-var config = require("../config.js");
-var async = require("async");
-var should = require("should");
+const config = require("../config.js");
+const async = require("async");
+const should = require("should");
 
 describe("config", function() {
   describe("initialise", function() {
@@ -25,5 +25,4 @@ describe("config", function() {
       bddone();
     });
   });
-
 });

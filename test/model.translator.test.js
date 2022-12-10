@@ -13,7 +13,7 @@ const translator = require("../model/translator.js");
 
 
 describe("model/translator", function() {
-  before(function(bddone){
+  before(function(bddone) {
     initialize.initialiseModules(bddone);
   });
   it("should translate a simple text with bing", function (bddone) {
@@ -26,7 +26,7 @@ describe("model/translator", function() {
       .post("/translate?api-version=3.0&from=EN&to=DE&textType=html", [{ text: originTextHtml }])
       .reply(200, [{ translations: [{ text: translatedTextHtml }] }]);
 
-    var options = {
+    const options = {
       fromLang: "en",
       toLang: "de",
       text: originTextMd
@@ -47,7 +47,7 @@ describe("model/translator", function() {
       .post("/translate?api-version=3.0&from=EN&to=DE&textType=html", [{ text: originTextHtml }])
       .reply(200, [{ translations: [{ text: translatedTextHtml }] }]);
 
-    var options = {
+    const options = {
       fromLang: "en",
       toLang: "de",
       text: originTextMd
@@ -68,7 +68,7 @@ describe("model/translator", function() {
       .post("/translate?api-version=3.0&from=DE&to=FR&textType=html", [{ text: originTextHtml }])
       .reply(200, [{ translations: [{ text: translatedTextHtml }] }]);
 
-    var options = {
+    const options = {
       fromLang: "de",
       toLang: "fr",
       text: originTextMd
@@ -88,11 +88,10 @@ describe("model/translator", function() {
     const translatedTextMd = "This is the translated Text (less formal translated)";
 
     nock("https://api.deepl.com")
-      .post('/v2/translate',"auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%3C%2Fp%3E%0A")
-      .reply(200, {translations: [{ detected_source_language: "EN",text: translatedTextHtml}]
-    });
+      .post("/v2/translate", "auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%3C%2Fp%3E%0A")
+      .reply(200, { translations: [{ detected_source_language: "EN", text: translatedTextHtml }] });
 
-    var options = {
+    const options = {
       fromLang: "en",
       toLang: "de",
       text: originTextMd
@@ -108,8 +107,8 @@ describe("model/translator", function() {
     const originTextMd = "Originaler Text";
     const translatedTextMd = "Originaler Text";
 
- 
-    var options = {
+
+    const options = {
       fromLang: "en",
       toLang: "de",
       text: originTextMd
@@ -130,12 +129,11 @@ describe("model/translator", function() {
 
     nock("https://api.deepl.com")
 
-                             
-      .post("/v2/translate","auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%20mit%20%3Ca%20href%3D%22https%3A%2F%2Fmarkdown.link%2Fdemo%22%3EMarkdown%3C%2Fa%3E%20Link%3C%2Fp%3E%0A")
-      .reply(200, {translations: [{ detected_source_language: "EN",text: translatedTextHtml}]
-    });
 
-    var options = {
+      .post("/v2/translate", "auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%20mit%20%3Ca%20href%3D%22https%3A%2F%2Fmarkdown.link%2Fdemo%22%3EMarkdown%3C%2Fa%3E%20Link%3C%2Fp%3E%0A")
+      .reply(200, { translations: [{ detected_source_language: "EN", text: translatedTextHtml }] });
+
+    const options = {
       fromLang: "en",
       toLang: "de",
       text: originTextMd
@@ -154,22 +152,21 @@ describe("model/translator", function() {
     const translatedTextMd = "Lien :RU-s: >>> [:FR-t:](https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&_x_tr_sl=auto&_x_tr_tl=fr) et deuxième LInk :EN-s: >>> [:FR-t:](https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&_x_tr_tl=fr)";
 
 
-    
+
 
 
     nock("https://api.deepl.com")
-      .post("/v2/translate",{
+      .post("/v2/translate", {
         text: '<p>Link :RU-s: &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a> und zweiter LInk :EN-t: &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a></p>\n',
-        source_lang: 'DE',
-        target_lang: 'FR',
-        auth_key: 'Test Key Fake',
-        tag_handling: 'xml'
+        source_lang: "DE",
+        target_lang: "FR",
+        auth_key: "Test Key Fake",
+        tag_handling: "xml"
       }
-       )
-      .reply(200, {translations: [{ detected_source_language: "EN",text: translatedTextHtml}]
-    });
+      )
+      .reply(200, { translations: [{ detected_source_language: "EN", text: translatedTextHtml }] });
 
-    var options = {
+    const options = {
       fromLang: "de",
       toLang: "fr",
       text: originTextMd

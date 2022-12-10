@@ -21,7 +21,6 @@ const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot(
 
 
 describe("routes/index", function() {
-  const jar = {};
   let client;
 
 
@@ -53,12 +52,6 @@ describe("routes/index", function() {
         ],
         clear: true
       }, bddone);
-  });
-  after(function() {
-    mockdate.reset();
-  });
-  beforeEach(function(bddone) {
-    return bddone();
   });
   afterEach(function(bddone) {
     return bddone();
@@ -143,14 +136,13 @@ describe("routes/index", function() {
   });
   describe("route POST /language", function() {
     const url = baseLink + "/language";
-    const data = { lang: "DE" };
 
     async function requestLanguageSetter(client, whichLang, lang) {
       const form = {};
       form[whichLang] = lang;
       try {
         await client.post(baseLink + "/language?", form);
-      } finally {}
+      } finally { }
     }
 
     it("should change language for full access", async function () {

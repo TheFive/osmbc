@@ -136,10 +136,9 @@ describe("model/article", function() {
     });
   });
   describe("save", function() {
-    it("Should do save with a Promise", async function () {
+    it("should do save with a Promise", async function () {
       // Generate an article for test
-      let newArticle;
-      newArticle = await articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" });
+      const newArticle = await articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" });
       const id = newArticle.id;
 
       // get a second copy of the article (use Database for Copy)
@@ -185,10 +184,8 @@ describe("model/article", function() {
     });
     it("should keep the intern reference to a blog (_blog)", function (bddone) {
       // Generate an article for test
-      let newArticle;
       articleModule.createNewArticle({ markdownDE: "markdown", blog: "TEST" }, function(err, result) {
         should.not.exist(err);
-        newArticle = result;
         const id = result.id;
 
         // get a second copy of the article (use Database for Copy)
