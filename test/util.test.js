@@ -11,6 +11,9 @@ const markdown = require("markdown-it")();
 const mdUtil = require("../util/md_util.js");
 const initialise = require("../util/initialise.js");
 const testutil = require("../test/testutil.js");
+const InternalCache = require("../util/internalCache.js");
+const { sleep }    = require("../util/util.js");
+
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
@@ -194,6 +197,28 @@ describe("util", function() {
     it("should render emojies", function() {
       const markdown = mdUtil.osmbcMarkdown();
       should(markdown.render(":smiley: with a shortcut :-)")).eql("<p>😃 with a shortcut 😃</p>\n");
+    });
+  });
+  describe("internal cache", function() {
+    let internalCache = null;
+    beforeEach(function(bddone) {
+      fs.unlink(path.join(__dirname, "..", "cache", "testCache.json"), function() {
+        internalCache = new InternalCache({ file: "testCache.json" });
+        bddone();
+      });
+    });
+    it("should store a key", async function() {
+      should(internalCache.get("key")).eql(undefined);
+      internalCache.set("key", "value");
+      should(internalCache.get("key")).eql("value");
+    });
+    it("should store a key persistent", async function() {
+      should(internalCache.get("key")).eql(undefined);
+      internalCache.set("key", "value");
+      await (sleep(1200));
+      const differentCache = internalCache = new InternalCache({ file: "testCache.json" });
+
+      should(differentCache.get("key")).eql("value");
     });
   });
 });

@@ -34,6 +34,8 @@ const translator    = require("../model/translator.js");
 
 const auth          = require("../routes/auth.js");
 
+const InternalCache = require("../util/internalCache.js");
+
 
 
 
@@ -43,9 +45,7 @@ const axios = require("axios");
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 
-const LRU = require("lru-cache");
-
-const linkCache = new LRU({ max: 300, maxage: 1000 * 60 * 60 * 5 });
+const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
 
 
 

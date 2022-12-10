@@ -2,60 +2,20 @@
 
 const axios =   require("axios");
 const moment = require("moment");
-const path =   require("path");
-const fs   =   require("fs");
 
 const mdUtil = require("../util/md_util.js");
 const configModule = require("../model/config.js");
 const config = require("../config.js");
 const language = require("../model/language.js");
 
-const NodeCache = require("node-cache");
+const InternalCache = require("../util/internalCache.js");
 
-const nominatimCacheFile = path.join(__dirname, "..", "cache", "nominatim.cache");
-const nominatimCacheDir  = path.join(__dirname, "..", "cache");
-const nominatimCache = new NodeCache({ stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
+const nominatimCache = new InternalCache({ file: "nominatim.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
 
 const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
-function createDir(dir, callback) {
-  if (fs.existsSync(dir)) return callback();
-  return fs.mkdir(dir, callback);
-}
-
-function storeCache() {
-  function storeCacheFunction() {
-    const keys = nominatimCache.keys();
-    const dump = nominatimCache.mget(keys);
-    const dumpstring = JSON.stringify(dump);
-    createDir(nominatimCacheDir, function writeData() {
-      fs.writeFile(nominatimCacheFile, dumpstring, (err) => {
-        if (err) {
-          throw err;
-        }
-      });
-    });
-  }
-  // Wait 1 second to first return result and give timeslot to frontend
-  setTimeout(storeCacheFunction, 1000);
-}
-const cacheLoaded = false;
-function readCache() {
-  if (cacheLoaded) return;
-  try {
-    const dumpstring = fs.readFileSync(nominatimCacheFile);
-    const dump = JSON.parse(dumpstring);
-    for (const k in dump) {
-      nominatimCache.set(k, dump[k]);
-    }
-  } catch (err) {
-    if (err.code !== "ENOENT");
-    throw err;
-  }
-}
 
 async function loadEvents(lang) {
-  readCache();
   const url = "https://osmcal.org/api/v2/events/";
   let json;
   let request;
@@ -92,7 +52,6 @@ async function loadEvents(lang) {
     if (loc && loc.address && loc.address.country) event.country = loc.address.country;
     if (loc && loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
   }
-  storeCache();
   return json;
 }
 
