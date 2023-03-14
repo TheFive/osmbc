@@ -2,13 +2,13 @@
 
 const async   = require("async");
 const should  = require("should");
-const pg      = require("pg");
 const program = require("commander");
 
 
 
 const config        = require("../config.js");
 const pgMap         = require("../model/pgMap.js");
+const db            = require("../model/db.js");
 const blogModule    = require("../model/blog.js");
 const articleModule = require("../model/article.js");
 const logModule     = require("../model/logModule.js");
@@ -32,7 +32,7 @@ function coloredDiffLog(one, other) {
     const color = part.added
       ? "green"
       : part.removed ? "red" : "grey";
-    process.stderr.write(part.value[color]);
+    console.info(part.value[color]);
   });
   console.info();
 }
@@ -52,30 +52,33 @@ program
   .option("--addUser [user]", "add user with full access to database", "")
   .parse(process.argv);
 
-if (program.verbose) {
+const options = program.opts();
+
+if (options.verbose) {
   console.info("Using NODE_ENV " + config.env);
 }
 
 
 config.initialise();
 
-if (program.dropTable && process.env.NODE_ENV === "production") {
+if (options.dropTable && process.env.NODE_ENV === "production") {
   console.error("You are going to delete production tables, please do that manual in postgres");
   process.exit();
 }
 
 const pgOptions = {
-  dropTables: program.dropTables,
-  dropTable: program.dropTable,
-  dropIndex: program.dropIndex,
-  dropView: program.dropView,
-  createTable: program.createTable,
-  createTables: program.createTables,
-  createView: program.createView,
-  createIndex: program.createIndex,
-  verbose: program.verbose,
-  dd: program.dd,
-  updateIndex: program.updateIndex
+  dropTables: options.dropTables,
+  dropTable: options.dropTable,
+  dropIndex: options.dropIndex,
+  dropView: options.dropView,
+  createTable: options.createTable,
+  createTables: options.createTables,
+  createView: options.createView,
+  createIndex: options.createIndex,
+  verbose: options.verbose,
+  dd: options.dd,
+  updateIndex: options.updateIndex,
+  addUser: options.addUser
 };
 
 
@@ -89,14 +92,21 @@ function analyseTable(pgObject, pgOptions, callback) {
   for (const k in pgObject.indexDefinition) {
     expected[k] = pgObject.indexDefinition[k];
   }
-  pg.connect(config.pgstring, function(err, client, pgdone) {
+
+  const pool = db.getPool();
+  pool.connect(function(err, client, pgdone) {
+    if (err) {
+      console.error("Can not connect to DB. " + err);
+      process.exit(1);
+    }
     const sql = "select indexname,indexdef from pg_indexes where tablename ='" + pgObject.table + "' and indexname not in (select conname from pg_constraint);";
-    const query = client.query(sql);
-    query.on("err", function(err) {
+    // const query = client.query(new pg.Query(sql));
+    const query = client.query(sql, function (err, res) {
+    if (err) {
       pgdone();
       return callback(err);
-    });
-    query.on("row", function(row) {
+    };
+    for (var row of res.rows) {
       const index = row.indexname;
       const indexdef = row.indexdef;
       database[index] = indexdef;
@@ -114,45 +124,43 @@ function analyseTable(pgObject, pgOptions, callback) {
       } else {
         foundUnnecessary[index] = indexdef;
       }
-    });
-    query.on("end", function() {
-      pgdone();
-      let k;
-      if (pgOptions.verbose) {
-        console.info("");
-        console.info("");
-        console.info("Checking Table", pgObject.table);
-        console.info(" Found indexes OK");
-        for (k in foundOK) {
-          console.info("  " + k);
-        }
-        console.info(" Found indexes Need Update");
-        for (k in foundNOK) {
-          console.info("  " + k + " Difference:");
-          coloredDiffLog(foundNOK[k], database[k]);
-        }
-        console.info(" Missing indexes");
-        for (k in expected) {
-          console.info("  " + k);
-          coloredDiffLog(expected[k], "");
-        }
-        console.info(" Unnecessary indexes");
-        for (k in foundUnnecessary) {
-          console.info("  " + k);
-          coloredDiffLog("", foundUnnecessary[k]);
-        }
+    };
+    pgdone();
+    let k;
+    if (pgOptions.verbose) {
+      console.info("");
+      console.info("");
+      console.info("Checking Table", pgObject.table);
+      console.info(" Found indexes OK");
+      for (k in foundOK) {
+        console.info("  " + k);
       }
-      const result = {
-        foundOK: foundOK,
-        foundNOK: foundNOK,
-        foundUnnecessary: foundUnnecessary,
-        expected: expected
-      };
-
-      return callback(null, result);
-    });
+      console.info(" Found indexes Need Update");
+      for (k in foundNOK) {
+        console.info("  " + k + " Difference:");
+        coloredDiffLog(foundNOK[k], database[k]);
+      }
+      console.info(" Missing indexes");
+      for (k in expected) {
+        console.info("  " + k);
+        coloredDiffLog(expected[k], "");
+      }
+      console.info(" Unnecessary indexes");
+      for (k in foundUnnecessary) {
+        console.info("  " + k);
+        coloredDiffLog("", foundUnnecessary[k]);
+      }
+    }
+    const result = {
+      foundOK: foundOK,
+      foundNOK: foundNOK,
+      foundUnnecessary: foundUnnecessary,
+      expected: expected
+    };
+    return callback(null, result);
   });
-}
+});
+};
 
 
 
@@ -184,14 +192,15 @@ function clearDB(options, callback) {
 }
 
 clearDB(pgOptions, function() {
-  if (program.addUser) {
-    userModule.createNewUser({ OSMUser: program.addUser, access: "full" }, function (err, result) {
-      if (err) return {
+  if (pgOptions.addUser) {
+    userModule.createNewUser({ OSMUser: pgOptions.addUser, access: "full" }, function (err, result) {
+      if (err) {
         console.error("Error Clearing Database (in createDB.js)");
         console.error(err);
+        return(err);
       }
       result.save(function () {
-        console.info("User " + program.addUser + " created. Ready.");
+        console.info("User " + pgOptions.addUser + " created. Ready.");
       });
     });
   } else {
