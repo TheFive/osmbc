@@ -205,7 +205,7 @@ The solution for this is using `nvm` — _Node Version Manager_:
 
 The database can be installed using the two javascript files that are **in the folder `import`**.
 
-### Creating tables and views and the first uster
+### Creating tables and views and the first user
 
 _→ See also: section about [Configuration files](#2---configuration-files), for database access_
 
@@ -220,7 +220,7 @@ To create the full database run it with the option --createTable --createIndex -
 If there are already tables and views you can drop them with --dropTable --dropIndex and --dropView. Please make sure to have a 
 backup of your productive data, before doing that.
 
-To update to the acutal set of indexes just user --updateIndex. (--updateNAME option is for now only available for indexes).
+To update to the actual set of indexes just user --updateIndex. (--updateNAME option is for now only available for indexes).
 
 A full working empty copy of OSMBC can be generated with:
 ```sh
