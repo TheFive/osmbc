@@ -86,7 +86,7 @@
     "nock": "13.2.x",
     "nyc": "^15.1.0",
     "pretty": "^2.0.0",
-    "selenium-webdriver": "4.5.x",
+    "selenium-webdriver": "4.8.x",
     "serve-index": "^1.9.1",
     "should": "^13.2.3",
     "sinon": "14.0.x",
