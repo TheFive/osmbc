@@ -48,5 +48,4 @@ nominatim.cache
 fontawesome-webfont.woff2
 bootstrap.min.css
 font-awesome.min.css
-linkExist.cache
-testCache.json
+cache
