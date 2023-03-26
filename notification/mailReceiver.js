@@ -129,7 +129,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callb
   welcomemail.render("welcome html.pug", data).then(function welcomemailRender(result) {
     debug("welcomemailRender");
 
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -164,7 +164,7 @@ MailReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, 
   infomailReview.render("infomailReview html.pug", data).then(function infomailRenderBlog(result) {
     debug("infomailRenderInfo");
 
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -195,7 +195,7 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, la
   infomailClose.render("infomailClose html.pug", data).then(function infomailRenderClose(result) {
     debug("infomailRenderClose");
 
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -244,7 +244,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user, article, cha
 
   infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -280,7 +280,7 @@ MailReceiver.prototype.addComment = function addComment(user, article, text, cal
 
   infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -318,7 +318,7 @@ MailReceiver.prototype.editComment = function editComment(user, article, index, 
 
   infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -364,7 +364,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user, blog, change, call
 
   infomailBlog.render("infomailBlog html.pug", data).then(function infomailRenderBlog(result) {
     debug("infomailRenderBlog");
-    const text = htmlToText.fromString(result, { tables: ["#valuetable"] });
+    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address

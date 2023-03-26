@@ -984,7 +984,7 @@ describe("routes/article", function() {
         .get("/apage")
         .reply(404, " Not OK");
       const sitecall2 = nock("https://www.site.ort2")
-        .get("/äpäge")
+        .get("/%C3%A4p%C3%A4ge")
         .reply(200, "OK");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });

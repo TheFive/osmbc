@@ -34,6 +34,8 @@ const translator    = require("../model/translator.js");
 
 const auth          = require("../routes/auth.js");
 
+const InternalCache = require("../util/internalCache.js");
+
 
 
 
@@ -43,9 +45,7 @@ const axios = require("axios");
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 
-const LRU = require("lru-cache");
-
-const linkCache = new LRU({ max: 300, maxage: 1000 * 60 * 60 * 5 });
+const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
 
 
 
@@ -109,6 +109,11 @@ function renderArticleId(req, res, next) {
   debug("renderArticleId");
 
   const languageFlags = configModule.getConfig("languageflags");
+  let linkAttributes = {};
+  if (config.getValue("link-attributes") && config.getValue("link-attributes").editor) {
+    linkAttributes = config.getValue("link-attributes").editor;
+  }
+
   const votes = configModule.getConfig("votes");
 
   /* votes.forEach(function(item){
@@ -209,10 +214,10 @@ function renderArticleId(req, res, next) {
   },
   function (err, result) {
     debug("renderArticleId->finalFunction");
-    const markdown = mdUtil.osmbcMarkdown();
+    const markdown = mdUtil.osmbcMarkdown({ target: "editor" });
     if (err) return next(err);
     if (result.notranslate) return res.redirect(result.notranslate);
-    const renderer = new BlogRenderer.HtmlRenderer();
+    const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
 
 
 
@@ -251,6 +256,7 @@ function renderArticleId(req, res, next) {
       usedLinks: result.usedLinks,
       categories: categories,
       languageFlags: languageFlags,
+      linkAttributes: linkAttributes,
       util: util,
       accessMap: result.accessMap,
       collectedByGuest: collectedByGuest,
@@ -406,7 +412,7 @@ function searchAndCreate(req, res, next) {
     articleModule.fullTextSearch(search, { column: "blog", desc: true }, function (err, result) {
       debug("searchAndCreate->fullTextSearch");
       if (err) return next(err);
-      const renderer = new BlogRenderer.HtmlRenderer(null);
+      const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
       assert(res.rendervar);
       res.set("content-type", "text/html");
       res.render("collect", {
@@ -840,7 +846,7 @@ function searchArticles(req, res, next) {
     debug("search->finalFunction");
     if (err) return next(err);
     assert(res.rendervar);
-    const renderer = new BlogRenderer.HtmlRenderer(null);
+    const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
     res.render("collect", {
       layout: res.rendervar.layout,
       search: search,

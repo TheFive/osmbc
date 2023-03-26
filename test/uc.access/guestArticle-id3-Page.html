@@ -191,9 +191,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
         <div class="row">
           <div class="col-sm-1"><img style="height:40px;width:40px"></div>
           <div class="col-sm-11"> <b><i class="fa fa-envelope" onclick="window.callAndRedraw('/article/3/markCommentRead?index=1&amp;reload=false','/article/3/commentArea');"></i><span> </span><span>TheFive</span></b><span> </span><span class="text-muted small">a few seconds ago</span>
-            <p></p>
-            <p>This is a comment for <a class="bg-warning" style="color:black" href="/usert/GuestUser">@GuestUser</a></p>
-            <p></p>
+            <p>This is a comment for @GuestUser</p>
           </div>
         </div>
         <div class="row">
@@ -233,6 +231,7 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
     <script src="/javascripts/markdown-it-emoji.min.js"></script>
     <script src="/javascripts/markdown-it-sup.min.js"></script>
     <script src="/javascripts/markdown-it-imsize.min.js"></script>
+    <script src="/javascripts/markdown-it-link-attributes.min.js"></script>
     <script src="/javascripts/article_view.js"></script>
     <script nonce="">
       // set Constant for Window with JADE Variables
@@ -240,6 +239,7 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
       activeLanguages = JSON.parse('["EN"]');
       emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJTNBLSklMjIlN0Q=`)));
       emojiList = JSON.parse(decodeURIComponent(window.atob(`JTdCJTIyc21pbGV5JTIyJTNBJTIyJUYwJTlGJTk4JTgzJTIyJTJDJTIyZ2VybWFueSUyMiUzQSUyMiUzQ2ltZyUyMHNyYyUzRCU1QyUyMiUyRmxvY2FsTWVkaWFGT2xkZXIyMDE1JTJGZGUtYmxhY2suc3ZnJTVDJTIyJTIwJTJGJTNFJTIyJTdE`)));
+      linkAttributes = JSON.parse(decodeURIComponent(window.atob(`JTdCJTIydGFyZ2V0JTIyJTNBJTIyX2JsYW5rJTIyJTJDJTIycmVsJTIyJTNBJTIybm9vcGVuZXIlMjIlN0Q=`)));
       leftLang = "EN";
       rightLang = "";
       lang3 = "";

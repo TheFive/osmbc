@@ -2,9 +2,9 @@
 
 
 
-var should = require("should");
+const should = require("should");
 
-var UserConfigFilter = require("../notification/UserConfigFilter.js");
+const UserConfigFilter = require("../notification/UserConfigFilter.js");
 
 
 
@@ -13,8 +13,8 @@ var UserConfigFilter = require("../notification/UserConfigFilter.js");
 
 describe("notification/messagefilter", function() {
   describe("UserConfigFilter", function() {
-    var dummy;
-    var called;
+    let dummy;
+    let called;
     beforeEach(function (bddone) {
       called = false;
       dummy = {
@@ -32,64 +32,56 @@ describe("notification/messagefilter", function() {
 
     describe("addComment", function () {
       it("should filter comments that are addressed (Language) full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {}, "Comment for @DE ", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.addComment({ OSMUser: "TheFive" }, {}, "Comment for @DE ", function (err) {
           should.not.exist(err);
           should(called).be.True();
           bddone();
         });
       });
       it("should filter comments that are addressed (Language) guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {}, "Comment for @DE ", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.addComment({ OSMUser: "TheFive" }, {}, "Comment for @DE ", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that are addressed (user) guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {firstCollector: "olli"}, "Comment for @TheFive test", function (err) {
-          should.not.exist(err);
-          should(called).be.True();
-          bddone();
-        });
-      });
-      it("should filter comments that are addressed (user) guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {firstCollector: "TheFive"}, "Comment for @TheFive test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.addComment({ OSMUser: "TheFive" }, { firstCollector: "olli" }, "Comment for @TheFive test", function (err) {
           should.not.exist(err);
           should(called).be.True();
           bddone();
         });
       });
       it("should filter comments that are not addressed full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {}, "Comment for @tester test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.addComment({ OSMUser: "TheFive" }, {}, "Comment for @tester test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that are not addressed guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.addComment({OSMUser: "TheFour"}, {}, "Comment for @tester test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.addComment({ OSMUser: "TheFour" }, {}, "Comment for @tester test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that start with search key full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {}, "Comment for @derTom test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.addComment({ OSMUser: "TheFive" }, {}, "Comment for @derTom test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that start with search key guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.addComment({OSMUser: "TheFive"}, {}, "Comment for @derTom test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.addComment({ OSMUser: "TheFive" }, {}, "Comment for @derTom test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
@@ -98,72 +90,72 @@ describe("notification/messagefilter", function() {
     });
     describe("editComment", function () {
       it("should filter comments that are addressed (Language) V2 full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @DE ", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @DE ", function (err) {
           should.not.exist(err);
           should(called).be.True();
           bddone();
         });
       });
       it("should filter comments that are addressed (Language) V2 guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @DE ", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @DE ", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that are addressed (user) V2 full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @TheFive test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @TheFive test", function (err) {
           should.not.exist(err);
           should(called).be.True();
           bddone();
         });
       });
       it("should filter comments that are addressed (user) V2 guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {firstCollector: "TheFive"}, 0, "Comment for @TheFive test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, { firstCollector: "TheFive" }, 0, "Comment for @TheFive test", function (err) {
           should.not.exist(err);
           should(called).be.True();
           bddone();
         });
       });
-      it("should filter comments that are addressed (user) V2 guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {firstCollector: "olli"}, 0, "Comment for @TheFive test", function (err) {
+      it("should filter comments that are addressed (user) V2 guest access another edit", function (bddone) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, { firstCollector: "olli" }, 0, "Comment for @TheFive test", function (err) {
           should.not.exist(err);
           should(called).be.True();
           bddone();
         });
       });
       it("should filter comments that are not addressed V2 full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @tester test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @tester test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that are not addressed V2 guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @tester test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @tester test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that start with search key V2 full access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @derTom test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "full" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @derTom test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();
         });
       });
       it("should filter comments that start with search key V2 guest access", function (bddone) {
-        var ucf = new UserConfigFilter({mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest"}, dummy);
-        ucf.editComment({OSMUser: "TheFive"}, {}, 0, "Comment for @derTom test", function (err) {
+        const ucf = new UserConfigFilter({ mailComment: ["DE", "TheFive"], OSMUser: "TheFive", access: "guest" }, dummy);
+        ucf.editComment({ OSMUser: "TheFive" }, {}, 0, "Comment for @derTom test", function (err) {
           should.not.exist(err);
           should(called).be.False();
           bddone();

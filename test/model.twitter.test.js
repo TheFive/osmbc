@@ -1,24 +1,24 @@
 "use strict";
 
-var twitter = require("../model/twitter.js");
-var config = require("../config.js");
-var path = require("path");
-var fs = require("fs");
-var sinon = require("sinon");
-var nock = require("nock");
-var should = require("should");
+const twitter = require("../model/twitter.js");
+const config = require("../config.js");
+const path = require("path");
+const fs = require("fs");
+const sinon = require("sinon");
+const nock = require("nock");
+const should = require("should");
 
 
 describe("model/twitter", function() {
-  var oldGetFunction;
+  let oldGetFunction;
   before(function (bddone) {
     config.initialise();
     oldGetFunction = twitter.for_debug_only.twitterClient.get;
     twitter.for_debug_only.twitterClient.get = sinon.spy(function (param, option, cb) {
-      should(option).eql({tweet_mode: "extended"});
+      should(option).eql({ tweet_mode: "extended" });
       if (param.substring(0, 15) === "/statuses/show/") {
-        var id = param.substring(15, 999);
-        var r = fs.readFileSync(path.join(__dirname, "data", "TwitterStatus-" + id + ".json"));
+        const id = param.substring(15, 999);
+        let r = fs.readFileSync(path.join(__dirname, "data", "TwitterStatus-" + id + ".json"));
         r = JSON.parse(r);
         return cb(null, r);
       }
@@ -40,7 +40,7 @@ describe("model/twitter", function() {
   it("should expand a twitter collection url with url in tweet", function (bddone) {
     nock("http://bit.ly")
       .intercept("/1Ghc7dI", "HEAD")
-      .reply(301, undefined, {location: "http://discoverspatial.com/courses/qgis-for-beginners"});
+      .reply(301, undefined, { location: "http://discoverspatial.com/courses/qgis-for-beginners" });
 
     nock("http://discoverspatial.com")
       .intercept("/courses/qgis-for-beginners", "HEAD")
@@ -76,7 +76,7 @@ describe("model/twitter", function() {
   it("should expand two twitter urls", function (bddone) {
     nock("http://bit.ly")
       .intercept("/1Ghc7dI", "HEAD")
-      .reply(301, undefined, {location: "http://discoverspatial.com/courses/qgis-for-beginners"});
+      .reply(301, undefined, { location: "http://discoverspatial.com/courses/qgis-for-beginners" });
 
     nock("http://discoverspatial.com")
       .intercept("/courses/qgis-for-beginners", "HEAD")
@@ -91,7 +91,7 @@ describe("model/twitter", function() {
   it("should not reexpand two twitter urls, if they are expanded", function (bddone) {
     nock("http://bit.ly")
       .intercept("/1Ghc7dI", "HEAD")
-      .reply(301, undefined, {location: "http://discoverspatial.com/courses/qgis-for-beginners"});
+      .reply(301, undefined, { location: "http://discoverspatial.com/courses/qgis-for-beginners" });
 
     nock("http://discoverspatial.com")
       .intercept("/courses/qgis-for-beginners", "HEAD")
@@ -106,7 +106,7 @@ describe("model/twitter", function() {
   it("should not reexpand one twitter urls, if one other is expanded", function (bddone) {
     nock("http://bit.ly")
       .intercept("/1Ghc7dI", "HEAD")
-      .reply(301, undefined, {location: "http://discoverspatial.com/courses/qgis-for-beginners"});
+      .reply(301, undefined, { location: "http://discoverspatial.com/courses/qgis-for-beginners" });
 
     nock("http://discoverspatial.com")
       .intercept("/courses/qgis-for-beginners", "HEAD")

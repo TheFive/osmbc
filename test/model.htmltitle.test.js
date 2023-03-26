@@ -35,7 +35,7 @@ describe("model/htmltitle", function() {
       return bddone();
     });
   });
-  it("ncu", async function() {
+  it("should check a html title", async function() {
     try {
       const result = await htmltitle.getTitle("http://forum.openstreetmap.org/viewtopic.php?id=54487");
       should(result).eql("Bridges which aren't on any Way? / Questions and Answers");

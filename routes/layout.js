@@ -165,7 +165,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
-    const markdown = mdUtil.osmbcMarkdown();
+    const markdown = mdUtil.osmbcMarkdown({ target: "editor" });
 
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
@@ -185,12 +185,10 @@ function prepareRenderLayout(req, res, next) {
       tbc: result.tbc,
       activeLanguages: activeLanguages,
       style: style,
-      markdown: markdown,
       user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),
-      md_render: util.md_render,
-      md_renderInline: markdown.renderInline,
+      md_renderInline: (text) => markdown.renderInline(text ?? ""),
       getAvatar: userModule.getAvatar,
       scriptUser: scriptUser,
       blogTranslationVisibleFor: blogTranslationVisibleFor

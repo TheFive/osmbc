@@ -61,9 +61,9 @@ block content
                 tr.d-none(class="class_" + article.id)
                   td
                   td(colspan=1)
-                    |!{layout.md_render(article["markdown"+layout.user.getLang(0)])}
+                    |!{layout.md_renderInline(article["markdown"+layout.user.getLang(0)])}
                   td(colspan=2)
-                    |!{layout.md_render(article["markdown"+layout.user.getLang(1)])}
+                    |!{layout.md_renderInline(article["markdown"+layout.user.getLang(1)])}
 
            
       else

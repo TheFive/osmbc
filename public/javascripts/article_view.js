@@ -29,6 +29,7 @@ function init() {
   window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
   window.mdRender.use(window.markdownitSup);
   window.mdRender.use(window["markdown-it-imsize.js"]);
+  window.mdRender.use(window.markdownitLinkAttributes, { attrs: window.linkAttributes });
 
 
   const oldEmoji = window.mdRender.renderer.rules.emoji;

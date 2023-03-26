@@ -4,6 +4,8 @@ const markdownIt = require("markdown-it");
 const markdownItEmoji = require("markdown-it-emoji");
 const markdownItSup = require("markdown-it-sup");
 const markdownItImsize = require("markdown-it-imsize");
+const mila = require("markdown-it-link-attributes");
+const config = require("../config.js");
 
 const configModule = require("../model/config.js");
 
@@ -21,10 +23,20 @@ module.exports.osmbcMarkdown = function osmbcMarkdown(options) {
   } else {
     localEmoji = languageFlags.emoji;
   }
-  return markdownIt()
+  let linkAttributeOptions = {};
+  if (options && options.target) {
+    if (config.getValue("link-attributes") && config.getValue("link-attributes")[options.target]) {
+      linkAttributeOptions = config.getValue("link-attributes")[options.target];
+    }
+  }
+
+  const result =  markdownIt()
+    .use(mila, { attrs: linkAttributeOptions })
     .use(markdownItEmoji, { defs: localEmoji, shortcuts: languageFlags.shortcut })
     .use(markdownItSup)
-    .use(markdownItImsize, { autofill: true });
+    .use(markdownItImsize, { autofill: true })
+   ;
+  return result;
 };
 
 
