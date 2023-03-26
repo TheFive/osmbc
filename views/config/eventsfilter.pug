@@ -53,7 +53,14 @@ block showContentOfConfig
           +fieldRow("daysAfterBlogStart")
           +fieldRow("duration")
           +fieldRow("big_duration")
-          +fieldRow("useGeoNames")
           +fieldRow("enableCountryFlags")
           each l,c in countries
             +countryRow(c)
+  h2="Hint"
+  p="'daysAfterBlogStart' is added to the blog start date. Events should end after this date."
+  p="'duration' is the length of the timeframe, events are shown in. It is added to the daysAfterBlogStart date. Events should not start after this date."
+  p="'big_duration' is planned to have a bigger timeframe for e.g. conferences. Needs an API improvmeent of OSMCAL"
+  p="'enableCountryFlags' will add country flags in the calendar."
+    
+    
+
