@@ -289,7 +289,8 @@ function executeScript(req, res, next) {
 
 function getEventTable(req, res, next) {
   const lang = req.query.lang;
-  osmcalloader.getEventMdCb(lang, function(err, result) {
+  const blogStartDate = req.body.blogStartDate;
+  osmcalloader.getEventMdCb(lang, blogStartDate, function(err, result) {
     if (err) return next(err);
     return res.end(result);
   });

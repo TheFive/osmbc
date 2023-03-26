@@ -55,18 +55,18 @@ async function loadEvents(lang) {
   return json;
 }
 
-async function filterEvents(events, filter) {
+async function filterEvents(events, filter, blogStartDate) {
   const result = [];
   let event;
   for (event of events) {
-    if (!filterEvent(event, filter)) result.push(event);
+    if (!filterEvent(event, filter, blogStartDate)) result.push(event);
   }
   return result;
 }
 
 
 
-function filterEvent(event, option) {
+function filterEvent(event, option, blogStartDate) {
   let date = new moment();
 
 
@@ -74,12 +74,13 @@ function filterEvent(event, option) {
   let endDate = startDate.clone();
   if (event.date && typeof event.date.end !== "undefined") endDate = moment(event.date.end);
 
-  let diff = -3;
-  const optionDiff = (option) ? parseInt(option.date) : diff;
+  let daysAfterBlogStart = 0;
+  const optionDiff = (option) ? parseInt(option.daysAfterBlogStart) : daysAfterBlogStart;
   if (!Number.isNaN(optionDiff)) {
-    diff = optionDiff;
+    daysAfterBlogStart = optionDiff;
   }
-  date = date.add(diff, "day");
+  date = (new moment(blogStartDate)).add(daysAfterBlogStart, "day");
+
   let duration = 15;
   if (option && option.duration && option.duration !== "") {
     duration = parseInt(option.duration);
@@ -163,7 +164,7 @@ function enrichData(json, lang) {
   }
 }
 
-async function getEventMd(lang) {
+async function getEventMd(lang, blogStartDate) {
   const ef = configModule.getConfig("eventsfilter");
   const ct = configModule.getConfig("calendartranslation");
   let townName = "Town";
@@ -184,7 +185,7 @@ async function getEventMd(lang) {
   try {
     events = await loadEvents(lang);
     filter = ef[lang];
-    filteredEvents = await filterEvents(events, filter);
+    filteredEvents = await filterEvents(events, filter, blogStartDate);
   } catch (err) {
     let errmessage = "Calendar could not be generated";
     if (err.message) errmessage = err.message;
@@ -207,8 +208,8 @@ async function getEventMd(lang) {
   return result;
 }
 
-function getEventMdCb(lang, cb) {
-  getEventMd(lang)
+function getEventMdCb(lang, blogStartDate, cb) {
+  getEventMd(lang, blogStartDate)
     .then((result) => { return cb(null, result); })
     .catch((err) => { return cb(err); });
 }
