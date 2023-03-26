@@ -35,7 +35,7 @@ mixin displayArticle(article,lang)
                           span=" "
                           i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
                         p
-                          |!{layout.md_render(comment.text)}
+                          |!{layout.md_renderInline(comment.text)}
 
 
 block content

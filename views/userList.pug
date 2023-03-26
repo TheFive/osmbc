@@ -53,7 +53,7 @@ block content
               td
                 if user.mdWeeklyAuthor
 
-                  |!{layout.markdown.renderInline(user.mdWeeklyAuthor)}
+                  |!{layout.md_renderInline(user.mdWeeklyAuthor)}
               td
                 a(href=layout.htmlroot+'/changes/log?user=' + user.OSMUser) (#{user._countChanges})
               td
