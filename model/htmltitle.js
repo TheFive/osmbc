@@ -88,7 +88,7 @@ async function getTitle(url) {
     }
     // if not exist, try to parse html page for charset in text
     if (!fromcharset) {
-      const r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/));
+      const r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/i));
       if (r) fromcharset = r[1];
     }
 
