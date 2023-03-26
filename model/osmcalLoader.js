@@ -25,7 +25,9 @@ async function loadEvents(lang) {
   } catch (err) {
     // ignore error
   }
-  if (!Array.isArray(json)) json = [{ name: "osmcal did not reply with Eventlist" }];
+  if (!Array.isArray(json)) {
+    throw new Error("osmcal did not reply with Eventlist");
+  }
   let event;
   for (event of json) {
     if (!event.location) continue;

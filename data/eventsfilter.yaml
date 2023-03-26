@@ -1,10 +1,10 @@
 DE:
-  daysAfterBlogStart: 5
+  daysAfterBlogStart: 4
   duration: 14
   big_duration: 21
   excludeCountries: USA
 EN:
-  daysAfterBlogStart: 5
+  daysAfterBlogStart: 4
   duration: 14
   big_duration: 50
   excludeCountries:
