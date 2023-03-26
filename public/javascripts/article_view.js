@@ -146,7 +146,7 @@ function getEventTable(lang, edit, pressedButton) {
 
   $.ajax({
     url: url,
-    data: { startDate: window.blogStartDate },
+    data: { blogStartDate: window.blogStartDate },
     method: "POST",
     success: function(data) {
       if (data) $(edit).val(data).trigger("change");
