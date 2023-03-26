@@ -40,6 +40,7 @@ copy("/font-awesome/fonts/fontawesome-webfont.woff2", "fonts/fontawesome-webfont
 
 copy("/markdown-it/dist/markdown-it.min.js", "javascripts/markdown-it.min.js");
 copy("/markdown-it-imsize/dist/markdown-it-imsize.min.js", "javascripts/markdown-it-imsize.min.js");
+copy("/markdown-it-link-attributes/dist/markdown-it-link-attributes.min.js", "javascripts/markdown-it-link-attributes.min.js");
 copy("/markdown-it-sup/dist/markdown-it-sup.min.js", "javascripts/markdown-it-sup.min.js");
 copy("/markdown-it-emoji/dist/markdown-it-emoji.min.js", "javascripts/markdown-it-emoji.min.js");
 

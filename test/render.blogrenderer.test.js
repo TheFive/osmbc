@@ -59,10 +59,18 @@ describe("render/blogrenderer", function() {
       should(result).equal('<li id="undefined_0">\nTest Collection\n</li>\n');
       bddone();
     });
-    it("should generate a preview when markdown is specified (Edit Link)", function (bddone) {
+    it("should generate a preview when markdown is specified (Edit Link) (editor mode)", function (bddone) {
+      let renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
       const article = articleModule.create({ markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)." });
       const result = renderer.renderArticle("DE", article);
-      should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de">Paul</a> tells something about <a href="www.nothing.de">nothing</a>.\n</li>\n');
+      should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de" target="_blank" rel="noopener">Paul</a> tells something about <a href="www.nothing.de" target="_blank" rel="noopener">nothing</a>.\n</li>\n');
+      bddone();
+    });
+    it("should generate a preview when markdown is specified (Edit Link) (production mode)", function (bddone) {
+      let renderer = new BlogRenderer.HtmlRenderer(null, { target: "production" });
+      const article = articleModule.create({ markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)." });
+      const result = renderer.renderArticle("DE", article);
+      should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de" class="production">Paul</a> tells something about <a href="www.nothing.de" class="production">nothing</a>.\n</li>\n');
       bddone();
     });
     it("should generate a preview when markdown is specified (Translate Link Required)", function (bddone) {

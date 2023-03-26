@@ -164,6 +164,7 @@ block append scripts_to_load
   script(src=layout.htmlroot + "/javascripts/markdown-it-emoji.min.js")
   script(src=layout.htmlroot + "/javascripts/markdown-it-sup.min.js")
   script(src=layout.htmlroot + "/javascripts/markdown-it-imsize.min.js")
+  script(src=layout.htmlroot + "/javascripts/markdown-it-link-attributes.min.js")
   script(src=layout.htmlroot + "/javascripts/article_view.js")
 
 
@@ -175,6 +176,7 @@ block append scripts_to_execute
     activeLanguages = JSON.parse('!{JSON.stringify(layout.activeLanguages)}');
     emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.shortcut)))}`)));
     emojiList =     JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.emoji)))}`)));
+    linkAttributes = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(linkAttributes)))}`)));
     leftLang = "!{params.left_lang}";
     rightLang = "!{params.right_lang}";
     lang3 = "!{params.lang3}";

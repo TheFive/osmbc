@@ -246,7 +246,7 @@ function renderBlogPreview(req, res, next) {
       debug("converter function");
       blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
         if (err) return callback(err);
-        let renderer = new BlogRenderer.HtmlRenderer(blog);
+        let renderer = new BlogRenderer.HtmlRenderer(blog, { target: "production" });
         if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
         const result = renderer.renderBlog(exportLang, data);
         if (multiExport) {
@@ -485,7 +485,7 @@ function renderBlogTab(req, res, next) {
     const languageFlags = configModule.getConfig("languageflags");
 
 
-    const renderer = new blogRenderer.HtmlRenderer(blog);
+    const renderer = new blogRenderer.HtmlRenderer(blog, { target: "editor" });
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
     res.render("blog/blog_" + tab.toLowerCase(), {
       layout: res.rendervar.layout,

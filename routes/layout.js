@@ -165,7 +165,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
-    const markdown = mdUtil.osmbcMarkdown();
+    const markdown = mdUtil.osmbcMarkdown({ target: "editor" });
 
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");

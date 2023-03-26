@@ -113,5 +113,11 @@
     "remote": "https://extern.site",
     "externally mirrored": true
   },
-  "Blog Title For Export": "weeklyOSM"
+  "Blog Title For Export": "weeklyOSM",
+  "link-attributes": {
+    "editor": {
+      "target": "_blank",
+      "rel": "noopener"},
+    "production": { "class": "production"}
+  }
 }

@@ -13,10 +13,10 @@ const mdUtil = require("../util/md_util.js");
 const assert = require("assert").strict;
 
 
-function HtmlRenderer(blog) {
+function HtmlRenderer(blog, options) {
   this.blog = blog;
 
-  this.markdown = mdUtil.osmbcMarkdown();
+  this.markdown = mdUtil.osmbcMarkdown(options);
 }
 
 function MarkdownRenderer(blog) {
