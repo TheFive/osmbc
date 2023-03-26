@@ -58,7 +58,7 @@ describe("uc/config", function() {
   it("should open and save eventsfilter", async function() {
     await driver.get(osmbcLink("/config/eventsfilter"));
     const textElement = await driver.findElement(By.css("table#resulttable"));
-    should(await textElement.getText()).eql("Value DE\ndate 0\nduration 14\nbig_duration 21\nuseGeoNames\nenableCountryFlags\nUSA");
+    should(await textElement.getText()).eql("Value DE\ndaysAfterBlogStart 4\nduration 14\nbig_duration 21\nuseGeoNames\nenableCountryFlags\nUSA");
   });
 });
 
