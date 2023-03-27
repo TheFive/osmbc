@@ -118,11 +118,9 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
         const width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
         if (width > 0) {
           liON = liON.replace("##width##", width);
-        }
-        else {
+        } else {
           liON = '<div class="wp-caption alignnone"> \n';
         }
-
       }
       text = text.replace("<p>", '<p class="wp-caption-text">');
       text = text.replace("<p>", '<p class="wp-caption-text">');
