@@ -40,7 +40,7 @@ jobs:
         with:
           time: 3s
       - name: Run testing on github
-        run: npm test
+        run: npm test-github
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
