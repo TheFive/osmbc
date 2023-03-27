@@ -6,6 +6,8 @@
   "scripts": {
     "start": "NODE_ENV=development node ./bin/www",
     "test": "NODE_ENV=test mocha",
+    "test-github": "NODE_ENV=test mocha -f eslint",
+    
     "staticHtmlServer": "NODE_ENV=development node ./staticFileServer.js"
   },
   "dependencies": {
