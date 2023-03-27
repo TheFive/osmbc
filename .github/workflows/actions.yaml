@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ${{ matrix.operating-system }}
     container:
-      image: node:10.16-jessie
+      image: node:16.10
     services:
       postgres:
         image: postgres:10.8
