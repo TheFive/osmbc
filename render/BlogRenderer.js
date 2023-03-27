@@ -116,8 +116,13 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
       if (liON.indexOf("##width##") >= 0) {
         // it is a picture, try to calculate the size.
         const width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
+        if (width > 0) {
+          liON = liON.replace("##width##", width);
+        }
+        else {
+          liON = '<div class="wp-caption alignnone"> \n';
+        }
 
-        liON = liON.replace("##width##", width);
       }
       text = text.replace("<p>", '<p class="wp-caption-text">');
       text = text.replace("<p>", '<p class="wp-caption-text">');
