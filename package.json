@@ -64,7 +64,7 @@
     "sanitize-filename": "^1.6.3",
     "sanitize-html": "2.10.x",
     "serve-favicon": "2.5.x",
-    "ssrf": "^1.0.2",
+    "ssrf-req-filter": "^1.0.6",
     "stoppable": "1.1.x",
     "turndown": "7.1.x",
     "twit": "2.2.x",
