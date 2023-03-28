@@ -67,9 +67,10 @@ block content
 
            
       else
-        p
-          a(style={color:'Gray'}) 
+        p(style={color:'Gray'}) 
             | No Articles found for search '#{search}'
+        br
+  .row
       if (showCollect)
         form(name="input",id="input" action=layout.htmlroot+"/article/create", method="post")
           h2 
