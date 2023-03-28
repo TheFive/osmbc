@@ -37,6 +37,7 @@ markdown-it-emoji.min.js
 markdown-it-imsize.min.js
 markdown-it-sup.min.js
 markdown-it.min.js
+markdown-it-link-attributes.min.js
 moment.min.js
 bootstrap-select.min.css
 config.development.json
@@ -48,6 +49,4 @@ nominatim.cache
 fontawesome-webfont.woff2
 bootstrap.min.css
 font-awesome.min.css
-linkExist.cache
-testCache.json
-markdown-it-link-attributes.min.js
+cache

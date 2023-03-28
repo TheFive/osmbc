@@ -176,7 +176,7 @@ Blog.prototype.fillEventArticle = function fillEventArticle(lang, callback) {
   if (typeof oldMd === "undefined") oldMd = "";
   if (oldMd && eventArticle["markdown" + lang].length > 10) return callback();
 
-  osmcalLoader.getEventMdCb(lang, function(err, result) {
+  osmcalLoader.getEventMdCb(lang, this.startDate, function(err, result) {
     if (err) return callback(err);
     const data = { old: {} };
     data["markdown" + lang] = result;

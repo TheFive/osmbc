@@ -64,6 +64,7 @@ describe("model/osmcalLoader", function() {
           .get("/api/v2/events/")
           .reply(300, "forbidden error");
         const result = await osmcalLoader.getEventMd("EN");
+        console.log(result)
         should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
       it("should handle non 200 results on nominatim API", async function() {
@@ -192,6 +193,19 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-08" }, big: true }, option)).be.False(); // no country given, filter does not work
       should(filterTest({ date: { start: "2015-12-08" }, country_code: "DE", big: true }, option)).be.True();
       should(filterTest({ date: { start: "2015-12-08" }, country_code: "UK", big: true }, option)).be.False();
+    });
+    it("should filter based on Start Date", async function() {
+      const filterTest = osmcalLoader.forTestOnly.filterEvent;
+      // clock is set to "2015-12-06" !!
+      const option = { date: 0, duration: 14, big_duration: 21, daysAfterBlogStart: 5 };
+      const blogStartDate = "2015-12-11 12:00";
+
+      should(filterTest({ date: { start: "2015-12-05" }, big: false }, option, blogStartDate)).be.True();
+      should(filterTest({ date: { start: "2015-12-06" }, big: true }, option, blogStartDate)).be.True();
+      should(filterTest({ date: { start: "2015-12-17" }, big: true }, option, blogStartDate)).be.False();
+      should(filterTest({ date: { start: "2015-12-20" }, big: true }, option, blogStartDate)).be.False();
+      should(filterTest({ date: { start: "2016-01-01" }, big: false }, option, blogStartDate)).be.True();
+      should(filterTest({ date: { start: "2016-12-31" }, big: true }, option, blogStartDate)).be.True();
     });
   });
 });

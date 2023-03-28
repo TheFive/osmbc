@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ${{ matrix.operating-system }}
     container:
-      image: node:10.16-jessie
+      image: node:16.10
     services:
       postgres:
         image: postgres:10.8
@@ -40,7 +40,7 @@ jobs:
         with:
           time: 3s
       - name: Run testing on github
-        run: npm test
+        run: npm test-github
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
