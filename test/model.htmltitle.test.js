@@ -85,14 +85,14 @@ describe("model/htmltitle", function() {
     try {
       await htmltitle.getTitle("https://www.test.dns-not-existing/testdd");
     } catch (err) {
-      should(err.message).eql("SSRL Test failed for URL");
+      should(err.message).eql("Problem with url");
     }
   });
   it("should not allow internal IPs", async function() {
     try {
       await htmltitle.getTitle("https://127.0.0.1/testdd");
     } catch (err) {
-      should(err.message).eql("SSRL Test failed for URL");
+      should(err.message).eql("Problem with url");
     }
   });
 });

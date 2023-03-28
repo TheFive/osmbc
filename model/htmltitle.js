@@ -2,7 +2,8 @@
 
 const cheerio = require("cheerio");
 const axios = require("axios").default;
-const ssrf = require("ssrf");
+const ssrfFilter = require("ssrf-req-filter");
+
 const debug = require("debug")("OSMBC:model:htmltitle");
 const iconv = require("iconv-lite");
 
@@ -50,29 +51,22 @@ function retrieveTitle(body) {
   return title;
 }
 
-// Team wished only to grap title, not description.
-/*
-function retrieveDescription(body) {
-  let c = cheerio.load(body);
-  let title = c('meta[property="og:description"]').attr("content");
-  if (typeof(title)=="undefined") title = null;
-  return title;
-} */
 
 const converterList = [retrieveForum, retrieveTwitter, retrieveOsmBlog, retrieveTitle];
 
 async function getTitle(url) {
   debug("getTitle");
-  let gotUrl;
-  try {
-    gotUrl = await ssrf.url(url);
-  } catch (err) {
-    throw new Error("SSRL Test failed for URL");
-  }
+
   let body = null;
   let r = null;
   try {
-    const response = await axios.get(gotUrl, { timeout: 2000, responseType: "arraybuffer", responseEncoding: "binary" });
+    const response = await axios.get(url, {
+      httpAgent: ssrfFilter(url),
+      httpsAgent: ssrfFilter(url),
+      timeout: 2000,
+      responseType: "arraybuffer",
+      responseEncoding: "binary"
+    });
     body = response.data;
 
     // try to get charset from Headers (version 1)
