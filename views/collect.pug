@@ -71,7 +71,7 @@ block content
             | No Articles found for search '#{search}'
         br
   .row
-      if (showCollect)
+      if (foundArticles && showCollect)
         form(name="input",id="input" action=layout.htmlroot+"/article/create", method="post")
           h2 
             | Create Article 
