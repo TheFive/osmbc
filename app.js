@@ -179,6 +179,9 @@ logger.info("Set Max Age of cookies to " + ((!cookieMaxAge) ? "default" : (cooki
 
 const sessionstore = require("./routes/sessionStore.js")(session);
 
+let secure = true;
+if (process.env.NODE_ENV === "test") secure = false;
+
 app.use(session(
   {
     store: sessionstore,
@@ -186,10 +189,12 @@ app.use(session(
     secret: config.getValue("SessionSecret", { mustExist: true }),
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: cookieMaxAge, secure: true}
+    cookie: { maxAge: cookieMaxAge, secure: secure}
   }
 ));
-app.use(csrf());
+
+
+if (process.env.NODE_ENV !== "test") app.use(csrf());
 
 
 // Initialise authenication stuff including passport
