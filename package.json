@@ -41,6 +41,7 @@
     "iconv-lite": "0.6.x",
     "jquery": "3.6.x",
     "js-yaml": "^4.1.x",
+    "lusca": "^1.7.0",
     "markdown-it": "13.0.x",
     "markdown-it-emoji": "^2.0.2",
     "markdown-it-imsize": "2.0.x",
@@ -71,7 +72,7 @@
     "twit": "2.2.x",
     "winston": "3.8.x",
     "winston-daily-rotate-file": "4.7.x",
-    "xml2js": "^0.4.23"
+    "xml2js": "0.5.x"
   },
   "devDependencies": {
     "axios-cookiejar-support": "^4.0.x",
