@@ -6,6 +6,7 @@ const express      = require("express");
 const favicon      = require("serve-favicon");
 const morgan       = require("morgan");
 const cookieParser = require("cookie-parser");
+const csrf         = require('lusca').csrf;
 const bodyParser   = require("body-parser");
 
 const debug        = require("debug")("OSMBC:app");
@@ -185,9 +186,10 @@ app.use(session(
     secret: config.getValue("SessionSecret", { mustExist: true }),
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: cookieMaxAge }
+    cookie: { maxAge: cookieMaxAge, secure: true}
   }
 ));
+app.use(csrf());
 
 
 // Initialise authenication stuff including passport
