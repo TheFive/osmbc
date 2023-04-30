@@ -219,7 +219,7 @@ function renderArticleId(req, res, next) {
 
     // Overwrite Markdown Renderer from layout module, with renderer supporting access map
     const markdown = mdUtil.osmbcMarkdown({ target: "editor" }, result.accessMap);
-    res.rendervar.layout.md_renderInline= (text) => markdown.renderInline(text ?? "");
+    res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
 
     const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
 
@@ -264,7 +264,7 @@ function renderArticleId(req, res, next) {
       util: util,
       collectedByGuest: collectedByGuest,
       mainTranslationService: mainTranslationService,
-      translationServices: translationServices,
+      translationServices: translationServices
     });
   }
   );
