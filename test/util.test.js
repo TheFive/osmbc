@@ -18,7 +18,7 @@ const { sleep }    = require("../util/util.js");
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
   let data;
-  before(function() {
+  before(async function() {
     const file =  path.resolve(__dirname, "data", "util.data.json");
     data = JSON.parse(fs.readFileSync(file));
   });
@@ -123,36 +123,44 @@ describe("util", function() {
     });
   });
   describe("md_render", function() {
+    function md_renderInline(text, accessMap) {
+      const osmbcMarkdown = mdUtil.osmbcMarkdown({ target: "editor" }, accessMap);
+      return osmbcMarkdown.render(text ?? "");
+    }
+    before(async function() {
+      await testutil.clearDB();
+      await initialise.initialiseModules();
+    });
     it("should render emty texts", function() {
-      should(util.md_render(null)).eql("");
+      should(md_renderInline(null)).eql("");
     });
     it("should convert a simple link", function() {
-      const r = util.md_render("http://www.google.de/hallo");
-      should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a></p>\n');
+      const r = md_renderInline("http://www.google.de/hallo");
+      should(r).eql('<p><a href=\"http://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">http://www.google.de/hallo</a></p>\n');
     });
     it("should convert a simple link at the end", function() {
-      const r = util.md_render("*italic* http://www.google.de/hallo");
-      should(r).eql("<p><em>italic</em> <a target=\"_blank\" href=\"http://www.google.de/hallo\">http://www.google.de/hallo</a></p>\n");
+      const r = md_renderInline("*italic* http://www.google.de/hallo");
+      should(r).eql("<p><em>italic</em> <a href=\"http://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">http://www.google.de/hallo</a></p>\n");
     });
     it("should convert a simple link at the start and ignore a MD LInk", function() {
-      const r = util.md_render("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
-      should(r).eql('<p><a target="_blank" href="http://www.google.de/hallo">http://www.google.de/hallo</a> is a synonym for <a target="_blank" href="https://www.google.de/hallo2">this</a></p>\n');
+      const r = md_renderInline("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
+      should(r).eql('<p><a href=\"http://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">http://www.google.de/hallo</a> is a synonym for <a href=\"https://www.google.de/hallo2\" target=\"_blank\" rel=\"noopener\">this</a></p>\n');
     });
     it("should render a shorted link", function() {
-      const r = util.md_render("this is a link #1928 to an article");
-      should(r).eql("<p>this is a link <a target=\"_blank\" href=\"http://localhost:35043/article/1928\">#1928</a> to an article</p>\n");
+      const r = md_renderInline("this is a link #1928 to an article", {});
+      should(r).eql("<p>this is a link <a href=\"http://localhost:35043/article/1928\" target=\"_blank\" rel=\"noopener\">#1928</a> to an article</p>\n");
     });
     it("should render user names", function() {
-      const r = util.md_render("@thefive is telling @user1 about @user2", { TheFive: "full", user1: "denied", user2: "guest" });
-      should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/TheFive>@TheFive</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
+      const r = md_renderInline("@thefive is telling @user1 about @user2", { TheFive: "full", user1: "denied", user2: "guest" });
+      should(r).eql('<p><a href="/usert/thefive" class="bg-success" style="color:black" target="_blank" rel="noopener">@thefive</a> is telling <a href="/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
     it("should not conflict with if username / language is contained in other username", function() {
-      const r = util.md_render("@ende is telling @user1 about @user2", { ende: "full", user1: "denied", user2: "guest", en: "full" });
-      should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling <a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
+      const r = md_renderInline("@ende is telling @user1 about @user2", { ende: "full", user1: "denied", user2: "guest", en: "full" });
+      should(r).eql('<p><a href="/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling <a href="/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
     it("should do colour mentions after a linebreak", function() {
-      const r = util.md_render("@ende is telling \n@user1 about @user2\n", { ende: "full", user1: "denied", user2: "guest", en: "full" });
-      should(r).eql("<p><a class='bg-success' style='color:black' href=/usert/ende>@ende</a> is telling\n<a class='bg-danger' style='color:black' href=/usert/user1>@user1</a> about <a class='bg-warning' style='color:black' href=/usert/user2>@user2</a></p>\n");
+      const r = md_renderInline("@ende is telling \n@user1 about @user2\n", { ende: "full", user1: "denied", user2: "guest", en: "full" });
+      should(r).eql('<p><a href="/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling\n<a href="/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
   });
   describe("turndown-it-sup", function() {
