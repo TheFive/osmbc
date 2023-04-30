@@ -214,9 +214,13 @@ function renderArticleId(req, res, next) {
   },
   function (err, result) {
     debug("renderArticleId->finalFunction");
-    const markdown = mdUtil.osmbcMarkdown({ target: "editor" });
     if (err) return next(err);
     if (result.notranslate) return res.redirect(result.notranslate);
+
+    // Overwrite Markdown Renderer from layout module, with renderer supporting access map
+    const markdown = mdUtil.osmbcMarkdown({ target: "editor" }, result.accessMap);
+    res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
+
     const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
 
 
@@ -258,7 +262,6 @@ function renderArticleId(req, res, next) {
       languageFlags: languageFlags,
       linkAttributes: linkAttributes,
       util: util,
-      accessMap: result.accessMap,
       collectedByGuest: collectedByGuest,
       mainTranslationService: mainTranslationService,
       translationServices: translationServices
@@ -313,6 +316,10 @@ function renderArticleIdCommentArea(req, res, next) {
   function (err, result) {
     debug("renderArticleCommentArea->finalFunction");
     if (err) return next(err);
+    // Overwrite Markdown Renderer from layout module, with renderer supporting access map
+    const markdown = mdUtil.osmbcMarkdown({ target: "editor" }, result.accessMap);
+    res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
+
 
 
     const rendervars = {
