@@ -179,7 +179,10 @@ logger.info("Set Max Age of cookies to " + ((!cookieMaxAge) ? "default" : (cooki
 
 const sessionstore = require("./routes/sessionStore.js")(session);
 
-let secure = true;
+
+// only work with secure cookies, but it looks there are problems in production with it
+// TheFive April 2023.
+let secure = false;
 if (process.env.NODE_ENV === "test") secure = false;
 
 app.use(session(
@@ -194,7 +197,9 @@ app.use(session(
 ));
 
 
-if (process.env.NODE_ENV !== "test") app.use(csrf());
+// use CSRF to become more secure, but it looks not working 
+// may be get started together with test module (switch test to httpS) TheFive April 2023
+// if (process.env.NODE_ENV !== "test") app.use(csrf());
 
 
 // Initialise authenication stuff including passport
