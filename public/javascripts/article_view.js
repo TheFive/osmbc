@@ -453,6 +453,7 @@ function dragstart(event, text) {
   event.dataTransfer.setData("TEXT", text);
 }
 
+
 // Collection is changed, so create a linkList
 // for the linkArea
 
@@ -492,6 +493,7 @@ function onchangeCollection() {
     if (window.lang4 !== "--" && window.lang4 !== "") {
       result += " " + generateGoogleTranslateLink(link, window.lang4);
     }
+    result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'' + link + '\')">CRTtC</a>';
 
     result += "<br>\n";
   }
@@ -513,6 +515,19 @@ function myclick(id) {
   src = "![(" + id + ")](" + src + ")";
   clip(src);
   alert(id + " flag is copied to clipboard");
+}
+
+function clickAndLoadLinktext(object,link) {
+  $.get(window.htmlroot + "/article/readability", { link: link }, function(data) {
+    navigator.clipboard.writeText(data)
+      .then(() => {
+        alert('Page Content is loaded to clipboard as textx');
+      })
+      .catch(err => {
+        console.dir(err);
+        alert('Error in copying text: ', err);
+      });
+  });
 }
 
 // dragStart Event

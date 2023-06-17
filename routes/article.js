@@ -36,6 +36,8 @@ const auth          = require("../routes/auth.js");
 
 const InternalCache = require("../util/internalCache.js");
 
+var { Readability } = require('@mozilla/readability');
+var { JSDOM } = require('jsdom');
 
 
 
@@ -777,6 +779,31 @@ function doAction(req, res, next) {
     res.end("OK");
   });
 }
+function getExternalText(req, res, next) {
+  debug("getExternalText");
+
+
+  const link = req.query.link;
+  console.dir(link);
+  console.dir(req.query);
+  if (link) {
+    axios.get(link, { headers: { "User-Agent": userAgent } }).then(function(response) {
+      const doc = new JSDOM(response.data, link);
+      const reader = new Readability(doc.window.document);
+      let article = reader.parse();
+      console.dir(article);
+      if (article && article.textContent) {
+        res.end(article.textContent);
+      } else {
+        res.end("Readability Failed for " + link);
+      };
+    }).catch(function(err) {
+      res.end(err);
+    });
+  } else {
+    res.end("No Link Found");
+  }
+}
 
 function createArticle(req, res, next) {
   debug("createArticle");
@@ -1053,6 +1080,7 @@ router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateW
 router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 router.post("/urlexist", allowGuestAccess, urlExist);
+router.get("/readability", allowFullAccess, getExternalText);
 
 router.param("article_id", getArticleFromID);
 
