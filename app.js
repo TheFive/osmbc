@@ -5,8 +5,7 @@ const path         = require("path");
 const express      = require("express");
 const favicon      = require("serve-favicon");
 const morgan       = require("morgan");
-const cookieParser = require("cookie-parser");
-const csrf         = require('lusca').csrf;
+// const cookieParser = require("cookie-parser");
 const bodyParser   = require("body-parser");
 
 const debug        = require("debug")("OSMBC:app");
@@ -122,7 +121,7 @@ if (mediaFolder["externally mirrored"] === false) {
 
 
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
 
 app.use(fileUpload({ safeFileNames: true, preserveExtension: true, abortOnLimit: true, limits: { fileSize: 50 * 1024 * 1024 } }));
@@ -190,14 +189,14 @@ app.use(session(
     store: sessionstore,
     name: config.getValue("SessionName", { mustExist: true }),
     secret: config.getValue("SessionSecret", { mustExist: true }),
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: cookieMaxAge, secure: secure}
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: cookieMaxAge, secure: secure }
   }
 ));
 
 
-// use CSRF to become more secure, but it looks not working 
+// use CSRF to become more secure, but it looks not working
 // may be get started together with test module (switch test to httpS) TheFive April 2023
 // if (process.env.NODE_ENV !== "test") app.use(csrf());
 
