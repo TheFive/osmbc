@@ -1,5 +1,5 @@
 "use strict";
-const checker = require("license-checker");
+const checker = require("license-checker-rseidelsohn");
 const should = require("should");
 const path = require("path");
 
@@ -46,6 +46,7 @@ function buildLicenseObject(object, cb) {
 
 const allowedLicensesProd = ["MIT",
   "MIT*",
+  "MIT-0",
   "(MIT AND CC-BY-3.0)",
   "MIT (http://mootools.net/license.txt)",
   "WTFPL",

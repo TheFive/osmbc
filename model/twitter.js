@@ -18,13 +18,16 @@ function expandUrl(shortUrl, callback) {
   );
 }
 
-const client = new Twit(
-  config.getValue("twitter")
-);
+const twitterConfig = config.getValue("twitter");
+
+let client;
+if (twitterConfig) client = new Twit(twitterConfig);
+else client = { get: (a, b, cb) => { cb(new Error("no config")); } };
 
 
 function expandTwitterUrl(collection, callback) {
   debug("expandTwitterUrl");
+  if (!twitterConfig) return (null, collection);
   if (!collection) return callback();
 
 
