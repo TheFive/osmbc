@@ -898,11 +898,18 @@ function urlExist(req, res) {
         return callback();
       }
 
-      axios.get(url, { headers: { "User-Agent": userAgent } }).then(function() {
+      axios.head(url, { headers: { "User-Agent": userAgent } }).then(function() {
         linkCache.set(url, "OK");
         result[url] = "OK";
         return callback();
       }).catch(function(err) {
+        if (err.code && err.code === 'HPE_UNEXPECTED_CONTENT_LENGTH') {
+          // www.openstreetmap.com is delivering content_length and transfer encoding, which
+          // results node in throwing this error.
+          // as the existanc of the url is approved by this error, everything is fine.
+          result[url] = "OK";
+          return callback();
+        }
         if (err.response && err.response.status >= 300) {
           result[url] = err.response.status;
           return callback();
