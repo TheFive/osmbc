@@ -288,7 +288,7 @@ mixin blogStatusTable(blogWithLink)
               div.badge.osmbclabel-closedblog
                 i.fa.fa-check
             else if (editBlog["reviewComment" + l])
-              div.badge.osmbclabel-reviewblog=(editBlog["reviewComment" + l].length - 1)
+              div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
             else
               div.badge.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
               

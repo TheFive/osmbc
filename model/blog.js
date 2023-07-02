@@ -101,6 +101,19 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
 };
 
 
+Blog.prototype.getClosedReviewCount = function getClosedreviewCount(lang) {
+  debug("getClosedreviewCount");
+  const self = this;
+  const rc = "reviewComment" + lang;
+  if (typeof (self[rc]) === "undefined" || self[rc] === null) {
+    return 0;
+  }
+  const users = new Set();
+  for (const review of self[rc]) {
+    if (review.text !== "startreview") users.add(review.user);
+  }
+  return users.size;
+};
 
 
 Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, callback) {
