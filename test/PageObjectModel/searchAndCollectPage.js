@@ -43,5 +43,10 @@ class SearchAndCollectPage extends StandardPage {
     await this.assertPage();
     await (await this._driver.findElement(By.css("input#OK"))).click();
   }
+
+  async getOkButton() {
+    await this.assertPage();
+    return await this._driver.findElement(By.css("input#OK"));
+  }
 }
 module.exports = SearchAndCollectPage;

@@ -978,13 +978,13 @@ describe("routes/article", function() {
     it("should run with full access user existing site", async function () {
       form = { urls: ["https://www.site.ort/apage", "https://www.site.ort2/apage", "https://www.site.ort2/äpäge"] };
       const sitecall = nock("https://www.site.ort")
-        .get("/apage")
+        .head("/apage")
         .reply(200, "OK");
       const sitecall1 = nock("https://www.site.ort2")
-        .get("/apage")
+        .head("/apage")
         .reply(404, " Not OK");
       const sitecall2 = nock("https://www.site.ort2")
-        .get("/%C3%A4p%C3%A4ge")
+        .head("/%C3%A4p%C3%A4ge")
         .reply(200, "OK");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
@@ -1006,7 +1006,7 @@ describe("routes/article", function() {
     it("should run with full access user with error and string param", async function () {
       const form = { urls: "https://www.site.ort2/apage" };
       const sitecall = nock("https://www.site.ort2")
-        .get("/apage")
+        .head("/apage")
         .reply(404, "Page Not Found");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
@@ -1020,7 +1020,7 @@ describe("routes/article", function() {
     it("should run with full access user with http error", async function () {
       const form = { urls: ["https://www.site.ort2/apage"] };
       const sitecall = nock("https://www.site.ort2")
-        .get("/apage")
+        .head("/apage")
         .reply(404, "something went wrong");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
@@ -1032,10 +1032,25 @@ describe("routes/article", function() {
       should(sitecall.isDone()).be.true();
     });
 
+    it("should handle content_length and transfer encoding", async function () {
+      const form = { urls: ["https://www.site.ort2/apage"] };
+      const sitecall = nock("https://www.site.ort2")
+        .head("/apage")
+        .replyWithError({ message: "Content and transfer encoding together", code: "HPE_UNEXPECTED_CONTENT_LENGTH" });
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form);
+
+      body.data.should.deepEqual({ "https://www.site.ort2/apage": "OK" });
+      should(body.status).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+    });
+
     it("should run with guest access user", async function () {
       const form = { urls: ["https://www.site.ort3/apage"] };
       let sitecall = nock("https://www.site.ort3")
-        .get("/apage")
+        .head("/apage")
         .reply(200, "OK");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
@@ -1071,7 +1086,7 @@ describe("routes/article", function() {
     it("should use guest user for non existing users", async function () {
       const form = { urls: ["https://www.site.ort4/apage"] };
       const sitecall = nock("https://www.site.ort4")
-        .get("/apage")
+        .head("/apage")
         .reply(200, "OK");
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });

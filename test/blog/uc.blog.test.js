@@ -54,7 +54,7 @@ describe("uc/blog", function() {
       if (url.search) path = path + url.search;
 
       const n = nock(url.protocol + "//" + url.host)
-        .get(path)
+        .head(path)
         .times(99)
         .reply(201, "OK");
       nocklist.push(n);
@@ -210,7 +210,6 @@ describe("uc/blog", function() {
         await sleep(500);
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
-
 
 
 

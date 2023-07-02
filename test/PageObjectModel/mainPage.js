@@ -58,5 +58,12 @@ class MainPage extends StandardPage {
     await this.assertPage();
     await (await this._driver.findElement(By.xpath("//a[text()='(more)']"))).click();
   }
+
+  async waitForInitialisation() {
+    await this.assertPage();
+    // use language 2 element as indicator to have finished page load
+    await this._driver.findElement(By.css("a#language2"));
+
+  }
 }
 module.exports = MainPage;

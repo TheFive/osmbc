@@ -39,6 +39,10 @@ describe("uc.article", function() {
       .get("/holla")
       .times(5)
       .reply(200, "OK");
+    nock("http://www.test.de")
+      .head("/holla")
+      .times(5)
+      .reply(200, "OK");
 
 
     testutil.startServerSync();
@@ -180,12 +184,12 @@ describe("uc.article", function() {
   describe("Change Collection", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      await driver.get(osmbcLink("/article/" + articleId));
-      nock("http://www.test.de").get("/holla").times(99).reply(200, "result");
-      nock("https://www.site.org").get("/didl?query=some").times(99).reply(200, "result");
-      nock("https://www.openstreetmap.org").get("/a_brilliant_map").times(99).reply(200, "result");
+      nock("http://www.test.de").head("/holla").times(99).reply(200, "OK");
+      nock("https://www.openstreetmap.org").head("/a_brilliant_map").times(99).reply(200, "result");
+      nock("https://www.site.org").head("/didl?query=some").times(99).reply(200, "result");
       nock("https://www.openstreetmap.org").get("/user/Severák/diary/37681").times(99).reply(200, "result");
       nock("https://productforums.google.com").get("/forum/#!topic/map-maker/Kk6AG2v-kzE").times(99).reply(200, "OK");
+      await driver.get(osmbcLink("/article/" + articleId));
     });
     it("should have converted collection correct", async function() {
       const osmbcApp = new OsmbcApp(driver);
