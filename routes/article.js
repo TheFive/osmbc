@@ -24,7 +24,6 @@ const mdUtil        = require("../util/md_util.js");
 const BlogRenderer  = require("../render/BlogRenderer.js");
 
 const articleModule = require("../model/article.js");
-const twitter       = require("../model/twitter.js");
 const blogModule    = require("../model/blog.js");
 const logModule     = require("../model/logModule.js");
 const configModule  = require("../model/config.js");
@@ -406,13 +405,6 @@ function searchAndCreate(req, res, next) {
           return cb();
         });
       } else return cb();
-    },
-    function generateCollection(cb) {
-      twitter.expandTwitterUrl(collection, function(err, result) {
-        if (err) return cb(err);
-        collection = result;
-        cb();
-      });
     }
   ], function (err) {
     if (err) return next(err);

@@ -18,7 +18,6 @@ const blogModule     = require("../model/blog.js");
 const logModule      = require("../model/logModule.js");
 const configModule   = require("../model/config.js");
 const pgMap          = require("../model/pgMap.js");
-const twitter        = require("../model/twitter.js");
 const translator     = require("../model/translator.js");
 
 
@@ -251,16 +250,6 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
         if (data.unpublishReference) text += "\n" + data.unpublishReference;
         self.addCommentFunction(user, text, cb);
       } else cb();
-    },
-
-    function expandTwitterUrl(cb) {
-      debug("expandTwitterUrl");
-      if (!util.isURL(data.collection)) return cb();
-      twitter.expandTwitterUrl(data.collection, function(err, result) {
-        if (err) return cb(err);
-        data.collection = result;
-        cb();
-      });
     }
   ], function(err) {
     if (err) return callback(err);
