@@ -44,6 +44,7 @@ describe("uc.access", function() {
     const errors = [];
 
     const osmbcAppTheFive = new OsmbcApp(driverTheFive);
+    await osmbcAppTheFive.getMainPage().waitForInitialisation();
 
     await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullStartPage");
 
@@ -62,6 +63,7 @@ describe("uc.access", function() {
 
     const sacPageTheFive = osmbcAppTheFive.getSearchAndCollectPage();
     await sacPageTheFive.fillAndStartSearch("new Info");
+    await sacPageTheFive.getOkButton();
 
 
     await testutil.expectHtml(driverTheFive, errors, "uc.access", "fullCollectPage");
@@ -106,6 +108,8 @@ describe("uc.access", function() {
 
     const sacPageGuest = osmbcAppGuest.getSearchAndCollectPage();
     await sacPageGuest.fillAndStartSearch("new Info");
+    await sacPageGuest.getOkButton();
+
 
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestCollectPage");

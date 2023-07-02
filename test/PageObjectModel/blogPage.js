@@ -2,6 +2,8 @@
 
 const { By } = require("selenium-webdriver");
 const { osmbcLink } = require("../../util/util.js");
+const { sleep }    = require("../../util/util.js");
+
 
 const StandardPage = require("./standardPage.js");
 
@@ -89,6 +91,7 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
     await this._driver.actions().scroll(0, 0, 0, 200, articleElement).perform();
+    sleep(100);
 
     await (articleElement).click();
   }

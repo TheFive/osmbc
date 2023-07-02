@@ -895,7 +895,7 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }).catch(function(err) {
-        if (err.code && err.code === 'HPE_UNEXPECTED_CONTENT_LENGTH') {
+        if (err.code && err.code === "HPE_UNEXPECTED_CONTENT_LENGTH") {
           // www.openstreetmap.com is delivering content_length and transfer encoding, which
           // results node in throwing this error.
           // as the existanc of the url is approved by this error, everything is fine.
