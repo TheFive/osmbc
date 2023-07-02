@@ -127,7 +127,13 @@ describe("uc/blog", function() {
 
       await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Reviewed");
 
+      // view review count on start page
+      await osmbcAppTheFive.openMainPage();
+     
+      await osmbcAppTheFive.getMainPage().waitForInitialisation();
+      await testutil.expectHtml(driverTheFive, errors, "blog", "IndexWithOneReview");
 
+      await  osmbcAppTheFive.getMainPage().clickBlogInList("WN251");
 
       await blogPage.clickDidExport("DE");
 
@@ -141,6 +147,12 @@ describe("uc/blog", function() {
 
 
       await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Closed");
+
+
+
+
+
+
 
       const driverUser1 = await testutil.getNewDriver("User1");
       const osmbcAppUser1 = new OsmbcApp(driverUser1);
