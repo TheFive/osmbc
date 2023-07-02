@@ -50,3 +50,5 @@ fontawesome-webfont.woff2
 bootstrap.min.css
 font-awesome.min.css
 cache
+config local.txt
+configserver.txt

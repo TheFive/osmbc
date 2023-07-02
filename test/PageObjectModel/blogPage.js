@@ -91,7 +91,7 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
     await this._driver.actions().scroll(0, 0, 0, 200, articleElement).perform();
-    sleep(100);
+    sleep(500);
 
     await (articleElement).click();
   }
