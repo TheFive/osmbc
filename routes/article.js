@@ -1049,7 +1049,7 @@ router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
-router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
+router.post("/translate/bingPRO/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 router.post("/urlexist", allowGuestAccess, urlExist);
 

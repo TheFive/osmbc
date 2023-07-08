@@ -1,7 +1,5 @@
 "use strict";
 
-const request = require("request");
-const uuidv4 = require("uuid/v4");
 const querystring = require("query-string");
 const axios = require("axios");
 const language = require("../model/language.js");
@@ -94,7 +92,7 @@ function deeplProActive () {
 
 const bingProAuthkey = config.getValue("BingProConfig").authKey;
 
-const msTranslate = {
+/* const msTranslate = {
   translate: function(from, to, text, callback) {
     const options = {
       method: "POST",
@@ -126,6 +124,7 @@ const msTranslate = {
     });
   }
 };
+*/
 
 
 function bingProActive () {
@@ -143,6 +142,7 @@ function translateBingPro(options, callback) {
   const toLang = language.bingPro(options.toLang);
   const text = options.text;
   const htmltext = markdown.render(text);
+  const msTranslate = null;
 
   msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
     if (err) return callback(err);
@@ -193,5 +193,3 @@ module.exports.copy.active = () => { return true; };
 module.exports.copy.name = "Copy";
 module.exports.copy.user = "Copy User";
 
-
-module.exports.fortestonly.msTransClient = msTranslate;
