@@ -3,7 +3,6 @@
 /* jshint ignore:start */
 
 
-const sinon   = require("sinon");
 const should  = require("should");
 const nock    = require("nock");
 const config  = require("../config.js");

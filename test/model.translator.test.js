@@ -114,6 +114,4 @@ describe("model/translator", function() {
       bddone();
     });
   });
-
-
 });

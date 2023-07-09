@@ -11,6 +11,7 @@ const language = require("../model/language.js");
 const TurndownService = require("turndown");
 const turndownItSup = require("../util/turndown-it-sup.js");
 const turndownItEmoji = require("../util/turndown-it-emoji");
+const turndownItImsize = require("../util/turndown-it-imsize.js");
 const mdUtil = require("../util/md_util.js");
 
 const config    = require("../config.js");
@@ -75,6 +76,7 @@ function translateDeeplPro(options, callback) {
       const turndownService = new TurndownService();
       turndownService.use(turndownItSup);
       turndownService.use(turndownItEmoji);
+      turndownService.use(turndownItImsize);
       let mdresult = turndownService.turndown(htmlresult);
       mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toLowerCase());
       mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toUpperCase());

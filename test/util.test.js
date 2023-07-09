@@ -6,8 +6,11 @@ const path = require("path");
 const fs     = require("fs");
 const turndownService = require("turndown")();
 turndownService.use(require("../util/turndown-it-sup.js"));
+turndownService.use(require("../util/turndown-it-imsize.js"));
 
 const markdown = require("markdown-it")();
+markdown.use(require("markdown-it-imsize"));
+
 const mdUtil = require("../util/md_util.js");
 const initialise = require("../util/initialise.js");
 const testutil = require("../test/testutil.js");
@@ -167,10 +170,17 @@ describe("util", function() {
       should(r).eql('<p><a href="http://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling\n<a href="http://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="http://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
   });
-  describe("turndown-it-sup", function() {
+  describe("turndown-it", function() {
     it("should convert nested superscript ", function() {
       const md = "It contains [^1^](https://link.somewhere) a link with superscript";
       const html = markdown.render(md);
+      const backconvertedMd = turndownService.turndown(html);
+      should(backconvertedMd).eql(md);
+    });
+    it("should turndown imsize markdown ", function() {
+      const md = "It contains ![onki](https://link.to.somehow =1000x500) a link with size and one ![](https://someOtherStuff.bonk) without";
+      const html = markdown.render(md);
+      console.dir(html);
       const backconvertedMd = turndownService.turndown(html);
       should(backconvertedMd).eql(md);
     });
