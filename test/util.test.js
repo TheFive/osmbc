@@ -210,6 +210,12 @@ describe("util", function() {
       const result = mdUtil.mdTable(json, columns);
       should(result).eql("|A |BEEE|\n|--|----|\n|[object Object]|v3  |\n|v2|22|\n");
     });
+    it("should eliminate pipe symbols", function() {
+      const json = [{ a: { d: "3" }, b: "something | with pipe" }, { a: "v2", b: 22 }];
+      const columns = [{ field: "a", name: "A" }, { field: "b", name: "BEEE" }];
+      const result = mdUtil.mdTable(json, columns);
+      should(result).eql("|A |BEEE                 |\n|--|---------------------|\n|[object Object]|something   with pipe|\n|v2|22|\n");
+    });
   });
   describe("util.osmbcMarkdown Renderer", function() {
     before(async function() {

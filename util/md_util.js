@@ -152,6 +152,10 @@ function fixLength(text, len, fillChar) {
   return result;
 }
 
+function cleanPipeSymbol(text){
+   if (typeof text !== "string") return text;
+  return text.replaceAll("|"," ");
+}
 function mdTable(json, columns) {
   for (const c of columns) {
     let cMin = c.name.length;
@@ -179,7 +183,7 @@ function mdTable(json, columns) {
   for (const o of json) {
     for (const c of columns) {
       md = md + "|";
-      md = md + fixLength(o[c.field], c.displayLength, " ");
+      md = md + fixLength(cleanPipeSymbol(o[c.field]), c.displayLength, " ");
     }
     md = md + "|\n";
   }
