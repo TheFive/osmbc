@@ -152,9 +152,9 @@ function fixLength(text, len, fillChar) {
   return result;
 }
 
-function cleanPipeSymbol(text){
-   if (typeof text !== "string") return text;
-  return text.replaceAll("|"," ");
+function cleanPipeSymbol(text) {
+  if (typeof text !== "string") return text;
+  return text.replaceAll("|", " ");
 }
 function mdTable(json, columns) {
   for (const c of columns) {
