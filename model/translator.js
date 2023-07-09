@@ -34,9 +34,6 @@ async function deeplTranslate(url, params) {
   }
 }
 
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-}
 
 const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
@@ -90,80 +87,10 @@ function deeplProActive () {
   return (typeof deeplConfig.authKey === "string");
 }
 
-const bingProAuthkey = config.getValue("BingProConfig").authKey;
-
-/* const msTranslate = {
-  translate: function(from, to, text, callback) {
-    const options = {
-      method: "POST",
-      baseUrl: "https://api.cognitive.microsofttranslator.com/",
-      url: "translate",
-      qs: {
-        "api-version": "3.0",
-        from: from,
-        to: to,
-        textType: "html"
-      },
-      headers: {
-        "Ocp-Apim-Subscription-Key": bingProAuthkey,
-        "Content-type": "application/json",
-        "X-ClientTraceId": uuidv4().toString()
-      },
-      body: [{
-        text: text
-      }],
-      json: true
-    };
-    request(options, function(err, response, body) {
-      if (body && body.error) err = new Error(body.error.message);
-      if (err) {
-        const message = err.message.replaceAll(bingProAuthkey, "APIKEY");
-        return callback(new Error(message));
-      }
-      callback(null, body[0].translations[0].text);
-    });
-  }
-};
-*/
 
 
-function bingProActive () {
-  return (typeof bingProAuthkey === "string");
-}
 
-function translateBingPro(options, callback) {
-  debug("translateBingPro");
-  const markdown = mdUtil.osmbcMarkdown({ translation: true });
 
-  if (typeof bingProAuthkey === "undefined") {
-    return callback(new Error("No Bing Pro Version registered"));
-  }
-  const fromLang = language.bingPro(options.fromLang);
-  const toLang = language.bingPro(options.toLang);
-  const text = options.text;
-  const htmltext = markdown.render(text);
-  const msTranslate = null;
-
-  msTranslate.translate(fromLang, toLang, htmltext, function(err, translation) {
-    if (err) return callback(err);
-    const turndownService = new TurndownService();
-    turndownService.use(turndownItSup);
-    turndownService.use(turndownItEmoji);
-    let mdresult = turndownService.turndown(translation);
-    mdresult = mdresult.replace(
-      RegExp(
-        escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang), "g"),
-      "https://translate.google.com/translate?sl=auto&tl=" + toLang);
-    mdresult = mdresult.replace(
-      RegExp(
-        escapeRegExp("https://translate.google.com/translate?sl=auto&tl=" + fromLang.toUpperCase()), "g"),
-      "https://translate.google.com/translate?sl=auto&tl=" + toLang.toUpperCase());
-
-    mdresult = mdresult.replaceAll(":" + fromLang.toUpperCase() + "-t:", ":" + toLang.toUpperCase() + "-t:");
-
-    return callback(null, mdresult);
-  });
-}
 
 function translateCopy(options, callback) {
   debug("translateCopy");
@@ -173,7 +100,6 @@ function translateCopy(options, callback) {
 
 
 module.exports.deeplPro = {};
-module.exports.bingPro = {};
 module.exports.fortestonly = {};
 module.exports.copy = {};
 
@@ -181,11 +107,6 @@ module.exports.deeplPro.translate = translateDeeplPro;
 module.exports.deeplPro.active = deeplProActive;
 module.exports.deeplPro.name = "DeepLPro";
 module.exports.deeplPro.user = "deeplPro API Call";
-
-module.exports.bingPro.translate = translateBingPro;
-module.exports.bingPro.active = bingProActive;
-module.exports.bingPro.name = "BingPro";
-module.exports.bingPro.user = "Bing API Call";
 
 module.exports.copy.translate = translateCopy;
 module.exports.copy.active = () => { return true; };

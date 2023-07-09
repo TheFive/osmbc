@@ -20,7 +20,6 @@ describe("model/language", function() {
     should(language.deeplProSourceLang("en")).eql("EN");
     should(language.deeplProSourceLang("PT-PT")).eql("PT");
     should(language.deeplProTargetLang("PT-PT")).eql("PT-PT");
-    should(language.bingPro("PT-PT")).eql("PT-BP");
     should(language.deeplProFormality("DE")).eql("less");
     bddone();
   });

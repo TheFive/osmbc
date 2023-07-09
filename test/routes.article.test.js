@@ -15,7 +15,6 @@ const articleModule = require("../model/article.js");
 const logModule = require("../model/logModule.js");
 
 const articleRouterForTestOnly = require("../routes/article.js").fortestonly;
-const bingTranslatorForTestOnly = require("../model/translator.js").fortestonly;
 
 const testutil = require("./testutil.js");
 
@@ -927,20 +926,12 @@ describe("routes/article", function() {
   describe("route POST /translate/deeplPro/:fromLang/:toLang", function() {
     const url = baseLink + "/article/translate/deeplPro/DE/EN";
     const form = { text: "Dies ist ein deutscher Text." };
-    let stub;
     beforeEach(async function() {
-      stub = sinon.stub(bingTranslatorForTestOnly.msTransClient, "translate").callsFake(function(params, callback) {
-        should(params.from).eql("DE");
-        should(params.to).eql("EN");
-        should(params.text).eql("Dies ist ein deutscher Text.");
-        return callback(null, "This is an english text.");
-      });
       nock("https://api.deepl.com")
         .post("/v2/translate", "auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDies%20ist%20ein%20deutscher%20Text.%3C%2Fp%3E%0A")
         .reply(200, { translations: [{ text: "This is an english text.", source_lang: "DE", target_lang: "EN" }] });
     });
     afterEach(async function() {
-      stub.restore();
     });
 
     it("should run with full access user", async function () {
