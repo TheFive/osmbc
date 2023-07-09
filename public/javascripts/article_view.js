@@ -693,7 +693,7 @@ function translate(langFrom, langToParam, service) {
     const from =  langFrom.toLowerCase();
     const to = langTo.toLowerCase();
     let originalText = document.getElementById("preview" + langFrom).innerText;
-    if (service === "deeplPro" || service === "bingPro" || service === "copy") {
+    if (service === "deeplPro" || service === "copy") {
       originalText = document.getElementById("markdown" + langFrom).value;
     }
     if (service !== "deepl") {

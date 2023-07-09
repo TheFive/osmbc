@@ -481,7 +481,6 @@ function renderBlogTab(req, res, next) {
 
     const apiAuthors = [];
     apiAuthors.push(translator.deeplPro.user);
-    apiAuthors.push(translator.bingPro.user);
     const languageFlags = configModule.getConfig("languageflags");
 
 
