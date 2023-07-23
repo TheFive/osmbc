@@ -23,6 +23,5 @@ class InboxPage extends StandardPage {
     await this.assertPage();
     await (await this._driver.findElement(By.xpath("//i[contains(@class,'fa-edit')][1]"))).click();
   }
-
 }
 module.exports = InboxPage;

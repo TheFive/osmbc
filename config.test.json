@@ -49,7 +49,7 @@
     {"lid":"DE","displayLong":"German","displayShort":"DED","deeplProFormality":"less"}, 
     {"lid":"EN","momentLocale":"en-gb"},
     {"lid":"ES","displayLong":"Spain","displayShort":"ES"},
-    {"lid":"PT-PT","deeplProSource":"PT","deeplProTarget":"PT-PT","bingPro":"PT-BP"}
+    {"lid":"PT-PT","deeplProSource":"PT","deeplProTarget":"PT-PT"}
   ],
   "htmlroot":"",
   "style":"/stylesheets/style.css",
@@ -80,9 +80,6 @@
   "DeeplProConfig": {
     "authKey":"Test Key Fake",
     "url":"https://api.deepl.com/v2/translate"
-  },
-  "BingProConfig": {
-    "authKey":"hidden"
   },
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],

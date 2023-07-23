@@ -75,13 +75,19 @@ describe("uc/collect", function() {
 
       await (driver.findElement(By.name("title"))).sendKeys("Test Title for Article");
       await (await driver.findElement(By.id("OK"))).click();
+      // wait for page to be loaded use language 2 as indicator
+      await driver.findElement(By.css("a#language2"));
 
       await testutil.expectHtml(driver, "collect", "editPageAfterCollect");
     });
     it("should search and find existing article", async function() {
       await driver.get(osmbcLink("/article/create"));
+      nock("http://www.test.dä")
+        .get("/holla")
+        .reply(200, "<html><head><title>HTML Title for test</title></head><body>The content of the document......</body></html>");
       await (driver.findElement(By.id("searchField"))).sendKeys("http://www.test.dä/holla");
       await (await driver.findElement(By.name("SearchNow"))).click();
+      await (driver.findElement(By.id("OK")));
 
       await testutil.expectHtml(driver, "collect", "foundAnArticle");
     });

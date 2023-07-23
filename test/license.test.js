@@ -1,5 +1,5 @@
 "use strict";
-const checker = require("license-checker");
+const checker = require("license-checker-rseidelsohn");
 const should = require("should");
 const path = require("path");
 
@@ -12,6 +12,7 @@ const licenses = {
   "vow@0.4.3": "MIT",
   "tweetnacl@0.14.3": "Unlicense",
   "colors@0.6.2": "MIT"
+
 };
 
 
@@ -22,10 +23,16 @@ function buildLicenseObject(object, cb) {
     should.not.exist(err);
     for (const k in json) {
       if (k === "osmbc@0.0.0") continue;
+      if (k === "caniuse-lite@1.0.30001507") {
+        // currently (jul 23) caniuse is only used in DEV for ladjs, which should be allowed to use
+        json[k] = "only-used-in-dev-branch-ladjs";
+        continue;
+      }
       // License not give, so please overwrite with manual capturet licenses
       if (json[k].licenses === "UNKNOWN" && licenses[k]) {
         json[k].licenses = licenses[k];
       }
+
       // Check, wether there is a manual overwrite for the license
       if (licenses[k]) {
         json[k].licenses = licenses[k];
@@ -44,8 +51,11 @@ function buildLicenseObject(object, cb) {
   };
 }
 
-const allowedLicensesProd = ["MIT",
+const allowedLicensesProd = [
+  "only-used-in-dev-branch-ladjs",
+  "MIT",
   "MIT*",
+  "MIT-0",
   "(MIT AND CC-BY-3.0)",
   "MIT (http://mootools.net/license.txt)",
   "WTFPL",

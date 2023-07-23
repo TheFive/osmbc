@@ -7,7 +7,6 @@ const path        = require("path");
 const config      = require("../config.js");
 const logger      = require("../config.js").logger;
 const layoutConst = require("../routes/layout").layoutConst;
-const async       = require("../util/async_wrap.js");
 
 const passport     = require("passport");
 
@@ -43,30 +42,46 @@ function initialise(app) {
   app.get(htmlRoot + "/login_failure", renderLoginFailure);
 
   if (auth.openstreetmap.enabled) {
-    app.get(htmlRoot + "/auth/openstreetmap", passport.authenticate("openstreetmap"));
+    app.get(htmlRoot + "/auth/openstreetmap", passport.authenticate("openstreetmap",
+      {
+        successReturnToOrRedirect: htmlRoot + "/osmbc.html",
+        failureRedirect: htmlRoot + "/login",
+        keepSessionInfo: true
+      }));
     app.get(htmlRoot + "/auth/openstreetmap/callback",
-      passport.authenticate("openstreetmap", { failureRedirect: config.getValue("htmlroot") + "/login" }),
-      function(req, res) {
-        debug("after passport.authenticate Function");
-        res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-      });
+      passport.authenticate("openstreetmap",
+        {
+          successReturnToOrRedirect: htmlRoot + "/osmbc.html",
+          failureRedirect: htmlRoot + "/login",
+          keepSessionInfo: true
+        }));
   }
   if (auth.htaccess.enabled) {
     function renderHtAccessLogin(req, res) {
       res.render("login-wpwd", { layout: layoutConst });
     }
     app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
-    const passport = require("passport");
-    app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd", { successRedirect: htmlRoot + "/", failureRedirect: htmlRoot + "/login_failure" }));
+    app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
+      {
+        successReturnToOrRedirect: htmlRoot + "/",
+        failureRedirect: htmlRoot + "/login_failure",
+        keepSessionInfo: true
+      }));
   }
 
   if (auth.openstreetmap_oauth20.enabled) {
-    app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2"));
-    app.get(htmlRoot + "/auth/openstreetmap_oauth20/callback", passport.authenticate("oauth2", { failureRedirect: "/login" }),
-      function(req, res) {
-      // Successful authentication, redirect home.
-        res.redirect(req.session.returnTo || htmlRoot + "/osmbc.html");
-      });
+    app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2",
+      {
+        successReturnToOrRedirect: htmlRoot + "/",
+        failureRedirect: "/login",
+        keepSessionInfo: true
+      }));
+    app.get(htmlRoot + "/auth/openstreetmap_oauth20/callback", passport.authenticate("oauth2",
+      {
+        successReturnToOrRedirect: htmlRoot + "/",
+        failureRedirect: "/login",
+        keepSessionInfo: true
+      }));
   }
   app.get(htmlRoot + "/logout", function(req, res) {
     debug("logoutFunction");
@@ -261,19 +276,8 @@ function ensureAuthenticated (req, res, next) {
   }
   // is not authenticated
   debug("ensureAuthenticated: Not OK");
-  async.series([
-    function saveReturnTo(cb) {
-      if (!req.session.returnTo) {
-        logger.info("Setting session return to to " + req.originalUrl);
-        req.session.returnTo = req.originalUrl;
-        return req.session.save(cb);
-      }
-      return cb();
-    }
-  ], function(err) {
-    if (err) return next(err);
-    res.redirect(htmlRoot + "/login");
-  });
+  req.session.returnTo = req.originalUrl;
+  res.redirect(htmlRoot + "/login");
 }
 
 

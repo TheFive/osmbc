@@ -24,7 +24,6 @@ const mdUtil        = require("../util/md_util.js");
 const BlogRenderer  = require("../render/BlogRenderer.js");
 
 const articleModule = require("../model/article.js");
-const twitter       = require("../model/twitter.js");
 const blogModule    = require("../model/blog.js");
 const logModule     = require("../model/logModule.js");
 const configModule  = require("../model/config.js");
@@ -139,9 +138,6 @@ function renderArticleId(req, res, next) {
   params.editComment = null;
   let mainTranslationService = "deepl";
   const translationServices = ["deepl", "copy"];
-  if (translator.bingPro.active()) {
-    translationServices.push("bingPro");
-  }
   if (translator.deeplPro.active()) {
     mainTranslationService = "deeplPro";
     translationServices.push("deeplPro");
@@ -408,13 +404,6 @@ function searchAndCreate(req, res, next) {
           return cb();
         });
       } else return cb();
-    },
-    function generateCollection(cb) {
-      twitter.expandTwitterUrl(collection, function(err, result) {
-        if (err) return cb(err);
-        collection = result;
-        cb();
-      });
     }
   ], function (err) {
     if (err) return next(err);
@@ -925,11 +914,18 @@ function urlExist(req, res) {
         return callback();
       }
 
-      axios.get(url, { headers: { "User-Agent": userAgent } }).then(function() {
+      axios.head(url, { headers: { "User-Agent": userAgent } }).then(function() {
         linkCache.set(url, "OK");
         result[url] = "OK";
         return callback();
       }).catch(function(err) {
+        if (err.code && err.code === "HPE_UNEXPECTED_CONTENT_LENGTH") {
+          // www.openstreetmap.com is delivering content_length and transfer encoding, which
+          // results node in throwing this error.
+          // as the existanc of the url is approved by this error, everything is fine.
+          result[url] = "OK";
+          return callback();
+        }
         if (err.response && err.response.status >= 300) {
           result[url] = err.response.status;
           return callback();
@@ -1077,7 +1073,6 @@ router.get("/searchandcreate", allowGuestAccess, searchAndCreate);
 router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
-router.post("/translate/bing/:fromLang/:toLang", allowFullAccess, translateWithPlugin("bingPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 router.post("/urlexist", allowGuestAccess, urlExist);
 router.get("/readability", allowFullAccess, getExternalText);

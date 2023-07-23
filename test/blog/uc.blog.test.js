@@ -54,7 +54,7 @@ describe("uc/blog", function() {
       if (url.search) path = path + url.search;
 
       const n = nock(url.protocol + "//" + url.host)
-        .get(path)
+        .head(path)
         .times(99)
         .reply(201, "OK");
       nocklist.push(n);
@@ -127,7 +127,13 @@ describe("uc/blog", function() {
 
       await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Reviewed");
 
+      // view review count on start page
+      await osmbcAppTheFive.openMainPage();
+     
+      await osmbcAppTheFive.getMainPage().waitForInitialisation();
+      await testutil.expectHtml(driverTheFive, errors, "blog", "IndexWithOneReview");
 
+      await  osmbcAppTheFive.getMainPage().clickBlogInList("WN251");
 
       await blogPage.clickDidExport("DE");
 
@@ -141,6 +147,12 @@ describe("uc/blog", function() {
 
 
       await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Closed");
+
+
+
+
+
+
 
       const driverUser1 = await testutil.getNewDriver("User1");
       const osmbcAppUser1 = new OsmbcApp(driverUser1);
@@ -210,7 +222,6 @@ describe("uc/blog", function() {
         await sleep(500);
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
-
 
 
 
