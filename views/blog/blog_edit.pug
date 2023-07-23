@@ -103,7 +103,7 @@ block content
                   div.badge.badge-pill.osmbclabel-closedblog
                     i.fa.fa-check
                 else if (blog["reviewComment" + lang])
-                  div.badge.badge-pill.osmbclabel-reviewblog=(blog["reviewComment" + lang].length - 1)
+                  div.badge.badge-pill.osmbclabel-reviewblog=(blog.getClosedReviewCount(lang))
                 else
                   div.badge.badge-pill.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
               //- Review Start Column
