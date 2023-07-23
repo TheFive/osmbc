@@ -4,7 +4,7 @@
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
 /* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
-/* exported callAndRedraw, setNoTranslation, translate */
+/* exported callAndRedraw, setNoTranslation, translate, clickAndLoadLinktext */
 
 /* jshint esversion: 6 */
 
@@ -480,6 +480,9 @@ function onchangeCollection() {
     });
     if (found) continue;
     window.linklist.push(link);
+    result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'textContent\',\'' + link + '\')"><i class="fa fa-file-text"></i>  </a>';
+    result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'content\',\'' + link + '\')"><i class="fa fa-file-text-o"></i>  </a>';
+
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
       result += '<a class="badge badge-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
     } else result += '<a class="badge badge-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
@@ -493,7 +496,6 @@ function onchangeCollection() {
     if (window.lang4 !== "--" && window.lang4 !== "") {
       result += " " + generateGoogleTranslateLink(link, window.lang4);
     }
-    result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'' + link + '\')">CRTtC</a>';
 
     result += "<br>\n";
   }
@@ -517,11 +519,18 @@ function myclick(id) {
   alert(id + " flag is copied to clipboard");
 }
 
-function clickAndLoadLinktext(object,link) {
-  $.get(window.htmlroot + "/article/readability", { link: link }, function(data) {
+function clickAndLoadLinktext(object, field, link) {
+  const LinkTextPlainRow = $("#linkTextPlainRow");
+  if (!LinkTextPlainRow.hasClass("invisible")) {
+    LinkTextPlainRow.addClass("invisible");
+    return;
+  }
+
+  $.get(window.htmlroot + "/article/readability", { link: link }, function(json) {
     const linkTextPlain = $("#linkTextPlain");
-    linkTextPlain.html("<pre>" + data + "</pre>");
-  }); 
+    LinkTextPlainRow.removeClass("invisible");
+    linkTextPlain.html(json[field]);
+  });
 }
 
 // dragStart Event

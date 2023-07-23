@@ -148,16 +148,15 @@ block content
         textarea.d-none.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
     div.form-group.row#LinkArea
       .col-md-1
-
       .col-md-6
         .div(id="linkArea")
       .col-md-4
         p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
-    div.form-group.row#LinkTextPlain
+    div.row.invisible(id="linkTextPlainRow")
       .col-md-1
-
+        label="Text"
       .col-md-10
-        .div(id="linkTextPlain")
+        div.border.border-secondary(id="linkTextPlain")
 
     // display Markdown Blog
     block markdownArea

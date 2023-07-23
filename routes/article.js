@@ -35,8 +35,8 @@ const auth          = require("../routes/auth.js");
 
 const InternalCache = require("../util/internalCache.js");
 
-var { Readability } = require('@mozilla/readability');
-var { JSDOM } = require('jsdom');
+const { Readability } = require("@mozilla/readability");
+const { JSDOM } = require("jsdom");
 
 
 
@@ -773,16 +773,13 @@ function getExternalText(req, res, next) {
 
 
   const link = req.query.link;
-  console.dir(link);
-  console.dir(req.query);
   if (link) {
     axios.get(link, { headers: { "User-Agent": userAgent } }).then(function(response) {
       const doc = new JSDOM(response.data, link);
       const reader = new Readability(doc.window.document);
-      let article = reader.parse();
-      console.dir(article);
-      if (article && article.textContent) {
-        res.end(article.textContent);
+      const article = reader.parse();
+      if (article && article.content) {
+        res.json(article);
       } else {
         res.end("Readability Failed for " + link);
       };
