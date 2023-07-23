@@ -529,7 +529,11 @@ function clickAndLoadLinktext(object, field, link) {
   $.get(window.htmlroot + "/article/readability", { link: link }, function(json) {
     const linkTextPlain = $("#linkTextPlain");
     LinkTextPlainRow.removeClass("invisible");
-    linkTextPlain.html(json[field]);
+    if (field === "textContent") {
+      linkTextPlain.html("<pre>" + json[field] + "</pre>");
+    } else {
+      linkTextPlain.html(json[field]);
+    }
   });
 }
 
