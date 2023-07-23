@@ -35,6 +35,8 @@ const auth          = require("../routes/auth.js");
 
 const InternalCache = require("../util/internalCache.js");
 
+const { Readability } = require("@mozilla/readability");
+const { JSDOM } = require("jsdom");
 
 
 
@@ -766,6 +768,28 @@ function doAction(req, res, next) {
     res.end("OK");
   });
 }
+function getExternalText(req, res, next) {
+  debug("getExternalText");
+
+
+  const link = req.query.link;
+  if (link) {
+    axios.get(link, { headers: { "User-Agent": userAgent } }).then(function(response) {
+      const doc = new JSDOM(response.data, link);
+      const reader = new Readability(doc.window.document);
+      const article = reader.parse();
+      if (article && article.content) {
+        res.json(article);
+      } else {
+        res.end("Readability Failed for " + link);
+      };
+    }).catch(function(err) {
+      res.end(err);
+    });
+  } else {
+    res.end("No Link Found");
+  }
+}
 
 function createArticle(req, res, next) {
   debug("createArticle");
@@ -1048,6 +1072,7 @@ router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 router.post("/urlexist", allowGuestAccess, urlExist);
+router.get("/readability", allowFullAccess, getExternalText);
 
 router.param("article_id", getArticleFromID);
 
