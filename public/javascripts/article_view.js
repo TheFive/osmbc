@@ -519,15 +519,9 @@ function myclick(id) {
 
 function clickAndLoadLinktext(object,link) {
   $.get(window.htmlroot + "/article/readability", { link: link }, function(data) {
-    navigator.clipboard.writeText(data)
-      .then(() => {
-        alert('Page Content is loaded to clipboard as textx');
-      })
-      .catch(err => {
-        console.dir(err);
-        alert('Error in copying text: ', err);
-      });
-  });
+    const linkTextPlain = $("#linkTextPlain");
+    linkTextPlain.html("<pre>" + data + "</pre>");
+  }); 
 }
 
 // dragStart Event
