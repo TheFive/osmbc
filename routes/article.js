@@ -784,7 +784,7 @@ function getExternalText(req, res, next) {
         res.end("Readability Failed for " + link);
       };
     }).catch(function(err) {
-      res.end(err);
+      res.end(err.message);
     });
   } else {
     res.end("No Link Found");

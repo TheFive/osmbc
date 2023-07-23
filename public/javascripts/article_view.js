@@ -527,6 +527,9 @@ function clickAndLoadLinktext(object, field, link) {
   }
 
   $.get(window.htmlroot + "/article/readability", { link: link }, function(json) {
+    if (typeof json === "string") {
+      json = { content: json, textContent: json };
+    }
     const linkTextPlain = $("#linkTextPlain");
     LinkTextPlainRow.removeClass("invisible");
     if (field === "textContent") {
