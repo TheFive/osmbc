@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.14](https://github.com/TheFive/osmbc/tree/4.0.14) (2023-07-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.13...4.0.14)
+
+**Closed issues:**
+
+- Blog Status page showing wrong number of Reviews [\#1002](https://github.com/TheFive/osmbc/issues/1002)
+
 ## [4.0.13](https://github.com/TheFive/osmbc/tree/4.0.13) (2023-07-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.12...4.0.13)
