@@ -5,7 +5,8 @@ const axios = require("axios").default;
 const ssrfFilter = require("ssrf-req-filter");
 
 const debug = require("debug")("OSMBC:model:htmltitle");
-const iconv = require("iconv-lite");
+
+const charsetDecoder = require("../util/util.js").charsetDecoder;
 
 
 function linkFrom(url, page) {
@@ -54,11 +55,14 @@ function retrieveTitle(body) {
 
 const converterList = [retrieveForum, retrieveTwitter, retrieveOsmBlog, retrieveTitle];
 
+
+
 async function getTitle(url) {
   debug("getTitle");
 
   let body = null;
   let r = null;
+  const responseInterseptor = axios.interceptors.response.use(charsetDecoder);
   try {
     const response = await axios.get(url, {
       httpAgent: ssrfFilter(url),
@@ -68,29 +72,9 @@ async function getTitle(url) {
       responseEncoding: "binary"
     });
     body = response.data;
-
-    // try to get charset from Headers (version 1)
-    let fromcharset = response.headers["content-encoding"];
-
-    // if not exist, try to get charset from Headers (version 2)
-    if (!fromcharset) {
-      const ct = response.headers["content-type"];
-      if (ct) {
-        const r = ct.match(/.*?charset=([^"']+)/);
-        if (r)fromcharset = r[1];
-      }
-    }
-    // if not exist, try to parse html page for charset in text
-    if (!fromcharset) {
-      const r = body.toString("utf-8").match((/<meta.*?charset=([^"']+)/i));
-      if (r) fromcharset = r[1];
-    }
-
-    // nothing given, to use parser set incoming & outcoming charset equal
-    if (!iconv.encodingExists(fromcharset)) fromcharset = "UTF-8";
-
-    body = iconv.decode(body, fromcharset);
+    axios.interceptors.response.eject(responseInterseptor);
   } catch (err) {
+    axios.interceptors.response.eject(responseInterseptor);
     if (err.code === "ECONNABORTED") {
       r = url + " TIMEOUT";
     } else throw new Error("Problem with url");
