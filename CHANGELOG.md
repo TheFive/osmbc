@@ -1,5 +1,13 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.15...HEAD)
+
+**Fixed bugs:**
+
+- Readability display does not handle non utf-8 pages [\#1005](https://github.com/TheFive/osmbc/issues/1005)
+
 ## [4.0.15](https://github.com/TheFive/osmbc/tree/4.0.15) (2023-07-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.14...4.0.15)
