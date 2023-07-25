@@ -4,6 +4,8 @@ const debug = require("debug")("OSMBC:util:util");
 const assert = require("assert").strict;
 const moment = require("moment");
 const language = require("../model/language.js");
+const iconv = require("iconv-lite");
+
 
 
 const config = require("../config");
@@ -138,7 +140,34 @@ exports.osmbcLink = function(link) {
   return baseLink + link;
 };
 
+function charsetDecoder(response) {
+  let fromcharset = response.headers["content-encoding"];
+  console.dir(response.data);
+  if (!fromcharset) {
+    const ct = response.headers["content-type"];
+    if (ct) {
+      const r = ct.match(/.*?charset=([^"']+)/);
+      if (r)fromcharset = r[1];
+    }
+  }
+  if (!fromcharset) {
+    const r = response.data.toString("utf-8").match((/<meta.*?charset=([^"']+)/i));
+    if (r) fromcharset = r[1];
+  }
 
+  if (!iconv.encodingExists(fromcharset)) fromcharset = "UTF-8";
+  console.dir(fromcharset);
+
+
+
+  response.data = iconv.decode(response.data, fromcharset);
+
+  return response;
+}
+
+
+
+exports.charsetDecoder = charsetDecoder;
 exports.shorten = shorten;
 exports.isURL = isURL;
 exports.toPGString = toPGString;

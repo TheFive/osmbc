@@ -20,6 +20,9 @@ const logger        = require("../config.js").logger;
 const language      = require("../model/language.js");
 const mdUtil        = require("../util/md_util.js");
 
+const charsetDecoder = require("../util/util.js").charsetDecoder;
+
+
 
 const BlogRenderer  = require("../render/BlogRenderer.js");
 
@@ -773,8 +776,15 @@ function getExternalText(req, res, next) {
 
 
   const link = req.query.link;
+  const responseInterseptor = axios.interceptors.response.use(charsetDecoder);
   if (link) {
-    axios.get(link, { headers: { "User-Agent": userAgent } }).then(function(response) {
+    axios.get(link, {
+      headers:
+      { "User-Agent": userAgent },
+      responseType: "arraybuffer",
+      responseEncoding: "binary"
+    }).then(function(response) {
+      axios.interceptors.response.eject(responseInterseptor);
       const doc = new JSDOM(response.data, link);
       const reader = new Readability(doc.window.document);
       const article = reader.parse();
@@ -784,6 +794,7 @@ function getExternalText(req, res, next) {
         res.end("Readability Failed for " + link);
       };
     }).catch(function(err) {
+      axios.interceptors.response.eject(responseInterseptor);
       res.end(err.message);
     });
   } else {
