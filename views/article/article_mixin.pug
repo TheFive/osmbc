@@ -181,6 +181,7 @@ block append scripts_to_execute
     rightLang = "!{params.right_lang}";
     lang3 = "!{params.lang3}";
     lang4 = "!{params.lang4}";
+    userLanguages =  JSON.parse('!{JSON.stringify(layout.user.langArray)}');
     blogStartDate = '!{ (blog) ? blog.startDate : new Date().toISOString()}'
     translationServices = JSON.parse('!{JSON.stringify(translationServices)}');
     urlWoErrorWhileEdit = JSON.parse('!{JSON.stringify(urlWoErrorWhileEdit)}');
