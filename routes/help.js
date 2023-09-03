@@ -1,10 +1,11 @@
-"use strict";
 
-const fs = require("fs");
-const path = require("path");
-const debug = require("debug")("OSMBC:routes:help");
-const config = require("../config.js");
-const mdUtil = require("../util/md_util.js");
+
+import _debug from "debug";
+import fs from "fs";
+import path from "path";
+import config from "../config.js";
+import mdUtil from "../util/md_util.js";
+const debug = _debug("OSMBC:routes:help");
 
 
 let token = null;
@@ -27,7 +28,7 @@ function generateHelpText(filename) {
 
   let helpdir = "help";
   if (filename === "CHANGELOG.md") helpdir = "";
-  let result = fs.readFileSync(path.resolve(__dirname, "..", helpdir, filename), "UTF8");
+  let result = fs.readFileSync(path.resolve(config.getDirName(), helpdir, filename), "UTF8");
   for (const t in token) {
     while (result.indexOf(t) >= 0) {
       result = result.replace(t, token[t]);
@@ -37,4 +38,9 @@ function generateHelpText(filename) {
   return result;
 }
 
-exports.getText = generateHelpText;
+
+const help = {
+  getText: generateHelpText
+};
+
+export default help;

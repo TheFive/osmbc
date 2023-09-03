@@ -1,15 +1,16 @@
 
-const NodeCache = require("node-cache");
-const fs = require("fs");
-const path = require("path");
+import NodeCache from "node-cache";
+import { existsSync, mkdir, writeFile, readFileSync } from "fs";
+import { join } from "path";
+import config from "../config.js";
 
 
-const cacheDir  = path.join(__dirname, "..", "cache");
+const cacheDir  = join(config.getDirName(), "..", "cache");
 
 function createDir(dir, callback) {
-  if (fs.existsSync(dir)) return callback();
+  if (existsSync(dir)) return callback();
   console.dir(dir);
-  return fs.mkdir(dir, callback);
+  return mkdir(dir, callback);
 }
 
 class InternalCache {
@@ -19,7 +20,7 @@ class InternalCache {
     if (options && options.checkperiod) config.checkperiod = options.checkperiod;
 
     this.cache = new NodeCache(config);
-    this.cacheFile = path.join(cacheDir, options.file);
+    this.cacheFile = join(cacheDir, options.file);
     this.cacheLoaded = false;
   }
 
@@ -30,7 +31,7 @@ class InternalCache {
       const dump = self.cache.mget(keys);
       const dumpstring = JSON.stringify(dump);
       createDir(cacheDir, function writeData() {
-        fs.writeFile(self.cacheFile, dumpstring, (err) => {
+        writeFile(self.cacheFile, dumpstring, (err) => {
           if (err) {
             throw err;
           }
@@ -44,7 +45,7 @@ class InternalCache {
   _readCache() {
     if (this.cacheLoaded) return;
     try {
-      const dumpstring = fs.readFileSync(this.cacheFile);
+      const dumpstring = readFileSync(this.cacheFile);
       const dump = JSON.parse(dumpstring);
       for (const k in dump) {
         this.cache.set(k, dump[k]);
@@ -59,4 +60,4 @@ class InternalCache {
   set(key, value) { this.cache.set(key, value); this._storeCache(); }
 }
 
-module.exports = InternalCache;
+export default InternalCache;

@@ -1,4 +1,4 @@
-"use strict";
+
 
 /* jshint ignore:start */
 /* eslint-disable */

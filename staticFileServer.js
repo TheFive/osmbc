@@ -1,24 +1,24 @@
-"use strict";
+
 
 /* eslint-disable quotes */
-const express = require('express');
-const app = express();
-const path = require("path");
-const http = require("http");
-const https = require("https");
-const fs = require("fs");
+import express from 'express';
+import path from "path";
+import http from "http";
+import https from "https";
+import fs from "fs";
 
-const config = require("./config.js");
+import config from "./config.js";
+import serveIndex from 'serve-index';
+const app = express();
 
 const PORT = 3032;
-const serveIndex = require('serve-index');
 
 
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(config.getDirName(), "public")));
 
-app.use("/", express.static(path.join(__dirname, "test")));
-app.use('/', serveIndex(path.join(__dirname, '/test')));
+app.use("/", express.static(path.join(config.getDirName(), "test")));
+app.use('/', serveIndex(path.join(config.getDirName(), '/test')));
 
 let httpServer = http;
 const options = {};

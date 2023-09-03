@@ -1,49 +1,48 @@
-"use strict";
 
-const express     = require("express");
-const async       = require("../util/async_wrap.js");
-const assert      = require("assert").strict;
-const debug       = require("debug")("OSMBC:routes:article");
-const path        = require("path");
-const HttpStatus  = require("http-status-codes");
+
+import { Router } from "express";
+import { auto, series, parallel, each } from "async";
+import { strict as assert } from "assert";
+import { resolve } from "path";
+import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
 /* jshint -W079 */
-const URL         = require("url").URL;
-
-const router      = express.Router();
-const slackrouter = express.Router();
-const pug         = require("pug");
+import { URL } from "url";
+import { renderFile } from "pug";
 
 
-const util          = require("../util/util.js");
-const config        = require("../config.js");
-const logger        = require("../config.js").logger;
-const language      = require("../model/language.js");
-const mdUtil        = require("../util/md_util.js");
-
-const charsetDecoder = require("../util/util.js").charsetDecoder;
+import util from "../util/util.js";
+import config from "../config.js";
+import language from "../model/language.js";
+import { osmbcMarkdown } from "../util/md_util.js";
 
 
 
-const BlogRenderer  = require("../render/BlogRenderer.js");
 
-const articleModule = require("../model/article.js");
-const blogModule    = require("../model/blog.js");
-const logModule     = require("../model/logModule.js");
-const configModule  = require("../model/config.js");
-const userModule    = require("../model/user.js");
-const htmltitle     = require("../model/htmltitle.js");
-const translator    = require("../model/translator.js");
+import blogRenderer from "../render/BlogRenderer.js";
 
-const auth          = require("../routes/auth.js");
+import articleModule from "../model/article.js";
+import blogModule from "../model/blog.js";
+import logModule from "../model/logModule.js";
+import configModule from "../model/config.js";
+import userModule from "../model/user.js";
+import htmlTitle from "../model/htmltitle.js";
+import translator from "../model/translator.js";
 
-const InternalCache = require("../util/internalCache.js");
+import auth from "../routes/auth.js";
 
-const { Readability } = require("@mozilla/readability");
-const { JSDOM } = require("jsdom");
+import InternalCache from "../util/internalCache.js";
+
+import { Readability } from "@mozilla/readability";
+import { JSDOM } from "jsdom";
 
 
 
-const axios = require("axios");
+import axios from "axios";
+import _debug from "debug";
+const debug = _debug("OSMBC:routes:article");
+
+const router      = Router();
+const slackrouter = Router();
 
 
 const userAgent = config.getValue("User-Agent", { mustExist: true });
@@ -68,13 +67,13 @@ function getArticleFromID(req, res, next, id) {
   assert(id);
   const idNumber = Number(id);
   if ("" + idNumber !== id) {
-    return res.status(HttpStatus.NOT_FOUND).send("Check Article ID in Url, it is not a number (conversion error)");
+    return res.status(NOT_FOUND).send("Check Article ID in Url, it is not a number (conversion error)");
   }
   articleModule.findById(idNumber, function(err, result) {
     debug("getArticleFromID->findById");
     if (err) return next(err);
     if (!result) {
-      return res.status(HttpStatus.NOT_FOUND).send("Article ID " + idNumber + " does not exist");
+      return res.status(NOT_FOUND).send("Article ID " + idNumber + " does not exist");
     }
     req.article = result;
     return next();
@@ -152,7 +151,7 @@ function renderArticleId(req, res, next) {
 
 
   const placeholder = configModule.getPlaceholder();
-  async.auto({
+  auto({
     // Find usage of Links in other articles
     articleReferences: article.calculateUsedLinks.bind(article, { ignoreStandard: true }),
     // Find the associated blog for this article
@@ -219,10 +218,10 @@ function renderArticleId(req, res, next) {
     if (result.notranslate) return res.redirect(result.notranslate);
 
     // Overwrite Markdown Renderer from layout module, with renderer supporting access map
-    const markdown = mdUtil.osmbcMarkdown({ target: "editor" }, result.accessMap);
+    const markdown = osmbcMarkdown({ target: "editor" }, result.accessMap);
     res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
 
-    const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
+    const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
 
 
 
@@ -281,7 +280,7 @@ function renderArticleIdVotes(req, res, next) {
   assert(article);
 
 
-  async.auto({},
+  auto({},
     function (err) {
       debug("renderArticleIdVotes->finalFunction");
       if (err) return next(err);
@@ -292,8 +291,8 @@ function renderArticleIdVotes(req, res, next) {
         article: article,
         votes: votes
       };
-      const voteButtons = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtons.pug"), rendervars);
-      const voteButtonsList = pug.renderFile(path.resolve(__dirname, "..", "views", "voteButtonsList.pug"), rendervars);
+      const voteButtons = renderFile(resolve(config.getDirName(), "views", "voteButtons.pug"), rendervars);
+      const voteButtonsList = renderFile(resolve(config.getDirName(), "views", "voteButtonsList.pug"), rendervars);
       res.json({ "#voteButtons": voteButtons, "#voteButtonsList": voteButtonsList });
     }
   );
@@ -311,14 +310,14 @@ function renderArticleIdCommentArea(req, res, next) {
   if (req.query.editComment) params.editComment = req.query.editComment;
 
 
-  async.auto({
+  auto({
     accessMap: createAccessMapFn(res.rendervar.layout.activeLanguages)
   },
   function (err, result) {
     debug("renderArticleCommentArea->finalFunction");
     if (err) return next(err);
     // Overwrite Markdown Renderer from layout module, with renderer supporting access map
-    const markdown = mdUtil.osmbcMarkdown({ target: "editor" }, result.accessMap);
+    const markdown = osmbcMarkdown({ target: "editor" }, result.accessMap);
     res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
 
 
@@ -330,8 +329,8 @@ function renderArticleIdCommentArea(req, res, next) {
       accessMap: result.accessMap
 
     };
-    pug.renderFile(path.resolve(__dirname, "..", "views", "article", "commentArea.pug"), rendervars, function(err, commentArea) {
-      if (err) logger.error(err);
+    renderFile(resolve(config.getDirName(), "views", "article", "commentArea.pug"), rendervars, function(err, commentArea) {
+      if (err) config.logger.error(err);
       if (err) return next(err);
       res.json({ "#commentArea": commentArea });
     });
@@ -359,7 +358,7 @@ function renderArticleIdVotesBlog(req, res, next) {
   assert(article);
   assert(vote);
 
-  async.auto({ },
+  auto({ },
     function (err) {
       debug("renderArticleIdVotes->finalFunction");
 
@@ -372,8 +371,8 @@ function renderArticleIdVotesBlog(req, res, next) {
         vote: vote
       };
 
-      pug.renderFile(path.resolve(__dirname, "..", "views", "voteLabel.pug"), rendervars, function(err, result) {
-        if (err) logger.error(err);
+      renderFile(resolve(config.getDirName(), "views", "voteLabel.pug"), rendervars, function(err, result) {
+        if (err) config.logger.error(err);
         if (err) return next(err);
         const v = {};
         v["#vote_" + voteName + "_" + article.id] = result;
@@ -395,10 +394,10 @@ function searchAndCreate(req, res, next) {
 
   let title;
   let collection = search;
-  async.series([
+  series([
     function generateTitle(cb) {
       if (util.isURL(search)) {
-        htmltitle.getTitle(search).then(function (titleCalc) {
+        htmlTitle.getTitle(search).then(function (titleCalc) {
           title = titleCalc;
           return cb();
         }).catch((err) => {
@@ -413,7 +412,7 @@ function searchAndCreate(req, res, next) {
     articleModule.fullTextSearch(search, { column: "blog", desc: true }, function (err, result) {
       debug("searchAndCreate->fullTextSearch");
       if (err) return next(err);
-      const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
+      const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
       assert(res.rendervar);
       res.set("content-type", "text/html");
       res.render("collect", {
@@ -462,7 +461,7 @@ function postArticle(req, res, next) {
   let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
-  async.parallel([
+  parallel([
     function createArticle(cb) {
       debug("postArticle->createArticle");
 
@@ -510,7 +509,7 @@ function postArticleNoTranslation(req, res, next) {
   const changes = {};
   changes.old = {};
 
-  async.parallel([
+  parallel([
   ],
   function setValues(err) {
     debug("postArticle->setValues");
@@ -580,7 +579,7 @@ function postArticleWithOldValues(req, res, next) {
   let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
-  async.parallel([
+  parallel([
     function createArticle(cb) {
       debug("postArticle->createArticle");
 
@@ -776,7 +775,7 @@ function getExternalText(req, res, next) {
 
 
   const link = req.query.link;
-  const responseInterseptor = axios.interceptors.response.use(charsetDecoder);
+  const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   if (link) {
     axios.get(link, {
       headers:
@@ -815,7 +814,7 @@ function createArticle(req, res, next) {
     proto.categoryEN = req.query.categoryEN;
   }
 
-  async.series([
+  series([
     function calculateWN(callback) {
       debug("createArticle->calculatenWN");
       // Blog Name is defined, so nothing to calculate
@@ -860,7 +859,7 @@ function searchArticles(req, res, next) {
   if (!search || typeof (search) === "undefined") search = "";
   let result = null;
 
-  async.series([
+  series([
     function doSearch(cb) {
       debug("search->doSearch");
       if (search !== "") {
@@ -877,7 +876,7 @@ function searchArticles(req, res, next) {
     debug("search->finalFunction");
     if (err) return next(err);
     assert(res.rendervar);
-    const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
+    const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
     res.render("collect", {
       layout: res.rendervar.layout,
       search: search,
@@ -901,7 +900,7 @@ function urlExist(req, res) {
   if (!Array.isArray(urls)) return req.next(new Error("Expected Paramter urls as Array"));
   const result = {};
 
-  async.each(urls,
+  each(urls,
     (url, callback) => {
       if (linkCache.get(url) === "OK") {
         result[url] = "OK";
@@ -966,7 +965,7 @@ function renderList(req, res, next) {
 
   let articles;
 
-  async.parallel([
+  parallel([
     function findArticleFunction(callback) {
       debug("renderList->findArticleFunction");
       if (!simpleFind) return callback();
@@ -1067,7 +1066,7 @@ function isFirstCollector(req, res, next) {
       if (comment.text.search(new RegExp("@" + user + "\\b", "i")) >= 0) return next();
     }
   }
-  res.status(HttpStatus.FORBIDDEN).send("This article is not allowed for guests");
+  res.status(FORBIDDEN).send("This article is not allowed for guests");
 }
 
 const allowFullAccess = auth.checkRole("full");
@@ -1107,10 +1106,19 @@ router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldVa
 
 
 
-module.exports.router = router;
-module.exports.slackrouter = slackrouter;
+const _router = router;
+export { _router as router };
 
 
-module.exports.fortestonly = {};
-module.exports.fortestonly.getArticleFromID = getArticleFromID;
-module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;
+const fortestonly = {};
+fortestonly.getArticleFromID = getArticleFromID;
+fortestonly.fixMarkdownLinks = fixMarkdownLinks;
+
+const articleRouter = {
+  fortestonly: fortestonly,
+  slackrouter: slackrouter,
+  router: router
+
+};
+
+export default articleRouter;

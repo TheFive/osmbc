@@ -1,27 +1,29 @@
-"use strict";
 
-const express  = require("express");
+
+import express from "express";
+
+import async from "async";
+import { strict as assert } from "assert";
+import _debug from "debug";
+
+import config from "../config.js";
+import language from "../model/language.js";
+
+import util from "../util/util.js";
+import moment from "moment";
+import yaml from "js-yaml";
+import configModule from "../model/config.js";
+
+
+import blogModule from "../model/blog.js";
+import blogRenderer from "../render/BlogRenderer.js";
+import logModule from "../model/logModule.js";
+import userModule from "../model/user.js";
+import translator from "../model/translator.js";
+
+import auth from "../routes/auth.js";
 const router   = express.Router();
-const async    = require("../util/async_wrap.js");
-const assert   = require("assert");
-const debug    = require("debug")("OSMBC:routes:blog");
-const config   = require("../config.js");
-const language = require("../model/language.js");
-
-const util     = require("../util/util.js");
-const moment   = require("moment");
-const yaml     = require("js-yaml");
-const configModule = require("../model/config.js");
-
-const BlogRenderer   = require("../render/BlogRenderer.js");
-
-const blogModule     = require("../model/blog.js");
-const blogRenderer   = require("../render/BlogRenderer.js");
-const logModule      = require("../model/logModule.js");
-const userModule     = require("../model/user.js");
-const translator     = require("../model/translator.js");
-
-const auth        = require("../routes/auth.js");
+const debug = _debug("OSMBC:routes:blog");
 
 const htmlroot = config.htmlRoot();
 
@@ -246,8 +248,8 @@ function renderBlogPreview(req, res, next) {
       debug("converter function");
       blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
         if (err) return callback(err);
-        let renderer = new BlogRenderer.HtmlRenderer(blog, { target: "production" });
-        if (asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
+        let renderer = new blogRenderer.HtmlRenderer(blog, { target: "production" });
+        if (asMarkdown) renderer = new blogRenderer.MarkdownRenderer(blog);
         const result = renderer.renderBlog(exportLang, data);
         if (multiExport) {
           overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
@@ -631,4 +633,6 @@ router.get("/:blog_id/:tab", auth.checkRole(["full"]), renderBlogTab);
 
 
 
-module.exports.router = router;
+
+
+export default router;

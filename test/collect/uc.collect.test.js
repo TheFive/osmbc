@@ -1,21 +1,21 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
 
-const nock = require("nock");
-const mockdate = require("mockdate");
-const should = require("should");
-const testutil = require("../testutil.js");
-const userModule = require("../../model/user.js");
-const articleModule = require("../../model/article.js");
-const blogModule = require("../../model/blog.js");
+import nock from "nock";
+import mockdate from "mockdate";
+import should from "should";
+import testutil from "../testutil.js";
+import userModule from "../../model/user.js";
+import articleModule from "../../model/article.js";
+import blogModule from "../../model/blog.js";
 
 
-const { osmbcLink } = require("../../util/util.js");
+import util from "../../util/util.js";
 
-const { By } = require("selenium-webdriver");
-
+import { By } from "selenium-webdriver";
+const osmbcLink = util.osmbcLink;
 
 
 describe("uc/collect", function() {

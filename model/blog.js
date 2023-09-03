@@ -1,29 +1,31 @@
-"use strict";
+
 // Exported Functions and prototypes are defined at end of file
 
-const async    = require("../util/async_wrap.js");
-const language   = require("../model/language.js");
-const util     = require("../util/util.js");
-const HttpStatus = require("http-status-codes");
-const config = require("../config.js");
+import { series, eachOf, each } from "async";
+import language from "../model/language.js";
+import util from "../util/util.js";
+import { FORBIDDEN } from "http-status-codes";
+import config from "../config.js";
 
 
 
-const assert   = require("assert").strict;
-const moment   = require("moment");
-const markdown = require("markdown-it")();
+import { strict as assert } from "assert";
+import moment from "moment";
 
-const articleModule       = require("../model/article.js");
-const configModule        = require("../model/config.js");
-const logModule           = require("../model/logModule.js");
-const messageCenter       = require("../notification/messageCenter.js");
-const userModule          = require("../model/user.js");
-const translator          = require("../model/translator.js");
-const schedule            = require("node-schedule");
-const osmcalLoader        = require("../model/osmcalLoader.js");
+import articleModule from "../model/article.js";
+import configModule from "../model/config.js";
+import logModule from "../model/logModule.js";
+import messageCenter from "../notification/messageCenter.js";
+import userModule from "../model/user.js";
+import translator from "../model/translator.js";
+import { scheduleJob } from "node-schedule";
+import osmcalLoader from "../model/osmcalLoader.js";
 
-const pgMap = require("./pgMap.js");
-const debug = require("debug")("OSMBC:model:blog");
+import pgMap from "./pgMap.js";
+import _debug from "debug";
+import _markdownIt from "markdown-it";
+const markdown = _markdownIt();
+const debug = _debug("OSMBC:model:blog");
 
 
 
@@ -78,7 +80,7 @@ Blog.prototype.setAndSave = function setAndSave(user, data, callback) {
   const self = this;
   delete self.lock;
   assert.notEqual(typeof self.id, "undefined");
-  async.series([
+  series([
     messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
     function copyDataToBlog(cb) {
       assert.notEqual(self.id, 0);
@@ -131,7 +133,7 @@ Blog.prototype.setReviewComment = function setReviewComment(lang, user, data, ca
   for (let i = 0; i < self[rc].length; i++) {
     if (self[rc][i].user === user && self[rc][i].text === data) return callback();
   }
-  async.series([
+  series([
     function logInformation(cb) {
       debug("setReviewComment->logInformation");
       messageCenter.global.sendReviewStatus(user, self, lang, data, cb);
@@ -215,14 +217,14 @@ Blog.prototype.editReviewComment = function editReviewComment(lang, user, index,
 
   if (self[rc][index].user !== user.OSMUser) {
     const error = new Error(">" + user.OSMUser + "< is not allowed to change review");
-    error.status = HttpStatus.FORBIDDEN;
+    error.status = FORBIDDEN;
     return callback(error);
   }
 
   // nothing to change.
   if (self[rc][index].text === data) return callback();
 
-  async.series([
+  series([
     function logInformation(cb) {
       debug("editReviewComment->logInformation");
       messageCenter.global.sendReviewStatus(user, self, lang, data, cb);
@@ -258,7 +260,7 @@ Blog.prototype.closeBlog = function closeBlog(options, callback) {
   if (self[closeField] === options.status) return callback();
   assert(self.id);
   assert(self.id !== 0);
-  async.series([
+  series([
     function logEntry(callback) {
       messageCenter.global.sendCloseStatus(options.user, self, options.lang, options.status, callback);
     },
@@ -293,15 +295,15 @@ Blog.prototype.closeBlog = function closeBlog(options, callback) {
 // find(object,order,callback)
 // object (optional) find Objects, that conform with all values in the object
 // order (optional)  field to sort by
-module.exports.find = function find(obj1, obj2, callback) {
+export function find(obj1, obj2, callback) {
   debug("find");
   pgMap.find({ table: "blog", create: create }, obj1, obj2, callback);
-};
+}
 
 // find(id,callback)
 // id find Objects with ID
 
-module.exports.findById = function findById(id, callback) {
+export function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
     pgMap.findById(id, { table: "blog", create: create }, function(err, result) {
@@ -315,10 +317,10 @@ module.exports.findById = function findById(id, callback) {
   return new Promise((resolve, reject) => {
     _findById(id, (err, result) => err ? reject(err) : resolve(result));
   });
-};
+}
 
 // findOne(object,order,callback)
-module.exports.findOne = function findOne(obj1, obj2, callback) {
+export function findOne(obj1, obj2, callback) {
   if (typeof obj2 === "function") {
     callback = obj2;
     obj2 = null;
@@ -333,7 +335,7 @@ module.exports.findOne = function findOne(obj1, obj2, callback) {
   return new Promise((resolve, reject) => {
     _findOne(obj1, obj2, (err, result) => err ? reject(err) : resolve(result));
   });
-};
+}
 
 // Create a blog in the database,
 // createNewBlog(proto,callback)
@@ -357,7 +359,7 @@ function createNewBlog(user, proto, noArticle, callback) {
     debug("createNewBlog");
     if (proto && proto.id) return callback(new Error("Should not exist proto id"));
 
-    exports.findOne(" where data->>'name' like 'WN%'", { column: "name", desc: true }, function(err, result) {
+    findOne(" where data->>'name' like 'WN%'", { column: "name", desc: true }, function(err, result) {
       if (err) return callback(err);
       const blog = create();
       let name = "WN250";
@@ -390,11 +392,11 @@ function createNewBlog(user, proto, noArticle, callback) {
       change.startDate = blog.startDate;
       change.endDate = blog.endDate;
       // create an Empty blog and simualte an id != 0
-      const emptyBlog = exports.create();
+      const emptyBlog = create();
       emptyBlog.id = -1;
       const newArticles = configModule.getConfig("newArticles");
 
-      async.eachOf(newArticles,
+      eachOf(newArticles,
         function createArticle(value, key, cb) {
           if (noArticle) return cb();
           const newArticle = { blog: blog.name };
@@ -454,29 +456,29 @@ function autoCloseBlog(callback) {
 
 
 
-  exports.find({ status: "open" }, { column: "endDate", desc: false }, function(err, result) {
+  find({ status: "open" }, { column: "endDate", desc: false }, function(err, result) {
     if (err) {
       _autoCloseRunning = _autoCloseRunning - 1;
       return callback(err);
     }
     assert(Array.isArray(result));
-    async.series([
-      function closeAllBlogs(cb) {
-        async.each(result, function(data, cb) {
+    series([
+      function series1CloseAllBlogs(cb) {
+        each(result, function(data, cb) {
           data.autoClose(cb);
         }, function finish() { cb(); });
       },
-      function createNewBlog(cb) {
-        exports.findOne({ status: "open" }, function(err, result) {
+      function series2CreateNewBlog(cb) {
+        findOne({ status: "open" }, function(err, result) {
           if (err) return cb(err);
           if (!result) {
-            exports.createNewBlog({ OSMUser: "autocreate" }, cb);
+            createNewBlog({ OSMUser: "autocreate" }, cb);
             return;
           }
           cb();
         });
       }
-    ], function(err) {
+    ], function seriesFinal(err) {
       _autoCloseRunning = _autoCloseRunning - 1;
       callback(err);
     });
@@ -545,7 +547,7 @@ Blog.prototype.createTeamString = function createTeamString(lang, callback) {
   const self = this;
   let logs;
   let users = null;
-  async.series([
+  series([
     function readLogs(cb) {
       logModule.countLogsForBlog(self.name, function (err, result) {
         if (err) return cb(err);
@@ -622,7 +624,7 @@ function sortArticles(listOfArticles) {
 function calculateDependend(article, cb) {
   debug("calculateDependend");
 
-  async.series([
+  series([
     article.calculateDerivedFromChanges.bind(article),
     article.calculateDerivedFromSourceId.bind(article)
   ], cb);
@@ -640,7 +642,7 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
   const blogName = this.name;
   let articleList = [];
 
-  async.series([
+  series([
     function readArticlesWithCollector(cb) {
       debug("readArticlesWithCollector");
       articleModule.find({ blog: blogName }, { column: "title" }, function (err, result) {
@@ -650,7 +652,7 @@ Blog.prototype.copyAllArticles = function copyAllArticles(user, fromLang, toLang
       });
     },
     function copyArticles(cb) {
-      async.each(articleList, function(article, cb2) {
+      each(articleList, function(article, cb2) {
         // to lang already defined
         if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
         if ((fromLang !== "no_translation") && (!article["markdown" + fromLang])) return cb2();
@@ -689,7 +691,7 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
   const blogName = this.name;
   let articleList = [];
 
-  async.series([
+  series([
     function readArticlesWithCollector(cb) {
       debug("readArticlesWithCollector");
       articleModule.find({ blog: blogName }, { column: "title" }, function (err, result) {
@@ -705,7 +707,7 @@ Blog.prototype.translateAllArticles = function translateAllArticles(user, fromLa
     },
     function translateArticles(cb) {
       debug("translateArticles");
-      async.each(articleList, function(article, cb2) {
+      each(articleList, function(article, cb2) {
         debug("translateArticles.forEach");
 
         // to lang already defined
@@ -758,7 +760,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
   let articleList = null;
   let containsEmptyArticlesWarning = false;
 
-  async.series([
+  series([
     function readFuture(cb) {
       debug("readFuture");
       articleModule.find({ blog: "Future" }, { column: "title" }, function(err, result) {
@@ -772,7 +774,7 @@ Blog.prototype.getPreviewData = function getPreviewData(options, callback) {
       articleModule.find({ blog: self }, { column: "title" }, function (err, result) {
         if (err) return cb(err);
         if (options.collectors) {
-          async.each(result, calculateDependend, function finalFunction(err) {
+          each(result, calculateDependend, function finalFunction(err) {
             if (err) return cb(err);
             articleList = result;
             return cb();
@@ -996,7 +998,7 @@ pgObject.indexDefinition = {
 pgObject.viewDefinition = {};
 pgObject.table = "blog";
 
-module.exports.pg = pgObject;
+const pg = pgObject;
 
 
 
@@ -1028,31 +1030,31 @@ Blog.prototype.startCloseTimer = function startCloseTimer() {
   if (this.status !== "open") return;
   if (this.endDate) {
     const date = new Date(this.endDate);
-    _allTimer[this.id] = schedule.scheduleJob(date, function() {
-      exports.autoCloseBlog(function() {});
+    _allTimer[this.id] = scheduleJob(date, function() {
+      autoCloseBlog(function() {});
     });
   }
 };
 
-exports.startAllTimers = function startAllTimers(callback) {
+export function startAllTimers(callback) {
   debug("startAllTimers");
-  exports.find({ status: "open" }, function(err, result) {
+  find({ status: "open" }, function(err, result) {
     if (err && err.message === "relation \"blog\" does not exist") return callback();
     if (err) return callback(err);
     if (!result) return callback();
     for (let i = 0; i < result.length; i++) {
       result[i].startCloseTimer();
     }
-    exports.autoCloseBlog(callback);
+    autoCloseBlog(callback);
   });
-};
+}
 
 
-module.exports.getTBC = function() {
+export function getTBC() {
   debug("getTBC");
   const blog = create({ name: "TBC", version: -1, status: "Action List" });
   return blog;
-};
+}
 
 
 Blog.prototype.getBlogName = function(lang) {
@@ -1071,22 +1073,23 @@ Blog.prototype.getStatus = function(lang) {
 
 Blog.prototype.save = pgMap.save;
 
-// Define it on BlogModule level to (for no Blog Specified)
-module.exports.getCategories = getGlobalCategories;
 
-// Creation Functions
 
-// Create a blog in memory with a given prototype
-// create(proto)
-// proto: (optional) JSON Data, to copy for the new object
-//         the copy is a flat copy
-module.exports.create = create;
 
-module.exports.createNewBlog = createNewBlog;
 
-module.exports.autoCloseBlog = autoCloseBlog;
+const blogModule = {
+  findOne: findOne,
+  findById: findById,
+  find: find,
+  create: create,
+  sortArticles: sortArticles,
+  sanitizeBlogKey: sanitizeBlogKey,
+  autoCloseBlog: autoCloseBlog,
+  createNewBlog: createNewBlog,
+  getCategories: getGlobalCategories,
+  pg: pg,
+  Class: Blog
 
-module.exports.sanitizeBlogKey = sanitizeBlogKey;
+};
 
-// sort article
-module.exports.sortArticles = sortArticles;
+export default blogModule;

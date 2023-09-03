@@ -1,18 +1,19 @@
-"use strict";
-
-const express  = require("express");
-const async    = require("async");
-const router   = express.Router();
-const debug    = require("debug")("OSMBC:routes:slack");
-
-const config   = require("../config.js");
-const logger   = require("../config.js").logger;
-const util     = require("../util/util.js");
 
 
-const userModule     = require("../model/user.js");
-const htmltitle     = require("../model/htmltitle.js");
-const articleModule     = require("../model/article.js");
+import { Router } from "express";
+import { series } from "async";
+
+import config from "../config.js";
+
+import util from "../util/util.js";
+
+
+import userModule from "../model/user.js";
+import htmlTitle from "../model/htmltitle.js";
+import articleModule from "../model/article.js";
+import _debug from "debug";
+const router   = Router();
+const debug = _debug("OSMBC:routes:slack");
 
 
 const botName = config.getValue("AppName", { mustExist: true }).toLowerCase();
@@ -43,7 +44,7 @@ function ensureAuthentificated(req, res, next) {
   }
   userModule.find({ SlackUser: req.body.user_name }, function(err, user) {
     if (err) {
-      logger.error(err);
+      config.logger.error(err);
       return next(err);
     }
     const obj = {};
@@ -129,9 +130,9 @@ function postSlackCreateUseTBC(req, res, next) {
     return;
   }
 
-  async.series([function calcTitle(cb) {
+  series([function calcTitle(cb) {
     if (typeof (title) === "undefined" || title === "") {
-      htmltitle.getTitle(url).then(function (t) {
+      htmlTitle.getTitle(url).then(function (t) {
         title = t;
         return cb();
       }).catch(function(err) {
@@ -167,9 +168,10 @@ router.post("/create/:team", ensureAuthentificated, postSlackCreateUseTBC);
 
 
 
+const fortestonly = {};
+fortestonly.searchUrlInSlack = searchUrlInSlack;
+fortestonly.extractTextWithoutUrl = extractTextWithoutUrl;
 
-module.exports.router = router;
+router.fortestonly = fortestonly;
 
-module.exports.fortestonly = {};
-module.exports.fortestonly.searchUrlInSlack = searchUrlInSlack;
-module.exports.fortestonly.extractTextWithoutUrl = extractTextWithoutUrl;
+export default router;

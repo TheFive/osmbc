@@ -1,28 +1,27 @@
-"use strict";
 
-const debug       = require("debug")("OSMBC:routes:auth");
-const HttpStatus  = require("http-status-codes");
-const path        = require("path");
+import { FORBIDDEN } from "http-status-codes";
+import { join } from "path";
 
-const config      = require("../config.js");
-const logger      = require("../config.js").logger;
-const layoutConst = require("../routes/layout").layoutConst;
+import config from "../config.js";
+import layoutRouter from "../routes/layout.js";
 
-const passport     = require("passport");
+import passport from "passport";
 
-const LocalHtpasswdStrategy = require("passport-local-htpasswd");
-const OAuth2Strategy = require("passport-oauth2").Strategy;
-const xml2js = require("xml2js");
+import LocalHtpasswdStrategy from "passport-local-htpasswd";
+import { Strategy as OAuth2Strategy } from "passport-oauth2";
+import { Parser } from "xml2js";
 
 
 
 
-const userModule = require("../model/user.js");
+import userModule from "../model/user.js";
 
+import _debug from "debug";
+const debug = _debug("OSMBC:routes:auth");
 
 const htmlRoot = config.htmlRoot();
 const createGuestUsersAutomatic = config.getValue("createGuestUsersAutomatic", { mustExist: true });
-const auth = config.getValue("auth", { mustExist: true });
+const authConfig = config.getValue("auth", { mustExist: true });
 
 
 
@@ -32,16 +31,16 @@ function initialise(app) {
 
   function renderLogin(req, res) {
     debug("renderLogin");
-    res.render("login", { layout: layoutConst });
+    res.render("login", { layout: layoutRouter.layoutConst });
   }
   function renderLoginFailure(req, res) {
     debug("renderLoginFailure");
-    res.render("login failure", { layout: layoutConst });
+    res.render("login failure", { layout: layoutRouter.layoutConst });
   }
   app.get(htmlRoot + "/login", renderLogin);
   app.get(htmlRoot + "/login_failure", renderLoginFailure);
 
-  if (auth.openstreetmap.enabled) {
+  if (authConfig.openstreetmap.enabled) {
     app.get(htmlRoot + "/auth/openstreetmap", passport.authenticate("openstreetmap",
       {
         successReturnToOrRedirect: htmlRoot + "/osmbc.html",
@@ -56,9 +55,9 @@ function initialise(app) {
           keepSessionInfo: true
         }));
   }
-  if (auth.htaccess.enabled) {
+  if (authConfig.htaccess.enabled) {
     function renderHtAccessLogin(req, res) {
-      res.render("login-wpwd", { layout: layoutConst });
+      res.render("login-wpwd", { layout: layoutRouter.layoutConst });
     }
     app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
     app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
@@ -69,7 +68,7 @@ function initialise(app) {
       }));
   }
 
-  if (auth.openstreetmap_oauth20.enabled) {
+  if (authConfig.openstreetmap_oauth20.enabled) {
     app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2",
       {
         successReturnToOrRedirect: htmlRoot + "/",
@@ -100,8 +99,8 @@ function initialise(app) {
   passport.deserializeUser(function (user, done) {
     debug("passport.deserializeUser CB");
     if (typeof user !== "string") {
-      logger.error("deserialise user with object called, expected string");
-      logger.error(JSON.stringify(user, null, 2));
+      config.logger.error("deserialise user with object called, expected string");
+      config.logger.error(JSON.stringify(user, null, 2));
       return done(null, null);
     }
     userModule.find({ OSMUser: user }, function(err, result) {
@@ -110,7 +109,7 @@ function initialise(app) {
         const overWriteRole = config.getValue("DefineRole");
         if (overWriteRole && overWriteRole[result[0].OSMUser]) {
           result[0].access = overWriteRole[result[0].OSMUser];
-          logger.error("DefineRole Overwrite: Switching user " + result[0].OSMUser + " to access " + overWriteRole[result[0].OSMUser]);
+          config.logger.error("DefineRole Overwrite: Switching user " + result[0].OSMUser + " to access " + overWriteRole[result[0].OSMUser]);
         }
         return done(null, result[0]);
       }
@@ -130,12 +129,12 @@ function initialise(app) {
   });
 
   // Initialise all login mechisms based on config file
-  if (auth.htaccess.enabled) {
-    const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: path.join(__dirname, "..", "test_pwd") });
+  if (authConfig.htaccess.enabled) {
+    const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: join(config.getDirName(), "test_pwd") });
     passport.use(strategy);
   }
-  if (auth.openstreetmap_oauth20.enabled) {
-    const oauth2 = auth.openstreetmap_oauth20;
+  if (authConfig.openstreetmap_oauth20.enabled) {
+    const oauth2 = authConfig.openstreetmap_oauth20;
     const client =  new OAuth2Strategy({
       authorizationURL: oauth2.authorizationURL,
       tokenURL: oauth2.tokenURL,
@@ -158,13 +157,12 @@ function initialise(app) {
             return done(err);
           }
           try {
-            const parser = new xml2js.Parser();
+            const parser = new Parser();
             parser.parseString(body, function (err, result) {
               if (err) return done(err);
               const userProfile = { displayName: result.osm.user[0].$.display_name, id: result.osm.user[0].$.id };
               return done(null, userProfile);
             });
-            return;
           } catch (e) {
             return done(e);
           }
@@ -207,7 +205,7 @@ function checkRole(role, functions) {
       if (!functionsArray[accessIndex]) return next();
       return functionsArray[accessIndex](req, res, next);
     }
-    return res.status(HttpStatus.FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
+    return res.status(FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
   };
 }
 
@@ -222,7 +220,7 @@ function checkUser(user) {
     if (accessIndex >= 0) {
       return next();
     }
-    return res.status(HttpStatus.FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
+    return res.status(FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
   };
 }
 
@@ -281,9 +279,13 @@ function ensureAuthenticated (req, res, next) {
 }
 
 
-module.exports.passport = passport;
-module.exports.checkRole = checkRole;
-module.exports.checkUser = checkUser;
-module.exports.hasRole = hasRole;
-module.exports.ensureAuthenticated = ensureAuthenticated;
-module.exports.initialise = initialise;
+const auth = {
+  passport: passport,
+  checkRole: checkRole,
+  checkUser: checkUser,
+  hasRole: hasRole,
+  ensureAuthenticated: ensureAuthenticated,
+  initialise: initialise
+};
+export default auth;
+

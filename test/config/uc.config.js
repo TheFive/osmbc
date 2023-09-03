@@ -1,15 +1,17 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
 
-const should   = require("should");
-const userModule = require("../../model/user.js");
+import should from "should";
+import userModule from "../../model/user.js";
 
-const testutil = require("../testutil.js");
-const { osmbcLink } = require("../../util/util.js");
+import testutil from "../testutil.js";
+import util from "../../util/util.js";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
+
+const osmbcLink = util.osmbcLink;
 
 
 

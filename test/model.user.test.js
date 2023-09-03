@@ -1,15 +1,15 @@
-"use strict";
 
-const async  = require("async");
-const should = require("should");
 
-const sinon  = require("sinon");
+import async from "async";
+import should from "should";
 
-const testutil = require("./testutil.js");
+import sinon from "sinon";
 
-const userModule = require("../model/user.js");
-const logModule = require("../model/logModule.js");
-const mailReceiver = require("../notification/mailReceiver.js");
+import testutil from "./testutil.js";
+
+import userModule from "../model/user.js";
+import logModule from "../model/logModule.js";
+import { MailReceiverForTestOnly } from "../notification/mailReceiver.js";
 
 
 
@@ -126,8 +126,8 @@ describe("model/user", function() {
   describe("setAndSave", function() {
     let oldtransporter;
     beforeEach(function (bddone) {
-      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
-      mailReceiver.for_test_only.transporter.sendMail = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
+      oldtransporter = MailReceiverForTestOnly.transporter.sendMail;
+      MailReceiverForTestOnly.transporter.sendMail = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
       testutil.importData({
         clear: true,
         user: [{ OSMUser: "WelcomeMe", email: "none", lastAccess: (new Date()).toISOString() },
@@ -136,7 +136,7 @@ describe("model/user", function() {
       }, bddone);
     });
     afterEach(function (bddone) {
-      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+      MailReceiverForTestOnly.transporter.sendMail = oldtransporter;
       bddone();
     });
     it("should set only the one Value in the database", function (bddone) {
@@ -167,7 +167,7 @@ describe("model/user", function() {
               should(result[0]).eql({ id: r0id, timestamp: t0, oid: id, user: "user", table: "usert", property: "OSMUser", from: "Test", to: "Test2" });
 
               // There should be no mail
-              should(mailReceiver.for_test_only.transporter.sendMail.called).be.False();
+              should(MailReceiverForTestOnly.transporter.sendMail.called).be.False();
               bddone();
             });
           });
@@ -196,7 +196,7 @@ describe("model/user", function() {
               should(result.length).equal(0);
 
               // There should be no mail
-              should(mailReceiver.for_test_only.transporter.sendMail.called).be.False();
+              should(MailReceiverForTestOnly.transporter.sendMail.called).be.False();
               bddone();
             });
           });
@@ -225,7 +225,7 @@ describe("model/user", function() {
               should(result.length).equal(1);
 
               // There should be no mail
-              should(mailReceiver.for_test_only.transporter.sendMail.called).be.False();
+              should(MailReceiverForTestOnly.transporter.sendMail.called).be.False();
               bddone();
             });
           });

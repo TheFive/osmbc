@@ -1,8 +1,9 @@
-"use strict";
 
-const assert = require("assert");
 
-const debug = require("debug")("OSMBC:notification:messageFilter");
+import _debug from "debug";
+
+import { strict as assert } from "assert";
+const debug = _debug("OSMBC:notification:messageFilter");
 
 
 function UserConfigFilter(user, receiver) {
@@ -159,4 +160,4 @@ UserConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog
   this.receiver.sendCloseStatus(user, blog, lang, status, cb);
 };
 
-module.exports = UserConfigFilter;
+export default UserConfigFilter;

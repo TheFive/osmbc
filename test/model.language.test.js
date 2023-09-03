@@ -1,7 +1,7 @@
-"use strict";
 
-const should = require("should");
-const language = require("../model/language.js");
+
+import should from "should";
+import language from "../model/language.js";
 
 
 

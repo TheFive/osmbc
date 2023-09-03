@@ -1,21 +1,21 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
 
-const nock  = require("nock");
-const should = require("should");
-const HttpStatus = require("http-status-codes");
+import nock from "nock";
+import should from "should";
+import HttpStatus from "http-status-codes";
 
-const config = require("../config");
-const initialise = require("../util/initialise.js");
-
-
+import config from "../config.js";
+import initialiseModules from "../util/initialise.js";
 
 
-const testutil = require("../test/testutil.js");
-const logModule = require("../model/logModule.js");
-const mockdate = require("mockdate");
+
+
+import testutil from "../test/testutil.js";
+import logModule from "../model/logModule.js";
+import mockdate from "mockdate";
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
@@ -31,7 +31,7 @@ describe("routes/changes", function() {
 
 
   before(async function () {
-    await initialise.initialiseModules();
+    await initialiseModules();
     testutil.startServerSync();
   });
 

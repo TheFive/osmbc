@@ -1,11 +1,11 @@
 "use strict;";
 
-const should = require("should");
+import should from "should";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
 
 
-const Page = require("./page.js");
+import Page from "./page.js";
 
 class ErrorPage extends Page {
   // eslint-disable-next-line no-useless-constructor
@@ -31,4 +31,5 @@ class ErrorPage extends Page {
     return await header.getText();
   }
 }
-module.exports = ErrorPage;
+
+export default ErrorPage;

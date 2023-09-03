@@ -1,9 +1,9 @@
-"use strict";
+import _debug from "debug";
+import async from "async";
+import LogModuleReceiver from "../notification/LogModuleReceiver.js";
 
-const debug     = require("debug")("OSMBC:notification:messageCenter");
-const async     = require("../util/async_wrap.js");
-const LogModuleReceiver = require("../notification/LogModuleReceiver");
-const logger    = require("../config.js").logger;
+import config from "../config.js";
+const debug = _debug("OSMBC:notification:messageCenter");
 
 
 
@@ -63,27 +63,30 @@ MessageCenter.prototype.editComment = function editComment(user, article, index,
 };
 
 
-module.exports.global = null;
+
+
+const messageCenter = {
+  initialise: initialise,
+  global: null
+};
 
 function initialise(callback) {
   debug("initialise");
-  if (module.exports.global) {
+  if (messageCenter.global) {
     if (callback) return callback();
     return;
   }
-  const messageCenter = new MessageCenter();
-  module.exports.global = messageCenter;
+  messageCenter.global = new MessageCenter();
 
 
 
-  messageCenter.registerReceiver(new LogModuleReceiver());
+  messageCenter.global.registerReceiver(new LogModuleReceiver());
 
-  logger.info("Message Center initialised.");
+  config.logger.info("Message Center initialised.");
   if (callback) return callback();
-}
+};
 
 
 
-// register the Logging Receiver
-module.exports.initialise = initialise;
-module.exports.Class = MessageCenter;
+
+export default messageCenter;

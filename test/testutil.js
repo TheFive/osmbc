@@ -1,42 +1,44 @@
-"use strict";
-
-const should = require("should");
-const async  = require("async");
-const path   = require("path");
-const nock   = require("nock");
-const fs     = require("fs");
-const pretty = require("pretty");
 
 
-const debug  = require("debug")("OSMBC:test:testutil");
+import _debug from "debug";
 
-const http = require("http");
-const axios = require("axios");
-const wrapper = require("axios-cookiejar-support").wrapper;
-const CookieJar = require("tough-cookie").CookieJar;
 
-const LoginPage = require("../test/PageObjectModel/loginPage.js");
-const LoginChooserPage = require("../test/PageObjectModel/loginChooserPage.js");
+import should from "should";
+import async from "async";
+import path from "path";
+import nock from "nock";
+import fs from "fs";
+import pretty from "pretty";
 
-const { Builder, Browser } = require("selenium-webdriver");
-const chrome = require("selenium-webdriver/chrome");
-const { osmbcLink } = require("../util/util.js");
+import http from "http";
+import axios from "axios";
+import { wrapper } from "axios-cookiejar-support";
+import { CookieJar } from "tough-cookie";
 
-const config = require("../config.js");
+import LoginPage from "../test/PageObjectModel/loginPage.js";
+import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
 
-const app = require("../app.js");
+import { Builder, Browser } from "selenium-webdriver";
+import chrome from "selenium-webdriver/chrome.js";
+import util from "../util/util.js";
 
-const pgMap = require("../model/pgMap.js");
-const db  = require("../model/db.js");
-const blogModule    = require("../model/blog.js");
-const articleModule = require("../model/article.js");
-const logModule     = require("../model/logModule.js");
-const userModule    = require("../model/user.js");
-const session       = require("../model/session.js");
-const configModule  = require("../model/config.js");
+import config from "../config.js";
 
-const mailReceiver   = require("../notification/mailReceiver.js");
-const messageCenter  = require("../notification/messageCenter.js");
+import app from "../app.js";
+
+import pgMap from "../model/pgMap.js";
+import db from "../model/db.js";
+import blogModule from "../model/blog.js";
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
+import userModule from "../model/user.js";
+import session from "../model/session.js";
+import configModule from "../model/config.js";
+
+import { initialiseMailReceiver, mailReceiverUpdateUser } from "../notification/mailReceiver.js";
+import messageCenter from "../notification/messageCenter.js";
+const osmbcLink = util.osmbcLink;
+const debug = _debug("OSMBC:test:testutil");
 
 
 // set Test Standard to ignore prototypes for should
@@ -47,7 +49,7 @@ should.config.checkProtoEql = false;
 // mocha tests.
 // in table there has to be a row with id, otherwise the function
 // will throw an error
-exports.getJsonWithId = function getJsonWithId(table, id, cb) {
+function getJsonWithId(table, id, cb) {
   debug("getJsonWithId");
   let result = null;
   db.query("select data from " + table + " where id = $1", [id], function(err, pgResult) {
@@ -64,7 +66,7 @@ exports.getJsonWithId = function getJsonWithId(table, id, cb) {
 // mocha tests.
 function internCreate() { return {}; }
 
-exports.findJSON = function findJSON(table, obj, cb) {
+function findJSON(table, obj, cb) {
   function _findJSON(table, obj, cb) {
     debug("findJSON");
     pgMap.findOne({ table: table, create: internCreate }, obj, cb);
@@ -84,7 +86,7 @@ exports.findJSON = function findJSON(table, obj, cb) {
 // with the tables, and assuming some tables to exist
 // the function requires the test environment
 
-exports.clearDB = function clearDB(done) {
+function clearDB(done) {
   function _clearDB(done) {
     if (config.env !== "test") {
       console.error("Running Tests with but environment is: ", config.env);
@@ -94,7 +96,7 @@ exports.clearDB = function clearDB(done) {
     messageCenter.initialise();
     should.exist(messageCenter.global);
 
-    mailReceiver.initialise([]);
+    initialiseMailReceiver([]);
 
     const pgOptions = { dropTables: true, createTables: true, dropIndex: true, createIndex: true, dropView: true, createView: true };
     async.series([
@@ -129,10 +131,10 @@ exports.clearDB = function clearDB(done) {
 // e.g. to store Test Results, is returned
 
 
-exports.importData = function importData(data, callback) {
+function importData(data, callback) {
   debug("importData");
   if (typeof data === "string") {
-    data = JSON.parse(fs.readFileSync(path.resolve(__dirname, data), "UTF8"));
+    data = JSON.parse(fs.readFileSync(path.resolve(config.getDirName(), "test", data), "UTF8"));
   }
   const idReference = { blog: {}, article: {}, user: {} };
 
@@ -141,7 +143,7 @@ exports.importData = function importData(data, callback) {
       function initialiseDB(cb0) {
         debug("initialiseDB");
         if (data.initialise) {
-          exports.clearDB(cb0);
+          clearDB(cb0);
         } else cb0();
       },
       function clearDB(cb0a) {
@@ -169,7 +171,8 @@ exports.importData = function importData(data, callback) {
             userModule.createNewUser(d, function up(err, user) {
               if (err) return cb(err);
               if (typeof (id) !== "undefined") idReference.user[id] = user.id;
-              mailReceiver.updateUser(user);
+              // eslint-disable-next-line new-cap
+              mailReceiverUpdateUser(user);
               return cb();
             });
           }, cb1);
@@ -234,7 +237,7 @@ exports.importData = function importData(data, callback) {
   });
 };
 
-exports.checkData = function checkData(data, callback) {
+function checkData(data, callback) {
   debug("checkData");
 
   async.series([
@@ -332,9 +335,9 @@ exports.checkData = function checkData(data, callback) {
 // This function reads the data directory (as a subdirectory of test directory)
 // and for every file, that fits the fileregex calls the createTestFunction
 // callback with the filename to create one or several it() tests for it.
-exports.generateTests = function generateTests(datadir, fileregex, createTestFunction) {
+function generateTests(datadir, fileregex, createTestFunction) {
   debug("generateTests");
-  const testdir = path.resolve(__dirname, datadir);
+  const testdir = path.resolve(config.getDirName(), datadir);
   const fileList = fs.readdirSync(testdir);
   for (let i = 0; i < fileList.length; i++) {
     const filenameLong = path.resolve(testdir, fileList[i]);
@@ -348,16 +351,16 @@ let server = null;
 
 
 
-exports.startServerSync = function startServerSync() {
+function startServerSync() {
   debug("startServer");
-  if (server) exports.stopServer();
+  if (server) stopServer();
   server = http.createServer(app).listen(config.getServerPort());
 };
 
 
 
 
-exports.stopServer = function stopServer(callback) {
+function stopServer(callback) {
   debug("stopServer");
   should.exist(server, "Server was not started, could not stop.");
   server.close();
@@ -369,36 +372,37 @@ exports.stopServer = function stopServer(callback) {
 
 
 
-exports.doATest = function doATest(dataBefore, test, dataAfter, callback) {
+function doATest(dataBefore, test, dataAfter, callback) {
   async.series([
-    exports.clearDB,
-    exports.importData.bind(this, dataBefore),
+    clearDB,
+    importData.bind(this, dataBefore),
     test,
-    exports.checkData.bind(this, dataAfter)
+    checkData.bind(this, dataAfter)
   ], function final(err) {
     should.not.exist(err);
     callback();
   });
 };
 
-exports.nockHtmlPages = function nockHtmlPages() {
+function nockHtmlPages() {
   debug("nockHtmlPages");
-  const file =  path.resolve(__dirname, "NockedPages", "NockedPages.json");
+  const file =  path.resolve(config.getDirName(), "test", "NockedPages", "NockedPages.json");
   const nocks =  JSON.parse(fs.readFileSync(file));
   for (const site in nocks) {
     for (const page in nocks[site]) {
       nock(site)
         .get(page)
-        .replyWithFile(200, path.resolve(__dirname, "NockedPages", nocks[site][page]));
+        .replyWithFile(200, path.resolve(config.getDirName(), "test", "NockedPages", nocks[site][page]));
     }
   }
 };
-exports.nockHtmlPagesClear = function nockHtmlPagesClear() {
+
+function nockHtmlPagesClear() {
   nock.cleanAll();
 };
 
 
-module.exports.expectHtml = async function expectHtml(driver, errorList, givenPath, name) {
+async function expectHtml(driver, errorList, givenPath, name) {
   const source = pretty(await driver.getPageSource());
   let stopOnError = false;
   if (!Array.isArray(errorList)) {
@@ -408,8 +412,8 @@ module.exports.expectHtml = async function expectHtml(driver, errorList, givenPa
     errorList = undefined;
   }
   let expected = "not read yet";
-  const expectedFile = path.join(__dirname, givenPath, name + ".html");
-  const actualFile   = path.join(__dirname, givenPath, name + "_actual.html");
+  const expectedFile = path.join(config.getDirName(), "test", givenPath, name + ".html");
+  const actualFile   = path.join(config.getDirName(), "test", givenPath, name + "_actual.html");
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
     const expectedPretty = pretty(expected);
@@ -529,8 +533,23 @@ async function getNewDriver(username) {
 }
 
 
-exports.getNewDriver = getNewDriver;
+const testutil = {
+  getNewDriver: getNewDriver,
+  checkUrlWithUser: checkUrlWithUser,
+  checkPostUrlWithUser: checkPostUrlWithUser,
+  getWrappedAxiosClient: getWrappedAxiosClient,
+  getJsonWithId: getJsonWithId,
+  findJSON: findJSON,
+  clearDB: clearDB,
+  importData: importData,
+  checkData: checkData,
+  generateTests: generateTests,
+  startServerSync: startServerSync,
+  stopServer: stopServer,
+  doATest: doATest,
+  nockHtmlPages: nockHtmlPages,
+  nockHtmlPagesClear: nockHtmlPagesClear,
+  expectHtml: expectHtml
+};
 
-exports.checkUrlWithUser = checkUrlWithUser;
-exports.checkPostUrlWithUser = checkPostUrlWithUser;
-exports.getWrappedAxiosClient = getWrappedAxiosClient;
+export default testutil;

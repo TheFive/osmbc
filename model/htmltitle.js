@@ -1,12 +1,13 @@
-"use strict";
 
-const cheerio = require("cheerio");
-const axios = require("axios").default;
-const ssrfFilter = require("ssrf-req-filter");
 
-const debug = require("debug")("OSMBC:model:htmltitle");
+import { load } from "cheerio";
+import axios from "axios";
+import ssrfFilter from "ssrf-req-filter";
 
-const charsetDecoder = require("../util/util.js").charsetDecoder;
+import util from "../util/util.js";
+
+import _debug from "debug";
+const debug = _debug("OSMBC:model:htmltitle");
 
 
 function linkFrom(url, page) {
@@ -18,7 +19,7 @@ function linkFrom(url, page) {
 
 function retrieveForum(body, url) {
   if (linkFrom(url, "forum.openstreetmap.org")) {
-    const c = cheerio.load(body);
+    const c = load(body);
     const title = c("title").text().replace(" / OpenStreetMap Forum", "").trim();
     return title;
   }
@@ -27,7 +28,7 @@ function retrieveForum(body, url) {
 
 function retrieveOsmBlog(body, url) {
   if (linkFrom(url, "www.openstreetmap.org")) {
-    const c = cheerio.load(body);
+    const c = load(body);
     const title = c("title").text().replace("OpenStreetMap | ", "").trim();
     return title;
   }
@@ -36,7 +37,7 @@ function retrieveOsmBlog(body, url) {
 
 function retrieveTwitter(body, url) {
   if (linkFrom(url, "twitter.com")) {
-    const c = cheerio.load(body);
+    const c = load(body);
     let title = c('meta[property="og:description"]').attr("content");
 
     // Only replace Twitter Url, if it exists.
@@ -47,7 +48,7 @@ function retrieveTwitter(body, url) {
 }
 
 function retrieveTitle(body) {
-  const c = cheerio.load(body);
+  const c = load(body);
   const title = c("title").text().trim();
   return title;
 }
@@ -62,7 +63,7 @@ async function getTitle(url) {
 
   let body = null;
   let r = null;
-  const responseInterseptor = axios.interceptors.response.use(charsetDecoder);
+  const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   try {
     const response = await axios.get(url, {
       httpAgent: ssrfFilter(url),
@@ -92,8 +93,13 @@ async function getTitle(url) {
 
 
 
-module.exports.getTitle = getTitle;
+const fortestonly = {};
+fortestonly.linkFrom = linkFrom;
 
-module.exports.fortestonly = {};
-module.exports.fortestonly.linkFrom = linkFrom;
+const htmlTitle = {
+  getTitle: getTitle,
+  fortestonly: fortestonly
+};
+
+export default htmlTitle;
 

@@ -1,4 +1,4 @@
-"use strict";
+
 
 
 function cleanAttribute (attribute) {
@@ -7,7 +7,7 @@ function cleanAttribute (attribute) {
 
 
 // this is not turning down emojies, but turndown the individual emoji generation for the translation tool
-module.exports = function(turndownService) {
+const turndownItImsize = function(turndownService) {
   turndownService.addRule("image",
     {
       filter: "img",
@@ -24,3 +24,5 @@ module.exports = function(turndownService) {
       }
     });
 };
+
+export default turndownItImsize;

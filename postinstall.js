@@ -1,19 +1,18 @@
-"use strict";
 
-
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import config from "../config.js";
 
 
 
 function copy(srcpath, destpath) {
-  const src = path.join(__dirname, "node_modules", srcpath);
-  const dest = path.join(__dirname, "public", destpath);
+  const src = path.join(config.getDirName(), "node_modules", srcpath);
+  const dest = path.join(config.getDirName(), "public", destpath);
   fs.copyFileSync(src, dest);
 }
 
 function createDir(dir) {
-  const d = path.join(__dirname, "public", dir);
+  const d = path.join(config.getDirName(), "public", dir);
   if (!fs.existsSync(d)) fs.mkdirSync(d);
 }
 

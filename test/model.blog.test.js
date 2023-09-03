@@ -1,14 +1,14 @@
-"use strict";
 
-const async  = require("async");
-const should = require("should");
-const nock   = require("nock");
 
-const testutil = require("./testutil.js");
+import async from "async";
+import should from "should";
+import nock from "nock";
 
-const logModule     = require("../model/logModule.js");
-const blogModule    = require("../model/blog.js");
-const articleModule = require("../model/article.js");
+import testutil from "./testutil.js";
+
+import logModule from "../model/logModule.js";
+import blogModule from "../model/blog.js";
+import articleModule from "../model/article.js";
 
 
 describe("model/blog", function() {

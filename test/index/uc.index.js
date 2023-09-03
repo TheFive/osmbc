@@ -1,25 +1,27 @@
 
-"use strict";
+
 /* jshint ignore:start */
 
-const testutil = require("../testutil.js");
-const should  = require("should");
-const nock = require("nock");
+import testutil from "../testutil.js";
+import should from "should";
+import nock from "nock";
 
-const userModule = require("../../model/user.js");
-const articleModule = require("../../model/article.js");
-const blogModule = require("../../model/blog.js");
+import userModule from "../../model/user.js";
+import articleModule from "../../model/article.js";
+import blogModule from "../../model/blog.js";
 
-const initialise = require("../../util/initialise.js");
-const MainPage = require("../../test/PageObjectModel/mainPage.js");
-const AdminPage = require("../../test/PageObjectModel/adminPage.js");
+import initialiseModules from "../../util/initialise.js";
+import MainPage from "../../test/PageObjectModel/mainPage.js";
+import AdminPage from "../../test/PageObjectModel/adminPage.js";
 
-const mockdate = require("mockdate");
+import mockdate from "mockdate";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
 
 
-const { osmbcLink, sleep } = require("../../util/util.js");
+import util from "../../util/util.js";
+const osmbcLink = util.osmbcLink;
+const sleep = util.sleep;
 
 
 describe("uc/index", function() {
@@ -32,7 +34,7 @@ describe("uc/index", function() {
       .times(999)
       .reply(200, "ok");
     await testutil.clearDB();
-    await initialise.initialiseModules();
+    await initialiseModules();
     await userModule.createNewUser({ OSMUser: "TheFive", access: "full", language: "DE", email: "a@b.c" });
     await userModule.createNewUser({ OSMUser: "OldUser", access: "full", lang: "EN", email: "d@e.f", lastAccess: "2016-02-25T20:00" });
     await userModule.createNewUser({ OSMUser: "OldUserAway", access: "denied", email: "g@h.i", lastAccess: "2016-02-25T20:00" });

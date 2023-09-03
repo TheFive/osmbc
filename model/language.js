@@ -1,9 +1,10 @@
-"use strict";
 
 
-const config = require("../config.js");
-const debug = require("debug")("OSMBC:model:language");
-const assert = require("assert");
+
+import config from "../config.js";
+import { strict as assert } from "assert";
+import _debug from "debug";
+const debug = _debug("OSMBC:model:language");
 
 
 
@@ -49,50 +50,64 @@ function initialise() {
   });
 }
 
-exports.getLanguages = function() {
+function getLanguages() {
   if (langMap === null) initialise();
   return langMap;
-};
+}
 
-exports.getLid = function() {
+function getLid() {
   if (lid === null) initialise();
   return lid;
-};
+}
 
 
-exports.momentLocale = function(lang) {
+function momentLocale(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   return (langMap[lang]) ? langMap[lang].localeString : "";
-};
+}
 
 
-exports.deeplProSourceLang = function(lang) {
+function deeplProSourceLang(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProSource) result = langMap[lang.toUpperCase()].deeplProSource;
   return result;
-};
+}
 
-exports.deeplProTargetLang = function(lang) {
+function deeplProTargetLang(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProTarget) result = langMap[lang.toUpperCase()].deeplProTarget;
   return result;
-};
-exports.deeplProFormality = function(lang) {
+}
+function deeplProFormality(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = null;
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].deeplProFormality) result = langMap[lang.toUpperCase()].deeplProFormality;
   return result;
-};
-exports.wpExportName = function(lang) {
+}
+function wpExportName(lang) {
   if (lang === null) return null;
   if (langMap === null) initialise();
   let result = lang.toUpperCase();
   if (langMap[lang.toUpperCase()] && langMap[lang.toUpperCase()].wpExportName) result = langMap[lang.toUpperCase()].wpExportName;
   return result;
+}
+
+
+const language = {
+  getLanguages: getLanguages,
+  getLid: getLid,
+  momentLocale: momentLocale,
+  deeplProSourceLang: deeplProSourceLang,
+  deeplProTargetLang: deeplProTargetLang,
+  deeplProFormality: deeplProFormality,
+  wpExportName: wpExportName
+
 };
+
+export default language;

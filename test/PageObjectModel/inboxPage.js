@@ -1,9 +1,13 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
+import { By } from "selenium-webdriver";
 
-const StandardPage = require("./standardPage.js");
+import StandardPage from "./standardPage.js";
+
+import util from "../../util/util.js";
+
+const osmbcLink = util.osmbcLink;
+
 
 class InboxPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
@@ -24,4 +28,4 @@ class InboxPage extends StandardPage {
     await (await this._driver.findElement(By.xpath("//i[contains(@class,'fa-edit')][1]"))).click();
   }
 }
-module.exports = InboxPage;
+export default InboxPage;

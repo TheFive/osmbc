@@ -1,15 +1,15 @@
-"use strict";
 
-const should  = require("should");
-const initialise = require("../util/initialise.js");
 
-const helpRoutes = require("../routes/help.js");
+import should from "should";
+import initialiseModules from "../util/initialise.js";
+
+import helpRoutes from "../routes/help.js";
 
 
 
 describe("routes/help", function() {
   before(async function() {
-    await initialise.initialiseModules();
+    await initialiseModules();
   });
   describe("generateHelpText", function() {
     /* eslint-disable mocha/no-synchronous-tests */

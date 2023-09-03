@@ -1,20 +1,23 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
-const path = require("path");
-const fs = require("fs");
-const nock = require("nock");
-const should = require("should");
-const testutil = require("../testutil.js");
-const userModule = require("../../model/user.js");
-const articleModule = require("../../model/article.js");
-const blogModule = require("../../model/blog.js");
-const { osmbcLink } = require("../../util/util.js");
-const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
-const { sleep }    = require("../../util/util.js");
-const { Key } = require("selenium-webdriver");
+import path from "path";
+import fs from "fs";
+import nock from "nock";
+import should from "should";
+import testutil from "../testutil.js";
+import userModule from "../../model/user.js";
+import articleModule from "../../model/article.js";
+import blogModule from "../../model/blog.js";
+import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
+import { Key } from "selenium-webdriver";
 
+import util from "../../util/util.js";
+import config from "../../config.js";
+
+const osmbcLink = util.osmbcLink;
+const sleep = util.sleep;
 
 
 const maxTimer = 20000;
@@ -69,7 +72,7 @@ describe("uc.article", function() {
       await driver.get(osmbcLink("/article/" + articleId));
     });
     it("should isURL work on page", async function() {
-      const file =  path.resolve(__dirname, "..", "data", "util.data.json");
+      const file =  path.resolve(config.getDirName(), "test", "data", "util.data.json");
       const data = JSON.parse(fs.readFileSync(file));
       for (let i = 0; i < data.isURLArray.length; i++) {
         should(await driver.executeScript("return isURL('" + data.isURLArray[i] + "')")).is.True();

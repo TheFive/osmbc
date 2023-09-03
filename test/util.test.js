@@ -1,28 +1,38 @@
-"use strict";
 
-const util = require("../util/util.js");
-const should = require("should");
-const path = require("path");
-const fs     = require("fs");
-const turndownService = require("turndown")();
-turndownService.use(require("../util/turndown-it-sup.js"));
-turndownService.use(require("../util/turndown-it-imsize.js"));
 
-const markdown = require("markdown-it")();
-markdown.use(require("markdown-it-imsize"));
+import should from "should";
+import path from "path";
+import fs from "fs";
+import turndown from "turndown";
+import config from "../config.js";
 
-const mdUtil = require("../util/md_util.js");
-const initialise = require("../util/initialise.js");
-const testutil = require("../test/testutil.js");
-const InternalCache = require("../util/internalCache.js");
-const { sleep }    = require("../util/util.js");
+import turndownItSup from "../util/turndown-it-sup.js";
+import turndownItImsize from "../util/turndown-it-imsize.js";
+
+import markdownIt from "markdown-it";
+import markdownItImsize from "markdown-it-imsize";
+
+import mdUtil from "../util/md_util.js";
+import initialiseModules from "../util/initialise.js";
+import testutil from "../test/testutil.js";
+import InternalCache from "../util/internalCache.js";
+
+
+import util from "../util/util.js";
+const turndownService = turndown();
+
+turndownService.use(turndownItSup);
+turndownService.use(turndownItImsize);
+const markdown = markdownIt();
+markdown.use(markdownItImsize);
+const sleep = util.sleep;
 
 
 /* eslint-disable mocha/no-synchronous-tests */
 describe("util", function() {
   let data;
   before(async function() {
-    const file =  path.resolve(__dirname, "data", "util.data.json");
+    const file =  path.resolve(config.getDirName(), "test", "data", "util.data.json");
     data = JSON.parse(fs.readFileSync(file));
   });
   describe("shorten", function () {
@@ -132,7 +142,7 @@ describe("util", function() {
     }
     before(async function() {
       await testutil.clearDB();
-      await initialise.initialiseModules();
+      await initialiseModules();
     });
     it("should render emty texts", function() {
       should(mdRenderInline(null)).eql("");
@@ -220,7 +230,7 @@ describe("util", function() {
   describe("util.osmbcMarkdown Renderer", function() {
     before(async function() {
       await testutil.clearDB();
-      await initialise.initialiseModules();
+      await initialiseModules();
     });
     it("should render emojies", function() {
       const markdown = mdUtil.osmbcMarkdown();
@@ -230,7 +240,7 @@ describe("util", function() {
   describe("internal cache", function() {
     let internalCache = null;
     beforeEach(function(bddone) {
-      fs.unlink(path.join(__dirname, "..", "cache", "testCache.json"), function() {
+      fs.unlink(path.join(config.getDirName(), "..", "cache", "testCache.json"), function() {
         internalCache = new InternalCache({ file: "testCache.json" });
         bddone();
       });

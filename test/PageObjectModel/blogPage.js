@@ -1,11 +1,13 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
-const { sleep }    = require("../../util/util.js");
+import { By } from "selenium-webdriver";
+import util from "../../util/util.js";
+import StandardPage from "./standardPage.js";
+
+const osmbcLink = util.osmbcLink;
+const sleep = util.sleep;
 
 
-const StandardPage = require("./standardPage.js");
 
 class BlogPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
@@ -156,4 +158,5 @@ class BlogPage extends StandardPage {
     await editView.click();
   }
 }
-module.exports = BlogPage;
+
+export default BlogPage;

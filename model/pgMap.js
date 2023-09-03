@@ -1,12 +1,13 @@
-"use strict";
 
-const db     = require("../model/db.js");
-const assert = require("assert").strict;
-const async  = require("../util/async_wrap.js");
-const debug  = require("debug")("OSMBC:model:pgMap");
-const sqldebug  = require("debug")("OSMBC:model:sql");
-const logger = require("../config.js").logger;
-const util = require("../util/util.js");
+import db from "../model/db.js";
+import { strict as assert } from "assert";
+import config from "../config.js";
+import util from "../util/util.js";
+
+import { series, each, eachOf } from "async";
+import _debug from "debug";
+const debug = _debug("OSMBC:model:pgMap");
+const sqldebug  = _debug("OSMBC:model:sql");
 
 
 function generateQuery(table, obj, order) {
@@ -103,7 +104,7 @@ function generateQuery(table, obj, order) {
 }
 
 
-module.exports.save = function(options, callback) {
+function save(options, callback) {
   debug("save");
   if (typeof options === "function") {
     callback = options;
@@ -144,7 +145,7 @@ module.exports.save = function(options, callback) {
       });
     } else {
       debug("Object will be updated, current version is %s", self.version);
-      async.series([
+      series([
         function(cb) {
           debug("Check version of object");
           let versionsEqual = false;
@@ -201,9 +202,9 @@ module.exports.save = function(options, callback) {
   return new Promise((resolve, reject) => {
     _save(options, (err, result) => err ? reject(err) : resolve(result));
   });
-};
+}
 
-module.exports.remove = function(callback) {
+function remove(callback) {
   debug("remove");
   const self = this;
   const table = self.getTable();
@@ -217,7 +218,7 @@ module.exports.remove = function(callback) {
   debug("call delete");
 
   db.query("delete from " + table + " where id = $1", [self.id], callback);
-};
+}
 
 function convertResultFunction(module, callback) {
   debug("convertResultFunction");
@@ -254,7 +255,7 @@ function convertOneResultFunction(module, callback) {
   };
 }
 
-module.exports.find = function find(module, obj, order, callback) {
+function find(module, obj, order, callback) {
   debug("find %s", module.table);
   if (typeof (obj) === "function") {
     callback = obj;
@@ -280,11 +281,11 @@ module.exports.find = function find(module, obj, order, callback) {
   } else {
     db.query(sqlQuery, undefined, convertResultFunction(module, callback));
   }
-};
+}
 
 
 
-module.exports.fullTextSearch = function fullTextSearch(module, search, order, callback) {
+function fullTextSearch(module, search, order, callback) {
   debug("fullTextSearch");
   assert(module.table);
   assert(module.create);
@@ -337,10 +338,10 @@ module.exports.fullTextSearch = function fullTextSearch(module, search, order, c
                                                     coalesce(data->>'markdownEN','')   ) " + englishVector +
                       orderBy;
   db.query(sqlQuery, [search], convertResultFunction(module, callback));
-};
+}
 
 
-module.exports.findById = function findById(id, module, callback) {
+function findById(id, module, callback) {
   function _findById(id, module, callback) {
     debug("findById %s", id);
     const table = module.table;
@@ -356,9 +357,9 @@ module.exports.findById = function findById(id, module, callback) {
   return new Promise((resolve, reject) => {
     _findById(id, module, (err, result) => err ? reject(err) : resolve(result));
   });
-};
+}
 
-module.exports.findOne = function findOne(module, obj, order, callback) {
+function findOne(module, obj, order, callback) {
   debug("findOne");
   if (typeof (obj) === "function") {
     callback = obj;
@@ -374,10 +375,10 @@ module.exports.findOne = function findOne(module, obj, order, callback) {
 
 
   db.query(sqlQuery + " limit 1", convertOneResultFunction(module, callback));
-};
+}
 
 
-exports.createTables = function(pgObject, options, analyse, callback) {
+function createTables(pgObject, options, analyse, callback) {
   debug("pgMap.createTables %s %s", pgObject.table, JSON.stringify(options));
   assert(typeof (options) === "object");
   if (typeof (analyse) === "function") {
@@ -386,11 +387,11 @@ exports.createTables = function(pgObject, options, analyse, callback) {
   }
   assert(typeof (analyse) === "object");
 
-  async.series([
+  series([
     function tabledrop(cb) {
       if (options.dropTables || (options.dropTable && options.dropTable === pgObject.table)) {
         debug("tabledrop");
-        if (options.verbose) logger.info("Drop Table " + pgObject.table);
+        if (options.verbose)config.logger.info("Drop Table " + pgObject.table);
         const dropString = "DROP TABLE IF EXISTS " + pgObject.table + " CASCADE";
         db.query(dropString, cb);
       } else return cb();
@@ -398,8 +399,8 @@ exports.createTables = function(pgObject, options, analyse, callback) {
     function tablecreation(cb) {
       if (options.createTables || (options.createTable && options.createTable === pgObject.table)) {
         debug("tablecreation");
-        if (options.verbose) logger.info("Create Table " + pgObject.table);
-        if (options.verbose) logger.info("Query: " + pgObject.createString);
+        if (options.verbose)config.logger.info("Create Table " + pgObject.table);
+        if (options.verbose)config.logger.info("Query: " + pgObject.createString);
         db.query(pgObject.createString, cb);
       } else return cb();
     },
@@ -421,9 +422,9 @@ exports.createTables = function(pgObject, options, analyse, callback) {
           if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
         }
       }
-      async.each(toBeDropped, function ftoBeDropped(index, eachofcb) {
+      each(toBeDropped, function ftoBeDropped(index, eachofcb) {
         debug("ftoBeDropped");
-        if (options.verbose) logger.info("Drop Index " + index);
+        if (options.verbose)config.logger.info("Drop Index " + index);
         const dropIndex = "DROP INDEX if exists " + index + ";";
         db.query(dropIndex, eachofcb);
       }, function finalFunction(err) {
@@ -434,15 +435,15 @@ exports.createTables = function(pgObject, options, analyse, callback) {
     function indexcreation(cb) {
       if (options.createIndex || options.updateIndex) {
         debug("indexcreation");
-        if (options.verbose) logger.info("Creating Indexes for " + pgObject.table);
-        async.eachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
+        if (options.verbose)config.logger.info("Creating Indexes for " + pgObject.table);
+        eachOf(pgObject.indexDefinition, function(sql, index, eachofcb) {
           let createIt = false;
           if (options.createIndex) createIt = true;
           if (analyse.foundNOK[index]) createIt = true;
           if (analyse.expected[index]) createIt = true;
 
           if (!createIt) return eachofcb();
-          if (options.verbose) logger.info("Create Index " + index);
+          if (options.verbose)config.logger.info("Create Index " + index);
           db.query(sql, eachofcb);
         }, function finalFunction(err) { return cb(err); });
       } else return cb();
@@ -450,9 +451,9 @@ exports.createTables = function(pgObject, options, analyse, callback) {
     function viewsdrop(cb) {
       debug("viewsdrop");
       if (options.dropView) {
-        async.eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
+        eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
           const dropIndex = "DROP VIEW if exists " + view + ";";
-          if (options.verbose) logger.info("Drop View " + view);
+          if (options.verbose)config.logger.info("Drop View " + view);
           db.query(dropIndex, eachofcb);
         }, function finalFunction(err) { return cb(err); });
       } else return cb();
@@ -460,22 +461,22 @@ exports.createTables = function(pgObject, options, analyse, callback) {
     function viewscreation(cb) {
       debug("viewscreation");
       if (options.createView) {
-        async.eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
-          if (options.verbose) logger.info("Create View " + view);
+        eachOf(pgObject.viewDefinition, function(sql, view, eachofcb) {
+          if (options.verbose)config.logger.info("Create View " + view);
           db.query(sql, eachofcb);
         }, function finalFunction(err) { return cb(err); });
       } else return cb();
     }
   ], function finalFunction(err) {
     if (options.verbose) {
-      if (err) logger.error(err);
+      if (err)config.logger.error(err);
     }
     return callback(err);
   });
-};
+}
 
 
-module.exports.count = function count(sql, values, callback) {
+function count(sql, values, callback) {
   debug("count");
   if (typeof values === "function") {
     callback = values;
@@ -497,9 +498,9 @@ module.exports.count = function count(sql, values, callback) {
   } else {
     db.query(sql, resultFunction);
   }
-};
+}
 
-module.exports.select = function select(sql, data, callback) {
+function select(sql, data, callback) {
   debug("select");
   if (typeof data === "function") {
     callback = data;
@@ -517,4 +518,19 @@ module.exports.select = function select(sql, data, callback) {
     }
     callback(null, result);
   });
+}
+
+
+const pgMap = {
+  save: save,
+  remove: remove,
+  find: find,
+  fullTextSearch: fullTextSearch,
+  findById: findById,
+  findOne: findOne,
+  count: count,
+  createTables: createTables,
+  select: select
 };
+
+export default pgMap;

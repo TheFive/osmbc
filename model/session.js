@@ -1,4 +1,4 @@
-"use strict";
+
 
 
 
@@ -19,7 +19,8 @@ pgObject.indexDefinition = {
 pgObject.viewDefinition = {};
 pgObject.table = "session";
 
-module.exports.pg = pgObject;
+const session = { pg: pgObject };
+export default session;
 
 
 

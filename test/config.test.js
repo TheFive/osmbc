@@ -1,8 +1,8 @@
-"use strict";
 
-const config = require("../config.js");
-const async = require("async");
-const should = require("should");
+
+import config from "../config.js";
+import async from "async";
+import should from "should";
 
 describe("config", function() {
   describe("initialise", function() {

@@ -1,24 +1,22 @@
-"use strict";
+import { Router } from "express";
+import { auto, each } from "async";
+import moment from "moment-timezone";
 
-const express       = require("express");
-const async         = require("async");
-const moment        = require("moment-timezone");
-const router        = express.Router();
-const debug         = require("debug")("OSMBC:routes:layout");
+import util from "../util/util.js";
+import config from "../config.js";
+import language from "../model/language.js";
+import { osmbcMarkdown } from "../util/md_util.js";
 
-const util          = require("../util/util.js");
-const config        = require("../config.js");
-const language      = require("../model/language.js");
+import { getTBC, find } from "../model/blog.js";
+import { getAvatar as _getAvatar } from "../model/user.js";
 
-const packageConfig = require("../package.json");
-const mdUtil        = require("../util/md_util");
+import _debug from "debug";
+const router        = Router();
 
-const blogModule    = require("../model/blog.js");
-const userModule    = require("../model/user.js");
 
 const htmlRoot      = config.htmlRoot();
 const appName       = config.getValue("AppName", { mustExist: true });
-
+const debug = _debug("OSMBC:routes:layout");
 
 
 const url = config.getValue("url");
@@ -39,7 +37,7 @@ const layoutConst = {
   moment: moment,
   util: util,
   appName: appName,
-  osmbc_version: (process.env.NODE_ENV !== "test") ? packageConfig.version : "T.V.S",
+  osmbc_version: (process.env.NODE_ENV !== "test") ? config.version : "T.V.S",
   title: appName,
   auth: config.getValue("auth", { mustExist: true })
 };
@@ -72,10 +70,10 @@ function prepareRenderLayout(req, res, next) {
   const usedLanguages = {};
   if (req.user.language) usedLanguages[req.user.language] = true;
 
-  async.auto({
+  auto({
 
     tbc: function (callback) {
-      const blog = blogModule.getTBC();
+      const blog = getTBC();
       blog.calculateDerived(req.user, function(err) {
         if (err) return callback(err);
         callback(null, blog);
@@ -83,13 +81,13 @@ function prepareRenderLayout(req, res, next) {
     },
     listOfOpenBlog:
     function (callback) {
-      blogModule.find({ status: "open" }, function(err, result) {
+      find({ status: "open" }, function(err, result) {
         if (err) return callback(err);
         const list = [];
         for (let i = 0; i < result.length; i++) {
           list.push(result[i]);
         }
-        async.each(list, function(item, cb) {
+        each(list, function(item, cb) {
           item.calculateDerived(req.user, function(err) {
             if (err) return cb(err);
             userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
@@ -104,9 +102,9 @@ function prepareRenderLayout(req, res, next) {
       });
     },
     editBlog: function (callback) {
-      blogModule.find({ status: "edit" }, function(err, list) {
+      find({ status: "edit" }, function(err, list) {
         if (err) return callback(err);
-        async.each(list, function(item, cb) {
+        each(list, function(item, cb) {
           item.calculateDerived(req.user, function(err) {
             if (err) return cb(err);
             for (const k in item._usedLanguages) usedLanguages[k] = true;
@@ -165,7 +163,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
-    const markdown = mdUtil.osmbcMarkdown({ target: "editor" });
+    const markdown = osmbcMarkdown({ target: "editor" });
 
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
@@ -189,7 +187,7 @@ function prepareRenderLayout(req, res, next) {
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),
       md_renderInline: (text) => markdown.renderInline(text ?? ""),
-      getAvatar: userModule.getAvatar,
+      getAvatar: _getAvatar,
       scriptUser: scriptUser,
       blogTranslationVisibleFor: blogTranslationVisibleFor
     });
@@ -200,15 +198,12 @@ function prepareRenderLayout(req, res, next) {
 
 
 
-// Export Render Functions for testing purposes
-exports.prepareRenderLayout = prepareRenderLayout;
-
-
 
 // And configure router to set the prepare Function
-router.get("*", exports.prepareRenderLayout);
+router.get("*", prepareRenderLayout);
 
 
+router.layoutConst = layoutConst;
+router.prepareRenderLayout = prepareRenderLayout;
 
-module.exports.router = router;
-module.exports.layoutConst = layoutConst;
+export default router;

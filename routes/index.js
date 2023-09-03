@@ -1,20 +1,21 @@
-"use strict";
 
-const assert = require("assert").strict;
-const debug = require("debug")("OSMBC:routes:index");
-const express = require("express");
-const async = require("../util/async_wrap.js");
-const HttpStatus = require("http-status-codes");
+
+import _debug from "debug";
+import { strict as assert } from "assert";
+import express from "express";
+import async from "async";
+import HttpStatus from "http-status-codes";
+import help from "../routes/help.js";
+import config from "../config.js";
+import language from "../model/language.js";
+import logModule from "../model/logModule.js";
+import userModule from "../model/user.js";
+import articleModule from "../model/article.js";
+import moment from "moment";
+import auth from "../routes/auth.js";
+const debug = _debug("OSMBC:routes:index");
 
 const router = express.Router();
-const help = require("../routes/help.js");
-const config = require("../config.js");
-const language = require("../model/language.js");
-const logModule = require("../model/logModule.js");
-const userModule = require("../model/user.js");
-const articleModule = require("../model/article.js");
-const moment = require("moment");
-const auth = require("../routes/auth.js");
 
 
 
@@ -275,4 +276,4 @@ router.get("/createblog", auth.checkRole(["full"]), createBlog);
 
 
 
-module.exports.router = router;
+export default router;
