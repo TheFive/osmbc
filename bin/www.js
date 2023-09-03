@@ -21,9 +21,9 @@ import config from "../config.js";
 import configModule from "../model/config.js";
 import { startAllTimers } from "../model/blog.js";
 import userModule from "../model/user.js";
-import { initialise as _initialise } from "../notification/messageCenter.js";
-import { initialise as __initialise } from "../notification/mailReceiver.js";
-import { initialise as ___initialise } from "../notification/slackReceiver.js";
+import messageCenter from "../notification/messageCenter.js";
+import { initialiseMailReceiver } from "../notification/mailReceiver.js";
+import { initialiseSlackReceiver} from "../notification/slackReceiver.js";
 import _debug from "debug";
 const debug = _debug("OSMBC:server");
 
@@ -64,7 +64,7 @@ function initialiseServer() {
   auto({
     configModule: configModule.initialise,
     blogModule: ["configModule", startBlogTimer],
-    messageCenter: _initialise,
+    messageCenter: messageCenter.initialise,
     startMailReceiver: startMailReceiver,
     startSlackReceiver: ["configModule", startSlackReceiver]
   },
@@ -101,7 +101,7 @@ function startMailReceiver(callback) {
     if (err) {
       return callback(new Error("Error during User Initialising for Mail " + err.message));
     }
-    __initialise(result);
+    initialiseMailReceiver(result);
     config.logger.info("Mail Receiver initialised.");
     return callback();
   });
@@ -110,7 +110,7 @@ function startMailReceiver(callback) {
 function startSlackReceiver(param, callback) {
   debug("startSlackReceiver");
 
-  ___initialise(callback);
+  initialiseSlackReceiver(callback);
 }
 
 function startBlogTimer(param, callback) {
