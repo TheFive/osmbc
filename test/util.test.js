@@ -236,6 +236,18 @@ describe("util", function() {
       const markdown = mdUtil.osmbcMarkdown();
       should(markdown.render(":smiley: with a shortcut :-)")).eql("<p>😃 with a shortcut 😃</p>\n");
     });
+    it("should render imsize links", function() {
+      const markdown = mdUtil.osmbcMarkdown();
+      should(markdown.render("This is a link with size ![text](https://a.picture =20x30)")).eql('<p>This is a link with size <img src="https://a.picture" alt="text" width="20" height="30"></p>\n');
+    });
+    it("should render superscript", function() {
+      const markdown = mdUtil.osmbcMarkdown();
+      should(markdown.render("29^th^")).eql('<p>29<sup>th</sup></p>\n');
+    });
+    it("should render superscript with links", function() {
+      const markdown = mdUtil.osmbcMarkdown();
+      should(markdown.render("29^[2](https://a.link)^")).eql('<p>29<sup>[2](https://a.link)</sup></p>\n');
+    });
   });
   describe("internal cache", function() {
     let internalCache = null;

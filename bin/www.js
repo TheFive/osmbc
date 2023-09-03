@@ -23,7 +23,7 @@ import { startAllTimers } from "../model/blog.js";
 import userModule from "../model/user.js";
 import messageCenter from "../notification/messageCenter.js";
 import { initialiseMailReceiver } from "../notification/mailReceiver.js";
-import { initialiseSlackReceiver} from "../notification/slackReceiver.js";
+import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
 import _debug from "debug";
 const debug = _debug("OSMBC:server");
 
