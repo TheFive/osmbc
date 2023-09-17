@@ -5,11 +5,10 @@ import { join } from "path";
 import config from "../config.js";
 
 
-const cacheDir  = join(config.getDirName(), "..", "cache");
+const cacheDir  = join(config.getDirName(), "cache");
 
 function createDir(dir, callback) {
   if (existsSync(dir)) return callback();
-  console.dir(dir);
   return mkdir(dir, callback);
 }
 

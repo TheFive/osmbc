@@ -86,12 +86,10 @@ function addUserAndArticleLinkify(markdownIt, accessMap) {
   markdownIt.linkify.add("#", {
     validate: function (text, pos, self) {
       const tail = text.slice(pos);
-      console.log("validating #");
       if (!self.re.articleLink) {
         self.re.articleLink = /^[0-9]+/;
       }
       if (self.re.articleLink.test(tail)) {
-        console.log("validating # found something");
         return tail.match(self.re.articleLink)[0].length;
       }
       return 0;

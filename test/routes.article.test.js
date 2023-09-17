@@ -294,7 +294,6 @@ describe("routes/article", function() {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.get(url);
-      console.dir(body);
 
       const json = body.data;
       json["#vote_pro_2"].should.containEql('class="badge osmbc-btn-not-voted"');
@@ -981,7 +980,6 @@ describe("routes/article", function() {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, form);
-
 
       body.data.should.deepEqual({
         "https://www.site.ort/apage": "OK",

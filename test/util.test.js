@@ -10,7 +10,7 @@ import turndownItSup from "../util/turndown-it-sup.js";
 import turndownItImsize from "../util/turndown-it-imsize.js";
 
 import markdownIt from "markdown-it";
-import markdownItImsize from "markdown-it-imsize";
+import markdownItImsize from "../util/markdown-it-imsize.js";
 
 import mdUtil from "../util/md_util.js";
 import initialiseModules from "../util/initialise.js";
@@ -190,7 +190,6 @@ describe("util", function() {
     it("should turndown imsize markdown ", function() {
       const md = "It contains ![onki](https://link.to.somehow =1000x500) a link with size and one ![](https://someOtherStuff.bonk) without";
       const html = markdown.render(md);
-      console.dir(html);
       const backconvertedMd = turndownService.turndown(html);
       should(backconvertedMd).eql(md);
     });
@@ -242,11 +241,11 @@ describe("util", function() {
     });
     it("should render superscript", function() {
       const markdown = mdUtil.osmbcMarkdown();
-      should(markdown.render("29^th^")).eql('<p>29<sup>th</sup></p>\n');
+      should(markdown.render("29^th^")).eql("<p>29<sup>th</sup></p>\n");
     });
     it("should render superscript with links", function() {
       const markdown = mdUtil.osmbcMarkdown();
-      should(markdown.render("29^[2](https://a.link)^")).eql('<p>29<sup>[2](https://a.link)</sup></p>\n');
+      should(markdown.render("29^[2](https://a.link)^")).eql("<p>29<sup>[2](https://a.link)</sup></p>\n");
     });
   });
   describe("internal cache", function() {

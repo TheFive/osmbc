@@ -146,7 +146,6 @@ function osmbcLink(link) {
 
 function charsetDecoder(response) {
   let fromcharset = response.headers["content-encoding"];
-  console.dir(response.data);
   if (!fromcharset) {
     const ct = response.headers["content-type"];
     if (ct) {
@@ -160,7 +159,6 @@ function charsetDecoder(response) {
   }
 
   if (!iconv.encodingExists(fromcharset)) fromcharset = "UTF-8";
-  console.dir(fromcharset);
 
 
 

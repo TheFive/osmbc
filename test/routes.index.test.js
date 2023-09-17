@@ -62,7 +62,6 @@ describe("routes/index", function() {
     it("should show home page", async function () {
       let body = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       body = await client.get(url);
-      console.dir(body);
       body.data.should.containEql("<title>TESTBC</title>");
       body.data.should.containEql('<h2 class="d-none d-sm-block">Welcome to OSM BC</h2>');
       body.data.should.containEql("Full Access Index Page");
