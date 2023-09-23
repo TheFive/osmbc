@@ -120,8 +120,10 @@ HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
           liON = liON.replace("##width##", width);
         } else {
           liON = '<div class="wp-caption alignnone"> \n';
+          text = text.replace("></p>", ' width="555"></p>');
         }
       }
+      text = text.replace('alt=""', 'alt="lead picture"');
       text = text.replace("<p>", '<p class="wp-caption-text">');
       text = text.replace("<p>", '<p class="wp-caption-text">');
     } else {
