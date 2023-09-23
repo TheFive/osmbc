@@ -126,7 +126,7 @@ block content
               td
                 if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
                   each val in blog["reviewComment"+lang]
-                    if (val.text != "startreview")
+                    if ((val.text != "startreview") && (val.text != "reviewing..."))
                       span.badge.small-margin(class="osmbclabel-reviewblog")=val.user
               //- Download Column
               td
