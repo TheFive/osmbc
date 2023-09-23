@@ -64,7 +64,6 @@ describe("model/osmcalLoader", function() {
           .get("/api/v2/events/")
           .reply(300, "forbidden error");
         const result = await osmcalLoader.getEventMd("EN");
-        console.log(result)
         should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
       it("should handle non 200 results on nominatim API", async function() {

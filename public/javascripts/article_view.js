@@ -486,16 +486,10 @@ function onchangeCollection() {
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
       result += '<a class="badge badge-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
     } else result += '<a class="badge badge-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
-    result += " " + generateGoogleTranslateLink(link, window.leftLang);
-    if (window.rightLang !== "--" && window.rightLang !== "") {
-      result += " " + generateGoogleTranslateLink(link, window.rightLang);
-    }
-    if (window.lang3 !== "--" && window.lang3 !== "") {
-      result += " " + generateGoogleTranslateLink(link, window.lang3);
-    }
-    if (window.lang4 !== "--" && window.lang4 !== "") {
-      result += " " + generateGoogleTranslateLink(link, window.lang4);
-    }
+
+    window.userLanguages.forEach(function(lang) {
+      result += " " + generateGoogleTranslateLink(link, lang);
+    });
 
     result += "<br>\n";
   }
