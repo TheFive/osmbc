@@ -251,7 +251,7 @@ describe("util", function() {
   describe("internal cache", function() {
     let internalCache = null;
     beforeEach(function(bddone) {
-      fs.unlink(path.join(config.getDirName(), "..", "cache", "testCache.json"), function() {
+      fs.unlink(path.join(config.getDirName(), "cache", "testCache.json"), function() {
         internalCache = new InternalCache({ file: "testCache.json" });
         bddone();
       });
