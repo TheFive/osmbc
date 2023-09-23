@@ -180,7 +180,6 @@ describe("util", function() {
     it("should turndown imsize markdown ", function() {
       const md = "It contains ![onki](https://link.to.somehow =1000x500) a link with size and one ![](https://someOtherStuff.bonk) without";
       const html = markdown.render(md);
-      console.dir(html);
       const backconvertedMd = turndownService.turndown(html);
       should(backconvertedMd).eql(md);
     });

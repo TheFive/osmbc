@@ -8,7 +8,6 @@ const cacheDir  = path.join(__dirname, "..", "cache");
 
 function createDir(dir, callback) {
   if (fs.existsSync(dir)) return callback();
-  console.dir(dir);
   return fs.mkdir(dir, callback);
 }
 
