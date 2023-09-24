@@ -4,6 +4,10 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.17...4.0.18)
 
+**Merged pull requests:**
+
+- Bugfix/heatmap typo [\#1010](https://github.com/TheFive/osmbc/pull/1010) ([call-me-matt](https://github.com/call-me-matt))
+
 ## [4.0.17](https://github.com/TheFive/osmbc/tree/4.0.17) (2023-09-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.15...4.0.17)
