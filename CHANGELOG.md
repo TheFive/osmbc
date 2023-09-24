@@ -1,12 +1,24 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.0.18](https://github.com/TheFive/osmbc/tree/4.0.18) (2023-09-24)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.15...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.17...4.0.18)
+
+**Merged pull requests:**
+
+- Bugfix/heatmap typo [\#1010](https://github.com/TheFive/osmbc/pull/1010) ([call-me-matt](https://github.com/call-me-matt))
+
+## [4.0.17](https://github.com/TheFive/osmbc/tree/4.0.17) (2023-09-23)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.15...4.0.17)
 
 **Fixed bugs:**
 
 - Readability display does not handle non utf-8 pages [\#1005](https://github.com/TheFive/osmbc/issues/1005)
+
+**Merged pull requests:**
+
+- fixed typo "e person" to "a person" [\#1004](https://github.com/TheFive/osmbc/pull/1004) ([thibaultmol](https://github.com/thibaultmol))
 
 ## [4.0.15](https://github.com/TheFive/osmbc/tree/4.0.15) (2023-07-23)
 
@@ -100,6 +112,12 @@
 - Unicode issue with title extraction [\#973](https://github.com/TheFive/osmbc/issues/973)
 - Open external links in a new tab [\#971](https://github.com/TheFive/osmbc/issues/971)
 
+**Merged pull requests:**
+
+- repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
+- do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
+- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [4.0.7](https://github.com/TheFive/osmbc/tree/4.0.7) (2022-12-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.6...4.0.7)
@@ -161,6 +179,10 @@
 
 - Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
 - Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
+
+**Merged pull requests:**
+
+- remove typo in KO header [\#951](https://github.com/TheFive/osmbc/pull/951) ([call-me-matt](https://github.com/call-me-matt))
 
 
 
