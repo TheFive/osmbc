@@ -73,12 +73,13 @@ async function getTitle(url) {
       responseEncoding: "binary"
     });
     body = response.data;
+    axios.interceptors.response.eject(responseInterseptor);
   } catch (err) {
+    axios.interceptors.response.eject(responseInterseptor);
     if (err.code === "ECONNABORTED") {
       r = url + " TIMEOUT";
     } else throw new Error("Problem with url");
   }
-  axios.interceptors.response.eject(responseInterseptor);
   for (let i = 0; i < converterList.length; i++) {
     if (r) break;
     r = converterList[i](body, url);

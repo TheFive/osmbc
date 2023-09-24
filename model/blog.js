@@ -112,7 +112,7 @@ Blog.prototype.getClosedReviewCount = function getClosedreviewCount(lang) {
   }
   const users = new Set();
   for (const review of self[rc]) {
-    if (review.text !== "startreview") users.add(review.user);
+    if ((review.text !== "startreview") && (review.text !== "reviewing...")) users.add(review.user);
   }
   return users.size;
 };

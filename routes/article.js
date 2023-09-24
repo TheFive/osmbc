@@ -783,10 +783,10 @@ function getExternalText(req, res, next) {
       responseType: "arraybuffer",
       responseEncoding: "binary"
     }).then(function(response) {
-      axios.interceptors.response.eject(responseInterseptor);
       const doc = new JSDOM(response.data, link);
       const reader = new Readability(doc.window.document);
       const article = reader.parse();
+      axios.interceptors.response.eject(responseInterseptor);
       if (article && article.content) {
         res.json(article);
       } else {
