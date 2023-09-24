@@ -3,7 +3,6 @@
 // file "inspired" by https://github.com/markdown-it/markdown-it-sup
 // and migrated to ES6
 
-'use strict';
 
 // same as UNESCAPE_MD_RE plus a space
 var UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
@@ -64,7 +63,9 @@ function superscript(state, silent) {
 
 
 function sup_plugin(md) {
+  console.log("STarting Plugin")
   md.inline.ruler.after('emphasis', 'sup', superscript);
+  console.log("Plugin installed")
 };
 
 export default sup_plugin;

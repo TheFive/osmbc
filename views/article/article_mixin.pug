@@ -162,8 +162,8 @@ mixin translationMenu
 block append scripts_to_load
   script(src=layout.htmlroot + "/javascripts/markdown-it.min.js")
   script(src=layout.htmlroot + "/javascripts/markdown-it-emoji.min.js")
-  script(src=layout.htmlroot + "/javascripts/markdown-it-sup.min.js")
-  script(src=layout.htmlroot + "/javascripts/markdown-it-imsize.min.js")
+  script(type="module" src=layout.htmlroot + "/javascripts/markdown-it-imsize.min.js")
+  script(type="module" src=layout.htmlroot + "/javascripts/markdown-it-sup.min.js")
   script(src=layout.htmlroot + "/javascripts/markdown-it-link-attributes.min.js")
   script(src=layout.htmlroot + "/javascripts/article_view.js")
 
