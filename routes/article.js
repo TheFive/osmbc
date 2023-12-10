@@ -1110,7 +1110,11 @@ router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldVa
 module.exports.router = router;
 module.exports.slackrouter = slackrouter;
 
+function cacheFlushAll() {
+  linkCache.flushAll();
+}
 
 module.exports.fortestonly = {};
 module.exports.fortestonly.getArticleFromID = getArticleFromID;
 module.exports.fortestonly.fixMarkdownLinks = fixMarkdownLinks;
+module.exports.fortestonly.cacheFlushAll = cacheFlushAll;

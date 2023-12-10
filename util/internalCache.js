@@ -56,6 +56,7 @@ class InternalCache {
 
   get(key) { this._readCache(); return this.cache.get(key); }
   set(key, value) { this.cache.set(key, value); this._storeCache(); }
+  flushAll() { this.cache.flushAll(); this._storeCache(); }
 }
 
 module.exports = InternalCache;
