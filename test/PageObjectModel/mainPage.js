@@ -1,9 +1,12 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
+import { By } from "selenium-webdriver";
 
-const StandardPage = require("./standardPage.js");
+import StandardPage from "./standardPage.js";
+import util from "../../util/util.js";
+
+const osmbcLink = util.osmbcLink;
+
 
 class MainPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
@@ -59,11 +62,10 @@ class MainPage extends StandardPage {
     await (await this._driver.findElement(By.xpath("//a[text()='(more)']"))).click();
   }
 
-  async   waitForInitialisation() {
+  async waitForInitialisation() {
     // await this.assertPage();
     // use language 2 element as indicator to have finished page load
     await this._driver.findElement(By.css("a#adminlink"));
-
   }
 }
-module.exports = MainPage;
+export default MainPage;

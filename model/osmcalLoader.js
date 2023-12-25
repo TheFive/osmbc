@@ -1,14 +1,14 @@
-"use strict";
 
-const axios =   require("axios");
-const moment = require("moment");
 
-const mdUtil = require("../util/md_util.js");
-const configModule = require("../model/config.js");
-const config = require("../config.js");
-const language = require("../model/language.js");
+import axios from "axios";
+import moment from "moment";
 
-const InternalCache = require("../util/internalCache.js");
+import mdUtil from "../util/md_util.js";
+import configModule from "../model/config.js";
+import config from "../config.js";
+import language from "../model/language.js";
+
+import InternalCache from "../util/internalCache.js";
 
 const nominatimCache = new InternalCache({ file: "nominatim.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
 
@@ -218,7 +218,13 @@ function getEventMdCb(lang, blogStartDate, cb) {
 
 
 
-module.exports.getEventMd = getEventMd;
-module.exports.getEventMdCb = getEventMdCb;
-module.exports.forTestOnly = {};
-module.exports.forTestOnly.filterEvent = filterEvent;
+export const forTestOnly = {};
+forTestOnly.filterEvent = filterEvent;
+
+const osmcalLoader = {
+  getEventMd: getEventMd,
+  getEventMdCb: getEventMdCb,
+  forTestOnly: forTestOnly
+
+};
+export default osmcalLoader;

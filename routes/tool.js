@@ -1,26 +1,25 @@
-"use strict";
-
-const debug = require("debug")("OSMBC:routes:tool");
-const express = require("express");
-const router = express.Router();
-const config = require("../config.js");
-const glob = require("glob");
-const fs = require("fs");
-const path = require("path");
-const moment = require("moment");
-const async = require("async");
-const yaml     = require("js-yaml");
-const childProcess = require("child_process");
-const logger = require("../config.js").logger;
-const osmcalloader = require("../model/osmcalLoader.js");
-const sanitize = require("sanitize-filename");
-const sanitizeString = require("../util/util.js").sanitizeString;
+import { Router } from "express";
+import config from "../config.js";
+import { glob } from "glob";
+import { readFile, unlink, appendFile, rename } from "fs";
+import { join, basename } from "path";
+import moment from "moment";
+import { series, eachLimit } from "async";
+import { load } from "js-yaml";
+import { execFile } from "child_process";
+import osmcalLoader from "../model/osmcalLoader.js";
+import sanitize from "sanitize-filename";
+import util from "../util/util.js";
 
 
 
 
-const checkRole        = require("../routes/auth.js").checkRole;
-const checkUser       = require("../routes/auth.js").checkUser;
+import auth from "../routes/auth.js";
+
+
+import _debug from "debug";
+const debug = _debug("OSMBC:routes:tool");
+const router = Router();
 
 
 const htmlroot = config.htmlRoot();
@@ -62,10 +61,10 @@ const fileTypeOk = " (done).log";
 
 function readScriptConfig(script, callback) {
   script = sanitize(script);
-  fs.readFile(path.join(scriptFilePath, script), function(err, text) {
+  readFile(join(scriptFilePath, script), function(err, text) {
     if (err) return callback(err);
     try {
-      const configuration = yaml.load(text);
+      const configuration = load(text);
       return callback(null, configuration);
     } catch (err) {
       const error = "Error Parsing YAML File: " + script + "\n---" + err.message;
@@ -88,11 +87,11 @@ function renderScriptLog(req, res) {
   let reload = false;
 
 
-  async.series([
+  series([
     (cb) => {
       // First check if given file exists
       // load it and display it without reload
-      fs.readFile(path.join(logFilePath, file), (err, data) => {
+      readFile(join(logFilePath, file), (err, data) => {
         if (!err) {
           text = data;
         }
@@ -103,7 +102,7 @@ function renderScriptLog(req, res) {
       // now check wether a "running" log exists
       // display it with automated reload
       if (text) return cb();
-      fs.readFile(path.join(logFilePath, file + fileTypeRunning), (err, data) => {
+      readFile(join(logFilePath, file + fileTypeRunning), (err, data) => {
         if (!err) {
           text = data;
           reload = true;
@@ -115,13 +114,13 @@ function renderScriptLog(req, res) {
       // if the file exists with done flag, than
       // show it but disable reload
       if (text) return cb();
-      fs.readFile(path.join(logFilePath, file + fileTypeOk), (err, data) => {
+      readFile(join(logFilePath, file + fileTypeOk), (err, data) => {
         if (!err) text = data;
         cb(err);
       });
     }
   ], (err) => {
-    logger.error(err);
+    config.logger.error(err);
     if (err) return res.render("script_log", { layout: res.rendervar.layout, text: "The file " + file + " could not be found.", file: file });
     res.render("script_log",
       {
@@ -143,9 +142,9 @@ function renderScripts(req, res) {
       return;
     }
     if (!data) data = [];
-    for (let i = 0; i < data.length; i++) { data[i] = path.basename(data[i]); }
+    for (let i = 0; i < data.length; i++) { data[i] = basename(data[i]); }
     const configTable = {};
-    async.eachLimit(data, 3,
+    eachLimit(data, 3,
       function(item, callback) {
         readScriptConfig(item, function(err, config) {
           if (err) return callback(err);
@@ -171,7 +170,7 @@ function renderScript(req, res) {
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
-    if (err) return res.status(500).send(sanitizeString(err.message));
+    if (err) return res.status(500).send(util.sanitizeString(err.message));
     res.render("script_execute_page", {
       layout: res.rendervar.layout,
       configuration: configuration,
@@ -188,13 +187,13 @@ function executeScript(req, res, next) {
   const file = req.params.filename;
 
   readScriptConfig(file, function(err, configuration) {
-    if (err) return res.status(500).send(sanitizeString(err.message));
+    if (err) return res.status(500).send(util.sanitizeString(err.message));
 
     const logFileBase = configuration.name + " " + req.user.OSMUser + " " + moment().format("YYYY-MM-DD HH_mm_ss");
-    const logFileRunning = path.join(logFilePath, logFileBase + fileTypeRunning);
-    const logFileOk = path.join(logFilePath, logFileBase + fileTypeOk);
+    const logFileRunning = join(logFilePath, logFileBase + fileTypeRunning);
+    const logFileOk = join(logFilePath, logFileBase + fileTypeOk);
 
-    let script = path.join(scriptFilePath, configuration.execute);
+    let script = join(scriptFilePath, configuration.execute);
     if (configuration.execute.substring(0, 1) === "/") script = configuration.execute;
 
     let pictureFile = null;
@@ -215,7 +214,7 @@ function executeScript(req, res, next) {
       if (param.type === "file" && req.files && req.files[param.title]) {
         if (pictureFile) return next(new Error("Two Pictures not allowed"));
         const fn = req.files[param.title].name.replace(/\s+/g, "_");
-        pictureFile = path.join(logFilePath, fn);
+        pictureFile = join(logFilePath, fn);
         doThingsBeforeScript = function(err, callback) {
           if (err) return callback(err);
           req.files[param.title].mv(pictureFile, callback);
@@ -250,37 +249,37 @@ function executeScript(req, res, next) {
     doThingsBeforeScript(null, function() {
       let cp = null;
       try {
-        cp = childProcess.execFile(script, args, options);
+        cp = execFile(script, args, options);
       } catch (err) {
-        logger.error(err);
-        return res.status(500).send(sanitizeString(err.message));
+        config.logger.error(err);
+        return res.status(500).send(util.sanitizeString(err.message));
       }
       function logError(err) {
-        if (err) logger.error(err);
-        if (pictureFile) fs.unlink(pictureFile, function() {});
+        if (err) config.logger.error(err);
+        if (pictureFile) unlink(pictureFile, function() {});
       }
       try {
         cp.on("error", (error) => {
-          fs.appendFile(logFileRunning, "error: " + error.message, (err) => { logger.error(err); });
-          logger.error("Script " + file + " generates error");
-          logger.error(error);
+          appendFile(logFileRunning, "error: " + error.message, (err) => { config.logger.error(err); });
+          config.logger.error("Script " + file + " generates error");
+          config.logger.error(error);
         });
 
         cp.stdout.on("data", (data) => {
-          fs.appendFile(logFileRunning, data, logError);
+          appendFile(logFileRunning, data, logError);
         });
         cp.stderr.on("data", (data) => {
-          fs.appendFile(logFileRunning, "error: " + data, logError);
+          appendFile(logFileRunning, "error: " + data, logError);
         });
         cp.on("close", () => {
-          fs.rename(logFileRunning, logFileOk, logError);
-          if (pictureFile) fs.unlink(pictureFile, function() {});
+          rename(logFileRunning, logFileOk, logError);
+          if (pictureFile) unlink(pictureFile, function() {});
         });
       } catch (err) {
         return next(err);
       }
-      fs.appendFile(logFileRunning, "Script Started: " + script + " " + JSON.stringify(args), function(err) {
-        if (err) return res.status(500).send(sanitizeString(err.message));
+      appendFile(logFileRunning, "Script Started: " + script + " " + JSON.stringify(args), function(err) {
+        if (err) return res.status(500).send(util.sanitizeString(err.message));
         res.redirect(htmlroot + "/tool/scripts/log/" + logFileBase);
       });
     });
@@ -290,16 +289,16 @@ function executeScript(req, res, next) {
 function getEventTable(req, res, next) {
   const lang = req.query.lang;
   const blogStartDate = req.body.blogStartDate;
-  osmcalloader.getEventMdCb(lang, blogStartDate, function(err, result) {
+  osmcalLoader.getEventMdCb(lang, blogStartDate, function(err, result) {
     if (err) return next(err);
     return res.end(result);
   });
 }
 
 const userList = config.getValue("scripts").user;
-let checkScriptRights = checkRole("full");
+let checkScriptRights = auth.checkRole("full");
 
-if (userList !== "full") checkScriptRights = checkUser(userList);
+if (userList !== "full") checkScriptRights = auth.checkUser(userList);
 
 router.get("/scripts/log", checkScriptRights, renderScriptLogs);
 router.get("/scripts/log/:filename", checkScriptRights, renderScriptLog);
@@ -307,7 +306,7 @@ router.get("/scripts/execute", checkScriptRights, renderScripts);
 router.get("/scripts/execute/:filename", checkScriptRights, renderScript);
 router.post("/scripts/execute/:filename", checkScriptRights, executeScript);
 
-router.post("/getEventTable", checkRole("full"), getEventTable);
+router.post("/getEventTable", auth.checkRole("full"), getEventTable);
 
 
-module.exports.router = router;
+export default router;

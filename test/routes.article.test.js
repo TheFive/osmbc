@@ -1,25 +1,25 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
 
-const should  = require("should");
-const nock    = require("nock");
-const config  = require("../config.js");
-const mockdate = require("mockdate");
-const HttpStatus = require("http-status-codes");
-const initialise = require("../util/initialise.js");
+import should from "should";
+import nock from "nock";
+import config from "../config.js";
+import mockdate from "mockdate";
+import HttpStatus from "http-status-codes";
+import initialiseModules from "../util/initialise.js";
 
-const articleModule = require("../model/article.js");
-const logModule = require("../model/logModule.js");
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
 
-const articleRouterForTestOnly = require("../routes/article.js").fortestonly;
+import articleRouter from "../routes/article.js";
 
-const testutil = require("./testutil.js");
+import testutil from "./testutil.js";
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
-
+const articleRouterForTestOnly = articleRouter.fortestonly;
 
 
 describe("routes/article", function() {
@@ -27,7 +27,7 @@ describe("routes/article", function() {
   const id = 2;
 
   before(async function () {
-    await initialise.initialiseModules();
+    await initialiseModules();
     await testutil.clearDB();
     articleRouterForTestOnly.cacheFlushAll();
     testutil.startServerSync();
@@ -981,7 +981,6 @@ describe("routes/article", function() {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, form);
-
 
       body.data.should.deepEqual({
         "https://www.site.ort/apage": "OK",

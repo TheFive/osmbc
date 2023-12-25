@@ -1,9 +1,10 @@
-"use strict";
+import request from "request";
 
-const request  = require("request");
-const deferred = require("deferred");
-const https = require("https");
-const logger    = require("../config.js").logger;
+import deferred from "deferred";
+import { Agent } from "https";
+
+import config from "../config.js";
+const post = request.post;
 
 
 const agentOptions = {
@@ -11,7 +12,7 @@ const agentOptions = {
   rejectUnauthorized: true
 };
 
-const agent = new https.Agent(agentOptions);
+const agent = new Agent(agentOptions);
 
 
 function SlackAPI(hookUrl, httpProxyOptions) {
@@ -48,16 +49,16 @@ SlackAPI.prototype.send = function(message, cb) {
   if (!cb) d = deferred();
 
 
-  const req = request.post(option, function(err, res, body) {
+  const req = post(option, function(err, res, body) {
     if (!err && body !== "ok") {
       err = { message: body };
       body = null;
     }
     if (err) {
-      logger.error(err);
-      logger.error("While sending");
-      logger.error(JSON.stringify(message));
-      logger.error("To Hook: " + command);
+      config.logger.error(err);
+      config.logger.error("While sending");
+      config.logger.error(JSON.stringify(message));
+      config.logger.error("To Hook: " + command);
       err = null;
     }
     if (d) return err ? d.reject(err) : d.resolve({ res: res, body: body });
@@ -88,4 +89,4 @@ SlackAPI.prototype.respond = function(query, cb) {
   }
 };
 
-module.exports = SlackAPI;
+export default SlackAPI;

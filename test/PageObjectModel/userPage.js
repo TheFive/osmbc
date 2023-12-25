@@ -1,10 +1,11 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
+import { By } from "selenium-webdriver";
+import util from "../../util/util.js";
 
-const Page = require("./page.js");
+import Page from "./page.js";
 
+const osmbcLink = util.osmbcLink;
 class UserPage extends Page {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
@@ -72,4 +73,5 @@ class UserPage extends Page {
     return text.substring(16, 99);
   }
 }
-module.exports = UserPage;
+
+export default UserPage;

@@ -1,11 +1,9 @@
-"use strict;";
+import util from "../../util/util.js";
 
-const { osmbcLink } = require("../../util/util.js");
-
-const { By, Key } = require("selenium-webdriver");
+import { By, Key } from "selenium-webdriver";
 
 
-const StandardPage = require("./standardPage.js");
+import StandardPage from "./standardPage.js";
 
 class ArticlePage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
@@ -14,7 +12,7 @@ class ArticlePage extends StandardPage {
   }
 
   async assertPage() {
-    await this._assertUrlStartsWith(osmbcLink("/article"));
+    await this._assertUrlStartsWith(util.osmbcLink("/article"));
   }
 
   async selectCategory(category) {
@@ -110,4 +108,5 @@ class ArticlePage extends StandardPage {
     return text;
   }
 }
-module.exports = ArticlePage;
+
+export default ArticlePage;

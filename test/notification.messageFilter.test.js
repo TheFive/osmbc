@@ -1,10 +1,10 @@
-"use strict";
 
 
 
-const should = require("should");
 
-const UserConfigFilter = require("../notification/UserConfigFilter.js");
+import should from "should";
+
+import UserConfigFilter from "../notification/UserConfigFilter.js";
 
 
 

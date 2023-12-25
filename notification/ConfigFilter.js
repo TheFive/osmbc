@@ -1,6 +1,7 @@
-"use strict";
-const debug = require("debug")("OSMBC:notification:messageFilter");
-const util = require("../util/util.js");
+import util from "../util/util.js";
+
+import _debug from "debug";
+const debug = _debug("OSMBC:notification:messageFilter");
 
 
 /* ConfigFilter Class
@@ -129,5 +130,5 @@ ConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, la
 };
 
 
-module.exports = ConfigFilter;
+export default ConfigFilter;
 

@@ -1,6 +1,7 @@
-"use strict";
 
-const debug = require("debug")("OSMBC:notification:messageFilter");
+
+import _debug from "debug";
+const debug = _debug("OSMBC:notification:messageFilter");
 
 
 
@@ -45,5 +46,5 @@ ArticleCollectFilter.prototype.sendCloseStatus = function sendCloseStatus(user, 
   return cb();
 };
 
-module.exports = ArticleCollectFilter;
+export default ArticleCollectFilter;
 

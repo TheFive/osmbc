@@ -1,19 +1,18 @@
-"use strict";
 
-
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import config from "./config.js";
 
 
 
 function copy(srcpath, destpath) {
-  const src = path.join(__dirname, "node_modules", srcpath);
-  const dest = path.join(__dirname, "public", destpath);
+  const src = path.join(config.getDirName(), "node_modules", srcpath);
+  const dest = path.join(config.getDirName(), "public", destpath);
   fs.copyFileSync(src, dest);
 }
 
 function createDir(dir) {
-  const d = path.join(__dirname, "public", dir);
+  const d = path.join(config.getDirName(), "public", dir);
   if (!fs.existsSync(d)) fs.mkdirSync(d);
 }
 
@@ -39,9 +38,9 @@ copy("/font-awesome/fonts/fontawesome-webfont.woff2", "fonts/fontawesome-webfont
 
 
 copy("/markdown-it/dist/markdown-it.min.js", "javascripts/markdown-it.min.js");
-copy("/markdown-it-imsize/dist/markdown-it-imsize.min.js", "javascripts/markdown-it-imsize.min.js");
+copy("/markdown-it-imsize/dist/markdown-it-imsize.js", "javascripts/markdown-it-imsize.min.js");
 copy("/markdown-it-link-attributes/dist/markdown-it-link-attributes.min.js", "javascripts/markdown-it-link-attributes.min.js");
-copy("/markdown-it-sup/dist/markdown-it-sup.min.js", "javascripts/markdown-it-sup.min.js");
+copy("/markdown-it-sup/dist/markdown-it-sup.js", "javascripts/markdown-it-sup.min.js");
 copy("/markdown-it-emoji/dist/markdown-it-emoji.min.js", "javascripts/markdown-it-emoji.min.js");
 
 

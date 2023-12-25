@@ -1,18 +1,18 @@
-"use strict";
-
-const assert = require("assert").strict;
-
-const db     = require("../model/db.js");
 
 
+import { strict as assert } from "assert";
+import db from "../model/db.js";
+import pgSessionCreator from "connect-pg-simple";
 
-module.exports = function(session) {
+
+
+export function createSessionStore(session) {
   let sessionStore = null;
   let psi = 180;
   if (process.env.NODE_ENV === "test") {
     psi = 180;
   }
-  const PgSession = require("connect-pg-simple")(session);
+  const PgSession = pgSessionCreator(session);
 
   const pool = db.getPool();
   assert(pool);
@@ -22,3 +22,4 @@ module.exports = function(session) {
   });
   return sessionStore;
 };
+

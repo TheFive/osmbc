@@ -1,7 +1,7 @@
-const should = require("should");
-const { Key } = require("selenium-webdriver");
+import should from "should";
+import { Key } from "selenium-webdriver";
 
-module.exports = class Page {
+export default class Page {
   constructor(driver) {
     this._driver = driver;
   }

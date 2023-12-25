@@ -1,9 +1,12 @@
-"use strict";
 
-const { Pool } = require("pg");
-const config = require("../config.js");
-const assert = require("assert").strict;
-const sqldebug  = require("debug")("OSMBC:model:sql");
+
+import pg from "pg";
+import config from "../config.js";
+import { strict as assert } from "assert";
+import _debug from "debug";
+const { Pool } = pg;
+const sqldebug = _debug("OSMBC:model:sql");
+
 
 
 const pgConfigValues = config.getValue("postgres", { mustexist: true });
@@ -15,10 +18,9 @@ assert(pgConfigValues.database);
 assert(typeof pgConfigValues.password !== "undefined");
 assert(pgConfigValues.server);
 assert(pgConfigValues.port);
-const logger    = require("../config.js").logger;
 
 if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
-  logger.error("Database connectstr is deprecated, please remove from config");
+  config.logger.error("Database connectstr is deprecated, please remove from config");
   process.exit(1);
 }
 
@@ -65,7 +67,7 @@ function getPool() {
 
 let deep = 0;
 // export the query method for passing queries to the pool
-module.exports.query = function (text, values, callback) {
+function query (text, values, callback) {
   if (typeof values === "function") {
     callback = values;
     values = undefined;
@@ -79,9 +81,9 @@ module.exports.query = function (text, values, callback) {
     deep = deep - 1;
     const endTime = new Date().getTime();
     if (endTime - startTime > logTime) {
-      logger.info("SQL: >>>>>>>>>> [" + (endTime - startTime) / 1000 + "] \n" + text + "\n");
-      if (values) logger.info("SQL: VALUES " + JSON.stringify(values));
-      logger.info("SQL: <<<<<<<<<< (" + deep + ")");
+      config.logger.info("SQL: >>>>>>>>>> [" + (endTime - startTime) / 1000 + "] \n" + text + "\n");
+      if (values)config.logger.info("SQL: VALUES " + JSON.stringify(values));
+      config.logger.info("SQL: <<<<<<<<<< (" + deep + ")");
     }
     if (err) {
       if (err.message.indexOf("connect ECONNREFUSED") >= 0) {
@@ -99,7 +101,13 @@ module.exports.query = function (text, values, callback) {
   } else {
     getPool().query(text, values, handleResult);
   }
+}
+
+
+
+const db = {
+  getPool: getPool,
+  query: query
 };
 
-
-module.exports.getPool = getPool;
+export default db;

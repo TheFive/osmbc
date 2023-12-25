@@ -1,18 +1,18 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
 
-const should  = require("should");
-const config  = require("../config.js");
+import should from "should";
+import config from "../config.js";
 
-const HttpStatus = require("http-status-codes");
+import HttpStatus from "http-status-codes";
 
-const nock = require("nock");
-const testutil = require("./testutil.js");
-const initialise = require("../util/initialise.js");
-const userModule = require("../model/user.js");
-const mockdate = require("mockdate");
+import nock from "nock";
+import testutil from "./testutil.js";
+import initialiseModules from "../util/initialise.js";
+import userModule from "../model/user.js";
+import mockdate from "mockdate";
 
 
 
@@ -28,7 +28,7 @@ describe("routes/index", function() {
 
 
   before(async function () {
-    await initialise.initialiseModules();
+    await initialiseModules();
     testutil.startServerSync();
   });
 
@@ -140,9 +140,7 @@ describe("routes/index", function() {
     async function requestLanguageSetter(client, whichLang, lang) {
       const form = {};
       form[whichLang] = lang;
-      try {
-        await client.post(baseLink + "/language?", form);
-      } finally { }
+      await client.post(baseLink + "/language?", form);
     }
 
     it("should change language for full access", async function () {

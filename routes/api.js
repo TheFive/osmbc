@@ -1,15 +1,16 @@
-"use strict";
 
-const debug         = require("debug")("OSMBC:routes:api");
-const express       = require("express");
-const userModule    = require("../model/user.js");
-const publicRouter  = express.Router();
-const async         = require("../util/async_wrap.js");
-const htmltitle     = require("../model/htmltitle.js");
-const util          = require("../util/util.js");
-const articleModule = require("../model/article.js");
-const config        = require("../config.js");
-const language      = require("../model/language.js");
+
+import _debug from "debug";
+import express from "express";
+import userModule from "../model/user.js";
+import async from "async";
+import htmlTitle from "../model/htmltitle.js";
+import util from "../util/util.js";
+import articleModule from "../model/article.js";
+import config from "../config.js";
+import language from "../model/language.js";
+const debug = _debug("OSMBC:routes:api");
+const publicApiRouter  = express.Router();
 
 
 
@@ -80,7 +81,7 @@ function collectArticle(req, res, next) {
           changes.title = "NOT GIVEN";
           return cb();
         }
-        htmltitle.getTitle(url[0]).then(function(title) {
+        htmlTitle.getTitle(url[0]).then(function(title) {
           changes.title = title;
           return cb();
         }).catch((err) => { return cb(err); });
@@ -162,7 +163,7 @@ function collectArticleLink(req, res, next) {
           changes.title = "NOT GIVEN";
           return cb();
         }
-        htmltitle.getTitle(url[0]).then(function(title) {
+        htmlTitle.getTitle(url[0]).then(function(title) {
           changes.title = title;
           return cb();
         }).catch(function(err) {
@@ -198,12 +199,12 @@ function collectArticleLink(req, res, next) {
   });
 }
 
-publicRouter.param("apiKey", checkApiKey);
+publicApiRouter.param("apiKey", checkApiKey);
 
-publicRouter.get("/monitor/:apiKey", isServerUp);
-publicRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
+publicApiRouter.get("/monitor/:apiKey", isServerUp);
+publicApiRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
 
-publicRouter.post("/collectArticle/:apiKey", collectArticle);
-publicRouter.get("/collect/:apiKey", collectArticleLink);
+publicApiRouter.post("/collectArticle/:apiKey", collectArticle);
+publicApiRouter.get("/collect/:apiKey", collectArticleLink);
 
-module.exports.publicRouter = publicRouter;
+export default publicApiRouter;

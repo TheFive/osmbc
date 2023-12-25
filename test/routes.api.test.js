@@ -1,14 +1,14 @@
-"use strict";
-
-const async = require("async");
-const should = require("should");
-const config = require("../config");
-const articleModule = require("../model/article.js");
-const nock = require("nock");
-const axios = require("axios");
 
 
-const testutil = require("../test/testutil.js");
+import async from "async";
+import should from "should";
+import config from "../config.js";
+import articleModule from "../model/article.js";
+import nock from "nock";
+import axios from "axios";
+
+
+import testutil from "../test/testutil.js";
 
 
 

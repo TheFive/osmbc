@@ -1,13 +1,13 @@
-"use strict";
 
-const async  = require("async");
-const should = require("should");
 
-const testutil = require("./testutil.js");
+import async from "async";
+import should from "should";
 
-const configModule = require("../model/config.js");
-const logModule = require("../model/logModule.js");
-const messageCenter = require("../notification/messageCenter.js");
+import testutil from "./testutil.js";
+
+import configModule from "../model/config.js";
+import logModule from "../model/logModule.js";
+import messageCenter from "../notification/messageCenter.js";
 
 
 

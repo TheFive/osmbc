@@ -1,22 +1,23 @@
-"use strict";
+
 
 /* jshint ignore:start */
 
-const testutil = require("../testutil.js");
-const should  = require("should");
-const sinon = require("sinon");
-const mockdate = require("mockdate");
-const fs = require("fs");
+import testutil from "../testutil.js";
+import should from "should";
+import sinon from "sinon";
+import mockdate from "mockdate";
+import fs from "fs";
 
 
-const userModule = require("../../model/user.js");
-const articleModule = require("../../model/article.js");
-const mailReceiver = require("../../notification/mailReceiver.js");
-const { osmbcLink } = require("../../util/util.js");
+import userModule from "../../model/user.js";
+import articleModule from "../../model/article.js";
+import { MailReceiverForTestOnly } from "../../notification/mailReceiver.js";
 
-const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
+import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 
-const { sleep }    = require("../../util/util.js");
+import util from "../../util/util.js";
+const osmbcLink = util.osmbcLink;
+const sleep = util.sleep;
 
 
 
@@ -29,7 +30,7 @@ describe("views/user", function() {
   let mailChecker;
   beforeEach(async function() {
     mockdate.set("2015-11-05");
-    mailChecker = sinon.stub(mailReceiver.for_test_only.transporter, "sendMail")
+    mailChecker = sinon.stub(MailReceiverForTestOnly.transporter, "sendMail")
       .callsFake(function(obj, doit) { return doit(null, { response: "t" }); });
     await testutil.clearDB();
     await userModule.createNewUser({ OSMUser: "TheFive", access: "full" });

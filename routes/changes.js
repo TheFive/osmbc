@@ -1,13 +1,14 @@
-"use strict";
 
-const express   = require("express");
-const assert    = require("assert").strict;
+
+import _debug from "debug";
+import express from "express";
+import assert from "assert";
+import logModule from "../model/logModule.js";
+import blogModule from "../model/blog.js";
+import { diffWords } from "diff";
+import auth from "../routes/auth.js";
 const router    = express.Router();
-const debug     = require("debug")("OSMBC:routes:changes");
-const logModule = require("../model/logModule.js");
-const blogModule = require("../model/blog.js");
-const jsdiff    = require("diff");
-const auth      = require("../routes/auth.js");
+const debug = _debug("OSMBC:routes:changes");
 
 
 
@@ -19,7 +20,7 @@ function generateHTMLDiff(one, other) {
   if (typeof (one) !== "string") return "";
   if (typeof (other) !== "string") return "";
 
-  const diff = jsdiff.diffWords(one, other);
+  const diff = diffWords(one, other);
   let result = "";
   diff.forEach(function(part) {
     // green for additions, red for deletions
@@ -96,4 +97,4 @@ function renderChangeId(req, res, next) {
 router.get("/log", auth.checkRole("full"), renderHistoryLog);
 router.get("/:change_id", auth.checkRole("full"), renderChangeId);
 
-module.exports.router = router;
+export default router;

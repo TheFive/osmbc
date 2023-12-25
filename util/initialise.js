@@ -1,16 +1,17 @@
-"use strict";
 
 
-const debug = require("debug")("OSMBC:util:initialize");
-const async = require("async");
-const logger  = require("../config.js").logger;
+
+import _debug from "debug";
+import config from "../config.js";
 
 
-const configModule = require("../model/config.js");
-const userModule = require("../model/user.js");
-const messageCenter = require("../notification/messageCenter.js");
-const mailReceiver  = require("../notification/mailReceiver.js");
-const slackReceiver  = require("../notification/slackReceiver.js");
+import configModule from "../model/config.js";
+import userModule from "../model/user.js";
+import messageCenter from "../notification/messageCenter.js";
+import { initialiseMailReceiver } from "../notification/mailReceiver.js";
+import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
+import async from "async";
+const debug = _debug("OSMBC:util:initialize");
 
 
 // do not know where to place this stuff,
@@ -24,8 +25,8 @@ function startMailReceiver(callback) {
     if (err) {
       return callback(new Error("Error during User Initialising for Mail " + err.message));
     }
-    mailReceiver.initialise(result);
-    logger.info("Mail Receiver initialised.");
+    initialiseMailReceiver(result);
+    config.logger.info("Mail Receiver initialised.");
     return callback();
   });
 }
@@ -33,11 +34,11 @@ function startMailReceiver(callback) {
 function startSlackReceiver(param, callback) {
   debug("startSlackReceiver");
 
-  slackReceiver.initialise(callback);
+  initialiseSlackReceiver(callback);
 }
 
 
-exports.initialiseModules = function(callback) {
+function initialiseModules(callback) {
   function _initialiseModules(callback) {
     debug("_initialiseModules");
     async.auto({
@@ -52,3 +53,5 @@ exports.initialiseModules = function(callback) {
     _initialiseModules((err, result) => err ? reject(err) : resolve(result));
   });
 };
+
+export default initialiseModules;

@@ -1,10 +1,12 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
 
-const { osmbcLink } = require("../../util/util.js");
+import util from "../../util/util.js";
 
-const Page = require("./page.js");
+import Page from "./page.js";
+
+const osmbcLink = util.osmbcLink;
 
 class LoginChooserPage extends Page {
   // eslint-disable-next-line no-useless-constructor
@@ -25,4 +27,4 @@ class LoginChooserPage extends Page {
     await button.click();
   }
 }
-module.exports = LoginChooserPage;
+export default LoginChooserPage;

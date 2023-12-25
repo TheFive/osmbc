@@ -1,11 +1,11 @@
-"use strict";
 
-const should = require("should");
 
-const nock = require("nock");
+import should from "should";
 
-const testutil = require("./testutil.js");
-const htmltitle = require("../model/htmltitle.js");
+import nock from "nock";
+
+import testutil from "./testutil.js";
+import htmltitle from "../model/htmltitle.js";
 
 
 describe("model/htmltitle", function() {

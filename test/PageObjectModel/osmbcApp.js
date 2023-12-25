@@ -1,19 +1,21 @@
 
-const AdminPage            = require("../../test/PageObjectModel/adminPage.js");
-const MainPage             = require("../../test/PageObjectModel/mainPage.js");
-const UserPage             = require("../../test/PageObjectModel/userPage.js");
-const BlogPage             = require("../../test/PageObjectModel/blogPage.js");
-const ArticlePage          = require("../../test/PageObjectModel/articlePage.js");
-const BlogDetailPage       = require("../../test/PageObjectModel/blogDetailPage.js");
-const ErrorPage            = require("../../test/PageObjectModel/errorPage.js");
-const UserListPage         = require("../../test/PageObjectModel/userListPage.js");
-const BlogListPage         = require("../../test/PageObjectModel/blogListPage.js");
-const SearchAndCollectPage = require("../../test/PageObjectModel/searchAndCollectPage.js");
-const InboxPage            = require("../../test/PageObjectModel/inboxPage.js");
-const { osmbcLink }        = require("../../util/util.js");
+import AdminPage from "../../test/PageObjectModel/adminPage.js";
+import MainPage from "../../test/PageObjectModel/mainPage.js";
+import UserPage from "../../test/PageObjectModel/userPage.js";
+import BlogPage from "../../test/PageObjectModel/blogPage.js";
+import ArticlePage from "../../test/PageObjectModel/articlePage.js";
+import BlogDetailPage from "../../test/PageObjectModel/blogDetailPage.js";
+import ErrorPage from "../../test/PageObjectModel/errorPage.js";
+import UserListPage from "../../test/PageObjectModel/userListPage.js";
+import BlogListPage from "../../test/PageObjectModel/blogListPage.js";
+import SearchAndCollectPage from "../../test/PageObjectModel/searchAndCollectPage.js";
+import InboxPage from "../../test/PageObjectModel/inboxPage.js";
+import util from "../../util/util.js";
+
+const osmbcLink = util.osmbcLink;
 
 
-module.exports = class OsmbcApp {
+export default class OsmbcApp {
   constructor(driver) {
     this._driver = driver;
   }

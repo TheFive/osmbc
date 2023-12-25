@@ -1,19 +1,21 @@
-"use strict";
 
-const should = require("should");
-const async  = require("async");
-const fs     = require("fs");
-const path = require("path");
 
-const testutil = require("./testutil.js");
-const logModule = require("../model/logModule.js");
-const initialize = require("../util/initialise.js");
+import should from "should";
+import async from "async";
+import fs from "fs";
+import path from "path";
+
+import testutil from "./testutil.js";
+import logModule from "../model/logModule.js";
+import initialiseModules from "../util/initialise.js";
+import config from "../config.js";
+
 
 
 
 describe("model/changes", function() {
   before(function(bddone) {
-    initialize.initialiseModules(bddone);
+    initialiseModules(bddone);
   });
   context("Change Constructor", function() {
     /* eslint-disable mocha/no-synchronous-tests */
@@ -90,8 +92,8 @@ describe("model/changes", function() {
     });
 
     it("should find find changes in long text", function() {
-      const markdownDE = fs.readFileSync(path.resolve(__dirname, "data", "model.longmarkdownDE.txt"), "UTF8");
-      const markdownDE2 = fs.readFileSync(path.resolve(__dirname, "data", "model.longmarkdownDE2.txt"), "UTF8");
+      const markdownDE = fs.readFileSync(path.resolve(config.getDirName(), "test", "data", "model.longmarkdownDE.txt"), "UTF8");
+      const markdownDE2 = fs.readFileSync(path.resolve(config.getDirName(), "test", "data", "model.longmarkdownDE2.txt"), "UTF8");
 
       const change = new logModule.Class({ to: markdownDE, from: markdownDE2 });
       should(change.htmlDiffText(40)).eql("Disabled for texts longer than 2000 chars.");

@@ -1,12 +1,12 @@
-"use strict";
-
-const async = require("async");
-const should = require("should");
 
 
-const testutil = require("../test/testutil.js");
+import async from "async";
+import should from "should";
 
-const layout = require("../routes/layout.js");
+
+import testutil from "../test/testutil.js";
+
+import layout from "../routes/layout.js";
 
 
 

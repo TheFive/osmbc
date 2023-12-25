@@ -1,7 +1,8 @@
-"use strict";
 
-const debug = require("debug")("OSMBC:notification:messageFilter");
-const language = require("../model/config.js");
+
+import _debug from "debug";
+import config from "../model/config.js";
+const debug = _debug("OSMBC:notification:messageFilter");
 
 
 
@@ -10,7 +11,7 @@ const language = require("../model/config.js");
 function BlogStatusFilter(receiver, languages) {
   debug("BlogStatusFilter");
   this.receiver = receiver;
-  if (!languages) languages = language.getLanguages();
+  if (!languages) languages = config.language.getLanguages();
   this.languages = languages;
 }
 

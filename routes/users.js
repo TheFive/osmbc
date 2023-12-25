@@ -1,21 +1,21 @@
-"use strict";
-
-const assert   = require("assert");
-const async    = require("async");
-const debug    = require("debug")("OSMBC:routes:users");
 
 
-const express    = require("express");
-const router     = express.Router();
-const auth       = require("../routes/auth.js");
+import { strict as assert } from "assert";
+import { parallel, each, series } from "async";
 
-const config   = require("../config.js");
-const language = require("../model/language.js");
-const logger   = require("../config.js").logger;
 
-const userModule = require("../model/user.js");
-const logModule = require("../model/logModule.js");
-const blogRenderer = require("../render/BlogRenderer.js");
+import { Router } from "express";
+import auth from "../routes/auth.js";
+
+import config from "../config.js";
+import language from "../model/language.js";
+
+import userModule from "../model/user.js";
+import logModule from "../model/logModule.js";
+import blogRenderer from "../render/BlogRenderer.js";
+import _debug from "debug";
+const debug = _debug("OSMBC:routes:users");
+const router     = Router();
 
 
 const htmlroot = config.htmlRoot();
@@ -35,12 +35,12 @@ function renderList(req, res, next) {
     if (req.query.temporaryGuest === "false") query.temporaryGuest = false;
   }
 
-  async.parallel([
+  parallel([
     function(callback) {
       userModule.find(query, sort, function(err, result) {
         if (err) return callback(err);
         users = result;
-        async.each(users, function (item, eachcb) {
+        each(users, function (item, eachcb) {
           item.calculateChanges(eachcb);
         }, function(err) {
           if (req.query.sort === "OSMBC-changes") {
@@ -73,7 +73,7 @@ function renderUserId(req, res, next) {
 
 
   if (req.query.becomeGuest === "true" && req.user.access === "full") {
-    logger.info("Switch user " + req.user.OSMUser + " to guest");
+    config.logger.info("Switch user " + req.user.OSMUser + " to guest");
     req.user.access = "guest";
     req.user.temporaryGuest = true;
     req.user.save({ noVersionIncrease: true }, function(err) {
@@ -106,7 +106,7 @@ function renderUserId(req, res, next) {
   let user;
   let changes;
   let userHeatMapArray = null;
-  async.series([
+  series([
     function findAndLoaduserByName(cb) {
       debug("findAndLoaduserByName");
       userModule.findOne({ OSMUser: id }, function findAndLoaduserCB(err, result) {
@@ -146,7 +146,7 @@ function renderUserId(req, res, next) {
     function findAndLoadHeatCalendarData(cb) {
       debug("findAndLoadHeatCalendarData");
       logModule.countLogsForUser(user.OSMUser, function(err, result) {
-        if (err) logger.error(err);
+        if (err) config.logger.error(err);
         userHeatMapArray = result;
         cb(null, result);
       });
@@ -226,7 +226,7 @@ function postUserId(req, res, next) {
   if (["three", "four"].indexOf(changes.languageCount) < 0) changes.languageCount = "two";
   let user;
   let allowedToChangeUser = true;
-  async.series([
+  series([
     function findUser(cb) {
       debug("findUser");
       userModule.findById(id, function(err, result) {
@@ -293,9 +293,14 @@ router.get("/createApiKey", auth.checkRole("full"), createApiKey);
 router.get("/:user_id", auth.checkRole(["full", "guest"]), renderUserId);
 router.post("/:user_id", auth.checkRole(["full", "guest"]), postUserId);
 
-module.exports.createUser = createUser;
-module.exports.postUserId = postUserId;
-module.exports.renderUserId = renderUserId;
-module.exports.renderList = renderList;
+const _createUser = createUser;
+export { _createUser as createUser };
+const _postUserId = postUserId;
+export { _postUserId as postUserId };
+const _renderUserId = renderUserId;
+export { _renderUserId as renderUserId };
+const _renderList = renderList;
+export { _renderList as renderList };
 
-module.exports.router = router;
+const _router = router;
+export { _router as router };

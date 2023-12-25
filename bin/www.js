@@ -4,28 +4,28 @@
  * Module dependencies.
  */
 
-const http    = require("http");
-const https   = require("https");
-const fs    = require("fs");
+import http from "http";
+import https from "https";
+import { readFileSync } from "fs";
 
-const async   = require("async");
-const debug   = require("debug")("OSMBC:server");
+import { auto } from "async";
 
-const stoppable = require("stoppable");
-
-
-const app     = require("../app");
-
-const config  = require("../config.js");
-const logger  = require("../config.js").logger;
+import stoppable from "stoppable";
 
 
-const configModule = require("../model/config.js");
-const blogModule = require("../model/blog.js");
-const userModule = require("../model/user.js");
-const messageCenter = require("../notification/messageCenter.js");
-const mailReceiver  = require("../notification/mailReceiver.js");
-const slackReceiver  = require("../notification/slackReceiver.js");
+import app from "../app.js";
+
+import config from "../config.js";
+
+
+import configModule from "../model/config.js";
+import { startAllTimers } from "../model/blog.js";
+import userModule from "../model/user.js";
+import messageCenter from "../notification/messageCenter.js";
+import { initialiseMailReceiver } from "../notification/mailReceiver.js";
+import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
+import _debug from "debug";
+const debug = _debug("OSMBC:server");
 
 /**
  * Get port from environment and store in Express.
@@ -49,8 +49,8 @@ const options = {};
 let httpServer = http;
 if (config.getServerKey()) {
   httpServer = https;
-  options.key = fs.readFileSync(config.getServerKey());
-  options.cert = fs.readFileSync(config.getServerCert());
+  options.key = readFileSync(config.getServerKey());
+  options.cert = readFileSync(config.getServerCert());
 }
 
 
@@ -61,7 +61,7 @@ const server = stoppable(httpServer.createServer(options, app));
  */
 function initialiseServer() {
   debug("initialiseServer");
-  async.auto({
+  auto({
     configModule: configModule.initialise,
     blogModule: ["configModule", startBlogTimer],
     messageCenter: messageCenter.initialise,
@@ -70,22 +70,22 @@ function initialiseServer() {
   },
   function(err) {
     if (err) {
-      logger.error(err);
+      config.logger.error(err);
       process.exit(1);
     }
     server.listen(port);
     server.on("error", onError);
     server.on("listening", onListening);
-    logger.info("Server Listening on port " + port);
+    config.logger.info("Server Listening on port " + port);
     const used = process.memoryUsage();
     for (const key in used) {
-      logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+      config.logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
     }
   });
 }
 
 process.on("SIGINT", function() {
-  logger.info("Received a stoprequest (SIGINT)");
+  config.logger.info("Received a stoprequest (SIGINT)");
   server.stop();
   process.exit();
 });
@@ -101,8 +101,8 @@ function startMailReceiver(callback) {
     if (err) {
       return callback(new Error("Error during User Initialising for Mail " + err.message));
     }
-    mailReceiver.initialise(result);
-    logger.info("Mail Receiver initialised.");
+    initialiseMailReceiver(result);
+    config.logger.info("Mail Receiver initialised.");
     return callback();
   });
 }
@@ -110,7 +110,7 @@ function startMailReceiver(callback) {
 function startSlackReceiver(param, callback) {
   debug("startSlackReceiver");
 
-  slackReceiver.initialise(callback);
+  initialiseSlackReceiver(callback);
 }
 
 function startBlogTimer(param, callback) {
@@ -119,12 +119,12 @@ function startBlogTimer(param, callback) {
   // do not autoclose if this is switched of in config.
   if (config.getValue("AutoClose") === false) return callback();
 
-  blogModule.startAllTimers(function (err) {
+  startAllTimers(function (err) {
     if (err) {
-      logger.error(err);
+      config.logger.error(err);
       return callback(new Error("Error during Blog Timers Start " + err.message));
     }
-    logger.info("Timer for Auto Close started");
+    config.logger.info("Timer for Auto Close started");
     return callback();
   });
 }
@@ -166,11 +166,13 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case "EACCES":
-      logger.error(bind + " requires elevated privileges");
+      config.logger.error(bind + " requires elevated privileges");
       process.exit(1);
+      break;
     case "EADDRINUSE":
-      logger.error(bind + " is already in use");
+      config.logger.error(bind + " is already in use");
       process.exit(1);
+      break;
     default:
       throw error;
   }

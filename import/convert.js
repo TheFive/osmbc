@@ -1,7 +1,7 @@
-"use strict";
+
 
 var articleModule = require('../model/article.js');
-var logger   = require("../config.js").logger;
+varconfig.logger   = require("../config.js").logger;
 var userModule = require('../model/user.js');
 var blogModule = require('../model/blog.js');
 var logModule = require('../model/logModule.js');
@@ -24,7 +24,7 @@ async.series([
   function articles(done) {
     articleModule.find({},function(err,result){
       if (err) {
-        logger.error(err);
+       config.logger.error(err);
         return;
       }
       if (result) {

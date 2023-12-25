@@ -1,21 +1,21 @@
-"use strict";
 
 
 
-const should = require("should");
-const async = require("async");
+
+import should from "should";
+import async from "async";
 
 
-const testutil = require("./testutil.js");
+import testutil from "./testutil.js";
 
-const articleModule = require("../model/article.js");
-const blogModule    = require("../model/blog.js");
-const slackReceiver = require("../notification/slackReceiver.js");
-const configModule  = require("../model/config.js");
+import articleModule from "../model/article.js";
+import blogModule from "../model/blog.js";
+import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
+import configModule from "../model/config.js";
 
 
 
-const nock = require("nock");
+import nock from "nock";
 
 
 
@@ -34,7 +34,7 @@ describe("notification/slackReceiver", function() {
     async.series([
       testutil.clearDB,
       configModule.initialise,
-      slackReceiver.initialise
+      initialiseSlackReceiver
     ], bddone);
   });
   afterEach(function(bddone) {
