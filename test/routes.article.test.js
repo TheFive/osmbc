@@ -29,6 +29,7 @@ describe("routes/article", function() {
   before(async function () {
     await initialiseModules();
     await testutil.clearDB();
+    articleRouterForTestOnly.cacheFlushAll();
     testutil.startServerSync();
   });
 

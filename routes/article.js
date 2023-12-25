@@ -1109,10 +1109,14 @@ router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldVa
 const _router = router;
 export { _router as router };
 
+function cacheFlushAll() {
+  linkCache.flushAll();
+}
 
 const fortestonly = {};
 fortestonly.getArticleFromID = getArticleFromID;
 fortestonly.fixMarkdownLinks = fixMarkdownLinks;
+fortestonly.cacheFlushAll = cacheFlushAll;
 
 const articleRouter = {
   fortestonly: fortestonly,
