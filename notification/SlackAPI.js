@@ -1,18 +1,10 @@
-import request from "request";
+import axios from "axios";
 
-import deferred from "deferred";
-import { Agent } from "https";
 
 import config from "../config.js";
-const post = request.post;
 
 
-const agentOptions = {
 
-  rejectUnauthorized: true
-};
-
-const agent = new Agent(agentOptions);
 
 
 function SlackAPI(hookUrl, httpProxyOptions) {
@@ -39,34 +31,30 @@ SlackAPI.prototype.send = function(message, cb) {
   if (message.unfurl_links) { body.unfurl_links = message.unfurl_links; }
   if (message.link_names) { body.link_names = message.link_names; }
 
-  const option = {
-    proxy: (this.http_proxy_options && this.http_proxy_options.proxy) || process.env.https_proxy || process.env.http_proxy,
-    url: command,
-    body: JSON.stringify(body),
-    agent: agent
-  };
-  let d = null;
-  if (!cb) d = deferred();
-
-
-  const req = post(option, function(err, res, body) {
-    if (!err && body !== "ok") {
-      err = { message: body };
-      body = null;
-    }
-    if (err) {
+  let err = null;
+  axios.post(command, body)
+    .then(response => {
+      console.log("THEN");
+      console.log(response);
+      if (response.body !== "OK") {
+        err = { message: response.body };
+        config.logger.error(err);
+        config.logger.error("While sending");
+        config.logger.error(JSON.stringify(message));
+        config.logger.error("To Hook: " + command);
+      }
+      if (cb) return cb(null, err, body);
+    })
+    .catch(error => {
+      console.log("CATCJ");
+      console.log(error);
+      err = error;
       config.logger.error(err);
       config.logger.error("While sending");
       config.logger.error(JSON.stringify(message));
       config.logger.error("To Hook: " + command);
-      err = null;
-    }
-    if (d) return err ? d.reject(err) : d.resolve({ res: res, body: body });
-    if (cb) return cb(null, err, body);
-    return null;
-  });
-
-  return d ? d.promise : req;
+      if (cb) return cb(null, err, body);
+    });
 };
 
 

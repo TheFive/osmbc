@@ -1,6 +1,6 @@
 
 
-import { stringify } from "query-string";
+import queryString from "query-string";
 import axios from "axios";
 import language from "../model/language.js";
 
@@ -24,7 +24,7 @@ const debug = _debug("OSMBC:model:translator");
 
 async function deeplTranslate(url, params) {
   try {
-    const query = stringify(params);
+    const query = queryString.stringify(params);
     const response = await request(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },

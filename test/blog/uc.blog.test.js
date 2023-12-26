@@ -229,7 +229,7 @@ describe("uc/blog", function() {
 
 
         await blogPage.clickOnArticle("jeden Tag...");
-        sleep(1000);
+        sleep(1500);
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
         sleep(500);

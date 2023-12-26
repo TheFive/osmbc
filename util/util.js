@@ -4,7 +4,7 @@ import moment from "moment";
 import language from "../model/language.js";
 import iconv from "iconv-lite";
 import markdownIt from "markdown-it";
-import markdownItEmoji from "markdown-it-emoji";
+import { full as markdownItEmoji } from "markdown-it-emoji";
 import markdownItSup from "../util/markdown-it-sup.js";
 import markdownItImsize from "../util/markdown-it-imsize.js";
 
@@ -71,7 +71,7 @@ function linkify(string) {
 };
 
 // eslint-disable-next-line camelcase
-function md_render(text, accessMap) {
+function mdRender(text, accessMap) {
   if (typeof text === "undefined") text = "";
   if (text === null) text = "";
 
@@ -184,7 +184,7 @@ const util = {
   charsetDecoder: charsetDecoder,
   sleep: sleep,
   osmbcLink: osmbcLink,
-  md_render: md_render
+  md_render: mdRender
 };
 
 export default util;
