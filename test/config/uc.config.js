@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import should from "should";
@@ -65,5 +64,4 @@ describe("uc/config", function() {
 });
 
 
-/* jshint ignore:end */
 

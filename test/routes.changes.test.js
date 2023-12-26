@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import nock from "nock";
@@ -142,4 +141,3 @@ describe("routes/changes", function() {
 });
 
 
-/* jshint ignore:end */

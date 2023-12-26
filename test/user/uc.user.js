@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 import testutil from "../testutil.js";
 import should from "should";
@@ -253,4 +252,3 @@ describe("views/user", function() {
 });
 
 
-/* jshint ignore:end */

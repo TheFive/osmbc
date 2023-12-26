@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import nock from "nock";
@@ -601,4 +600,3 @@ describe("routes/blog", function() {
 });
 
 
-/* jshint ignore:end */

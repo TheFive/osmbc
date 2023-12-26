@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 import path from "path";
 import fs from "fs";
@@ -333,4 +332,3 @@ describe("uc.article", function() {
   });
 });
 
-/* jshint ignore:end */

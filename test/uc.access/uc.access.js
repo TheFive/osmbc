@@ -1,7 +1,5 @@
 
 
-/* jshint ignore:start */
-
 import mockdate from "mockdate";
 import testutil from "../testutil.js";
 import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
@@ -148,7 +146,7 @@ describe("uc.access", function() {
 
     // Check Guest Users Inbox
     await articlePageGuest.clickInboxMenu();
-    await sleep(350);
+    await sleep(600);
 
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");
@@ -169,4 +167,3 @@ describe("uc.access", function() {
     await driver.quit();
   });
 });
-/* jshint ignore:end */

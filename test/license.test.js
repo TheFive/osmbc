@@ -41,7 +41,7 @@ function buildLicenseObject(object, cb) {
       const l = json[k].licenses;
       const pl = k + " License(" + json[k].licenses + ")";
       if (Array.isArray(l)) {
-        l.forEach(function (license) { // jshint ignore:line
+        l.forEach(function (license) {
           usedLicenses[license] = pl;
         });
       } else {

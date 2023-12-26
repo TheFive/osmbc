@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import nock from "nock";
@@ -308,4 +307,3 @@ describe("uc/blog", function() {
   });
 });
 
-/* jshint ignore:end */

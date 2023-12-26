@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import should from "should";
@@ -1093,4 +1092,3 @@ describe("routes/article", function() {
 });
 
 
-/* jshint ignore:end */

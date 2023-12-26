@@ -1,7 +1,5 @@
 
 
-/* jshint ignore:start */
-
 import testutil from "../testutil.js";
 import should from "should";
 import nock from "nock";
@@ -185,4 +183,3 @@ describe("uc/index", function() {
     });
   });
 });
-/* jshint ignore:end */

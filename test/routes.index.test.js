@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import should from "should";
@@ -320,4 +319,3 @@ describe("routes/index", function() {
   });
 });
 
-/* jshint ignore:end */

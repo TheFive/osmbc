@@ -193,7 +193,6 @@ MarkdownRenderer.prototype.charSetString = function charSetString2() {
 
 
 function renderBlogStructure(lang, articleData) {
-  /* jshint validthis: true */
   debug("htmlBlog");
 
   const articles = articleData.articles;

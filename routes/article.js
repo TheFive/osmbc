@@ -5,7 +5,6 @@ import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
 import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
-/* jshint -W079 */
 import { URL } from "url";
 import { renderFile } from "pug";
 
@@ -915,7 +914,7 @@ function urlExist(req, res) {
       // check wether url is valid
       try {
         // eslint-disable-next-line no-unused-vars
-        const testurl = new URL(url); // jshint ignore:line
+        const testurl = new URL(url);
       } catch (error) {
         result[url] = `Invalid URI "${url}"`;
         return callback();

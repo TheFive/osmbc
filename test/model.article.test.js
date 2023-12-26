@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import _debug from "debug";
@@ -1464,4 +1463,3 @@ describe("model/article", function() {
     });
   });
 });
-/* jshint ignore:end */

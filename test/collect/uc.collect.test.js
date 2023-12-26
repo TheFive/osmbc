@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import nock from "nock";
@@ -94,5 +93,4 @@ describe("uc/collect", function() {
   });
 });
 
-/* jshint ignore:end */
 
