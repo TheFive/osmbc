@@ -1,8 +1,3 @@
-
-
-/* jshint ignore:start */
-
-
 import should from "should";
 import nock from "nock";
 import config from "../config.js";
@@ -258,4 +253,3 @@ describe("router/user", function() {
 });
 
 
-/* jshint ignore:end */

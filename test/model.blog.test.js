@@ -13,7 +13,7 @@ import articleModule from "../model/article.js";
 
 describe("model/blog", function() {
   before(function (bddone) {
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");

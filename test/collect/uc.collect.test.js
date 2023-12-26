@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import nock from "nock";
@@ -23,7 +22,7 @@ describe("uc/collect", function() {
   let driver = null;
   before(async function() {
     mockdate.set(new Date("2016-05-25T19:00:00Z"));
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -94,5 +93,4 @@ describe("uc/collect", function() {
   });
 });
 
-/* jshint ignore:end */
 

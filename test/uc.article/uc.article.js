@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 import path from "path";
 import fs from "fs";
@@ -31,7 +30,7 @@ describe("uc.article", function() {
   let osmbcApp;
 
   beforeEach(async function() {
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -333,4 +332,3 @@ describe("uc.article", function() {
   });
 });
 
-/* jshint ignore:end */

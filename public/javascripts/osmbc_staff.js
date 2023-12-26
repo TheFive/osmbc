@@ -5,10 +5,8 @@
 /* exported chooseLanguageSet */
 /* exported setUserConfig */
 
-/* jshint esversion: 6 */
 
 function highlightWrongLinks() {
-  /* jshint validthis: true */
   const object = $(this);
   const list = [];
   const mapping = {};

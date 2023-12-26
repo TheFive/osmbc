@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import should from "should";
@@ -43,7 +42,7 @@ describe("routes/article", function() {
   beforeEach(function (bddone) {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(HttpStatus.OK, "ok");
@@ -1093,4 +1092,3 @@ describe("routes/article", function() {
 });
 
 
-/* jshint ignore:end */

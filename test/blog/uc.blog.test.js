@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import nock from "nock";
@@ -33,7 +32,7 @@ describe("uc/blog", function() {
   this.timeout(1000 * 60);
 
   before(async function() {
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -308,4 +307,3 @@ describe("uc/blog", function() {
   });
 });
 
-/* jshint ignore:end */

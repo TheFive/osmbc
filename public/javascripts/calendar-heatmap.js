@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 /* eslint-disable */
 
 function calendarHeatmap(actualDate) {
@@ -226,7 +225,6 @@ function calendarHeatmap(actualDate) {
 
 
 // polyfill for Array.find() method
-/* jshint ignore:start */
 if (!Array.prototype.find) {
   Array.prototype.find = function (predicate) {
     if (this === null) {
@@ -249,4 +247,3 @@ if (!Array.prototype.find) {
     return undefined;
   };
 }
-/* jshint ignore:end */

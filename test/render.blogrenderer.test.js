@@ -28,7 +28,7 @@ describe("render/blogrenderer", function() {
   before(async function () {
     await configModule.initialise();
     renderer = new BlogRenderer.HtmlRenderer();
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");

@@ -1,6 +1,5 @@
 
 
-/* jshint ignore:start */
 
 
 import _debug from "debug";
@@ -34,7 +33,7 @@ describe("model/article", function() {
   const testUser = { OSMUser: "user" };
   before(function (bddone) {
     // nock all slack messages
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -1464,4 +1463,3 @@ describe("model/article", function() {
     });
   });
 });
-/* jshint ignore:end */

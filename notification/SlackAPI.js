@@ -34,8 +34,6 @@ SlackAPI.prototype.send = function(message, cb) {
   let err = null;
   axios.post(command, body)
     .then(response => {
-      console.log("THEN");
-      console.log(response);
       if (response.body !== "OK") {
         err = { message: response.body };
         config.logger.error(err);
@@ -46,8 +44,6 @@ SlackAPI.prototype.send = function(message, cb) {
       if (cb) return cb(null, err, body);
     })
     .catch(error => {
-      console.log("CATCJ");
-      console.log(error);
       err = error;
       config.logger.error(err);
       config.logger.error("While sending");

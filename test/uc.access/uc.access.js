@@ -1,12 +1,11 @@
 
 
-/* jshint ignore:start */
-
 import mockdate from "mockdate";
 import testutil from "../testutil.js";
 import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 import util from "../../util/util.js";
 import should from "should";
+import nock from "nock";
 
 
 
@@ -21,6 +20,10 @@ const sleep = util.sleep;
 describe("uc.access", function() {
   this.timeout(30000);
   beforeEach(async function() {
+    nock("https://missingmattermost.example.com/")
+      .post(/\/services\/.*/)
+      .times(999)
+      .reply(200, "opk");
     await testutil.clearDB();
     await initialiseModules();
     testutil.startServerSync();
@@ -148,7 +151,7 @@ describe("uc.access", function() {
 
     // Check Guest Users Inbox
     await articlePageGuest.clickInboxMenu();
-    await sleep(350);
+    await sleep(600);
 
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");
@@ -169,4 +172,3 @@ describe("uc.access", function() {
     await driver.quit();
   });
 });
-/* jshint ignore:end */
