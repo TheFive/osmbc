@@ -14,7 +14,7 @@
     "@mozilla/readability": "^0.4.4",
     "animated-gif-detector": "1.2.x",
     "async": "3.2.x",
-    "axios": "1.4.x",
+    "axios": "1.6.x",
     "body-parser": "1.20.x",
     "bootstrap": "4.6.2",
     "bootstrap-select": "^1.13.18",
