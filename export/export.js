@@ -1,14 +1,14 @@
-"use strict";
-const assert = require("assert");
 
-const fs = require("fs");
+import { strict as assert } from "assert";
+
+import fs from "fs";
 
 
-const articleModule = require("../model/article.js");
-const blogModule = require("../model/blog.js");
-const logModule = require("../model/logModule.js");
-const configModule = require("../model/config.js");
-const async = require("async");
+import articleModule from "../model/article.js";
+import blogModule from "../model/blog.js";
+import logModule from "../model/logModule.js";
+import configModule from "../model/config.js";
+import async from "async";
 
 function exportArticle(blog, callback) {
   console.info("export article");
@@ -65,7 +65,7 @@ function exportChange(blog, callback) {
 }
 
 
-var blog = process.argv[2];
+const blog = process.argv[2];
 
 assert(typeof (blog) === "string");
 assert(blog.length >= 3);

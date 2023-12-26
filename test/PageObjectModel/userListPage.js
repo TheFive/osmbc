@@ -1,13 +1,14 @@
 "use strict;";
 
-const { osmbcLink } = require("../../util/util.js");
+import util from "../../util/util.js";
+import Page from "./page.js";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
+
+const osmbcLink = util.osmbcLink;
 
 
-const Page = require("./page.js");
-
-class UserListPage extends Page {
+export default class UserListPage extends Page {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
     super(driver);
@@ -22,4 +23,3 @@ class UserListPage extends Page {
     await (await this._driver.findElement(By.id("sortWeeklyAuthor"))).click();
   }
 }
-module.exports = UserListPage;

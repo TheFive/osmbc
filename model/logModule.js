@@ -1,12 +1,13 @@
-"use strict";
-
-const db = require("../model/db.js");
-const language = require("../model/language.js");
-const pgMap = require("../model/pgMap.js");
-const debug = require("debug")("OSMBC:model:logModule");
 
 
-const jsdiff = require("diff");
+import db from "../model/db.js";
+import language from "../model/language.js";
+import pgMap from "../model/pgMap.js";
+
+
+import { diffChars, diffWordsWithSpace } from "diff";
+import _debug from "debug";
+const debug = _debug("OSMBC:model:logModule");
 
 
 
@@ -24,16 +25,17 @@ function create(proto) {
 
   return v;
 }
-module.exports.log = function log(object, callback) {
+
+function log(object, callback) {
   debug("log");
   if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
   db.query("insert into changes (data) values ($1) ", [object], function(err) {
     return callback(err);
   });
-};
+}
 
 
-module.exports.find = function(obj1, obj2, callback) {
+function find(obj1, obj2, callback) {
   const self = this;
   function _find(obj1, obj2, callback) {
     debug("find");
@@ -45,16 +47,14 @@ module.exports.find = function(obj1, obj2, callback) {
   return new Promise((resolve, reject) => {
     _find(obj1, obj2, (err, result) => (err) ? reject(err) : resolve(result));
   });
-};
-module.exports.findById = function(id, callback) {
+}
+function findById(id, callback) {
   debug("findById");
   pgMap.findById(id, this, callback);
 };
 
 
-module.exports.create = function() {
-  return new Change();
-};
+
 
 
 Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
@@ -70,7 +70,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
   }
 
   // first check on only spaces
-  let diff = jsdiff.diffChars(from, to);
+  let diff = diffChars(from, to);
   let onlySpacesAdd = true;
   let onlySpacesDel = true;
   if (from === to) {
@@ -94,7 +94,7 @@ Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
   if (onlySpacesDel) {
     return '<span class="osmbc-deleted">Only spaces removed</span>';
   }
-  diff = jsdiff.diffWordsWithSpace(from, to);
+  diff = diffWordsWithSpace(from, to);
 
   let result = "";
   let chars = maxChars;
@@ -205,7 +205,6 @@ pgObject.viewDefinition = {};
 
 pgObject.table = "changes";
 
-module.exports.pg = pgObject;
 
 
 Change.prototype.getTable = function getTable() {
@@ -215,8 +214,18 @@ Change.prototype.getTable = function getTable() {
 Change.prototype.save = pgMap.save;
 
 
-module.exports.table = "changes";
-module.exports.countLogsForBlog = countLogsForBlog;
-module.exports.create = create;
-module.exports.Class = Change;
-module.exports.countLogsForUser = countLogsForUser;
+
+
+const logModule = {
+  table: "changes",
+  countLogsForBlog: countLogsForBlog,
+  create: create,
+  countLogsForUser: countLogsForUser,
+  log: log,
+  find: find,
+  findById: findById,
+  pg: pgObject,
+  Class: Change
+};
+
+export default logModule;

@@ -1,19 +1,25 @@
-"use strict";
 
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+import { strict as assert } from "assert";
+import winston from "winston";
+import _debug from "debug";
+import { execSync } from "child_process";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const path     = require("path");
-const fs       = require("fs");
-const debug    = require("debug")("OSMBC:config");
-const assert   = require("assert").strict;
+const debug = _debug("OSMBC:config");
+
 const env      = process.env.NODE_ENV || "development";
-const winston  = require("winston");
+
+
+let pgstring;
 
 
 
-
-
-// Define simple first logger for winston
+// Define simple firstconfig.logger for winston
 
 let logger;
 
@@ -54,7 +60,7 @@ let configuration;
 
 function getPostgresDBString() {
   debug("getPostgresDBString");
-  const conf = exports.getValue("postgres");
+  const conf = getValue("postgres");
   let userString = "";
   if (conf.username !== "") {
     userString = conf.username + ":" + conf.password + "@";
@@ -77,14 +83,13 @@ function getPostgresDBString() {
 
 
 function getCurrentGitBranch() {
-  const { execSync } = require("child_process");
   return execSync("git rev-parse --abbrev-ref HEAD").toString().trim();
 }
 
 
 
 
-exports.initialise = function initialise(callback) {
+function initialise(callback) {
   if (typeof configuration !== "undefined") {
     if (callback) callback();
     return;
@@ -123,20 +128,21 @@ exports.initialise = function initialise(callback) {
 
 
 
-  exports.pgstring = getPostgresDBString();
+  pgstring = getPostgresDBString();
   if (callback) callback();
 };
 
 
 
-exports.getConfiguration = function() {
+function getConfiguration() {
   assert(false, "Function obsolote use single values");
-  exports.initialise();
+  initialise();
   return configuration;
 };
-exports.getValue = function(key, options) {
+
+function getValue(key, options) {
   debug("getValue %s", key);
-  exports.initialise();
+  initialise();
   if (options) assert.equal(typeof (options), "object");
   let result;
   if (options) {
@@ -171,20 +177,20 @@ exports.getValue = function(key, options) {
 };
 
 
-const languages = exports.getValue("languages", { mustExist: true });
-const htmlRoot = exports.getValue("htmlroot", { mustExist: true });
-const url = exports.getValue("url", { mustExist: true });
+const languages = getValue("languages", { mustExist: true });
+const _htmlRoot = getValue("htmlroot", { mustExist: true });
+const _url =  getValue("url", { mustExist: true });
 
 
-exports.getLanguages = function() {
+function getLanguages() {
   assert(false, "OSMBC Error Function obsolote");
   return languages;
 };
 
-exports.htmlRoot = function() { return htmlRoot; };
-exports.url = function() { return url; };
+function htmlRoot() { return _htmlRoot; };
+function url() { return _url; };
 
-exports.moment_locale = function(lang) {
+function momentLocale(lang) {
   assert(false, "Function obsolote");
   return configuration.moment_locale[lang];
 };
@@ -192,30 +198,49 @@ exports.moment_locale = function(lang) {
 
 
 
-exports.getServerPort = function() {
-  exports.initialise();
-  return exports.getValue("serverport", { mustExist: true });
+function getServerPort() {
+  initialise();
+  return getValue("serverport", { mustExist: true });
 };
 
-exports.getServerKey = function() {
-  exports.initialise();
-  return exports.getValue("serverkey");
+function getServerKey() {
+  initialise();
+  return getValue("serverkey");
 };
 
-exports.getServerCert = function() {
-  exports.initialise();
-  return exports.getValue("servercert");
+function getServerCert() {
+  initialise();
+  return getValue("servercert");
 };
 
-exports.getCallbackUrl = function() {
-  exports.initialise();
+function getCallbackUrl() {
+  initialise();
   return configuration.callbackUrl;
 };
-
-exports.env = env;
-exports.logger = logger;
 
 
 
 // deprecate Values
-exports.getValue("diableOldEditor", { deprecated: true });
+getValue("diableOldEditor", { deprecated: true });
+
+
+const config = {
+  getValue: getValue,
+  env: env,
+  logger: logger,
+  getConfiguration: getConfiguration,
+  getPGString: () => { return pgstring; },
+  getLanguages: getLanguages,
+  htmlRoot: htmlRoot,
+  url: url,
+  momentLocale: momentLocale,
+  getServerPort: getServerPort,
+  getServerKey: getServerKey,
+  getServerCert: getServerCert,
+  getCallbackUrl: getCallbackUrl,
+  initialise: initialise,
+  getDirName: () => { return __dirname; },
+  version: "T.B.D."
+};
+
+export default config;

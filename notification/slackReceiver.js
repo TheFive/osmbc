@@ -1,30 +1,29 @@
-"use strict";
 
 
-const config = require("../config.js");
-const assert = require("assert");
-const debug = require("debug")("OSMBC:notification:slackReceiver");
 
-const configModule = require("../model/config.js");
+import config from "../config.js";
+import assert from "assert";
 
-const messageCenter = require("../notification/messageCenter.js");
-const ConfigFilter  = require("../notification/ConfigFilter.js");
-const IteratorReceiver = require("../notification/IteratorReceiver.js");
+import configModule from "../model/config.js";
+
+import messageCenter from "../notification/messageCenter.js";
+import ConfigFilter from "../notification/ConfigFilter.js";
+import IteratorReceiver from "../notification/IteratorReceiver.js";
+
+import Slack from "../notification/SlackAPI.js";
+
+
+import _debug from "debug";
+const debug = _debug("OSMBC:notification:slackReceiver");
 
 config.initialise();
 
 const botName = config.getValue("AppName").toLowerCase();
 
-
-
-
-const Slack = require("../notification/SlackAPI");
-
 const osmbcUrl = config.getValue("url") + config.htmlRoot();
 const iconUrl = osmbcUrl + "/images/osmbc_im_logo.png";
 
-
-function SlackReceiver(name, slack, channel) {
+export function SlackReceiver(name, slack, channel) {
   debug("SlackReceiver::SlackReceiver");
 
   assert(typeof (name) === "string");
@@ -43,7 +42,7 @@ function SlackReceiver(name, slack, channel) {
   debug("Slack: %s", this.slackName);
   debug("hook: %s", this.hook);
   debug("channel: %s", this.channel);
-}
+};
 
 function blogNameSlack(blog, change) {
   debug("blogNameSlack");
@@ -243,8 +242,8 @@ let channelReceiverMap = {};
 let registered = false;
 let slackhook = null;
 
-function initialise(callback) {
-  debug("initialise");
+export const initialiseSlackReceiver = function initialiseSlackReceiver(callback) {
+  debug("initialiseSlackReceiver");
   slackhook = config.getValue("slacktool");
   messageCenter.initialise();
   configModule.getConfigObject("slacknotification", function(err, slackConfig) {
@@ -265,8 +264,6 @@ function initialise(callback) {
     }
     if (callback) return callback();
   });
-}
+};
 
 
-module.exports.SlackReceiver = SlackReceiver;
-module.exports.initialise = initialise;

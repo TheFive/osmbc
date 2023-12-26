@@ -1,4 +1,4 @@
-"use strict";
+
 
 const async   = require("async");
 const should  = require("should");

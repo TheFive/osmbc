@@ -1,19 +1,17 @@
-"use strict";
-
-const pgMap          = require("./pgMap.js");
-const util           = require("../util/util.js");
-const debug          = require("debug")("OSMBC:model:user");
-const assert         = require("assert").strict;
-const async          = require("../util/async_wrap.js");
-const messageCenter  = require("../notification/messageCenter.js");
-const mailReceiver   = require("../notification/mailReceiver.js");
-const random         = require("randomstring");
-const emailValidator = require("email-validator");
-const config         = require("../config.js");
-const cheerio        = require("cheerio");
-const axios          = require("axios");
-const logger         = require("../config.js").logger;
-const HttpStatus     = require("http-status-codes");
+import pgMap from "./pgMap.js";
+import util from "../util/util.js";
+import { strict as assert } from "assert";
+import { eachLimit, series, eachOfSeries } from "async";
+import messageCenter from "../notification/messageCenter.js";
+import { mailReceiverUpdateUser as _updateUser, MailReceiver } from "../notification/mailReceiver.js";
+import { generate } from "randomstring";
+import { validate } from "email-validator";
+import config from "../config.js";
+import { load } from "cheerio";
+import axios from "axios";
+import { CONFLICT, UNAUTHORIZED, FORBIDDEN } from "http-status-codes";
+import _debug from "debug";
+const debug = _debug("OSMBC:model:user");
 
 // generate an user object, use Prototpye
 // to prototype some fields
@@ -46,7 +44,7 @@ function createNewUser (proto, callback) {
     debug("createNewUser");
     if (proto && proto.id) {
       const e = new Error("user id exists");
-      e.status = HttpStatus.CONFLICT;
+      e.status = CONFLICT;
       return callback(e);
     }
     const user = create(proto);
@@ -54,7 +52,7 @@ function createNewUser (proto, callback) {
       if (err) return callback(err);
       if (result && result.length > 0) {
         const err = new Error("User >" + user.OSMUser + "< already exists.");
-        err.status = HttpStatus.CONFLICT;
+        err.status = CONFLICT;
         return callback(err);
       }
       // set some defaults for the user
@@ -65,7 +63,7 @@ function createNewUser (proto, callback) {
       // save data
       user.save(function updateUser(err, result) {
         if (err) return callback(err, result);
-        mailReceiver.updateUser(result);
+        _updateUser(result);
         return callback(null, result);
       });
     });
@@ -92,7 +90,7 @@ function cacheOSMAvatar(osmuser, callback) {
     timeout: 1000
   }).then(function(response) {
     if (response.data) {
-      const c = cheerio.load(response.data);
+      const c = load(response.data);
       let avatarLink = c(".user_image").attr("src");
       const title = c("title").text();
       if (title === "No such user | OpenStreetMap") return callback();
@@ -116,7 +114,7 @@ function cacheOSMAvatarAll(callback) {
   debug("cacheOSMAvatarAll");
   find({}, function(err, users) {
     if (err) return callback(err);
-    async.eachLimit(users, 4, function (item, cb) {
+    eachLimit(users, 4, function (item, cb) {
       cacheOSMAvatar(item.OSMUser, cb);
     }, function(err) {
       return callback(err);
@@ -126,7 +124,7 @@ function cacheOSMAvatarAll(callback) {
 
 if (process.env.NODE_ENV !== "test") {
   cacheOSMAvatarAll(function(err) {
-    if (err) logger.info("Error during Cache of User Avatar " + err.message);
+    if (err) config.logger.info("Error during Cache of User Avatar " + err.message);
   });
 }
 
@@ -146,16 +144,15 @@ User.prototype.calculateChanges = function calculateChanges(callback) {
 
 function getAvatar(osmuser) {
   debug("getAvatar");
-  /* jshint -W040 */
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
   cacheOSMAvatar(osmuser, function() {});
-  /* jshint +W040 */
   return avatarCache[osmuser];
 }
 
 
 User.prototype.getAvatar = getAvatar;
-module.exports.getAvatar = getAvatar;
+const _getAvatar = getAvatar;
+export { _getAvatar as getAvatar };
 
 // use some database function from pgMap
 User.prototype.remove = pgMap.remove;
@@ -221,7 +218,7 @@ pgObject.indexDefinition = {
 };
 pgObject.viewDefinition = {};
 pgObject.table = "usert";
-module.exports.pg = pgObject;
+const pg = pgObject;
 
 
 // This function is called by the link
@@ -236,19 +233,19 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
   if (self.OSMUser !== user.OSMUser) {
     debug("User is wrong");
     err = new Error("Wrong User: expected >" + self.OSMUser + "< given >" + user.OSMUser + "<");
-    err.status = HttpStatus.CONFLICT;
+    err.status = CONFLICT;
     return callback(err);
   }
   if (!self.emailInvalidation) {
     debug("nothing in validation");
     err = new Error("No Validation pending for user >" + self.OSMUser + "<");
-    err.status = HttpStatus.CONFLICT;
+    err.status = CONFLICT;
     return callback(err);
   }
   if (validationCode !== self.emailValidationKey) {
     debug("Validation Code is wrong");
     err = new Error("Wrong Validation Code for EMail for user >" + self.OSMUser + "<");
-    err.status = HttpStatus.CONFLICT;
+    err.status = CONFLICT;
     messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: null, to: "Validation Failed" }, function() {
       return callback(err);
     });
@@ -260,7 +257,7 @@ User.prototype.validateEmail = function validateEmail(user, validationCode, call
   delete self.emailInvalidation;
   delete self.emailValidationKey;
   self.save(function logit(err) {
-    mailReceiver.updateUser(self);
+    _updateUser(self);
     if (err) return callback(err);
     messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: oldmail, to: self.email }, function() {
       return callback(err);
@@ -286,7 +283,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
   if (data.OSMUser === "autocreate") {
     const err = new Error("User >autocreate< not allowed");
-    err.status = HttpStatus.CONFLICT;
+    err.status = CONFLICT;
     return callback(err);
   }
 
@@ -294,20 +291,20 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   // check and react on Mail Change
   if (data.email && data.email.trim() !== "" && data.email !== self.email) {
     const err =  Error("EMail address can only be changed by the user himself, after he has logged in.");
-    err.status = HttpStatus.UNAUTHORIZED;
+    err.status = UNAUTHORIZED;
     if (self.access === "denied" && data.email !== "none") return callback(err);
     if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(err);
 
     if (data.email !== "resend" && data.email !== "none") {
-      if (!emailValidator.validate(data.email)) {
+      if (!validate(data.email)) {
         const error = new Error("Invalid Email Address: " + data.email);
-        error.status = HttpStatus.CONFLICT;
+        error.status = CONFLICT;
         return callback(error);
       }
       if (data.email !== "") {
         // put email to validation email, and generate a key.
         data.emailInvalidation = data.email;
-        data.emailValidationKey = random.generate();
+        data.emailValidationKey = generate();
         sendWelcomeEmail = true;
         delete data.email;
       }
@@ -322,18 +319,18 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
   if (data.OSMUser !== self.OSMUser) {
     if (self.hasLoggedIn()) {
       const error = new Error(">" + self.OSMUser + "< already has logged in, change in name not possible.");
-      error.status = HttpStatus.FORBIDDEN;
+      error.status = FORBIDDEN;
       return callback(error);
     }
   }
-  async.series([
+  series([
     function checkUserName(cb) {
       if (data.OSMUser && data.OSMUser !== self.OSMUser) {
         find({ OSMUser: data.OSMUser }, function(err, result) {
           if (err) return callback(err);
           if (result && result.length) {
             const err = new Error("User >" + data.OSMUser + "< already exists.");
-            err.status = HttpStatus.CONFLICT;
+            err.status = CONFLICT;
             return cb(err);
           } else return cb();
         });
@@ -342,7 +339,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
     cacheOSMAvatar.bind(null, data.OSMUser)
   ], function finalFunction(err) {
     if (err) return callback(err);
-    async.eachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
+    eachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
       // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 
@@ -358,7 +355,7 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
 
 
       const timestamp = new Date();
-      async.series([
+      series([
         function(cb) {
           // do not log validation key in logfile
           const toValue = value;
@@ -396,9 +393,9 @@ User.prototype.setAndSave = function setAndSave(user, data, callback) {
         // Inform Mail Receiver Module, that there could be a change
         if (err) return callback(err);
         // tell mail receiver to update the information about the users
-        mailReceiver.updateUser(self);
+        _updateUser(self);
         if (sendWelcomeEmail) {
-          const m = new mailReceiver.MailReceiver(self);
+          const m = new MailReceiver(self);
           // do not wait for mail to go out.
           // mail is logged in outgoing mail list
           m.sendWelcomeMail(user.OSMUser, function () {});
@@ -579,7 +576,7 @@ User.prototype.hasGuestAccess = function hasFullAccess() {
 
 User.prototype.createApiKey = function createApiKey(callback) {
   debug("createApiKey");
-  const apiKey = random.generate({ length: 10 });
+  const apiKey = generate({ length: 10 });
   this.apiKey = apiKey;
   this.save(callback);
 };
@@ -593,7 +590,7 @@ const interval = config.getValue("WelcomeInterval", { mustExist: true });
 const welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", { mustExist: true });
 
 
-module.exports.getNewUsers = function getNewUsers(callback) {
+export function getNewUsers(callback) {
   debug("getNewUsers");
 
 
@@ -614,7 +611,7 @@ module.exports.getNewUsers = function getNewUsers(callback) {
     }
     callback(null, result);
   });
-};
+}
 
 function migrateData(user) {
   // This function can be used to modify user because of data modell changes
@@ -635,19 +632,28 @@ function migrateData(user) {
 // Parameter: Prototype (optional)
 //            callback
 // Prototype is not allowed to have an id
-module.exports.createNewUser = createNewUser;
 
 
 // save stores the current object to database
 User.prototype.save = pgMap.save; // Create Tables and Views
 
 
-module.exports.create = create;
-module.exports.migrateData = migrateData;
-module.exports.find = find;
-module.exports.findById = findById;
-module.exports.findOne = findOne;
 
 User.prototype.getTable = function getTable() {
   return "usert";
 };
+
+
+const userModule = {
+  findOne: findOne,
+  findById: findById,
+  find: find,
+  migrateData: migrateData,
+  create: create,
+  createNewUser: createNewUser,
+  pg: pg,
+  Class: User,
+  getNewUsers: getNewUsers
+};
+
+export default userModule;

@@ -1,7 +1,8 @@
-"use strict";
-const checker = require("license-checker-rseidelsohn");
-const should = require("should");
-const path = require("path");
+
+import checker from "license-checker-rseidelsohn";
+import should from "should";
+import path from "path";
+import config from "../config.js";
 
 const licenses = {
   "string-hash@1.1.0": "CC0",
@@ -40,7 +41,7 @@ function buildLicenseObject(object, cb) {
       const l = json[k].licenses;
       const pl = k + " License(" + json[k].licenses + ")";
       if (Array.isArray(l)) {
-        l.forEach(function (license) { // jshint ignore:line
+        l.forEach(function (license) {
           usedLicenses[license] = pl;
         });
       } else {
@@ -116,7 +117,7 @@ describe("license-check", function() {
     before(function(bddone) {
       checker.init({
         production: true,
-        start: path.join(__dirname, "..")
+        start: path.join(config.getDirName())
       }, buildLicenseObject(usedLicenses, bddone));
     });
     it("should not use GPL", function(bddone) {
@@ -137,7 +138,7 @@ describe("license-check", function() {
     before(function(bddone) {
       checker.init({
         development: true,
-        start: path.join(__dirname, "..")
+        start: path.join(config.getDirName())
       }, buildLicenseObject(usedLicenses, bddone));
     });
     it("should have checked all licenses", function(bddone) {

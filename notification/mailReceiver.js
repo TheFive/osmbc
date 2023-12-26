@@ -1,32 +1,37 @@
-"use strict";
+import { join } from "path";
+import config from "../config.js";
+import { strict as assert } from "assert";
+import { existsSync } from "fs";
+import { createTransport } from "nodemailer";
+import Email from "email-templates";
+import { validate } from "email-validator";
 
-const path          = require("path");
-const config        = require("../config.js");
-const assert        = require("assert");
-const debug         = require("debug")("OSMBC:notification:mailReceiver");
-const fs            = require("fs");
-const nodemailer    = require("nodemailer");
-const Email         = require("email-templates");
-const emailValidator = require("email-validator");
+import messageCenter from "../notification/messageCenter.js";
+import articleModule from "../model/article.js";
+import blogModule from "../model/blog.js";
 
-const messageCenter = require("../notification/messageCenter.js");
-const articleModule = require("../model/article.js");
-const blogModule    = require("../model/blog.js");
-
-const htmlToText    = require("html-to-text");
+import { convert } from "html-to-text";
 
 
 
-const winston = require("winston");
-require("winston-daily-rotate-file");
+import winston from "winston";
+import "winston-daily-rotate-file";
+
+
+
+import UserConfigFilter from "../notification/UserConfigFilter.js";
+
+import IteratorReceiver from "../notification/IteratorReceiver.js";
+import _debug from "debug";
+const debug = _debug("OSMBC:notification:mailReceiver");
 
 let logDir = config.getValue("maillog_directory", { mustExist: true });
 const logNamePrefix = config.getValue("maillog_prefix", { mustExist: true });
 const logNameDateFormat = config.getValue("maillog_dateformat", { mustExist: true });
-if (logDir === ".") logDir = path.join(__dirname, "..");
+if (logDir === ".") logDir = join(config.getDirName(), "..");
 
 
-if (!(fs.existsSync(logDir))) {
+if (!(existsSync(logDir))) {
   console.error("Missing Directory (maillog_directory) %s", logDir);
   process.exit(1);
 }
@@ -48,30 +53,24 @@ const logger =  winston.createLogger({
 
 
 
-const UserConfigFilter = require("../notification/UserConfigFilter.js");
-
-const IteratorReceiver = require("../notification/IteratorReceiver.js");
-
-
-
-const infoMailtemplateDir = path.join(__dirname, "..", "email", "infomail");
+const infoMailtemplateDir = join(config.getDirName(), "email", "infomail");
 const infomail = new Email({
   views: { root: infoMailtemplateDir }
 });
 
-const infoMailBlogtemplateDir = path.join(__dirname, "..", "email", "infomailBlog");
+const infoMailBlogtemplateDir = join(config.getDirName(), "email", "infomailBlog");
 const infomailBlog = new Email({ views: { root: infoMailBlogtemplateDir } });
 
-const infoMailReviewtemplateDir = path.join(__dirname, "..", "email", "infomailReview");
+const infoMailReviewtemplateDir = join(config.getDirName(), "email", "infomailReview");
 const infomailReview = new Email({ views: { root: infoMailReviewtemplateDir } });
 
-const infoMailClosetemplateDir = path.join(__dirname, "..", "email", "infomailClose");
+const infoMailClosetemplateDir = join(config.getDirName(), "email", "infomailClose");
 const infomailClose = new Email({ views: { root: infoMailClosetemplateDir } });
 
-const welcomeMailtemplateDir = path.join(__dirname, "..", "email", "welcome");
+const welcomeMailtemplateDir = join(config.getDirName(), "email", "welcome");
 const welcomemail = new Email({ views: { root: welcomeMailtemplateDir } });
 
-const transporter = nodemailer.createTransport(config.getValue("SMTP"));
+const transporter = createTransport(config.getValue("SMTP"));
 
 const layout = {
   htmlroot: config.htmlRoot(),
@@ -115,7 +114,7 @@ function MailReceiver(user) {
   debug("MailReceiver");
   this.invalidMail = true;
   this.user = user;
-  if (emailValidator.validate(user.email)) {
+  if (validate(user.email)) {
     this.invalidMail = false;
   }
 }
@@ -129,7 +128,7 @@ MailReceiver.prototype.sendWelcomeMail = function sendWelcomeMail(inviter, callb
   welcomemail.render("welcome html.pug", data).then(function welcomemailRender(result) {
     debug("welcomemailRender");
 
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -164,7 +163,7 @@ MailReceiver.prototype.sendReviewStatus = function sendReviewStatus(user, blog, 
   infomailReview.render("infomailReview html.pug", data).then(function infomailRenderBlog(result) {
     debug("infomailRenderInfo");
 
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -195,7 +194,7 @@ MailReceiver.prototype.sendCloseStatus = function sendCloseStatus(user, blog, la
   infomailClose.render("infomailClose html.pug", data).then(function infomailRenderClose(result) {
     debug("infomailRenderClose");
 
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -244,7 +243,7 @@ MailReceiver.prototype.updateArticle = function updateArticle(user, article, cha
 
   infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -280,7 +279,7 @@ MailReceiver.prototype.addComment = function addComment(user, article, text, cal
 
   infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -318,7 +317,7 @@ MailReceiver.prototype.editComment = function editComment(user, article, index, 
 
   infomail.render("infomail html.pug", data).then(function infomailRender(result) {
     debug("infomailRender");
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -364,7 +363,7 @@ MailReceiver.prototype.updateBlog = function updateBlog(user, blog, change, call
 
   infomailBlog.render("infomailBlog html.pug", data).then(function infomailRenderBlog(result) {
     debug("infomailRenderBlog");
-    const text = htmlToText.convert(result, { tables: ["#valuetable"] });
+    const text = convert(result, { tables: ["#valuetable"] });
 
     const mailOptions = {
       from: config.getValue("EmailSender"), // sender address
@@ -454,7 +453,7 @@ function initialise(userList) {
   userReceiverMap = {};
   for (let i = 0; i < userList.length; i++) {
     const u = userList[i];
-    updateUser(u);
+    mailReceiverUpdateUser(u);
   }
   assert(messageCenter.global);
   if (!registered) {
@@ -464,8 +463,8 @@ function initialise(userList) {
 }
 
 
-function updateUser(user) {
-  debug("updateUser");
+export function mailReceiverUpdateUser(user) {
+  debug("mailReceiverUpdateUser");
   delete userReceiverMap[user.OSMUser];
   if (user.access !== "full" && user.access !== "guest") return;
   if (!user.email) return;
@@ -475,11 +474,11 @@ function updateUser(user) {
 }
 
 
-module.exports.MailReceiver = MailReceiver;
-module.exports.initialise = initialise;
-module.exports.updateUser = updateUser;
+const _MailReceiver = MailReceiver;
+export { _MailReceiver as MailReceiver };
+export { initialise as initialiseMailReceiver };
 
-module.exports.for_test_only = { transporter: transporter, logger: logger };
+export const MailReceiverForTestOnly = { transporter: transporter, logger: config.logger };
 
 
 // setup e-mail data with unicode symbols

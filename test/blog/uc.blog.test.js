@@ -1,25 +1,27 @@
-"use strict";
-
-/* jshint ignore:start */
-
-
-const nock       = require("nock");
-const should     = require("should");
-const mockdate   = require("mockdate");
-const yaml       = require("js-yaml");
-const fs         = require("fs");
-const path       = require("path");
-const URL        = require("url").URL;
-const testutil   = require("../../test/testutil.js");
-
-const { sleep }    = require("../../util/util.js");
-
-const OsmbcApp  = require("../../test/PageObjectModel/osmbcApp.js");
 
 
 
-const initialise = require("../../util/initialise.js");
-const userModule  = require("../../model/user.js");
+
+import nock from "nock";
+import should from "should";
+import { set, reset } from "mockdate";
+import { load } from "js-yaml";
+import { readFileSync } from "fs";
+import { resolve } from "path";
+import { URL } from "url";
+import testutil from "../../test/testutil.js";
+
+import _util from "../../util/util.js";
+import config from "../../config.js";
+
+
+import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
+
+
+
+import initialiseModules from "../../util/initialise.js";
+import userModule from "../../model/user.js";
+const sleep = _util.sleep;
 
 
 
@@ -30,24 +32,24 @@ describe("uc/blog", function() {
   this.timeout(1000 * 60);
 
   before(async function() {
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
     process.env.TZ = "Europe/Amsterdam";
-    mockdate.set(new Date("2016-05-25T19:00:00Z"));
+    set(new Date("2016-05-25T19:00:00Z"));
     await testutil.clearDB();
-    await initialise.initialiseModules();
+    await initialiseModules();
 
     testutil.startServerSync();
   });
   after(async function() {
-    mockdate.reset();
+    reset();
     testutil.stopServer();
   });
   const nocklist = [];
   beforeEach(async function() {
-    const list = yaml.load(fs.readFileSync(path.resolve(__dirname, "..", "blog", "DataWN290LinkList.txt"), "UTF8"));
+    const list = load(readFileSync(resolve(config.getDirName(), "test", "blog", "DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item) {
       const url = new URL(item);
       let path = url.pathname;
@@ -129,11 +131,11 @@ describe("uc/blog", function() {
 
       // view review count on start page
       await osmbcAppTheFive.openMainPage();
-     
+
       await osmbcAppTheFive.getMainPage().waitForInitialisation();
       await testutil.expectHtml(driverTheFive, errors, "blog", "IndexWithOneReview");
 
-      await  osmbcAppTheFive.getMainPage().clickBlogInList("WN251");
+      await osmbcAppTheFive.getMainPage().clickBlogInList("WN251");
 
       await blogPage.clickDidExport("DE");
 
@@ -226,7 +228,7 @@ describe("uc/blog", function() {
 
 
         await blogPage.clickOnArticle("jeden Tag...");
-        sleep(1000);
+        sleep(1500);
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
         sleep(500);
@@ -305,4 +307,3 @@ describe("uc/blog", function() {
   });
 });
 
-/* jshint ignore:end */

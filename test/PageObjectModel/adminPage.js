@@ -1,10 +1,10 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
-const should = require("should");
+import { By } from "selenium-webdriver";
+import util from "../../util/util.js";
+import should from "should";
 
-const Page = require("./page.js");
+import Page from "./page.js";
 
 class AdminPage extends Page {
   // eslint-disable-next-line no-useless-constructor
@@ -13,11 +13,11 @@ class AdminPage extends Page {
   }
 
   async isPage() {
-    return (await this._checkUrl(osmbcLink("/osmbc/admin")));
+    return (await this._checkUrl(util.osmbcLink("/osmbc/admin")));
   }
 
   async assertPage() {
-    await this._assertUrl(osmbcLink("/osmbc/admin"));
+    await this._assertUrl(util.osmbcLink("/osmbc/admin"));
   }
 
   async getFirstHeader() {
@@ -50,4 +50,4 @@ class AdminPage extends Page {
     }
   }
 }
-module.exports = AdminPage;
+export default AdminPage;

@@ -1,9 +1,11 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
+import { By } from "selenium-webdriver";
 
-const Page = require("../../test/PageObjectModel/page.js");
+import Page from "../../test/PageObjectModel/page.js";
+import util from "../../util/util.js";
+
+const osmbcLink = util.osmbcLink;
 
 class LoginPage extends Page {
   // eslint-disable-next-line no-useless-constructor
@@ -31,4 +33,4 @@ class LoginPage extends Page {
     await (await this._driver.findElement(By.id("submitbutton"))).click();
   }
 }
-module.exports = LoginPage;
+export default LoginPage;

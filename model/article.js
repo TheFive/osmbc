@@ -1,24 +1,27 @@
-"use strict";
+
 // Exported Functions and prototypes are defined at end of file
 
 
-const async      = require("../util/async_wrap.js");
-const assert     = require("assert").strict;
-const debug      = require("debug")("OSMBC:model:article");
-const HttpStatus = require("http-status-codes");
+import { series, each } from "async";
+import { strict as assert } from "assert";
+import { CONFLICT } from "http-status-codes";
+import _debug from "debug";
 
 
-const config    = require("../config.js");
-const language    = require("../model/language.js");
 
-const util      = require("../util/util.js");
+import config from "../config.js";
+import language from "../model/language.js";
 
-const messageCenter  = require("../notification/messageCenter.js");
-const blogModule     = require("../model/blog.js");
-const logModule      = require("../model/logModule.js");
-const configModule   = require("../model/config.js");
-const pgMap          = require("../model/pgMap.js");
-const translator     = require("../model/translator.js");
+import util from "../util/util.js";
+
+import messageCenter from "../notification/messageCenter.js";
+import { findOne as __findOne } from "../model/blog.js";
+import logModule from "../model/logModule.js";
+import configModule from "../model/config.js";
+import pgMap from "../model/pgMap.js";
+import translator from "../model/translator.js";
+
+const debug = _debug("OSMBC:model:article");
 
 
 
@@ -204,7 +207,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       if (oldValue) oldValue = oldValue.replace(/(\r\n)/gm, "\n");
       if ((dbValue && dbValue !== oldValue) || (typeof (self[k]) === "undefined" && data.old[k] !== "")) {
         const error = new Error("Field " + k + " already changed in DB");
-        error.status = HttpStatus.CONFLICT;
+        error.status = CONFLICT;
         error.detail = { oldValue: data.old[k], databaseValue: self[k], newValue: data[k] };
         return callback(error);
       }
@@ -229,7 +232,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
 
 
 
-  async.series([
+  series([
     function checkID(cb) {
       if (self.id === 0) {
         self.save(cb);
@@ -237,7 +240,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
     },
     function loadBlog(cb) {
       if (self._blog) return cb();
-      blogModule.findOne({ name: self.blog }, function(err, result) {
+      __findOne({ name: self.blog }, function(err, result) {
         if (err) return cb(err);
         self._blog = result;
         return cb();
@@ -271,7 +274,7 @@ Article.prototype.setAndSave = function setAndSave(user, data, callback) {
       }
     }
 
-    async.series(
+    series(
       [function logIt (cb) {
         const oa = create(self);
         // do not wait on email, so put empty callback handler
@@ -302,14 +305,14 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
   for (const k in data) {
     if ((self[k] && self[k] !== data[k]) || (typeof (self[k]) === "undefined" && data[k] !== "")) {
       const error = new Error("Field " + k + " already changed in DB");
-      error.status = HttpStatus.CONFLICT;
+      error.status = CONFLICT;
       error.detail = { oldValue: data[k], databaseValue: self[k], Action: "Review Translation Command", field: k };
       return callback(error);
     }
   }
   data.action = "Review Change of " + Object.keys(data);
 
-  async.series([
+  series([
     function checkID(cb) {
       debug("reviewChanges->checkId");
       if (self.id === 0) {
@@ -319,7 +322,7 @@ Article.prototype.reviewChanges = function setAndSave(user, data, callback) {
     function loadBlog(cb) {
       debug("reviewChanges->loadBlog");
       if (self._blog) return cb();
-      blogModule.findOne({ name: self.blog }, function(err, result) {
+      __findOne({ name: self.blog }, function(err, result) {
         if (err) return cb(err);
         self._blog = result;
         return cb();
@@ -385,7 +388,7 @@ function findById(id, callback) {
       if (err) callback(err);
       if (!result) return callback(null, result);
 
-      blogModule.findOne({ name: result.blog }, function(err, blog) {
+      __findOne({ name: result.blog }, function(err, blog) {
         result._blog = blog;
 
         return callback(err, result);
@@ -491,14 +494,7 @@ Article.prototype.displayTitle = function displayTitle(maxlength) {
   let result = "";
   if (typeof (this.title) !== "undefined" && this.title !== "") {
     result = util.shorten(this.title, maxlength);
-  } else
-  /* it is a very bad idea to shorten HTML this way.
-  if (typeof(this.markdownDE)!='undefined' && this.markdownDE !="") {
-    var md = this.markdownDE;
-    if (md.substring(0,2)=='* ') {md = md.substring(2,99999)};
-    result = util.shorten(md,maxlength)
-  } else */
-  if (typeof (this.collection) !== "undefined" && this.collection !== "") {
+  } else if (typeof (this.collection) !== "undefined" && this.collection !== "") {
     result = util.shorten(this.collection, maxlength);
   }
   if (result.trim() === "") result = "No Title";
@@ -528,7 +524,7 @@ pgObject.indexDefinition = {
 pgObject.viewDefinition = {
 
 };
-module.exports.pg = pgObject;
+const pg = pgObject;
 
 
 // calculateUsedLinks(callback)
@@ -556,7 +552,7 @@ Article.prototype.calculateUsedLinks = function calculateUsedLinks(options, call
 
 
   // For each link, search in DB on usage
-  async.each(usedLinks,
+  each(usedLinks,
     function forEachUsedLink(item, cb) {
       debug("forEachUsedLink");
       if (options.ignoreStandard && ignoreStandard.indexOf(item) >= 0) return cb();
@@ -633,7 +629,7 @@ Article.prototype.addCommentFunction = function addCommentFunction(user, text, c
   self.commentRead[user.OSMUser] = self.commentList.length - 1;
 
 
-  async.series([
+  series([
     function sendit(cb) {
       debug("sendit");
 
@@ -671,10 +667,10 @@ Article.prototype.editComment = function editComment(user, index, text, callback
   assert(index <= self.commentList.length - 1);
   if (user.OSMUser !== self.commentList[index].user) {
     const error = new Error("Only Writer is allowed to change a commment");
-    error.status = HttpStatus.CONFLICT;
+    error.status = CONFLICT;
     return callback(error);
   }
-  async.series([
+  series([
     function sendit(cb) {
       debug("sendit");
       messageCenter.global.editComment(user, self, index, text, cb);
@@ -720,7 +716,7 @@ Article.prototype.copyToBlog = function copToBlog(blogName, languages, callback)
 
   self.copyTo[blogName] = 0;
   let storeArticle = null;
-  async.series([
+  series([
     function(cb) {
       createNewArticle(newArticle, function(err, a) {
         storeArticle = a;
@@ -929,7 +925,7 @@ Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSo
 
   const self = this;
   if (!self.originArticleId) return cb();
-  async.series([
+  series([
     function loadArticle(callback) {
       findById(self.originArticleId, function(err, article) {
         if (err) return callback(err);
@@ -939,7 +935,7 @@ Article.prototype.calculateDerivedFromSourceId = function calculateDerivedFromSo
     },
     function loadBlog(callback) {
       if (!self._originArticle) return callback();
-      blogModule.findOne({ name: self._originArticle.blog }, function(err, blog) {
+      __findOne({ name: self._originArticle.blog }, function(err, blog) {
         if (err) return callback(err);
         self._originBlog = blog;
         return callback();
@@ -973,37 +969,26 @@ Article.prototype.remove = pgMap.remove;
 
 
 
-// Create an Article object in memory, do not save
-// Can use a prototype, to initialise data
-// Parameter: prototype (optional)
-module.exports.create = create;
-
-// Creates an Article object and stores it to database
-// can use a prototype to initialise data
-// Parameter: Prototype (optional)
-//            callback
-// Prototype is not allowed to have an id
-module.exports.createNewArticle = createNewArticle;
-
-// Find an Article in database
-// Parameter: object JSON Object with key value pairs to seach for
-//            order  string to order the result
-module.exports.find = find;
-
-module.exports.findEmptyUserCollectedArticles = findEmptyUserCollectedArticles;
-
-module.exports.findUserEditFieldsArticles = findUserEditFieldsArticles;
-
-// Find an Article in database by ID
-module.exports.findById = findById;
-module.exports.fullTextSearch = fullTextSearch;
 
 
 
-// Find one Object (similar to find, but returns first result)
-module.exports.findOne = findOne;
 
 
-module.exports.Class = Article;
 
-module.exports.isMarkdown = isMarkdown;
+
+
+const articleModule = {
+  isMarkdown: isMarkdown,
+  findOne: findOne,
+  fullTextSearch: fullTextSearch,
+  findById: findById,
+  findUserEditFieldsArticles: findUserEditFieldsArticles,
+  findEmptyUserCollectedArticles: findEmptyUserCollectedArticles,
+  find: find,
+  createNewArticle: createNewArticle,
+  create: create,
+  pg: pg,
+  Class: Article
+};
+
+export default articleModule;

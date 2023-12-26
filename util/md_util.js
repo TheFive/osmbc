@@ -1,14 +1,14 @@
-"use strict";
 
-const markdownIt = require("markdown-it");
-const markdownItEmoji = require("markdown-it-emoji");
-const markdownItSup = require("markdown-it-sup");
-const markdownItImsize = require("markdown-it-imsize");
-const mila = require("markdown-it-link-attributes");
-const config = require("../config.js");
-const { regex } = require("list-matcher");
 
-const configModule = require("../model/config.js");
+import markdownIt from "markdown-it";
+import { full as markdownItEmoji } from "markdown-it-emoji";
+import markdownItSup from "markdown-it-sup";
+import markdownItImsize from "markdown-it-imsize";
+import mila from "markdown-it-link-attributes";
+import config from "../config.js";
+import { regex } from "list-matcher";
+
+import configModule from "../model/config.js";
 
 const htmlRoot = config.htmlRoot();
 const url = config.url();
@@ -104,7 +104,7 @@ function addUserAndArticleLinkify(markdownIt, accessMap) {
 
 
 
-module.exports.osmbcMarkdown = function osmbcMarkdown(options, accessMap) {
+export function osmbcMarkdown(options, accessMap) {
   const languageFlags = configModule.getConfig("languageflags");
 
   let localEmoji = false;
@@ -126,7 +126,6 @@ module.exports.osmbcMarkdown = function osmbcMarkdown(options, accessMap) {
   }
   const linkify = (options && options.target && options.target === "editor");
 
-
   const result =  markdownIt({ linkify: linkify })
     .use(mila, { attrs: linkAttributeOptions })
     .use(markdownItEmoji, { defs: localEmoji, shortcuts: languageFlags.shortcut })
@@ -137,7 +136,7 @@ module.exports.osmbcMarkdown = function osmbcMarkdown(options, accessMap) {
     addUserAndArticleLinkify(result, accessMap);
   }
   return result;
-};
+}
 
 
 function fixLength(text, len, fillChar) {
@@ -190,4 +189,10 @@ function mdTable(json, columns) {
 
 
 
-module.exports.mdTable = mdTable;
+
+const mdUtil = {
+  mdTable: mdTable,
+  osmbcMarkdown: osmbcMarkdown
+};
+
+export default mdUtil;

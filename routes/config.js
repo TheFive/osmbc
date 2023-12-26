@@ -1,20 +1,21 @@
-"use strict";
-
-const assert   = require("assert");
-const async    = require("../util/async_wrap.js");
-const debug    = require("debug")("OSMBC:routes:config");
 
 
-const express    = require("express");
+import _debug from "debug";
+import { strict as assert } from "assert";
+import async from "async";
+
+
+import express from "express";
+import auth from "../routes/auth.js";
+
+
+
+import config from "../config.js";
+
+import configModule from "../model/config.js";
+import logModule from "../model/logModule.js";
+const debug = _debug("OSMBC:routes:config");
 const router     = express.Router();
-const auth        = require("../routes/auth.js");
-
-
-
-const config = require("../config.js");
-
-const configModule = require("../model/config.js");
-const logModule = require("../model/logModule.js");
 
 
 const htmlroot = config.htmlRoot();
@@ -112,4 +113,5 @@ router.get("/:name", auth.checkRole("full"), renderConfigName);
 router.post("/:name", auth.checkRole("full"), postConfigId);
 
 
-module.exports.router = router;
+
+export default router;

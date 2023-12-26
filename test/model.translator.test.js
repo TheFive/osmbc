@@ -1,11 +1,11 @@
-"use strict";
 
-const should = require("should");
 
-const nock   = require("nock");
-const initialize = require("../util/initialise.js");
+import should from "should";
 
-const translator = require("../model/translator.js");
+import nock from "nock";
+import initialiseModules from "../util/initialise.js";
+
+import translator from "../model/translator.js";
 
 
 
@@ -14,7 +14,7 @@ const translator = require("../model/translator.js");
 
 describe("model/translator", function() {
   before(function(bddone) {
-    initialize.initialiseModules(bddone);
+    initialiseModules(bddone);
   });
 
 

@@ -1,21 +1,21 @@
-"use strict";
-
-/* jshint ignore:start */
 
 
-const async  = require("async");
-const should = require("should");
-const nock   = require("nock");
-const debug  = require("debug")("OSMBC:test:article.test");
 
 
-const testutil = require("./testutil.js");
-const mockdate = require("mockdate");
+import _debug from "debug";
+import async from "async";
+import should from "should";
+import nock from "nock";
 
-const articleModule = require("../model/article.js");
-const logModule     = require("../model/logModule.js");
-const blogModule    = require("../model/blog.js");
-const messageCenter = require("../notification/messageCenter.js");
+
+import testutil from "./testutil.js";
+import mockdate from "mockdate";
+
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
+import blogModule from "../model/blog.js";
+import messageCenter from "../notification/messageCenter.js";
+const debug = _debug("OSMBC:test:article.test");
 
 
 // set Test Standard to ignore prototypes for should
@@ -33,7 +33,7 @@ describe("model/article", function() {
   const testUser = { OSMUser: "user" };
   before(function (bddone) {
     // nock all slack messages
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -1463,4 +1463,3 @@ describe("model/article", function() {
     });
   });
 });
-/* jshint ignore:end */

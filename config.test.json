@@ -18,23 +18,23 @@
     "access_token_secret": "dummy"
     },
   "slacktool":{
-    "osmde":"https://hooks.slack.com/services/osmde",
-    "theweeklyosm":"https://hooks.slack.com/services/theweeklyosm"
+    "osmde":"https://missingmattermost.example.com/services/osmde",
+    "theweeklyosm":"https://missingmattermost.example.com/services/theweeklyosm"
   },
   "slack":{
     "blog":{
       "DE":{
-        "hook":"https://hooks.slack.com/services/blogKey",
+        "hook":"https://missingmattermost.example.com/services/blogKey",
         "channel":"#osmbcblog"
       },
       "default":{
-        "hook":"https://hooks.slack.com/services/blogKeyWeekly",
+        "hook":"https://missingmattermost.example.com/services/blogKeyWeekly",
         "channel":"#osmbcblog"
       }
     },
     "article":{
       "wn":{
-        "hook":"https://hooks.slack.com/services/articleKey",
+        "hook":"https://missingmattermost.example.com/services/articleKey",
         "channel":"#osmbcarticle",
         "token":"testtoken"
 

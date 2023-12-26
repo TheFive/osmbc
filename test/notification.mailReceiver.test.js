@@ -1,36 +1,36 @@
-"use strict";
-
-
-const should = require("should");
-const sinon  = require("sinon");
-const nock   = require("nock");
-const fs     = require("fs");
-const path   = require("path");
-const mockdate = require("mockdate");
 
 
 
-const testutil = require("./testutil.js");
+import should from "should";
+import sinon from "sinon";
+import nock from "nock";
+import fs from "fs";
+import path from "path";
+import mockdate from "mockdate";
+import config from "../config.js";
 
-const articleModule = require("../model/article.js");
-const blogModule    = require("../model/blog.js");
-const userModule    = require("../model/user.js");
 
-const mailReceiver  = require("../notification/mailReceiver.js");
+import testutil from "./testutil.js";
 
-const messageCenter = require("../notification/messageCenter.js");
+import articleModule from "../model/article.js";
+import blogModule from "../model/blog.js";
+import userModule from "../model/user.js";
+
+import { MailReceiverForTestOnly } from "../notification/mailReceiver.js";
+
+import messageCenter from "../notification/messageCenter.js";
 
 
 
 
 messageCenter.initialise();
-const logFile = path.join(__dirname, "..", "maillogTest.log");
+const logFile = path.join(config.getDirName(), "maillogTest.log");
 
 
 describe("notification/mailReceiver", function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -50,7 +50,7 @@ describe("notification/mailReceiver", function() {
 
     beforeEach(function (bddone) {
       if (fs.existsSync(logFile)) fs.unlinkSync(logFile);
-      mailChecker = sinon.stub(mailReceiver.for_test_only.transporter, "sendMail")
+      mailChecker = sinon.stub(MailReceiverForTestOnly.transporter, "sendMail")
         .callsFake(function(obj, doit) { return doit(null, { response: "t" }); });
       testutil.importData({
         clear: true,
@@ -308,16 +308,16 @@ describe("notification/mailReceiver", function() {
     let oldtransporter;
     let mailChecker;
     afterEach(function (bddone) {
-      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+      MailReceiverForTestOnly.transporter.sendMail = oldtransporter;
       mockdate.reset();
       bddone();
     });
 
     beforeEach(function (bddone) {
       mockdate.set(new Date("2016-05-25T20:00:00Z"));
-      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+      oldtransporter = MailReceiverForTestOnly.transporter.sendMail;
       mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-      mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+      MailReceiverForTestOnly.transporter.sendMail = mailChecker;
       testutil.importData({
         clear: true,
         user: [{ OSMUser: "User1", email: "user1@mail.bc", access: "full", mailBlogStatusChange: "true" },
@@ -373,12 +373,12 @@ describe("notification/mailReceiver", function() {
         should.not.exist(err);
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-        mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+        MailReceiverForTestOnly.transporter.sendMail = mailChecker;
         blog.setAndSave({ OSMUser: "testuser" }, { status: "edit" }, function(err) {
           should.not.exist(err);
 
           should(mailChecker.calledTwice).be.True();
-          const result = mailReceiver.for_test_only.transporter.sendMail.getCall(0).args[0];
+          const result = MailReceiverForTestOnly.transporter.sendMail.getCall(0).args[0];
           const expectedMail = '<h2>Blog WN251 changed.</h2><p>Blog <a href="http://localhost:35043/blog/WN251">WN251</a> was changed by testuser</p><table id=\"valuetable\"><tr><th>Key</th><th>Value</th></tr><tr><td>status</td><td>edit</td></tr></table>';
           const expectedText = "BLOG WN251 CHANGED.\n\nBlog WN251 [http://localhost:35043/blog/WN251] was changed by testuser\n\nKEY      VALUE\nstatus   edit";
           should(result.html).eql(expectedMail);
@@ -413,7 +413,7 @@ describe("notification/mailReceiver", function() {
         should.not.exist(err);
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-        mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+        MailReceiverForTestOnly.transporter.sendMail = mailChecker;
         blog.setReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
 
@@ -440,7 +440,7 @@ describe("notification/mailReceiver", function() {
         should.not.exist(err);
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-        mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+        MailReceiverForTestOnly.transporter.sendMail = mailChecker;
         blog.setReviewComment("ES", { OSMUser: "testuser" }, "markexported", function(err) {
           should.not.exist(err);
 
@@ -468,7 +468,7 @@ describe("notification/mailReceiver", function() {
         should.not.exist(err);
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-        mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+        MailReceiverForTestOnly.transporter.sendMail = mailChecker;
         blog.closeBlog({ lang: "ES", user: { OSMUser: "testuser" }, status: true }, function(err) {
           should.not.exist(err);
           should(mailChecker.calledOnce).be.True();
@@ -493,9 +493,9 @@ describe("notification/mailReceiver", function() {
   describe("users", function() {
     let oldtransporter;
     beforeEach(function (bddone) {
-      oldtransporter = mailReceiver.for_test_only.transporter.sendMail;
+      oldtransporter = MailReceiverForTestOnly.transporter.sendMail;
       const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-      mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+      MailReceiverForTestOnly.transporter.sendMail = mailChecker;
       testutil.importData({
         clear: true,
         user: [{ OSMUser: "WelcomeMe", email: "none" },
@@ -503,12 +503,12 @@ describe("notification/mailReceiver", function() {
       }, bddone);
     });
     afterEach(function (bddone) {
-      mailReceiver.for_test_only.transporter.sendMail = oldtransporter;
+      MailReceiverForTestOnly.transporter.sendMail = oldtransporter;
       bddone();
     });
     it("should send out an email when changing email", function (bddone) {
       const mailChecker =  sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
-      mailReceiver.for_test_only.transporter.sendMail = mailChecker;
+      MailReceiverForTestOnly.transporter.sendMail = mailChecker;
 
       userModule.findOne({ OSMUser: "WelcomeMe" }, function(err, user) {
         should.not.exist(err);

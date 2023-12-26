@@ -1,17 +1,10 @@
-"use strict";
-
-const request  = require("request");
-const deferred = require("deferred");
-const https = require("https");
-const logger    = require("../config.js").logger;
+import axios from "axios";
 
 
-const agentOptions = {
+import config from "../config.js";
 
-  rejectUnauthorized: true
-};
 
-const agent = new https.Agent(agentOptions);
+
 
 
 function SlackAPI(hookUrl, httpProxyOptions) {
@@ -38,34 +31,26 @@ SlackAPI.prototype.send = function(message, cb) {
   if (message.unfurl_links) { body.unfurl_links = message.unfurl_links; }
   if (message.link_names) { body.link_names = message.link_names; }
 
-  const option = {
-    proxy: (this.http_proxy_options && this.http_proxy_options.proxy) || process.env.https_proxy || process.env.http_proxy,
-    url: command,
-    body: JSON.stringify(body),
-    agent: agent
-  };
-  let d = null;
-  if (!cb) d = deferred();
-
-
-  const req = request.post(option, function(err, res, body) {
-    if (!err && body !== "ok") {
-      err = { message: body };
-      body = null;
-    }
-    if (err) {
-      logger.error(err);
-      logger.error("While sending");
-      logger.error(JSON.stringify(message));
-      logger.error("To Hook: " + command);
-      err = null;
-    }
-    if (d) return err ? d.reject(err) : d.resolve({ res: res, body: body });
-    if (cb) return cb(null, err, body);
-    return null;
-  });
-
-  return d ? d.promise : req;
+  let err = null;
+  axios.post(command, body)
+    .then(response => {
+      if (response.body !== "OK") {
+        err = { message: response.body };
+        config.logger.error(err);
+        config.logger.error("While sending");
+        config.logger.error(JSON.stringify(message));
+        config.logger.error("To Hook: " + command);
+      }
+      if (cb) return cb(null, err, body);
+    })
+    .catch(error => {
+      err = error;
+      config.logger.error(err);
+      config.logger.error("While sending");
+      config.logger.error(JSON.stringify(message));
+      config.logger.error("To Hook: " + command);
+      if (cb) return cb(null, err, body);
+    });
 };
 
 
@@ -88,4 +73,4 @@ SlackAPI.prototype.respond = function(query, cb) {
   }
 };
 
-module.exports = SlackAPI;
+export default SlackAPI;

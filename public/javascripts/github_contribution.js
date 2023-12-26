@@ -1,4 +1,4 @@
-"use strict";
+
 /**
  * Jquery plugin to render like contribution graph on Github.
  *

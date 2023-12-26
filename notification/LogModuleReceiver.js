@@ -1,9 +1,9 @@
-"use strict";
+import { eachOfSeries, series } from "async";
+import { strict as assert } from "assert";
+import logModule from "../model/logModule.js";
 
-const debug     = require("debug")("OSMBC:notification:LogModuleReceiver");
-const async     = require("../util/async_wrap.js");
-const assert    = require("assert");
-const logModule = require("../model/logModule.js");
+import _debug from "debug";
+const debug = _debug("OSMBC:notification:LogModuleReceiver");
 
 
 
@@ -27,7 +27,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
   if (change.blog) logblog = change.blog;
   let timestamp = new Date();
   if (change.timestamp) timestamp = change.timestamp;
-  async.eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
+  eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     // There is no Value for the key, so do nothing
     if (typeof (value) === "undefined") return cbEachOf();
 
@@ -36,7 +36,7 @@ LogModuleReceiver.prototype.updateArticle = function(user, article, change, cb) 
     if (!change.action && value === article[key]) return cbEachOf();
     if (typeof (article[key]) === "undefined" && value === "") return cbEachOf();
 
-    async.series([
+    series([
       function(cb) {
         logModule.log({
           oid: article.id,
@@ -64,7 +64,7 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
   assert(typeof (user) === "object");
   assert(typeof user.OSMUser === "string");
   const timestamp = new Date();
-  async.eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
+  eachOfSeries(change, function setAndSaveEachOf(value, key, cbEachOf) {
     debug("setAndSaveEachOf");
     // There is no Value for the key, so do nothing
 
@@ -80,7 +80,7 @@ LogModuleReceiver.prototype.updateBlog = function(user, blog, change, cb) {
       if (JSON.stringify(value) === JSON.stringify(blog[key])) return cbEachOf();
     }
 
-    async.series([
+    series([
       function writeLog(cb) {
         debug("writeLog");
         logModule.log({
@@ -178,4 +178,4 @@ LogModuleReceiver.prototype.addComment = function addComment(user, article, text
   }, callback);
 };
 
-module.exports = LogModuleReceiver;
+export default LogModuleReceiver;

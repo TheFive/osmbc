@@ -1,9 +1,9 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
-const { osmbcLink } = require("../../util/util.js");
+import { By } from "selenium-webdriver";
+import util from "../../util/util.js";
 
-const StandardPage = require("./standardPage.js");
+import StandardPage from "./standardPage.js";
 
 class BlogDetailPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
@@ -12,7 +12,7 @@ class BlogDetailPage extends StandardPage {
   }
 
   async assertPage() {
-    await this._assertUrlStartsWith(osmbcLink("/blog/edit"));
+    await this._assertUrlStartsWith(util.osmbcLink("/blog/edit"));
   }
 
   async clickEdit() {
@@ -31,4 +31,5 @@ class BlogDetailPage extends StandardPage {
     await (await this._driver.findElement(By.css("input[value='OK']"))).click();
   }
 }
-module.exports = BlogDetailPage;
+
+export default BlogDetailPage;

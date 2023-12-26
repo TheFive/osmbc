@@ -1,23 +1,24 @@
-"use strict";
-
-const debug    = require("debug")("OSMBC:model:config");
-const assert   = require("assert").strict;
-const async    = require("../util/async_wrap.js");
-const yaml     = require("js-yaml");
-const fs       = require("fs");
-const path     = require("path");
+import { strict as assert } from "assert";
+import { eachOf, series } from "async";
+import { load } from "js-yaml";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 
 
 
-const pgMap        = require("../model/pgMap.js");
-const language     = require("..//model/language.js");
-const util         = require("../util/util.js");
-const sanitizeHtml = require("sanitize-html");
-const config       = require("../config.js");
+import pgMap from "../model/pgMap.js";
+import language from "..//model/language.js";
+import util from "../util/util.js";
+import sanitize from "sanitize-html";
+import config from "../config.js";
 
 
-const messageCenter = require("../notification/messageCenter.js");
-const slackReceiver = require("../notification/slackReceiver.js");
+import messageCenter from "../notification/messageCenter.js";
+import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
+
+
+import _debug from "debug";
+const debug = _debug("OSMBC:model:config");
 
 const mediaFolderLocal = config.getValue("media folder", { mustExist: true }).local;
 
@@ -45,8 +46,8 @@ function freshupEmoji(json) {
 
       if (value.substring(0, mediaFolderLocal.length) === mediaFolderLocal) value = `<img src="${value}"></img>`;
 
-      value = sanitizeHtml(value, {
-        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
+      value = sanitize(value, {
+        allowedTags: sanitize.defaults.allowedTags.concat(["img"])
       });
       newEmoji[key] = value;
     }
@@ -121,7 +122,7 @@ Config.prototype.getJSON = function getJSON() {
   }
   if (this.type === "yaml") {
     try {
-      this.json = yaml.load(this.yaml);
+      this.json = load(this.yaml);
       if (this.name === "votes") this.json = freshupVotes(this.json);
       if (this.name === "languageflags") this.json = freshupEmoji(this.json);
       checkAndRepair[this.name](this);
@@ -156,7 +157,7 @@ function readDefaultData(text) {
   debug("readDefaultData");
   const data = {};
   try {
-    data.yaml = fs.readFileSync(path.resolve(__dirname, "..", "data", text + ".yaml"), "UTF8");
+    data.yaml = readFileSync(resolve(config.getDirName(), "data", text + ".yaml"), "UTF8");
     data.type = "yaml";
     data.name = text;
     return data;
@@ -165,7 +166,7 @@ function readDefaultData(text) {
     // try txt next
   }
   try {
-    data.text = fs.readFileSync(path.resolve(__dirname, "..", "data", text + ".txt"), "UTF8");
+    data.text = readFileSync(resolve(config.getDirName(), "data", text + ".txt"), "UTF8");
     data.type = "text";
     data.name = text;
     return data;
@@ -211,7 +212,6 @@ pgObject.createString = "CREATE TABLE config (  id bigserial NOT NULL,  data jso
 pgObject.indexDefinition = {};
 pgObject.viewDefinition = {};
 pgObject.table = "config";
-module.exports.pg = pgObject;
 
 
 const checkAndRepair = {
@@ -308,7 +308,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
     delete self.json;
 
 
-    async.eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
+    eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
       // There is no Value for the key, so do nothing
       if (typeof (value) === "undefined") return cbEachOf();
 
@@ -323,7 +323,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
       debug("Old Value Was >>%s<<", self[key]);
 
 
-      async.series([
+      series([
         function calculateID(cb) {
           if (self.id !== 0) return cb();
           self.save(cb);
@@ -352,7 +352,7 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
 
       if (self.name === "slacknotification") {
         // Reinitialise Slack Receiver if something is changed on slack notification.
-        slackReceiver.initialise();
+        initialiseSlackReceiver();
       }
       self.save(callback);
     });
@@ -403,7 +403,7 @@ function initConfigElement(name, callback) {
 
 let configMap = null;
 
-module.exports.initialiseConfigMap = function initialiseConfigMap() { configMap = null; };
+function initialiseConfigMap() { configMap = null; }
 
 function initialise(callback) {
   function _initialise(callback) {
@@ -411,7 +411,7 @@ function initialise(callback) {
     assert(callback);
     if (configMap) return callback();
     configMap = {};
-    async.series([
+    series([
       initConfigElement.bind(null, "formulation_tipEN"),
       initConfigElement.bind(null, "formulation_tipDE"),
       initConfigElement.bind(null, "calendartranslation"),
@@ -442,14 +442,14 @@ function initialise(callback) {
 }
 
 
-module.exports.getConfig = function(text) {
+function getConfig(text) {
   debug("exports.getConfig");
   assert(configMap);
 
   return configMap[text].getValue();
-};
+}
 
-module.exports.getConfigObject = function(text, callback) {
+function getConfigObjectExported(text, callback) {
   function _getConfigObject(text, callback) {
     debug("exports.getConfigObject");
     let config = null;
@@ -477,17 +477,16 @@ module.exports.getConfigObject = function(text, callback) {
   });
 };
 
-module.exports.initialise = initialise;
 
 
 Config.prototype.getTable = function getTable() {
   return "config";
 };
 
-module.exports.getPlaceholder = function getPlaceholder() {
-  const phEN = exports.getConfig("formulation_tipEN");
-  const phDE = exports.getConfig("formulation_tipDE");
-  const cat = exports.getConfig("categorydescription");
+function getPlaceholder() {
+  const phEN = getConfig("formulation_tipEN");
+  const phDE = getConfig("formulation_tipDE");
+  const cat = getConfig("categorydescription");
   const result = { markdown: { EN: phEN, DE: phDE }, categories: cat };
   for (const lang in language.getLanguages()) {
     if (lang === "DE") continue;
@@ -495,4 +494,17 @@ module.exports.getPlaceholder = function getPlaceholder() {
     result.markdown[lang] = phEN;
   }
   return result;
+}
+
+const configModule = {
+  pg: pgObject,
+  initialiseConfigMap: initialiseConfigMap,
+  getConfig: getConfig,
+  getConfigObject: getConfigObjectExported,
+  initialise: initialise,
+  getPlaceholder: getPlaceholder,
+  Class: Config
+
 };
+
+export default configModule;

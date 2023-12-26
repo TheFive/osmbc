@@ -1,4 +1,4 @@
-"use strict";
+
 
 /* eslint-env browser:true, node:false, jquery:true, commonjs:false */
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
@@ -6,7 +6,6 @@
 /* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
 /* exported callAndRedraw, setNoTranslation, translate, clickAndLoadLinktext */
 
-/* jshint esversion: 6 */
 
 // Init This Window with jQuery ready Callback
 $(document).ready(init);
@@ -27,8 +26,8 @@ function init() {
   window.mdRender = window.markdownit();
 
   window.mdRender.use(window.markdownitEmoji, { defs: window.emojiList, shortcuts: window.emojiShortcut });
-  window.mdRender.use(window.markdownitSup);
   window.mdRender.use(window["markdown-it-imsize.js"]);
+  window.mdRender.use(window.markdownitSup);
   window.mdRender.use(window.markdownitLinkAttributes, { attrs: window.linkAttributes });
 
 
@@ -130,7 +129,6 @@ function saveButton() {
 // Check, wether value of field is "-" and set it to "no translation"
 // Install as onleave event handler
 function convertMinusNoTranslation() {
-  /* jshint validthis: true */
   const object = $(this);
   const md = object.val();
   if (md && md.trim() === "-") {
@@ -263,8 +261,6 @@ function generateMarkdownLink2(par1, par2) {
 
 // Event Handler for pasting text to markdown field
 function pasteEvent() {
-  /* jshint validthis: true */
-
   const mf = this;
 
   // Generate a triple of text, start selection and end selection BEFORE Pasting new text
@@ -292,7 +288,6 @@ function pasteEvent() {
 // Check, wether a markdown field contains a table
 // and set the texttype to monospace
 function checkForTable() {
-  /* jshint validthis: true */
   const md = this.value;
   if (md.indexOf("|----") >= 0) {
     $(this).wrap = "off";
@@ -305,7 +300,6 @@ function checkForTable() {
 
 // Event handler to calculate the fresh markdown preview
 function previewMarkdown() {
-  /* jshint validthis: true */
   const md = this.value;
   const preview = $(".preview[lang=" + this.lang + "]");
   preview.html(convert(md));
@@ -319,7 +313,6 @@ function previewMarkdown() {
 //
 // Can be extended: Valid Urls, ...
 function checkMarkdownError() {
-  /* jshint validthis: true */
   const md = this.value;
   if (!window.linklist) window.linklist = [];
   const text = $(".markdownMessage[lang=" + this.lang + "]");
@@ -475,7 +468,7 @@ function onchangeCollection() {
     let found = false;
 
 
-    window.linklist.forEach(function (l) { // jshint ignore:line
+    window.linklist.forEach(function (l) {
       if (l === link) found = true;
     });
     if (found) continue;
@@ -551,7 +544,6 @@ function ondragstartLangLabel(event, lang) {
 // Fit to content event
 // justify the size of the textfield to the shown content
 function FitToContent() {
-  /* jshint validthis: true */
   if (!this) return;
   const textfield = this;
   textfield.style.height = textfield.style.minHeight;
@@ -581,8 +573,6 @@ function syncPlaceholder() {
 }
 
 function showModified() {
-  /* jshint validthis: true */
-
   let modified = false;
 
   const newVal = $(this).val();

@@ -1,15 +1,16 @@
-"use strict";
-
-/* jshint ignore:start */
 
 
-const should   = require("should");
-const userModule = require("../../model/user.js");
 
-const testutil = require("../testutil.js");
-const { osmbcLink } = require("../../util/util.js");
 
-const { By } = require("selenium-webdriver");
+import should from "should";
+import userModule from "../../model/user.js";
+
+import testutil from "../testutil.js";
+import util from "../../util/util.js";
+
+import { By } from "selenium-webdriver";
+
+const osmbcLink = util.osmbcLink;
 
 
 
@@ -63,5 +64,4 @@ describe("uc/config", function() {
 });
 
 
-/* jshint ignore:end */
 

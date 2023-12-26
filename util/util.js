@@ -1,14 +1,19 @@
-"use strict";
+import _debug from "debug";
+import { strict as assert } from "assert";
+import moment from "moment";
+import language from "../model/language.js";
+import iconv from "iconv-lite";
+import markdownIt from "markdown-it";
+import { full as markdownItEmoji } from "markdown-it-emoji";
+import markdownItSup from "../util/markdown-it-sup.js";
+import markdownItImsize from "../util/markdown-it-imsize.js";
 
-const debug = require("debug")("OSMBC:util:util");
-const assert = require("assert").strict;
-const moment = require("moment");
-const language = require("../model/language.js");
-const iconv = require("iconv-lite");
 
 
+import config from "../config.js";
 
-const config = require("../config");
+
+const debug = _debug("OSMBC:util:util");
 const htmlRoot = config.htmlRoot();
 const url = config.url();
 
@@ -16,16 +21,16 @@ const url = config.url();
 function sanitizeString(str) {
   str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
   return str.trim();
-}
+};
 
-const markdown = require("markdown-it")()
-  .use(require("markdown-it-emoji"))
-  .use(require("markdown-it-sup"))
-  .use(require("markdown-it-imsize"), { autofill: true });
+const markdown = markdownIt()
+  .use(markdownItEmoji)
+  .use(markdownItSup)
+  .use(markdownItImsize, { autofill: true });
 
 function isTrue(expr) {
   return (expr === true || expr === "true");
-}
+};
 
 function shorten(string, maxlength) {
   debug("maxString");
@@ -39,7 +44,7 @@ function shorten(string, maxlength) {
 
   if (newstring.length < maxlength) return newstring;
   return newstring.substring(0, maxlength) + "...";
-}
+};
 
 function toPGString(string, count) {
   if (typeof string !== "string") return "";
@@ -53,7 +58,7 @@ function toPGString(string, count) {
     result += c;
   }
   return result;
-}
+};
 
 function linkify(string) {
   debug("linkify");
@@ -63,10 +68,10 @@ function linkify(string) {
     result = result.replace(" ", "_");
   }
   return result;
-}
+};
 
 // eslint-disable-next-line camelcase
-function md_render(text, accessMap) {
+function mdRender(text, accessMap) {
   if (typeof text === "undefined") text = "";
   if (text === null) text = "";
 
@@ -105,23 +110,23 @@ const getAllUrlRegex = /(https?:\/\/[^\[\] \n\r()]*)/g;
 function isURL(t) {
   if (t) return isUrlRegex.test(t);
   return isUrlRegex;
-}
+};
 
 function getAllURL(t) {
   const r = t.match(getAllUrlRegex);
   if (r === null) return [];
   return r;
-}
+};
 
 function requireTypes(vars, types) {
   for (let i = 0; i < vars.length; i++) {
     assert.equal(typeof (vars[i]), types[i]);
   }
-}
+};
 
 function dateFormat(date, lang) {
   return moment(date).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L");
-}
+};
 
 
 
@@ -131,10 +136,9 @@ function sleep(time) {
 }
 
 
-exports.sleep = sleep;
 
 
-exports.osmbcLink = function(link) {
+function osmbcLink(link) {
   // warning this seems to be only implemented for tests
   const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
   return baseLink + link;
@@ -161,22 +165,26 @@ function charsetDecoder(response) {
   response.data = iconv.decode(response.data, fromcharset);
 
   return response;
-}
+};
 
 
 
-exports.charsetDecoder = charsetDecoder;
-exports.shorten = shorten;
-exports.isURL = isURL;
-exports.toPGString = toPGString;
-exports.getAllURL = getAllURL;
-exports.requireTypes = requireTypes;
-exports.linkify = linkify;
-exports.isTrue = isTrue;
-exports.dateFormat = dateFormat;
-exports.sanitizeString = sanitizeString;
 
 
-// Convert MD to HTML, and mark all http(s) links as hyperlinks.
-// eslint-disable-next-line camelcase
-exports.md_render = md_render;
+const util = {
+  sanitizeString: sanitizeString,
+  isTrue: isTrue,
+  shorten: shorten,
+  toPGString: toPGString,
+  linkify: linkify,
+  isURL: isURL,
+  getAllURL: getAllURL,
+  requireTypes: requireTypes,
+  dateFormat: dateFormat,
+  charsetDecoder: charsetDecoder,
+  sleep: sleep,
+  osmbcLink: osmbcLink,
+  md_render: mdRender
+};
+
+export default util;

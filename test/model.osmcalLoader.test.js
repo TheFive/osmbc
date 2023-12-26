@@ -1,22 +1,22 @@
-"use strict";
 
-const fs = require("fs");
-const path = require("path");
-const config = require("../config.js");
-const should = require("should");
-const nock   = require("nock");
-const mockdate = require("mockdate");
 
-const testutil = require("../test/testutil.js");
+import fs from "fs";
+import path from "path";
+import config from "../config.js";
+import should from "should";
+import nock from "nock";
+import mockdate from "mockdate";
 
-const osmcalLoader  = require("../model/osmcalLoader.js");
+import testutil from "../test/testutil.js";
+
+import osmcalLoader from "../model/osmcalLoader.js";
 
 
 async function doTest(option) {
-  const inputFile =  path.resolve(__dirname, "data", `osmcal_api_v2.${option.file}.json`);
+  const inputFile =  path.resolve(config.getDirName(), "test", "data", `osmcal_api_v2.${option.file}.json`);
   const input =  JSON.parse(fs.readFileSync(inputFile));
 
-  const outputFile = path.resolve(__dirname, "data", `osmcal_result.${option.file}.txt`);
+  const outputFile = path.resolve(config.getDirName(), "test", "data", `osmcal_result.${option.file}.txt`);
   const expectedResult = fs.readFileSync(outputFile, { encoding: "utf8" });
 
   nock("https://osmcal.org")

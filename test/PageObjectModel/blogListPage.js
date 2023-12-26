@@ -1,13 +1,15 @@
 "use strict;";
 
-const { osmbcLink } = require("../../util/util.js");
+import util from "../../util/util.js";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
 
 
-const StandardPage = require("./standardPage.js");
+import StandardPage from "./standardPage.js";
 
-class BlogListPage extends StandardPage {
+const osmbcLink = util.osmbcLink;
+
+export default class BlogListPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
     super(driver);
@@ -22,4 +24,3 @@ class BlogListPage extends StandardPage {
     await (await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"))).click();
   }
 }
-module.exports = BlogListPage;

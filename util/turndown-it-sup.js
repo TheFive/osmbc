@@ -1,6 +1,6 @@
-"use strict";
 
-module.exports = function(turndownService) {
+
+const turndownItSup = function(turndownService) {
   turndownService.addRule("superscript",
     {
       filter: "sup",
@@ -9,3 +9,5 @@ module.exports = function(turndownService) {
       }
     });
 };
+
+export default turndownItSup;

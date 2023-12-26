@@ -1,16 +1,16 @@
-"use strict";
 
-const should    = require("should");
-const async     = require("async");
-const nock      = require("nock");
-const axios    = require("axios");
 
-const testutil  = require("./testutil.js");
+import should from "should";
+import async from "async";
+import nock from "nock";
+import axios from "axios";
 
-const config    = require("../config.js");
-const initialise      = require("../util/initialise.js");
+import testutil from "./testutil.js";
 
-const articleModule = require("../model/article.js");
+import config from "../config.js";
+import initialiseModules from "../util/initialise.js";
+
+import articleModule from "../model/article.js";
 
 
 describe("router/slack", function() {
@@ -41,14 +41,14 @@ describe("router/slack", function() {
   before(function(bddone) {
     link = "http://localhost:" + config.getServerPort() + config.htmlRoot() + "/slack/create/wn";
 
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
     testutil.nockHtmlPages();
 
     process.env.TZ = "Europe/Amsterdam";
-    initialise.initialiseModules(bddone);
+    initialiseModules(bddone);
   });
   after(function(bddone) {
     testutil.nockHtmlPagesClear();

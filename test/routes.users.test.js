@@ -1,14 +1,10 @@
-"use strict";
-
-/* jshint ignore:start */
-
-
-const should = require("should");
-const nock   = require("nock");
-const config = require("../config.js");
-const HttpStatus = require("http-status-codes"); const userModule = require("../model/user.js");
-const testutil = require("./testutil.js");
-const initialise = require("../util/initialise.js");
+import should from "should";
+import nock from "nock";
+import config from "../config.js";
+import HttpStatus from "http-status-codes";
+import userModule from "../model/user.js";
+import testutil from "./testutil.js";
+import initialiseModules from "../util/initialise.js";
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
@@ -20,7 +16,7 @@ describe("router/user", function() {
 
 
   before(async function () {
-    await initialise.initialiseModules();
+    await initialiseModules();
     testutil.startServerSync();
   });
 
@@ -257,4 +253,3 @@ describe("router/user", function() {
 });
 
 
-/* jshint ignore:end */

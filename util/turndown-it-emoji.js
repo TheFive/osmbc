@@ -1,9 +1,9 @@
-"use strict";
-const configModule = require("../model/config.js");
+
+import configModule from "../model/config.js";
 
 
 // this is not turning down emojies, but turndown the individual emoji generation for the translation tool
-module.exports = function(turndownService) {
+const turndownItEmoji = function(turndownService) {
   turndownService.addRule("emoji",
     {
       filter: "emoji",
@@ -18,3 +18,4 @@ module.exports = function(turndownService) {
       }
     });
 };
+export default turndownItEmoji;

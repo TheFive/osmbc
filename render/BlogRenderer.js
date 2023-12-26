@@ -1,22 +1,22 @@
-"use strict";
+import moment from "moment-timezone";
 
-const debug = require("debug")("OSMBC:render:BlogRenderer");
-const moment = require("moment-timezone");
-
-const util = require("../util/util.js");
-const configModule = require("../model/config.js");
-const config = require("../config.js");
-const language = require("../model/language.js");
-const mdUtil = require("../util/md_util.js");
+import util from "../util/util.js";
+import configModule from "../model/config.js";
+import config from "../config.js";
+import language from "../model/language.js";
+import { osmbcMarkdown } from "../util/md_util.js";
 
 
-const assert = require("assert").strict;
+import { strict as assert } from "assert";
+
+import _debug from "debug";
+const debug = _debug("OSMBC:render:BlogRenderer");
 
 
 function HtmlRenderer(blog, options) {
   this.blog = blog;
 
-  this.markdown = mdUtil.osmbcMarkdown(options);
+  this.markdown = osmbcMarkdown(options);
 }
 
 function MarkdownRenderer(blog) {
@@ -193,7 +193,6 @@ MarkdownRenderer.prototype.charSetString = function charSetString2() {
 
 
 function renderBlogStructure(lang, articleData) {
-  /* jshint validthis: true */
   debug("htmlBlog");
 
   const articles = articleData.articles;
@@ -259,5 +258,10 @@ HtmlRenderer.prototype.renderBlog = renderBlogStructure;
 MarkdownRenderer.prototype.renderBlog = renderBlogStructure;
 
 
-module.exports.MarkdownRenderer = MarkdownRenderer;
-module.exports.HtmlRenderer = HtmlRenderer;
+
+const blogRenderer = {
+  HtmlRenderer: HtmlRenderer,
+  MarkdownRenderer: MarkdownRenderer
+};
+
+export default blogRenderer;

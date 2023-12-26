@@ -1,10 +1,10 @@
-"use strict";
 
-const config = require("../config.js");
-const should = require("should");
-const async  = require("async");
 
-const pgMap  = require("../model/pgMap.js");
+import config from "../config.js";
+import should from "should";
+import async from "async";
+
+import pgMap from "../model/pgMap.js";
 
 
 function TestTable(proto) {

@@ -1,29 +1,31 @@
-"use strict";
-
-const querystring = require("query-string");
-const axios = require("axios");
-const language = require("../model/language.js");
 
 
+import queryString from "query-string";
+import axios from "axios";
+import language from "../model/language.js";
 
 
 
-const TurndownService = require("turndown");
-const turndownItSup = require("../util/turndown-it-sup.js");
-const turndownItEmoji = require("../util/turndown-it-emoji");
-const turndownItImsize = require("../util/turndown-it-imsize.js");
-const mdUtil = require("../util/md_util.js");
 
-const config    = require("../config.js");
-const debug       = require("debug")("OSMBC:model:translator");
+
+import TurndownService from "turndown";
+import turndownItSup from "../util/turndown-it-sup.js";
+import turndownItEmoji from "../util/turndown-it-emoji.js";
+import turndownItImsize from "../util/turndown-it-imsize.js";
+import { osmbcMarkdown } from "../util/md_util.js";
+
+import config from "../config.js";
+import _debug from "debug";
+const request = axios.request;
+const debug = _debug("OSMBC:model:translator");
 
 
 
 
 async function deeplTranslate(url, params) {
   try {
-    const query = querystring.stringify(params);
-    const response = await axios.request(url, {
+    const query = queryString.stringify(params);
+    const response = await request(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       data: query
@@ -39,7 +41,7 @@ async function deeplTranslate(url, params) {
 const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
 function translateDeeplPro(options, callback) {
-  const markdown = mdUtil.osmbcMarkdown({ translation: true });
+  const markdown = osmbcMarkdown({ translation: true });
   debug("translateDeeplPro");
 
   if (typeof deeplConfig.authKey === "undefined") {
@@ -100,19 +102,25 @@ function translateCopy(options, callback) {
 }
 
 
+const deeplPro = {};
+const fortestonly = {};
+const copy = {};
 
-module.exports.deeplPro = {};
-module.exports.fortestonly = {};
-module.exports.copy = {};
+deeplPro.translate = translateDeeplPro;
+deeplPro.active = deeplProActive;
+deeplPro.name = "DeepLPro";
+deeplPro.user = "deeplPro API Call";
 
-module.exports.deeplPro.translate = translateDeeplPro;
-module.exports.deeplPro.active = deeplProActive;
-module.exports.deeplPro.name = "DeepLPro";
-module.exports.deeplPro.user = "deeplPro API Call";
+copy.translate = translateCopy;
+copy.active = () => { return true; };
 
-module.exports.copy.translate = translateCopy;
-module.exports.copy.active = () => { return true; };
+copy.name = "Copy";
+copy.user = "Copy User";
 
-module.exports.copy.name = "Copy";
-module.exports.copy.user = "Copy User";
+const translator = {
+  deeplPro: deeplPro,
+  fortestonly: fortestonly,
+  copy: copy
+};
 
+export default translator;

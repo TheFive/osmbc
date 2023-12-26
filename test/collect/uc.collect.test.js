@@ -1,21 +1,20 @@
-"use strict";
-
-/* jshint ignore:start */
 
 
-const nock = require("nock");
-const mockdate = require("mockdate");
-const should = require("should");
-const testutil = require("../testutil.js");
-const userModule = require("../../model/user.js");
-const articleModule = require("../../model/article.js");
-const blogModule = require("../../model/blog.js");
 
 
-const { osmbcLink } = require("../../util/util.js");
+import nock from "nock";
+import mockdate from "mockdate";
+import should from "should";
+import testutil from "../testutil.js";
+import userModule from "../../model/user.js";
+import articleModule from "../../model/article.js";
+import blogModule from "../../model/blog.js";
 
-const { By } = require("selenium-webdriver");
 
+import util from "../../util/util.js";
+
+import { By } from "selenium-webdriver";
+const osmbcLink = util.osmbcLink;
 
 
 describe("uc/collect", function() {
@@ -23,7 +22,7 @@ describe("uc/collect", function() {
   let driver = null;
   before(async function() {
     mockdate.set(new Date("2016-05-25T19:00:00Z"));
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -94,5 +93,4 @@ describe("uc/collect", function() {
   });
 });
 
-/* jshint ignore:end */
 

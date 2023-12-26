@@ -1,13 +1,14 @@
 "use strict;";
 
-const { osmbcLink } = require("../../util/util.js");
+import { By } from "selenium-webdriver";
+import util from "../../util/util.js";
 
-const { By } = require("selenium-webdriver");
+import StandardPage from "./standardPage.js";
+
+const osmbcLink = util.osmbcLink;
 
 
-const StandardPage = require("./standardPage.js");
-
-class SearchAndCollectPage extends StandardPage {
+export default class SearchAndCollectPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
     super(driver);
@@ -49,4 +50,3 @@ class SearchAndCollectPage extends StandardPage {
     return await this._driver.findElement(By.css("input#OK"));
   }
 }
-module.exports = SearchAndCollectPage;

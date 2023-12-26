@@ -1,10 +1,10 @@
 "use strict;";
 
-const { By } = require("selenium-webdriver");
+import { By } from "selenium-webdriver";
 
-const Page = require("../../test/PageObjectModel/page.js");
+import Page from "../../test/PageObjectModel/page.js";
 
-class StandardPage extends Page {
+export default class StandardPage extends Page {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
     super(driver);
@@ -34,5 +34,4 @@ class StandardPage extends Page {
     await this.assertPage();
     await (await this._driver.findElement(By.css("nav#fixedNavbar>div>ul>li>img"))).click();
   }
-}
-module.exports = StandardPage;
+};

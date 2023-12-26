@@ -1,19 +1,21 @@
-"use strict";
 
 
 
-const should = require("should");
-const testutil = require("./testutil.js");
 
-const path = require("path");
-const fs = require("fs");
-const async = require("async");
-const nock = require("nock");
+import should from "should";
+import testutil from "./testutil.js";
 
-const articleModule = require("../model/article.js");
-const blogModule = require("../model/blog.js");
-const configModule = require("../model/config.js");
-const BlogRenderer = require("../render/BlogRenderer.js");
+import path from "path";
+import fs from "fs";
+import async from "async";
+import nock from "nock";
+
+import articleModule from "../model/article.js";
+import blogModule from "../model/blog.js";
+import configModule from "../model/config.js";
+import BlogRenderer from "../render/BlogRenderer.js";
+import config from "../config.js";
+
 
 
 
@@ -26,7 +28,7 @@ describe("render/blogrenderer", function() {
   before(async function () {
     await configModule.initialise();
     renderer = new BlogRenderer.HtmlRenderer();
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -211,7 +213,7 @@ describe("render/blogrenderer", function() {
     });
     function doATest(filename) {
       it("should handle testfile " + filename, function (bddone) {
-        const file =  path.resolve(__dirname, "data", filename);
+        const file =  path.resolve(config.getDirName(), "data", filename);
         const data =  JSON.parse(fs.readFileSync(file));
 
         let blog;
@@ -251,7 +253,7 @@ describe("render/blogrenderer", function() {
           try {
             // try to read file content,
             // if it fails, use the already defined value
-            const file =  path.resolve(__dirname, "data", htmlResult);
+            const file =  path.resolve(config.getDirName(), "data", htmlResult);
             htmlResult = fs.readFileSync(file, "utf-8");
             if (file.indexOf(".md") >= 0) markdown = true;
           } catch (err) { /* ignore the error */ }

@@ -1,24 +1,23 @@
-"use strict";
-
-/* jshint ignore:start */
-
-
-const nock       = require("nock");
-const should     = require("should");
-const fs         = require("fs");
-const path       = require("path");
-const HttpStatus = require("http-status-codes");
-const mockdate   = require("mockdate");
-
-
-const config     = require("../config");
-const initialise = require("../util/initialise.js");
-const blogModule = require("../model/blog.js");
 
 
 
 
-const testutil   = require("../test/testutil.js");
+import nock from "nock";
+import should from "should";
+import fs from "fs";
+import path from "path";
+import HttpStatus from "http-status-codes";
+import mockdate from "mockdate";
+
+
+import config from "../config.js";
+import initialiseModules from "../util/initialise.js";
+import blogModule from "../model/blog.js";
+
+
+
+
+import testutil from "../test/testutil.js";
 
 
 
@@ -38,7 +37,7 @@ describe("routes/blog", function() {
   });
 
   before(async function () {
-    await initialise.initialiseModules();
+    await initialiseModules();
     testutil.startServerSync();
   });
 
@@ -46,7 +45,7 @@ describe("routes/blog", function() {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
 
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
@@ -541,7 +540,7 @@ describe("routes/blog", function() {
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
       const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&download=true");
 
-      const file = path.resolve(__dirname, "data", "views.blog.export.1.html");
+      const file = path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.html");
       const expectation = fs.readFileSync(file, "UTF8");
 
       should(body.data).eql(expectation);
@@ -556,14 +555,14 @@ describe("routes/blog", function() {
       should(body.data).eql("[:de]Wochennotiz OG[:en]weeklyOSM OG[:es]semanarioOSM OG[:]");
     });
     it("should get a preview in the markdown format ", async function () {
-      await testutil.importData(path.resolve(__dirname, "data", "views.blog.export.1.json"));
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
       const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&markdown=true&download=true");
 
 
-      const file = path.resolve(__dirname, "data", "views.blog.export.1.md");
+      const file = path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.md");
       const expectation = fs.readFileSync(file, "UTF8");
 
       should(body.data).eql(expectation);
@@ -601,4 +600,3 @@ describe("routes/blog", function() {
 });
 
 
-/* jshint ignore:end */
