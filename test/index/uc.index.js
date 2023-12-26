@@ -27,7 +27,7 @@ describe("uc/index", function() {
   beforeEach(async function() {
     mockdate.set(new Date("2016-05-25T20:00"));
 
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");

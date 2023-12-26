@@ -30,7 +30,7 @@ const logFile = path.join(config.getDirName(), "maillogTest.log");
 describe("notification/mailReceiver", function() {
   before(function (bddone) {
     testutil.clearDB(bddone);
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");

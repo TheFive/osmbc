@@ -35,7 +35,7 @@ describe("notification/slackReceiver", function() {
   });
   describe("articles", function() {
     it("should slack message, when collecting article", function (bddone) {
-      const slack = nock("https://hooks.slack.com")
+      const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/article/1|Test Title> added to <http://localhost:35043/blog/WN789|WN789>\n",
@@ -54,7 +54,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when changing a collection (with <..> in Title)", function (bddone) {
-      let slack = nock("https://hooks.slack.com")
+      let slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/article/1|Test «..» «..» Title> added to <http://localhost:35043/blog/WN789|WN789>\n",
@@ -68,7 +68,7 @@ describe("notification/slackReceiver", function() {
         article.setAndSave({ OSMUser: "testuser" }, { version: 1, blog: "WN789", collection: "newtext", title: "Test <..> <..> Title" }, function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
-          slack = nock("https://hooks.slack.com")
+          slack = nock("https://missingmattermost.example.com")
             .post("/services/osmde",
               {
                 text: "<http://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
@@ -86,7 +86,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when adding comment", function (bddone) {
-      const slack = nock("https://hooks.slack.com")
+      const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
@@ -105,7 +105,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when changing comment", function (bddone) {
-      const slack = nock("https://hooks.slack.com")
+      const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
@@ -118,7 +118,7 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         article.addCommentFunction({ OSMUser: "testuser" }, "Information for @User3", function(err) {
           should.not.exist(err);
-          const slack2 = nock("https://hooks.slack.com")
+          const slack2 = nock("https://missingmattermost.example.com")
             .post("/services/osmde",
               {
                 text: "<http://localhost:35043/article/1|Test Title> changed comment:\nInformation for all",
@@ -139,7 +139,7 @@ describe("notification/slackReceiver", function() {
   });
   describe("blogs", function() {
     it("should slack message when creating a blog", function (bddone) {
-      const slack1 = nock("https://hooks.slack.com")
+      const slack1 = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
@@ -148,7 +148,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack2 = nock("https://hooks.slack.com")
+      const slack2 = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
@@ -166,7 +166,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when change blog status", function (bddone) {
-      const slack1a = nock("https://hooks.slack.com")
+      const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
@@ -175,7 +175,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack1b = nock("https://hooks.slack.com")
+      const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
@@ -185,7 +185,7 @@ describe("notification/slackReceiver", function() {
           })
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, function(err, blog) {
-        const slack2a = nock("https://hooks.slack.com")
+        const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
               text: "<http://localhost:35043/blog/WN251|WN251> changed status to edit\n",
@@ -194,7 +194,7 @@ describe("notification/slackReceiver", function() {
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
-        const slack2b = nock("https://hooks.slack.com")
+        const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
               text: "<http://localhost:35043/blog/WN251|WN251> changed status to edit\n",
@@ -217,7 +217,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when review status is set (no startreview)", function (bddone) {
-      const slack1a = nock("https://hooks.slack.com")
+      const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -226,7 +226,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack1b = nock("https://hooks.slack.com")
+      const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -236,7 +236,7 @@ describe("notification/slackReceiver", function() {
           })
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        const slack2a = nock("https://hooks.slack.com")
+        const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
               text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (, )",
@@ -245,7 +245,7 @@ describe("notification/slackReceiver", function() {
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
-        const slack2b = nock("https://hooks.slack.com")
+        const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
               text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
@@ -269,7 +269,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when review status is set (with startreview)", function (bddone) {
-      const slack1a = nock("https://hooks.slack.com")
+      const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -278,7 +278,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack1b = nock("https://hooks.slack.com")
+      const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -288,7 +288,7 @@ describe("notification/slackReceiver", function() {
           })
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit", "reviewCommentPT-PT": [{ timestamp: "__timestamp__" }] }, function(err, blog) {
-        const slack2a = nock("https://hooks.slack.com")
+        const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
               text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been reviewed: I have reviewed (<http://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__&user=testuser|User Review>, <http://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__|Full Review>)",
@@ -297,7 +297,7 @@ describe("notification/slackReceiver", function() {
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
-        const slack2b = nock("https://hooks.slack.com")
+        const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
               text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (<http://localhost:35043/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
@@ -321,7 +321,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when review is marked as exported", function (bddone) {
-      const slack1a = nock("https://hooks.slack.com")
+      const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -330,7 +330,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack1b = nock("https://hooks.slack.com")
+      const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -340,7 +340,7 @@ describe("notification/slackReceiver", function() {
           })
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        const slack2a = nock("https://hooks.slack.com")
+        const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
               text: "<http://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
@@ -349,7 +349,7 @@ describe("notification/slackReceiver", function() {
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
-        const slack2b = nock("https://hooks.slack.com")
+        const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
               text: "<http://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
@@ -373,7 +373,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when blog is closed", function (bddone) {
-      const slack1a = nock("https://hooks.slack.com")
+      const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -382,7 +382,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack1b = nock("https://hooks.slack.com")
+      const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -392,7 +392,7 @@ describe("notification/slackReceiver", function() {
           })
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        const slack2a = nock("https://hooks.slack.com")
+        const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
               text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
@@ -401,7 +401,7 @@ describe("notification/slackReceiver", function() {
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
-        const slack2b = nock("https://hooks.slack.com")
+        const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
               text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
@@ -424,7 +424,7 @@ describe("notification/slackReceiver", function() {
       });
     });
     it("should slack message, when blog is reopened", function (bddone) {
-      const slack1a = nock("https://hooks.slack.com")
+      const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -433,7 +433,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      const slack1b = nock("https://hooks.slack.com")
+      const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
             text: "<http://localhost:35043/blog/blog|blog> was created\n",
@@ -443,7 +443,7 @@ describe("notification/slackReceiver", function() {
           })
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
-        const slack2a = nock("https://hooks.slack.com")
+        const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
               text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
@@ -452,7 +452,7 @@ describe("notification/slackReceiver", function() {
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
-        let slack2b = nock("https://hooks.slack.com")
+        let slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
               text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
@@ -468,7 +468,7 @@ describe("notification/slackReceiver", function() {
           should(slack1b.isDone()).is.True();
           should(slack2a.isDone()).is.False();
           should(slack2b.isDone()).is.True();
-          slack2b = nock("https://hooks.slack.com")
+          slack2b = nock("https://missingmattermost.example.com")
             .post("/services/theweeklyosm",
               {
                 text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",

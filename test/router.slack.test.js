@@ -41,7 +41,7 @@ describe("router/slack", function() {
   before(function(bddone) {
     link = "http://localhost:" + config.getServerPort() + config.htmlRoot() + "/slack/create/wn";
 
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");

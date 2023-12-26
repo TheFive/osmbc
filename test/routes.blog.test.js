@@ -45,7 +45,7 @@ describe("routes/blog", function() {
     // Clear DB Contents for each test
     mockdate.set(new Date("2016-05-25T20:00:00Z"));
 
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");

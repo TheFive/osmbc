@@ -32,7 +32,7 @@ describe("uc/blog", function() {
   this.timeout(1000 * 60);
 
   before(async function() {
-    nock("https://hooks.slack.com/")
+    nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
       .reply(200, "ok");
