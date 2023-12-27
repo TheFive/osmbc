@@ -22,112 +22,120 @@ const debug = _debug("OSMBC:notification:messageFilter");
 * */
 
 
-function ConfigFilter(config, receiver) {
-  debug("ConfigFilter");
-  this.config = config;
-  this.receiver = receiver;
+class ConfigFilter {
+  constructor(config, receiver) {
+    debug("ConfigFilter");
+    this.config = config;
+    this.receiver = receiver;
+  }
+
+  updateArticle(user, article, change, cb) {
+    debug("ConfigFilter.prototype.updateArticle");
+    let notify = false;
+
+    // check Collection
+    if (util.isTrue(this.config.notifyNewCollection)) {
+      if (change.collection && change.collection !== article.collection) {
+        notify = true;
+        debug("Notification because new collection");
+      }
+    }
+    if (!notify) return cb();
+    this.receiver.updateArticle(user, article, change, cb);
+  }
+
+  addComment(user, article, comment, cb) {
+    debug("ConfigFilter.prototype.addComment");
+    let notify = false;
+
+    // check Collection
+    if (util.isTrue(this.config.notifyAllComment)) {
+      notify = true;
+    }
+    let userList = [];
+    if (this.config.notifyComment) userList = this.config.notifyComment;
+    for (let i = 0; i < userList.length; i++) {
+      if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
+        notify = true;
+        debug("Notification because comment for @" + userList[i]);
+      }
+    }
+    if (!notify) return cb();
+    this.receiver.addComment(user, article, comment, cb);
+  }
+
+  editComment(user, article, index, comment, cb) {
+    debug("ConfigFilter.prototype.addComment");
+    let notify = false;
+
+    // check Collection
+    if (util.isTrue(this.config.notifyAllComment)) {
+      notify = true;
+    }
+    let userList = [];
+    if (this.config.notifyComment) userList = this.config.notifyComment;
+    for (let i = 0; i < userList.length; i++) {
+      if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
+        notify = true;
+        debug("Notification because comment for @" + userList[i]);
+      }
+    }
+    if (!notify) return cb();
+    this.receiver.editComment(user, article, index, comment, cb);
+  }
+
+  updateBlog(user, blog, change, cb) {
+    debug("ConfigFilter.prototype.updateBlog");
+    let notify = false;
+
+
+    // check Collection
+    if (util.isTrue(this.config.notifyBlogStatusChange)) {
+      if (change.status && change.status !== blog.status && change.status !== "closed") {
+        notify = true;
+      }
+    }
+
+    if (!notify) return cb();
+    this.receiver.updateBlog(user, blog, change, cb);
+  }
+
+  sendReviewStatus(user, blog, lang, status, cb) {
+    debug("ConfigFilter.prototype.sendReviewStatus");
+    let wnList = [];
+    let notify = false;
+    if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
+    for (let i = 0; i < wnList.length; i++) {
+      const l = wnList[i];
+      if (l === lang) notify = true;
+    }
+    if (!notify) return cb();
+    debug("Send out notification");
+    this.receiver.sendReviewStatus(user, blog, lang, status, cb);
+  }
+
+  sendCloseStatus(user, blog, lang, status, cb) {
+    debug("ConfigFilter.prototype.sendCloseStatus");
+    let wnList = [];
+    let notify = false;
+    if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
+    if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
+    for (let i = 0; i < wnList.length; i++) {
+      const l = wnList[i];
+      if (l === lang) notify = true;
+    }
+    if (!notify) return cb();
+    debug("Send out notification");
+    this.receiver.sendCloseStatus(user, blog, lang, status, cb);
+  }
 }
 
-ConfigFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
-  debug("ConfigFilter.prototype.updateArticle");
-  let notify = false;
-
-  // check Collection
-  if (util.isTrue(this.config.notifyNewCollection)) {
-    if (change.collection && change.collection !== article.collection) {
-      notify = true;
-      debug("Notification because new collection");
-    }
-  }
-  if (!notify) return cb();
-  this.receiver.updateArticle(user, article, change, cb);
-};
-
-ConfigFilter.prototype.addComment = function ucfAddComment(user, article, comment, cb) {
-  debug("ConfigFilter.prototype.addComment");
-  let notify = false;
-
-  // check Collection
-  if (util.isTrue(this.config.notifyAllComment)) {
-    notify = true;
-  }
-  let userList = [];
-  if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (let i = 0; i < userList.length; i++) {
-    if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
-      notify = true;
-      debug("Notification because comment for @" + userList[i]);
-    }
-  }
-  if (!notify) return cb();
-  this.receiver.addComment(user, article, comment, cb);
-};
-
-ConfigFilter.prototype.editComment = function ucfEditComment(user, article, index, comment, cb) {
-  debug("ConfigFilter.prototype.addComment");
-  let notify = false;
-
-  // check Collection
-  if (util.isTrue(this.config.notifyAllComment)) {
-    notify = true;
-  }
-  let userList = [];
-  if (this.config.notifyComment) userList = this.config.notifyComment;
-  for (let i = 0; i < userList.length; i++) {
-    if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
-      notify = true;
-      debug("Notification because comment for @" + userList[i]);
-    }
-  }
-  if (!notify) return cb();
-  this.receiver.editComment(user, article, index, comment, cb);
-};
-
-ConfigFilter.prototype.updateBlog = function ucfUpdateArticle(user, blog, change, cb) {
-  debug("ConfigFilter.prototype.updateBlog");
-  let notify = false;
 
 
-  // check Collection
-  if (util.isTrue(this.config.notifyBlogStatusChange)) {
-    if (change.status && change.status !== blog.status && change.status !== "closed") {
-      notify = true;
-    }
-  }
-
-  if (!notify) return cb();
-  this.receiver.updateBlog(user, blog, change, cb);
-};
 
 
-ConfigFilter.prototype.sendReviewStatus = function sendReviewStatus(user, blog, lang, status, cb) {
-  debug("ConfigFilter.prototype.sendReviewStatus");
-  let wnList = [];
-  let notify = false;
-  if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  for (let i = 0; i < wnList.length; i++) {
-    const l = wnList[i];
-    if (l === lang) notify = true;
-  }
-  if (!notify) return cb();
-  debug("Send out notification");
-  this.receiver.sendReviewStatus(user, blog, lang, status, cb);
-};
 
-ConfigFilter.prototype.sendCloseStatus = function sendCloseStatus(user, blog, lang, status, cb) {
-  debug("ConfigFilter.prototype.sendCloseStatus");
-  let wnList = [];
-  let notify = false;
-  if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-  for (let i = 0; i < wnList.length; i++) {
-    const l = wnList[i];
-    if (l === lang) notify = true;
-  }
-  if (!notify) return cb();
-  debug("Send out notification");
-  this.receiver.sendCloseStatus(user, blog, lang, status, cb);
-};
+
 
 
 export default ConfigFilter;

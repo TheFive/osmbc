@@ -73,12 +73,121 @@ function freshupEmoji(json) {
   return json;
 }
 
-function Config (proto) {
-  debug("Config");
-  debug("Prototype %s", JSON.stringify(proto));
-  this.id = 0;
-  for (const k in proto) {
-    this[k] = proto[k];
+class Config {
+  constructor(proto) {
+    debug("Config");
+    debug("Prototype %s", JSON.stringify(proto));
+    this.id = 0;
+    for (const k in proto) {
+      this[k] = proto[k];
+    }
+  }
+
+  getJSON() {
+    debug("Config.prototype.getJSON");
+    // try to convert YAML if necessary
+    if (this.json) {
+      return this.json;
+    }
+    if (this.type === "yaml") {
+      try {
+        this.json = load(this.yaml);
+        if (this.name === "votes") this.json = freshupVotes(this.json);
+        if (this.name === "languageflags") this.json = freshupEmoji(this.json);
+        checkAndRepair[this.name](this);
+        return this.json;
+      } catch (err) {
+        return { error: "YAML convert error for: " + this.name + " ", errorMessage: err };
+      }
+    }
+  }
+
+  getValue() {
+    debug("Config.prototype.getValue");
+    if (this.type === "text") return this.text;
+    if (this.type === "yaml") return this.getJSON();
+    return "Unknown Type";
+  }
+
+  setAndSave(user, data, callback) {
+    const self = this;
+    function _configSetAndSave(user, data, callback) {
+      debug("setAndSave");
+      util.requireTypes([user, data, callback], ["object", "object", "function"]);
+      // try to convert YAML if necessary
+      delete self.json;
+
+
+      eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
+        // There is no Value for the key, so do nothing
+        if (typeof (value) === "undefined") return cbEachOf();
+
+        // The Value to be set, is the same then in the object itself
+        // so do nothing
+        if (value === self[key]) return cbEachOf();
+        if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
+        if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
+
+
+        debug("Set Key %s to value >>%s<<", key, value);
+        debug("Old Value Was >>%s<<", self[key]);
+
+
+        series([
+          function calculateID(cb) {
+            if (self.id !== 0) return cb();
+            self.save(cb);
+          },
+          function (cb) {
+            // do not log validation key in logfile
+            const toValue = value;
+
+            messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue }, cb);
+          },
+          function (cb) {
+            self[key] = value;
+            cb();
+          }
+        ], function (err) {
+          cbEachOf(err);
+        });
+      }, function setAndSaveFinalCB(err) {
+        debug("setAndSaveFinalCB");
+        if (err) return callback(err);
+        checkAndRepair[self.name](self);
+        if (self.json && self.json.error) {
+          return callback(new Error(self.json.errorMessage));
+        }
+        actualiseConfigMap(self);
+
+        if (self.name === "slacknotification") {
+          // Reinitialise Slack Receiver if something is changed on slack notification.
+          initialiseSlackReceiver();
+        }
+        self.save(callback);
+      });
+    }
+    if (callback) {
+      return _configSetAndSave(user, data, callback);
+    }
+    return new Promise((resolve, reject) => {
+      _configSetAndSave(user, data, (err) => { (err) ? reject(err) : resolve(); });
+    });
+  }
+
+  // save stores the current object to database
+  save(callback) {
+    debug("Config.prototype.save");
+    delete this.json;
+    this._internalSave(function didit(err, result) {
+      if (err) return callback(err);
+      actualiseConfigMap(result);
+      return callback(null, result);
+    });
+  }
+
+  getTable() {
+    return "config";
   }
 }
 
@@ -114,31 +223,7 @@ function createNewConfig (proto, callback) {
 
 Config.prototype.remove = pgMap.remove;
 
-Config.prototype.getJSON = function getJSON() {
-  debug("Config.prototype.getJSON");
-  // try to convert YAML if necessary
-  if (this.json) {
-    return this.json;
-  }
-  if (this.type === "yaml") {
-    try {
-      this.json = load(this.yaml);
-      if (this.name === "votes") this.json = freshupVotes(this.json);
-      if (this.name === "languageflags") this.json = freshupEmoji(this.json);
-      checkAndRepair[this.name](this);
-      return this.json;
-    } catch (err) {
-      return { error: "YAML convert error for: " + this.name + " ", errorMessage: err };
-    }
-  }
-};
 
-Config.prototype.getValue = function getValue() {
-  debug("Config.prototype.getValue");
-  if (this.type === "text") return this.text;
-  if (this.type === "yaml") return this.getJSON();
-  return "Unknown Type";
-};
 
 function find(obj, ord, callback) {
   debug("find");
@@ -298,72 +383,6 @@ const checkAndRepair = {
 };
 
 
-Config.prototype.setAndSave = function setAndSave(user, data, callback) {
-  const self = this;
-  function _configSetAndSave(user, data, callback) {
-    debug("setAndSave");
-    util.requireTypes([user, data, callback], ["object", "object", "function"]);
-    // try to convert YAML if necessary
-
-    delete self.json;
-
-
-    eachOf(data, function setAndSaveEachOf(value, key, cbEachOf) {
-      // There is no Value for the key, so do nothing
-      if (typeof (value) === "undefined") return cbEachOf();
-
-      // The Value to be set, is the same then in the object itself
-      // so do nothing
-      if (value === self[key]) return cbEachOf();
-      if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
-      if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
-
-
-      debug("Set Key %s to value >>%s<<", key, value);
-      debug("Old Value Was >>%s<<", self[key]);
-
-
-      series([
-        function calculateID(cb) {
-          if (self.id !== 0) return cb();
-          self.save(cb);
-        },
-        function(cb) {
-          // do not log validation key in logfile
-          const toValue = value;
-
-          messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "config", property: key, from: self[key], to: toValue }, cb);
-        },
-        function(cb) {
-          self[key] = value;
-          cb();
-        }
-      ], function(err) {
-        cbEachOf(err);
-      });
-    }, function setAndSaveFinalCB(err) {
-      debug("setAndSaveFinalCB");
-      if (err) return callback(err);
-      checkAndRepair[self.name](self);
-      if (self.json && self.json.error) {
-        return callback(new Error(self.json.errorMessage));
-      }
-      actualiseConfigMap(self);
-
-      if (self.name === "slacknotification") {
-        // Reinitialise Slack Receiver if something is changed on slack notification.
-        initialiseSlackReceiver();
-      }
-      self.save(callback);
-    });
-  }
-  if (callback) {
-    return _configSetAndSave(user, data, callback);
-  }
-  return new Promise((resolve, reject) => {
-    _configSetAndSave(user, data, (err) => { (err) ? reject(err) : resolve(); });
-  });
-};
 
 
 
@@ -373,16 +392,6 @@ Config.prototype.setAndSave = function setAndSave(user, data, callback) {
 Config.prototype._internalSave = pgMap.save;
 
 
-// save stores the current object to database
-Config.prototype.save = function saveConfig(callback) {
-  debug("Config.prototype.save");
-  delete this.json;
-  this._internalSave(function didit(err, result) {
-    if (err) return callback(err);
-    actualiseConfigMap(result);
-    return callback(null, result);
-  });
-};
 
 
 function initConfigElement(name, callback) {
@@ -479,9 +488,6 @@ function getConfigObjectExported(text, callback) {
 
 
 
-Config.prototype.getTable = function getTable() {
-  return "config";
-};
 
 function getPlaceholder() {
   const phEN = getConfig("formulation_tipEN");
