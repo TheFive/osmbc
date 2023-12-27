@@ -273,7 +273,7 @@ mixin blogStatusTable(blogWithLink)
           td=openBlog.name
         for l in layout.activeLanguages
           td
-            div.badge.osmbclabel-openblog=openBlog._countUneditedMarkdown[l]
+            div.badge.osmbclabel-openblog=openBlog.getUnEdited(l)
 
     for editBlog in layout.editBlog.slice(0).reverse()
       tr
@@ -290,7 +290,7 @@ mixin blogStatusTable(blogWithLink)
             else if (editBlog["reviewComment" + l])
               div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
             else
-              div.badge.osmbclabel-editblog=editBlog._countUneditedMarkdown[l]
+              div.badge.osmbclabel-editblog=editBlog.getUnEdited(l)
               
 mixin helpMenu
   li.dropdown.nav-item

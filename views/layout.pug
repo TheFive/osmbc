@@ -109,8 +109,8 @@ block all
       link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css" rel='stylesheet')
 
     body
-      - function blogNumber(blog,language) {return ((blog && blog._countUneditedMarkdown)?blog._countUneditedMarkdown[language]:"?") }
-      - function blogCount(blog,language) {return ((blog && blog._countExpectedMarkdown)?blog._countExpectedMarkdown[language]:"?") }
+      - function blogNumber(blog,language) {return ((blog)?blog.getUnEdited(language):"?") }
+      - function blogCount(blog,language) {return ((blog)?blog.getExpected(language):"?") }
 
 
       // Fixed navbar

@@ -83,7 +83,6 @@
     "license-checker": "^25.0.1",
     "license-checker-rseidelsohn": "4.3.x",
     "mocha": "10.2.x",
-    "mocha-eslint": "^7.0.0",
     "mockdate": "3.0.x",
     "nock": "13.4.x",
     "nyc": "^15.1.0",

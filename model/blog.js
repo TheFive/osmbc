@@ -43,7 +43,10 @@ function sanitizeBlogKey(blog) {
   return str.trim();
 }
 
+
 class Blog {
+  #statusCount = null;
+
   constructor(proto) {
     debug("Blog");
     this.id = 0;
@@ -55,6 +58,26 @@ class Blog {
         this[k] = proto[k];
       }
     }
+  }
+
+  getExpected(l) {
+    if (this.#statusCount !== null) return this.#statusCount[l].expected;
+    return "?";
+  }
+
+  getUnEdited(l) {
+    if (this.#statusCount !== null) return this.#statusCount[l].unedited;
+    return "?";
+  }
+
+  getAutoTranslate(l) {
+    if (this.#statusCount !== null) return this.#statusCount[l].autoTranslate;
+    return "?";
+  }
+
+  getNoTranslate(l) {
+    if (this.#statusCount !== null) return this.#statusCount[l].noTranslate;
+    return "?";
   }
 
   getTable() {
@@ -553,15 +576,12 @@ class Blog {
   }
 
   calculateDerived(user, callback) {
-    debug("countUneditedMarkdown");
+    debug("calculateDerived");
     assert(user);
     // already done, nothing to do.
-    if (this._countUneditedMarkdown) return callback();
+    if (this.#statusCount !== null) return callback();
     const self = this;
-
-    self._countUneditedMarkdown = {};
-    self._countExpectedMarkdown = {};
-    self._countNoTranslateMarkdown = {};
+    self.#statusCount = {};
 
     self._userMention = [];
     self._mainLangMention = [];
@@ -580,66 +600,76 @@ class Blog {
     articleModule.find({ blog: self }, function (err, result) {
       if (err) return callback(err);
       assert(Array.isArray(result));
+      each(result, calculateDependend, function(err) {
+        if (err) return callback(err);
+        for (const l in language.getLanguages()) {
+          const statusLang = {};
 
-
-      for (const l in language.getLanguages()) {
-        self._countUneditedMarkdown[l] = 0;
-        self._countExpectedMarkdown[l] = 0;
-        self._countNoTranslateMarkdown[l] = 0;
-        self._unsolvedComments[l] = 0;
-        for (j = 0; j < result.length; j++) {
-          const article = result[j];
-          const c = article.categoryEN;
-          if (c === "Upcoming Events") self._upcomingEvents = article;
-          if (c === "--unpublished--") continue;
-          self._countExpectedMarkdown[l] += 1;
-          const m = article["markdown" + l];
-          if (m === "no translation") {
-            self._countNoTranslateMarkdown[l] += 1;
-          } else {
-            if (!m || m === "" || c === "-- no category yet --") {
-              self._countUneditedMarkdown[l] += 1;
+          statusLang.unedited = 0;
+          statusLang.expected = 0;
+          statusLang.autoTranslate = 0;
+          statusLang.noTranslate = 0;
+          self._unsolvedComments[l] = 0;
+          for (j = 0; j < result.length; j++) {
+            const article = result[j];
+            const c = article.categoryEN;
+            if (c === "Upcoming Events") self._upcomingEvents = article;
+            if (c === "--unpublished--") continue;
+            statusLang.expected += 1;
+            const m = article["markdown" + l];
+            if (m === "no translation") {
+              statusLang.noTranslate += 1;
+            } else {
+              if (!m || m === "" || c === "-- no category yet --") {
+                statusLang.unedited += 1;
+              } else {
+                if (article.isTranslatedAutomated(l)) {
+                  statusLang.autoTranslate += 1;
+                  console.log("Found auto translate " + l);
+                }
+              }
+            }
+            // check, wether language is used in blog
+            if (m && m !== "no translation") self._usedLanguages[l] = true;
+            if (article.commentList && article.commentStatus === "open") {
+              if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
             }
           }
-          // check, wether language is used in blog
-          if (m && m !== "no translation") self._usedLanguages[l] = true;
-          if (article.commentList && article.commentStatus === "open") {
-            if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
+          self.#statusCount[l] = statusLang;
+        }
+        if (!result) return callback();
+        for (i = 0; i < result.length; i++) {
+          if (self.name === "TBC") {
+            if (result[i].firstCollector === user.OSMUser) {
+              self._tbcOwnArticleNumber += 1;
+            }
+          }
+          if (result[i].commentList) {
+            if (result[i].commentStatus === "solved") continue;
+            for (j = 0; j < result[i].commentList.length; j++) {
+              const comment = result[i].commentList[j].text;
+
+              if (comment.search(new RegExp("@" + user.OSMUser, "i")) >= 0) {
+                self._userMention.push(result[i]);
+                break;
+              }
+              if ((comment.search(new RegExp("@" + mainLang, "i")) >= 0) ||
+                (comment.search(/@all/i) >= 0) ||
+                (comment.search(/@all/i) >= 0)) {
+                self._mainLangMention.push(result[i]);
+                break;
+              }
+              if ((comment.search(new RegExp("@" + secondLang, "i")) >= 0) ||
+                (comment.search(/@all/i) >= 0) ||
+                (comment.search(/@all/i) >= 0)) {
+                self._secondLangMention.push(result[i]);
+                break;
+              }
+            }
           }
         }
-      }
-      if (!result) return callback();
-      for (i = 0; i < result.length; i++) {
-        if (self.name === "TBC") {
-          if (result[i].firstCollector === user.OSMUser) {
-            self._tbcOwnArticleNumber += 1;
-          }
-        }
-        if (result[i].commentList) {
-          if (result[i].commentStatus === "solved") continue;
-          for (j = 0; j < result[i].commentList.length; j++) {
-            const comment = result[i].commentList[j].text;
-
-            if (comment.search(new RegExp("@" + user.OSMUser, "i")) >= 0) {
-              self._userMention.push(result[i]);
-              break;
-            }
-            if ((comment.search(new RegExp("@" + mainLang, "i")) >= 0) ||
-              (comment.search(/@all/i) >= 0) ||
-              (comment.search(/@all/i) >= 0)) {
-              self._mainLangMention.push(result[i]);
-              break;
-            }
-            if ((comment.search(new RegExp("@" + secondLang, "i")) >= 0) ||
-              (comment.search(/@all/i) >= 0) ||
-              (comment.search(/@all/i) >= 0)) {
-              self._secondLangMention.push(result[i]);
-              break;
-            }
-          }
-        }
-      }
-      return callback();
+        return callback();
+      });
     });
   }
 

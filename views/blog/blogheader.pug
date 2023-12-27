@@ -148,10 +148,11 @@ block additionalMenuRight
 
 block content
   .row
-    - unedited = blog._countUneditedMarkdown[left_lang];
-    - notranslate = blog._countNoTranslateMarkdown[left_lang];
-    - total = blog._countExpectedMarkdown[left_lang]
-    - ready = (total-unedited - notranslate)
+    - unedited = blog.getUnEdited(left_lang);
+    - notranslate = blog.getNoTranslate(left_lang);
+    - autoTranslate = blog.getAutoTranslate(left_lang);
+    - total = blog.getExpected(left_lang);
+    - ready = (total-unedited - notranslate - autoTranslate)
     - if (total == 0) total = 1
   .row
     .col-md-1
@@ -163,15 +164,17 @@ block content
     .col-md-11
      div.progress(style="margin-bottom:2px")
       div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
+      div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(1000*autoTranslate/total)}%`)=autoTranslate
       div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
       div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
   div.d-none.d-md-block
     if (right_lang!= "--" && right_lang != null)
       .row
-        - unedited = blog._countUneditedMarkdown[right_lang];
-        - notranslate = blog._countNoTranslateMarkdown[right_lang];
-        - total = blog._countExpectedMarkdown[right_lang];
-        - ready = (total-unedited - notranslate)
+        - unedited = blog.getUnEdited(right_lang);
+        - notranslate = blog.getNoTranslate(right_lang);
+        - autoTranslate = blog.getAutoTranslate(right_lang);
+        - total = blog.getExpected(right_lang);
+        - ready = (total-unedited - notranslate - autoTranslate)
         - if (total == 0) total = 1
         .col-md-1
           div.badge.badge-info.osmbclabel-lang2=right_lang
@@ -182,6 +185,7 @@ block content
         .col-md-11
          div.progress(style="margin-bottom:10px")
           div.progress-bar.osmbclabel-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
+          div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(1000*autoTranslate/total)}%`)=autoTranslate
           div.progress-bar.osmbclabel-no-markdown(style="width:" +parseInt(100*unedited/total)+"%")=unedited
           div.progress-bar.osmbclabel-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
 
@@ -231,7 +235,7 @@ block content
           a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" +left_lang)
             i.fa.fa-download
             | #{left_lang}
-            if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[left_lang] == 0)
+            if !(blog.getUnEdited(left_lang) == 0)
               span=" "
               i.fa.fa-exclamation-triangle
         if (right_lang != "--" && right_lang != null)
@@ -239,7 +243,7 @@ block content
             a.nav-link(href=layout.htmlroot+"/blog/" + blog.name +"/preview?lang=" + right_lang)
               i.fa.fa-download
               | #{right_lang}
-              if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[right_lang] == 0)
+              if !(blog.getUnEdited(right_lang) == 0)
                 span=" "
                 i.fa.fa-exclamation-triangle
 
@@ -252,7 +256,7 @@ block content
               - if ( blog["close"+lang] === true) closedLangs.push(lang)
               a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
                 span="Export "+ lang
-                if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                if !(blog.getUnEdited(lang) == 0)
                   span=" "
                   i.fa.fa-exclamation-triangle
             - if (closedLangs.length>1)
@@ -261,7 +265,7 @@ block content
                   span="Export All: "
                   each lang in closedLangs
                     span=lang+" "
-                    if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                    if !(blog.getUnEdited(lang) == 0)
                       span=" "
                       i.fa.fa-exclamation-triangle
                     span=","
