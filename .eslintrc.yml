@@ -43,4 +43,4 @@ rules:
   mocha/no-nested-tests: error
 
 parserOptions:
-  ecmaVersion: 12
+  ecmaVersion: 2022

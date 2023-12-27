@@ -70,7 +70,7 @@ block blogcontent
                   textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang=lang)=a["markdown"+lang]
                   textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
                 form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
-                  if a.author && a.author["markdown" + lang] && apiAuthors.indexOf(a.author["markdown" + lang].split(",")[0]) >= 0
+                  if a.isTranslatedAutomated(lang)
                       textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
                       button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+lang type="submit")
                         div.fa.fa-ok

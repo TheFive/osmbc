@@ -15,12 +15,380 @@ const debug = _debug("OSMBC:model:user");
 
 // generate an user object, use Prototpye
 // to prototype some fields
-function User(proto) {
-  debug("User");
-  debug("Prototype %s", JSON.stringify(proto));
-  this.id = 0;
-  for (const k in proto) {
-    this[k] = proto[k];
+class User {
+  constructor(proto) {
+    debug("User");
+    debug("Prototype %s", JSON.stringify(proto));
+    this.id = 0;
+    for (const k in proto) {
+      this[k] = proto[k];
+    }
+  }
+
+  // Calculate derived values
+  // now: Calculate only number of changes
+  calculateChanges(callback) {
+    debug("User.prototype.calculateChanges");
+    const self = this;
+    if (self._countChanges) return;
+    pgMap.count("select count(*) as count from changes where data->>'user'=$1 and data->>'table'='article'", [this.OSMUser], function (err, result) {
+      if (err) return callback(err);
+      self._countChanges = result.count;
+      return callback();
+    });
+  }
+
+  // This function is called by the link
+  // send out via EMail if someone registers a new email
+  validateEmail(user, validationCode, callback) {
+    debug("validateEmail");
+    assert(typeof (user) === "object");
+    assert(typeof (validationCode) === "string");
+    assert(typeof (callback) === "function");
+    const self = this;
+    let err;
+    if (self.OSMUser !== user.OSMUser) {
+      debug("User is wrong");
+      err = new Error("Wrong User: expected >" + self.OSMUser + "< given >" + user.OSMUser + "<");
+      err.status = CONFLICT;
+      return callback(err);
+    }
+    if (!self.emailInvalidation) {
+      debug("nothing in validation");
+      err = new Error("No Validation pending for user >" + self.OSMUser + "<");
+      err.status = CONFLICT;
+      return callback(err);
+    }
+    if (validationCode !== self.emailValidationKey) {
+      debug("Validation Code is wrong");
+      err = new Error("Wrong Validation Code for EMail for user >" + self.OSMUser + "<");
+      err.status = CONFLICT;
+      messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: null, to: "Validation Failed" }, function () {
+        return callback(err);
+      });
+      return;
+    }
+    debug("Email Validation OK saving User");
+    const oldmail = self.email;
+    self.email = self.emailInvalidation;
+    delete self.emailInvalidation;
+    delete self.emailValidationKey;
+    self.save(function logit(err) {
+      _updateUser(self);
+      if (err) return callback(err);
+      messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: oldmail, to: self.email }, function () {
+        return callback(err);
+      });
+    });
+  }
+
+  // pgMap setAndSave Function,
+  // Check on EMail change (and trigger new validation)
+  // create error if user that already have logged in
+  // changes their OSM Account
+  setAndSave(user, data, callback) {
+    debug("setAndSave");
+    // reset cache
+    util.requireTypes([user, data, callback], ["object", "object", "function"]);
+    const self = this;
+    delete self.lock;
+    let sendWelcomeEmail = false;
+    // remove spaces from front and and of email adress
+    if (data.email) data.email = data.email.trim();
+    if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
+    if (data.OSMUser === "autocreate") {
+      const err = new Error("User >autocreate< not allowed");
+      err.status = CONFLICT;
+      return callback(err);
+    }
+
+
+    // check and react on Mail Change
+    if (data.email && data.email.trim() !== "" && data.email !== self.email) {
+      const err = Error("EMail address can only be changed by the user himself, after he has logged in.");
+      err.status = UNAUTHORIZED;
+      if (self.access === "denied" && data.email !== "none") return callback(err);
+      if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(err);
+
+      if (data.email !== "resend" && data.email !== "none") {
+        if (!validate(data.email)) {
+          const error = new Error("Invalid Email Address: " + data.email);
+          error.status = CONFLICT;
+          return callback(error);
+        }
+        if (data.email !== "") {
+          // put email to validation email, and generate a key.
+          data.emailInvalidation = data.email;
+          data.emailValidationKey = generate();
+          sendWelcomeEmail = true;
+          delete data.email;
+        }
+      }
+      if (data.email === "resend") {
+        // resend case.
+        sendWelcomeEmail = true;
+        delete data.email;
+      }
+    }
+    // Check Change of OSMUser Name.
+    if (data.OSMUser !== self.OSMUser) {
+      if (self.hasLoggedIn()) {
+        const error = new Error(">" + self.OSMUser + "< already has logged in, change in name not possible.");
+        error.status = FORBIDDEN;
+        return callback(error);
+      }
+    }
+    series([
+      function checkUserName(cb) {
+        if (data.OSMUser && data.OSMUser !== self.OSMUser) {
+          find({ OSMUser: data.OSMUser }, function (err, result) {
+            if (err) return callback(err);
+            if (result && result.length) {
+              const err = new Error("User >" + data.OSMUser + "< already exists.");
+              err.status = CONFLICT;
+              return cb(err);
+            } else return cb();
+          });
+        } else return cb();
+      },
+      cacheOSMAvatar.bind(null, data.OSMUser)
+    ], function finalFunction(err) {
+      if (err) return callback(err);
+      eachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
+        // There is no Value for the key, so do nothing
+        if (typeof (value) === "undefined") return cbEachOf();
+
+        // The Value to be set, is the same then in the object itself
+        // so do nothing
+        if (value === self[key]) return cbEachOf();
+        if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
+        if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
+
+
+        debug("Set Key %s to value >>%s<<", key, value);
+        debug("Old Value Was >>%s<<", self[key]);
+
+
+        const timestamp = new Date();
+        series([
+          function (cb) {
+            // do not log validation key in logfile
+            const toValue = value;
+            // Hide Validation Key not to show to all users
+            if (key === "emailValidationKey") return cb();
+
+            messageCenter.global.sendInfo({
+              oid: self.id,
+              user: user.OSMUser,
+              table: "usert",
+              property: key,
+              from: self[key],
+              timestamp: timestamp,
+              to: toValue
+            },
+            cb);
+          },
+          function (cb) {
+            if (key === "email" && value === "none") {
+              delete self.email;
+              delete self.emailValidationKey;
+              delete self.emailInvalidation;
+              return cb();
+            }
+            self[key] = value;
+            cb();
+          }
+        ], function (err) {
+          cbEachOf(err);
+        });
+      }, function setAndSaveFinalCB(err) {
+        debug("setAndSaveFinalCB");
+        if (err) return callback(err);
+        self.save(function (err) {
+          // Inform Mail Receiver Module, that there could be a change
+          if (err) return callback(err);
+          // tell mail receiver to update the information about the users
+          _updateUser(self);
+          if (sendWelcomeEmail) {
+            const m = new MailReceiver(self);
+            // do not wait for mail to go out.
+            // mail is logged in outgoing mail list
+            m.sendWelcomeMail(user.OSMUser, function () { });
+          }
+          return callback();
+        });
+      });
+    });
+  }
+
+  hasLoggedIn() {
+    debug("User.prototype.hasLoggedIn");
+    if (this.lastAccess) return true;
+    return false;
+  }
+
+  getNotificationStatus(channel, type) {
+    debug("User.prototype.getNotificationStatus");
+    if (!this.notificationStatus) return null;
+    if (!this.notificationStatus[channel]) return null;
+    return this.notification[channel][type];
+  }
+
+  getLanguageConfig() {
+    debug("User.prototype.getLanguageConfig");
+    if (this.languageSet && this.languageSet !== "") {
+      if (this.languageSets && this.languageSets[this.languageSet]) {
+        if (!Array.isArray(this.languageSets[this.languageSet])) {
+          return this.languageSets[this.languageSet];
+        }
+        return {
+          languages: this.languageSets[this.languageSet],
+          translationServices: this.translationServices,
+          translationServicesMany: this.translationServicesMany
+        };
+      }
+    }
+    return {
+      languages: this.langArray,
+      translationServices: this.translationServices,
+      translationServicesMany: this.translationServicesMany
+    };
+  }
+
+  getLanguages() {
+    debug("User.prototype.getLanguages");
+    return this.getLanguageConfig().languages;
+  }
+
+  getLanguageSets() {
+    debug("User.prototype.getLanguageSets");
+    const languageSets = [];
+    for (const set in this.languageSets ?? {}) {
+      languageSets.push(set);
+    }
+    return languageSets;
+  }
+
+  saveLanguageSet(setName, callback) {
+    debug("User.prototype.saveLanguageSet");
+    if (typeof this.languageSets === "undefined") {
+      this.languageSets = {};
+    }
+    this.languageSets[setName] = {
+      languages: this.langArray,
+      translationServices: this.translationServices,
+      translationServicesMany: this.translationServicesMany
+    };
+    this.languageSet = setName;
+    this.save(callback);
+  }
+
+  deleteLanguageSet(setName, callback) {
+    debug("User.prototype.saveLanguageSet");
+    if (typeof this.languageSets === "undefined") {
+      this.languageSets = {};
+    }
+    delete this.languageSets[setName];
+    if (this.languageSet === setName) this.languageSet = "";
+    this.save(callback);
+  }
+
+  getMainLang() {
+    debug("User.prototype.getMainLang");
+    if (this.langArray && this.langArray[0]) return this.langArray[0];
+    if (this.mainLang) return this.mainLang;
+    if (this.language) return this.language;
+    return "EN";
+  }
+
+  getSecondLang() {
+    debug("User.prototype.getMainLang");
+    if (this.langArray && this.langArray[1]) return this.langArray[1];
+    if (this.secondLang) return this.secondLang;
+    return null;
+  }
+
+  getLang3() {
+    debug("User.prototype.getLang3");
+    if (this.langArray && this.langArray[2]) return this.langArray[2];
+    if (this.lang3) return this.lang3;
+    return null;
+  }
+
+  getLang4() {
+    debug("User.prototype.getLang4");
+    if (this.langArray && this.langArray[3]) return this.langArray[3];
+    if (this.lang4) return this.lang4;
+    return null;
+  }
+
+  getLang(i) {
+    debug("User.prototype.getLang");
+    if (!this.langArray) {
+      this.langArray = [];
+      this.langArray[0] = this.getMainLang();
+      if (this.getSecondLang()) this.langArray[1] = this.getSecondLang();
+      if (this.getLang3()) this.langArray[2] = this.getLang3();
+      if (this.getLang4()) this.langArray[3] = this.getLang4();
+    }
+    return (this.langArray[i]);
+  }
+
+  getTranslations() {
+    const lConfig = this.getLanguageConfig();
+    const result = [...(lConfig.translationServices ?? [])];
+    const onTop = lConfig.translationServicesMany ?? [];
+    onTop.forEach(function (item) {
+      if (result.indexOf(item) < 0) result.push(item);
+    });
+    return result;
+  }
+
+  useOneTranslation(service) {
+    const lConfig = this.getLanguageConfig();
+    const result = lConfig.translationServices ?? [];
+    return (result.indexOf(service) >= 0);
+  }
+
+  useManyTranslation(service) {
+    const lConfig = this.getLanguageConfig();
+    const result = lConfig.translationServicesMany ?? [];
+    return (result.indexOf(service) >= 0);
+  }
+
+  setOption(view, option, value) {
+    debug("User.prototype.setOption");
+    if (!this.option) this.option = {};
+    if (!this.option[view]) this.option[view] = {};
+    this.option[view][option] = value;
+  }
+
+  getOption(view, option) {
+    debug("User.protoype.getOption");
+    if (this.option && this.option[view] && this.option[view][option]) return this.option[view][option];
+    if (defaultOption && defaultOption[view] && defaultOption[view][option]) return defaultOption[view][option];
+    return null;
+  }
+
+  hasFullAccess() {
+    debug("User.protoype.hasFullAccess");
+    return this.access === "full";
+  }
+
+  hasGuestAccess() {
+    debug("User.protoype.hasFullAccess");
+    return this.access === "guest";
+  }
+
+  createApiKey(callback) {
+    debug("createApiKey");
+    const apiKey = generate({ length: 10 });
+    this.apiKey = apiKey;
+    this.save(callback);
+  }
+
+  getTable() {
+    return "usert";
   }
 }
 
@@ -128,18 +496,6 @@ if (process.env.NODE_ENV !== "test") {
   });
 }
 
-// Calculate derived values
-// now: Calculate only number of changes
-User.prototype.calculateChanges = function calculateChanges(callback) {
-  debug("User.prototype.calculateChanges");
-  const self = this;
-  if (self._countChanges) return;
-  pgMap.count("select count(*) as count from changes where data->>'user'=$1 and data->>'table'='article'", [this.OSMUser], function(err, result) {
-    if (err) return callback(err);
-    self._countChanges = result.count;
-    return callback();
-  });
-};
 
 
 function getAvatar(osmuser) {
@@ -221,365 +577,38 @@ pgObject.table = "usert";
 const pg = pgObject;
 
 
-// This function is called by the link
-// send out via EMail if someone registers a new email
-User.prototype.validateEmail = function validateEmail(user, validationCode, callback) {
-  debug("validateEmail");
-  assert(typeof (user) === "object");
-  assert(typeof (validationCode) === "string");
-  assert(typeof (callback) === "function");
-  const self = this;
-  let err;
-  if (self.OSMUser !== user.OSMUser) {
-    debug("User is wrong");
-    err = new Error("Wrong User: expected >" + self.OSMUser + "< given >" + user.OSMUser + "<");
-    err.status = CONFLICT;
-    return callback(err);
-  }
-  if (!self.emailInvalidation) {
-    debug("nothing in validation");
-    err = new Error("No Validation pending for user >" + self.OSMUser + "<");
-    err.status = CONFLICT;
-    return callback(err);
-  }
-  if (validationCode !== self.emailValidationKey) {
-    debug("Validation Code is wrong");
-    err = new Error("Wrong Validation Code for EMail for user >" + self.OSMUser + "<");
-    err.status = CONFLICT;
-    messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: null, to: "Validation Failed" }, function() {
-      return callback(err);
-    });
-    return;
-  }
-  debug("Email Validation OK saving User");
-  const oldmail = self.email;
-  self.email = self.emailInvalidation;
-  delete self.emailInvalidation;
-  delete self.emailValidationKey;
-  self.save(function logit(err) {
-    _updateUser(self);
-    if (err) return callback(err);
-    messageCenter.global.sendInfo({ oid: self.id, user: user.OSMUser, table: "usert", property: "email", from: oldmail, to: self.email }, function() {
-      return callback(err);
-    });
-  });
-};
 
 
 
-// pgMap setAndSave Function,
-// Check on EMail change (and trigger new validation)
-// create error if user that already have logged in
-// changes their OSM Account
-User.prototype.setAndSave = function setAndSave(user, data, callback) {
-  debug("setAndSave");
-  // reset cache
-  util.requireTypes([user, data, callback], ["object", "object", "function"]);
-  const self = this;
-  delete self.lock;
-  let sendWelcomeEmail = false;
-  // remove spaces from front and and of email adress
-  if (data.email) data.email = data.email.trim();
-  if (data.OSMUser) data.OSMUser = data.OSMUser.trim();
-  if (data.OSMUser === "autocreate") {
-    const err = new Error("User >autocreate< not allowed");
-    err.status = CONFLICT;
-    return callback(err);
-  }
 
 
-  // check and react on Mail Change
-  if (data.email && data.email.trim() !== "" && data.email !== self.email) {
-    const err =  Error("EMail address can only be changed by the user himself, after he has logged in.");
-    err.status = UNAUTHORIZED;
-    if (self.access === "denied" && data.email !== "none") return callback(err);
-    if (self.OSMUser !== user.OSMUser && self.hasLoggedIn()) return callback(err);
-
-    if (data.email !== "resend" && data.email !== "none") {
-      if (!validate(data.email)) {
-        const error = new Error("Invalid Email Address: " + data.email);
-        error.status = CONFLICT;
-        return callback(error);
-      }
-      if (data.email !== "") {
-        // put email to validation email, and generate a key.
-        data.emailInvalidation = data.email;
-        data.emailValidationKey = generate();
-        sendWelcomeEmail = true;
-        delete data.email;
-      }
-    }
-    if (data.email === "resend") {
-      // resend case.
-      sendWelcomeEmail = true;
-      delete data.email;
-    }
-  }
-  // Check Change of OSMUser Name.
-  if (data.OSMUser !== self.OSMUser) {
-    if (self.hasLoggedIn()) {
-      const error = new Error(">" + self.OSMUser + "< already has logged in, change in name not possible.");
-      error.status = FORBIDDEN;
-      return callback(error);
-    }
-  }
-  series([
-    function checkUserName(cb) {
-      if (data.OSMUser && data.OSMUser !== self.OSMUser) {
-        find({ OSMUser: data.OSMUser }, function(err, result) {
-          if (err) return callback(err);
-          if (result && result.length) {
-            const err = new Error("User >" + data.OSMUser + "< already exists.");
-            err.status = CONFLICT;
-            return cb(err);
-          } else return cb();
-        });
-      } else return cb();
-    },
-    cacheOSMAvatar.bind(null, data.OSMUser)
-  ], function finalFunction(err) {
-    if (err) return callback(err);
-    eachOfSeries(data, function setAndSaveEachOf(value, key, cbEachOf) {
-      // There is no Value for the key, so do nothing
-      if (typeof (value) === "undefined") return cbEachOf();
-
-      // The Value to be set, is the same then in the object itself
-      // so do nothing
-      if (value === self[key]) return cbEachOf();
-      if (JSON.stringify(value) === JSON.stringify(self[key])) return cbEachOf();
-      if (typeof (self[key]) === "undefined" && value === "") return cbEachOf();
 
 
-      debug("Set Key %s to value >>%s<<", key, value);
-      debug("Old Value Was >>%s<<", self[key]);
 
 
-      const timestamp = new Date();
-      series([
-        function(cb) {
-          // do not log validation key in logfile
-          const toValue = value;
-          // Hide Validation Key not to show to all users
-          if (key === "emailValidationKey") return cb();
-
-          messageCenter.global.sendInfo({
-            oid: self.id,
-            user: user.OSMUser,
-            table: "usert",
-            property: key,
-            from: self[key],
-            timestamp: timestamp,
-            to: toValue
-          },
-          cb);
-        },
-        function(cb) {
-          if (key === "email" && value === "none") {
-            delete self.email;
-            delete self.emailValidationKey;
-            delete self.emailInvalidation;
-            return cb();
-          }
-          self[key] = value;
-          cb();
-        }
-      ], function(err) {
-        cbEachOf(err);
-      });
-    }, function setAndSaveFinalCB(err) {
-      debug("setAndSaveFinalCB");
-      if (err) return callback(err);
-      self.save(function (err) {
-        // Inform Mail Receiver Module, that there could be a change
-        if (err) return callback(err);
-        // tell mail receiver to update the information about the users
-        _updateUser(self);
-        if (sendWelcomeEmail) {
-          const m = new MailReceiver(self);
-          // do not wait for mail to go out.
-          // mail is logged in outgoing mail list
-          m.sendWelcomeMail(user.OSMUser, function () {});
-        }
-        return callback();
-      });
-    });
-  });
-};
 
 
-User.prototype.hasLoggedIn = function hasLoggedIn() {
-  debug("User.prototype.hasLoggedIn");
-  if (this.lastAccess) return true;
-  return false;
-};
 
 
-User.prototype.getNotificationStatus = function getNotificationStatus(channel, type) {
-  debug("User.prototype.getNotificationStatus");
-  if (!this.notificationStatus) return null;
-  if (!this.notificationStatus[channel]) return null;
-  return this.notification[channel][type];
-};
-
-User.prototype.getLanguageConfig = function getLanguageConfig() {
-  debug("User.prototype.getLanguageConfig");
-  if (this.languageSet && this.languageSet !== "") {
-    if (this.languageSets && this.languageSets[this.languageSet]) {
-      if (!Array.isArray(this.languageSets[this.languageSet])) {
-        return this.languageSets[this.languageSet];
-      }
-      return {
-        languages: this.languageSets[this.languageSet],
-        translationServices: this.translationServices,
-        translationServicesMany: this.translationServicesMany
-      };
-    }
-  }
-  return {
-    languages: this.langArray,
-    translationServices: this.translationServices,
-    translationServicesMany: this.translationServicesMany
-  };
-};
-
-User.prototype.getLanguages = function getLanguages() {
-  debug("User.prototype.getLanguages");
-  return this.getLanguageConfig().languages;
-};
-
-User.prototype.getLanguageSets = function getLanguages() {
-  debug("User.prototype.getLanguageSets");
-  const languageSets = [];
-  for (const set in this.languageSets ?? {}) {
-    languageSets.push(set);
-  }
-  return languageSets;
-};
-
-User.prototype.saveLanguageSet = function saveLanguageSet(setName, callback) {
-  debug("User.prototype.saveLanguageSet");
-  if (typeof this.languageSets === "undefined") {
-    this.languageSets = {};
-  }
-  this.languageSets[setName] = {
-    languages: this.langArray,
-    translationServices: this.translationServices,
-    translationServicesMany: this.translationServicesMany
-  };
-  this.languageSet = setName;
-  this.save(callback);
-};
-
-User.prototype.deleteLanguageSet = function deleteLanguageSet(setName, callback) {
-  debug("User.prototype.saveLanguageSet");
-  if (typeof this.languageSets === "undefined") {
-    this.languageSets = {};
-  }
-  delete this.languageSets[setName];
-  if (this.languageSet === setName) this.languageSet = "";
-  this.save(callback);
-};
 
 
-User.prototype.getMainLang = function getMainLang() {
-  debug("User.prototype.getMainLang");
-  if (this.langArray && this.langArray[0]) return this.langArray[0];
-  if (this.mainLang) return this.mainLang;
-  if (this.language) return this.language;
-  return "EN";
-};
-
-User.prototype.getSecondLang = function getSecondLang() {
-  debug("User.prototype.getMainLang");
-  if (this.langArray && this.langArray[1]) return this.langArray[1];
-  if (this.secondLang) return this.secondLang;
-  return null;
-};
-
-User.prototype.getLang3 = function getLang3() {
-  debug("User.prototype.getLang3");
-  if (this.langArray && this.langArray[2]) return this.langArray[2];
-  if (this.lang3) return this.lang3;
-  return null;
-};
-
-User.prototype.getLang4 = function getLang4() {
-  debug("User.prototype.getLang4");
-  if (this.langArray && this.langArray[3]) return this.langArray[3];
-  if (this.lang4) return this.lang4;
-  return null;
-};
-
-User.prototype.getLang = function getLang(i) {
-  debug("User.prototype.getLang");
-  if (!this.langArray) {
-    this.langArray = [];
-    this.langArray[0] = this.getMainLang();
-    if (this.getSecondLang()) this.langArray[1] = this.getSecondLang();
-    if (this.getLang3()) this.langArray[2] = this.getLang3();
-    if (this.getLang4()) this.langArray[3] = this.getLang4();
-  }
-  return (this.langArray[i]);
-};
-
-User.prototype.getTranslations = function getTranslations() {
-  const lConfig = this.getLanguageConfig();
-  const result = [...(lConfig.translationServices ?? [])];
-  const onTop = lConfig.translationServicesMany ?? [];
-  onTop.forEach(function (item) {
-    if (result.indexOf(item) < 0) result.push(item);
-  });
-  return result;
-};
-
-User.prototype.useOneTranslation = function useOneTranslation(service) {
-  const lConfig = this.getLanguageConfig();
-  const result = lConfig.translationServices ?? [];
-  return (result.indexOf(service) >= 0);
-};
-
-User.prototype.useManyTranslation = function useManyTranslation(service) {
-  const lConfig = this.getLanguageConfig();
-  const result = lConfig.translationServicesMany ?? [];
-  return (result.indexOf(service) >= 0);
-};
 
 
-User.prototype.setOption = function setOption(view, option, value) {
-  debug("User.prototype.setOption");
-  if (!this.option) this.option = {};
-  if (!this.option[view]) this.option[view] = {};
-  this.option[view][option] = value;
-};
+
+
+
+
+
+
 
 
 const defaultOption = {};
 
-User.prototype.getOption = function getOption(view, option) {
-  debug("User.protoype.getOption");
-  if (this.option && this.option[view] && this.option[view][option]) return this.option[view][option];
-  if (defaultOption && defaultOption[view] && defaultOption[view][option]) return defaultOption[view][option];
-  return null;
-};
-
-User.prototype.hasFullAccess = function hasFullAccess() {
-  debug("User.protoype.hasFullAccess");
-  return this.access === "full";
-};
-
-User.prototype.hasGuestAccess = function hasFullAccess() {
-  debug("User.protoype.hasFullAccess");
-  return this.access === "guest";
-};
 
 
 
-User.prototype.createApiKey = function createApiKey(callback) {
-  debug("createApiKey");
-  const apiKey = generate({ length: 10 });
-  this.apiKey = apiKey;
-  this.save(callback);
-};
+
+
 
 
 // this functions returns (and caches) the new users
@@ -639,9 +668,6 @@ User.prototype.save = pgMap.save; // Create Tables and Views
 
 
 
-User.prototype.getTable = function getTable() {
-  return "usert";
-};
 
 
 const userModule = {

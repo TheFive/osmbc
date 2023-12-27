@@ -123,6 +123,9 @@ function save(options, callback) {
     for (const k in self) {
       if (k.substring(0, 1) === "_") delete self[k];
     }
+    for (const k in self) {
+      if (k.substring(0, 1) === "#") delete self[k];
+    }
     // id must be >= 0;
     if (self.id === -1) {
       return callback(new Error("Virtual Object can not be saved"));

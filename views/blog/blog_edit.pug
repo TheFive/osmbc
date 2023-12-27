@@ -105,7 +105,7 @@ block content
                 else if (blog["reviewComment" + lang])
                   div.badge.badge-pill.osmbclabel-reviewblog=(blog.getClosedReviewCount(lang))
                 else
-                  div.badge.badge-pill.osmbclabel-editblog=blog._countUneditedMarkdown[lang]
+                  div.badge.badge-pill.osmbclabel-editblog=blog.getUnEdited(lang)
               //- Review Start Column
               td
                 if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
@@ -131,7 +131,7 @@ block content
               //- Download Column
               td
                 i.fa.fa-download(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)
-                if !(blog._countUneditedMarkdown && blog._countUneditedMarkdown[lang] == 0)
+                if !(blog.getUnEdited(lang) == 0)
                   span=" "
                   i.fa.fa-exclamation-triangle
               //- Close Column

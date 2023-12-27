@@ -103,7 +103,6 @@ function translateCopy(options, callback) {
 
 
 const deeplPro = {};
-const fortestonly = {};
 const copy = {};
 
 deeplPro.translate = translateDeeplPro;
@@ -113,13 +112,14 @@ deeplPro.user = "deeplPro API Call";
 
 copy.translate = translateCopy;
 copy.active = () => { return true; };
+copy.name = "Copy Article";
+copy.user = "automated copy";
 
 copy.name = "Copy";
 copy.user = "Copy User";
 
 const translator = {
   deeplPro: deeplPro,
-  fortestonly: fortestonly,
   copy: copy
 };
 

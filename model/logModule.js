@@ -11,11 +11,77 @@ const debug = _debug("OSMBC:model:logModule");
 
 
 
-function Change(proto) {
-  debug("Change");
-  debug("Prototype %s", JSON.stringify(proto));
-  for (const k in proto) {
-    this[k] = proto[k];
+class Change {
+  constructor(proto) {
+    debug("Change");
+    debug("Prototype %s", JSON.stringify(proto));
+    for (const k in proto) {
+      this[k] = proto[k];
+    }
+  }
+
+  htmlDiffText(maxChars) {
+    debug("htmlDiffText");
+    let from = "";
+    let to = "";
+
+    if (this.from) from = String(this.from);
+    if (this.to) to = String(this.to);
+
+    if (from.length > 2000 || to.length > 2000) {
+      return "Disabled for texts longer than 2000 chars.";
+    }
+
+    // first check on only spaces
+    let diff = diffChars(from, to);
+    let onlySpacesAdd = true;
+    let onlySpacesDel = true;
+    if (from === to) {
+      return "<span>no change</span>";
+    }
+    diff.forEach(function (part) {
+      const partOnlySpace = (part.value.trim() === "");
+      if (part.removed) {
+        onlySpacesAdd = false;
+        if (!partOnlySpace) onlySpacesDel = false;
+      }
+
+      if (part.added) {
+        onlySpacesDel = false;
+        if (!partOnlySpace) onlySpacesAdd = false;
+      }
+    });
+    if (onlySpacesAdd) {
+      return '<span class="osmbc-inserted">ONLY SPACES ADDED</span>';
+    }
+    if (onlySpacesDel) {
+      return '<span class="osmbc-deleted">Only spaces removed</span>';
+    }
+    diff = diffWordsWithSpace(from, to);
+
+    let result = "";
+    let chars = maxChars;
+    diff.forEach(function (part) {
+      // green for additions, red for deletions
+      // grey for common parts
+      let styleColor = 'style="color:grey"';
+      if (part.added) {
+        styleColor = 'class="osmbc-inserted"';
+      }
+      if (part.removed) {
+        styleColor = 'class="osmbc-deleted"';
+      }
+      let partstr = part.value;
+      if (!(part.added || part.removed)) partstr = "…";
+      partstr = partstr.substring(0, chars);
+      chars -= Math.max(0, partstr.length);
+      result += "<span " + styleColor + ">" + partstr + "</span>\n";
+    });
+    return result;
+  }
+
+  getTable() {
+    return "changes";
   }
 }
 
@@ -57,65 +123,6 @@ function findById(id, callback) {
 
 
 
-Change.prototype.htmlDiffText = function htmlDiffText(maxChars) {
-  debug("htmlDiffText");
-  let from = "";
-  let to = "";
-
-  if (this.from) from = String(this.from);
-  if (this.to) to = String(this.to);
-
-  if (from.length > 2000 || to.length > 2000) {
-    return "Disabled for texts longer than 2000 chars.";
-  }
-
-  // first check on only spaces
-  let diff = diffChars(from, to);
-  let onlySpacesAdd = true;
-  let onlySpacesDel = true;
-  if (from === to) {
-    return "<span>no change</span>";
-  }
-  diff.forEach(function(part) {
-    const partOnlySpace = (part.value.trim() === "");
-    if (part.removed) {
-      onlySpacesAdd = false;
-      if (!partOnlySpace) onlySpacesDel = false;
-    }
-
-    if (part.added) {
-      onlySpacesDel = false;
-      if (!partOnlySpace) onlySpacesAdd = false;
-    }
-  });
-  if (onlySpacesAdd) {
-    return '<span class="osmbc-inserted">ONLY SPACES ADDED</span>';
-  }
-  if (onlySpacesDel) {
-    return '<span class="osmbc-deleted">Only spaces removed</span>';
-  }
-  diff = diffWordsWithSpace(from, to);
-
-  let result = "";
-  let chars = maxChars;
-  diff.forEach(function(part) {
-    // green for additions, red for deletions
-    // grey for common parts
-    let styleColor               = 'style="color:grey"';
-    if (part.added) {
-      styleColor = 'class="osmbc-inserted"';
-    }
-    if (part.removed) {
-      styleColor = 'class="osmbc-deleted"';
-    }
-    let partstr = part.value;
-    if (!(part.added || part.removed)) partstr = "…";
-    partstr = partstr.substring(0, chars);
-    chars -= Math.max(0, partstr.length);
-    result += "<span " + styleColor + ">" + partstr + "</span>\n";
-  });
-  return result;
-};
 
 
 
@@ -207,9 +214,6 @@ pgObject.table = "changes";
 
 
 
-Change.prototype.getTable = function getTable() {
-  return "changes";
-};
 
 Change.prototype.save = pgMap.save;
 

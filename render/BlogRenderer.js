@@ -13,183 +13,203 @@ import _debug from "debug";
 const debug = _debug("OSMBC:render:BlogRenderer");
 
 
-function HtmlRenderer(blog, options) {
-  this.blog = blog;
+class HtmlRenderer {
+  constructor(blog, options) {
+    this.blog = blog;
 
-  this.markdown = osmbcMarkdown(options);
-}
-
-function MarkdownRenderer(blog) {
-  this.blog = blog;
-}
-
-
-HtmlRenderer.prototype.subtitle = function htmlSubtitle(lang) {
-  debug("HtmlRenderer.prototype.subtitle %s", lang);
-  const blog = this.blog;
-  assert(language.getLanguages()[lang]);
-  if (blog.startDate && blog.endDate) {
-    return "<p>" + util.dateFormat(blog.startDate, lang) + "-" + util.dateFormat(blog.endDate, lang) + "</p>\n";
-  } else return "<p> missing date </p>\n";
-};
-
-MarkdownRenderer.prototype.subtitle = function markdownSubtitle(lang) {
-  debug("MarkdownRenderer.prototype.subtitle %s", lang);
-  const blog = this.blog;
-  if (blog.startDate && blog.endDate) {
-    return moment(blog.startDate).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L") + "\n\n";
-  } else return "missing date\n";
-};
-
-HtmlRenderer.prototype.containsEmptyArticlesWarning = function htmlContainsEmptyArticlesWarning(lang) {
-  debug("HtmlRenderer.prototype.containsEmptyArticlesWarning %s", lang);
-  assert(language.getLanguages()[lang]);
-  return "<p> Warning: This export contains empty Articles </p>\n";
-};
-
-
-MarkdownRenderer.prototype.containsEmptyArticlesWarning = function mdContainsEmptyArticlesWarning(lang) {
-  debug("MarkdownRenderer.prototype.containsEmptyArticlesWarning %s", lang);
-  return "Warning: This export contains empty Articles\n\n";
-};
-
-HtmlRenderer.prototype.categoryTitle = function htmlCatTitle(lang, category) {
-  debug("HtmlRenderer.prototype.categoryTitle");
-  if (category.EN === "Picture") return "<!--         place picture here              -->\n";
-  return '<h2 id="' + util.linkify(this.blog.name + "_" + category[lang]) + '">' + category[lang] + "</h2>\n";
-};
-MarkdownRenderer.prototype.categoryTitle = function markdownCatTitle(lang, category) {
-  debug("MarkdownRenderer.prototype.categoryTitle");
-  return "## " + category[lang];
-};
-
-HtmlRenderer.prototype.renderArticle = function htmlArticle(lang, article) {
-  debug("HtmlRenderer.prototype.article");
-
-  const calendarTranslation = configModule.getConfig("calendartranslation");
-
-
-
-  let md = article["markdown" + lang];
-
-
-  let blogRef = article.blog;
-  if (!blogRef) blogRef = "undefined";
-  const titleRef = article.id;
-  const pageLink = util.linkify(blogRef + "_" + titleRef);
-
-
-
-
-  let liON = '<li id="' + pageLink + '">\n';
-  let liOFF = "</li>\n";
-
-
-  if (article.categoryEN === "Picture") {
-    liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n';
-    liOFF = "</div>\n";
-  }
-  if (article.categoryEN === "Upcoming Events") {
-    liON = "<p>";
-    liOFF = "</p>\n" + calendarTranslation.footer[lang];
-  }
-  if (article.categoryEN === "Long Term Dates") {
-    liON = "<p>";
-    liOFF = "</p>";
+    this.markdown = osmbcMarkdown(options);
   }
 
+  subtitle(lang) {
+    debug("HtmlRenderer.prototype.subtitle %s", lang);
+    const blog = this.blog;
+    assert(language.getLanguages()[lang]);
+    if (blog.startDate && blog.endDate) {
+      return "<p>" + util.dateFormat(blog.startDate, lang) + "-" + util.dateFormat(blog.endDate, lang) + "</p>\n";
+    } else return "<p> missing date </p>\n";
+  }
+
+  containsEmptyArticlesWarning(lang) {
+    debug("HtmlRenderer.prototype.containsEmptyArticlesWarning %s", lang);
+    assert(language.getLanguages()[lang]);
+    return "<p> Warning: This export contains empty Articles </p>\n";
+  }
+
+  categoryTitle(lang, category) {
+    debug("HtmlRenderer.prototype.categoryTitle");
+    if (category.EN === "Picture") return "<!--         place picture here              -->\n";
+    return '<h2 id="' + util.linkify(this.blog.name + "_" + category[lang]) + '">' + category[lang] + "</h2>\n";
+  }
+
+  renderArticle(lang, article) {
+    debug("HtmlRenderer.prototype.article");
+
+    const calendarTranslation = configModule.getConfig("calendartranslation");
 
 
 
-  // Generate Text for display
-  let text = "";
+    let md = article["markdown" + lang];
 
-  if (typeof (md) !== "undefined" && md !== "") {
-    // Does the markdown text starts with '* ', so ignore it
-    if (md.substring(0, 2) === "* ") { md = md.substring(2, 99999); }
-    // Return an list Element for the blog article
-    text = this.markdown.render(md);
 
+    let blogRef = article.blog;
+    if (!blogRef) blogRef = "undefined";
+    const titleRef = article.id;
+    const pageLink = util.linkify(blogRef + "_" + titleRef);
+
+
+
+
+    let liON = '<li id="' + pageLink + '">\n';
+    let liOFF = "</li>\n";
 
 
     if (article.categoryEN === "Picture") {
-      if (liON.indexOf("##width##") >= 0) {
-        // it is a picture, try to calculate the size.
-        const width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
-        if (width > 0) {
-          liON = liON.replace("##width##", width);
-        } else {
-          liON = '<div class="wp-caption alignnone"> \n';
-          text = text.replace("></p>", ' width="555"></p>');
+      liON = '<div style="width: ##width##px" class="wp-caption alignnone"> \n';
+      liOFF = "</div>\n";
+    }
+    if (article.categoryEN === "Upcoming Events") {
+      liON = "<p>";
+      liOFF = "</p>\n" + calendarTranslation.footer[lang];
+    }
+    if (article.categoryEN === "Long Term Dates") {
+      liON = "<p>";
+      liOFF = "</p>";
+    }
+
+
+
+
+    // Generate Text for display
+    let text = "";
+
+    if (typeof (md) !== "undefined" && md !== "") {
+      // Does the markdown text starts with '* ', so ignore it
+      if (md.substring(0, 2) === "* ") { md = md.substring(2, 99999); }
+      // Return an list Element for the blog article
+      text = this.markdown.render(md);
+
+
+
+      if (article.categoryEN === "Picture") {
+        if (liON.indexOf("##width##") >= 0) {
+          // it is a picture, try to calculate the size.
+          const width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
+          if (width > 0) {
+            liON = liON.replace("##width##", width);
+          } else {
+            liON = '<div class="wp-caption alignnone"> \n';
+            text = text.replace("></p>", ' width="555"></p>');
+          }
+        }
+        text = text.replace('alt=""', 'alt="lead picture"');
+        text = text.replace("<p>", '<p class="wp-caption-text">');
+        text = text.replace("<p>", '<p class="wp-caption-text">');
+      } else {
+        // Not a picture remove <p> at start and end
+        if (text.substring(0, 3) === "<p>" && text.substring(text.length - 5, text.length - 1) === "</p>") {
+          text = text.substring(3, text.length - 5) + "\n";
         }
       }
-      text = text.replace('alt=""', 'alt="lead picture"');
-      text = text.replace("<p>", '<p class="wp-caption-text">');
-      text = text.replace("<p>", '<p class="wp-caption-text">');
     } else {
-      // Not a picture remove <p> at start and end
-      if (text.substring(0, 3) === "<p>" && text.substring(text.length - 5, text.length - 1) === "</p>") {
-        text = text.substring(3, text.length - 5) + "\n";
-      }
+      text += article.displayTitle(90) + "\n";
     }
-  } else {
-    text += article.displayTitle(90) + "\n";
+    if (article.categoryEN === "--unpublished--") {
+      let reason2 = "No Reason given";
+      if (article.unpublishReason) reason2 = article.unpublishReason;
+      text += "<br>" + reason2;
+      if (article.unpublishReference) text += " (" + article.unpublishReference + ")";
+    }
+
+    return liON + text + liOFF;
   }
-  if (article.categoryEN === "--unpublished--") {
-    let reason2 = "No Reason given";
-    if (article.unpublishReason) reason2 = article.unpublishReason;
-    text += "<br>" + reason2;
-    if (article.unpublishReference) text += " (" + article.unpublishReference + ")";
+
+  articleTitle(lang, article) {
+    debug("HtmlRenderer.prototype.article");
+    let text = article.displayTitle(999);
+    if (article.categoryEN === "--unpublished--") {
+      let reason2 = "No Reason given";
+      if (article.unpublishReason) reason2 = article.unpublishReason;
+      text += "<br>" + reason2;
+      if (article.unpublishReference) text += " (" + article.unpublishReference + ")";
+    }
+    return "<li>" + text + "</li>\n";
   }
 
-  return liON + text + liOFF;
-};
-
-MarkdownRenderer.prototype.renderArticle = function markdownArticle(lang, article) {
-  debug("MarkdownRenderer.prototype.article");
-  return "* " + article["markdown" + lang];
-};
-
-HtmlRenderer.prototype.articleTitle = function htmlArticle(lang, article) {
-  debug("HtmlRenderer.prototype.article");
-  let text = article.displayTitle(999);
-  if (article.categoryEN === "--unpublished--") {
-    let reason2 = "No Reason given";
-    if (article.unpublishReason) reason2 = article.unpublishReason;
-    text += "<br>" + reason2;
-    if (article.unpublishReference) text += " (" + article.unpublishReference + ")";
+  listAroundArticles(categoryString) {
+    return "<ul>\n" + categoryString + "</ul>\n";
   }
-  return "<li>" + text + "</li>\n";
-};
-MarkdownRenderer.prototype.articleTitle = function markdownArticle(lang, article) {
-  debug("MarkdownRenderer.prototype.article");
-  return "* " + article.displayTitle(999);
-};
 
-HtmlRenderer.prototype.listAroundArticles = function listAround1(categoryString) {
-  return "<ul>\n" + categoryString + "</ul>\n";
-};
+  formatTeamString(teamString) {
+    return teamString;
+  }
 
-MarkdownRenderer.prototype.listAroundArticles = function listAround2(categoryString) {
-  return "\n\n" + categoryString;
-};
+  charSetString() {
+    return "<meta charset=\"utf-8\"/>\n";
+  }
+}
 
-HtmlRenderer.prototype.formatTeamString = function formatTeamString1(teamString) {
-  return teamString;
-};
+class MarkdownRenderer {
+  constructor(blog) {
+    this.blog = blog;
+  }
 
-MarkdownRenderer.prototype.formatTeamString = function formatTeamString2() {
-  return "";
-};
+  subtitle(lang) {
+    debug("MarkdownRenderer.prototype.subtitle %s", lang);
+    const blog = this.blog;
+    if (blog.startDate && blog.endDate) {
+      return moment(blog.startDate).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L") + "-" + moment(blog.endDate).tz("Europe/Berlin").locale(language.momentLocale(lang)).format("L") + "\n\n";
+    } else return "missing date\n";
+  }
+
+  containsEmptyArticlesWarning(lang) {
+    debug("MarkdownRenderer.prototype.containsEmptyArticlesWarning %s", lang);
+    return "Warning: This export contains empty Articles\n\n";
+  }
+
+  categoryTitle(lang, category) {
+    debug("MarkdownRenderer.prototype.categoryTitle");
+    return "## " + category[lang];
+  }
+
+  renderArticle(lang, article) {
+    debug("MarkdownRenderer.prototype.article");
+    return "* " + article["markdown" + lang];
+  }
+
+  articleTitle(lang, article) {
+    debug("MarkdownRenderer.prototype.article");
+    return "* " + article.displayTitle(999);
+  }
+
+  listAroundArticles(categoryString) {
+    return "\n\n" + categoryString;
+  }
+
+  formatTeamString() {
+    return "";
+  }
+
+  charSetString() {
+    return "";
+  }
+}
 
 
-HtmlRenderer.prototype.charSetString = function charSetString() {
-  return "<meta charset=\"utf-8\"/>\n";
-};
 
-MarkdownRenderer.prototype.charSetString = function charSetString2() {
-  return "";
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function renderBlogStructure(lang, articleData) {

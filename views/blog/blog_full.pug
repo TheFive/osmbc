@@ -115,7 +115,7 @@ block blogcontent
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
                       textarea.d-none.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
                     form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
-                      if a.author && a.author["markdown" + left_lang] && apiAuthors.indexOf(a.author["markdown" + left_lang].split(",")[0]) >= 0
+                      if a.isTranslatedAutomated(left_lang)
                           textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
                           button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
                             div.fa.fa-ok
@@ -144,7 +144,7 @@ block blogcontent
                         textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
                         textarea.d-none.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
                       form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
-                        if a.author && a.author["markdown" + right_lang] && apiAuthors.indexOf(a.author["markdown" + right_lang].split(",")[0]) >= 0
+                        if a.isTranslatedAutomated(right_lang)
                             textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
                             button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")
                               div.fa.fa-ok
