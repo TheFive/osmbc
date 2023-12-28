@@ -164,7 +164,7 @@ block content
     .col-md-11
      div.progress(style="margin-bottom:2px")
       div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
-      div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(1000*autoTranslate/total)}%`)=autoTranslate
+      div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
       div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
       div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
   div.d-none.d-md-block
@@ -185,7 +185,7 @@ block content
         .col-md-11
          div.progress(style="margin-bottom:10px")
           div.progress-bar.osmbclabel-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
-          div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(1000*autoTranslate/total)}%`)=autoTranslate
+          div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
           div.progress-bar.osmbclabel-no-markdown(style="width:" +parseInt(100*unedited/total)+"%")=unedited
           div.progress-bar.osmbclabel-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
 

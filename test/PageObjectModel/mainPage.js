@@ -48,7 +48,7 @@ class MainPage extends StandardPage {
 
   async getMailAlertText() {
     await this.assertPage();
-    const mailalert = await this._driver.findElement(By.css("#mailalert > p"));
+    const mailalert = await this._driver.findElement(By.css("#mailalert"));
     return await mailalert.getText();
   }
 

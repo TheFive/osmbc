@@ -147,14 +147,14 @@ block all
         if (layout && layout.user && layout.user && layout.user.emailInvalidation)
           p
             div.alert.alert-danger.text-center#mailalert
-              p="Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox."
-              p
+              span="Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox."
+              span
                 a.alert-link(href=layout.htmlroot+"/usert/self")=" Goto User Configuration"
         if (layout && layout.user && layout.user && !layout.user.email && !layout.user.emailInvalidation)
           p
             div.alert.alert-danger.text-center#mailalert
-              p="Please enter your email to receive comments and feedback here:"
-              p
+              span="Please enter your email to receive comments and feedback here:"
+              span
                 a.alert-link(href=layout.htmlroot + "/usert/self")=" Goto User Configuration"
 
         p
@@ -180,11 +180,7 @@ block all
   script(nonce=cspNonce).
 
     // Init This Window with jQuery ready Callback
-    $(document).ready(init2);
     window.htmlroot = "!{layout.htmlroot}";
-    function init2() {
-      $("#mailalert").animate({height: '200px',fontSize: "40px"},1000)
-    }
     
     
     
