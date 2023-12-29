@@ -130,6 +130,12 @@ class User {
         delete data.email;
       }
     }
+    const defaultChangeToNo = ((!self.publicProfile || self.publicProfile.trim() === "") && data.publicProfile === "No");
+    if (!defaultChangeToNo && (self.publicProfile !== data.publicProfile)) {
+      const err = Error("Public Profile can only be changed by the user himself");
+      err.status = UNAUTHORIZED;
+      return callback(err);
+    }
     // Check Change of OSMUser Name.
     if (data.OSMUser !== self.OSMUser) {
       if (self.hasLoggedIn()) {

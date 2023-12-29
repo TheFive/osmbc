@@ -625,7 +625,6 @@ class Blog {
               } else {
                 if (article.isTranslatedAutomated(l)) {
                   statusLang.autoTranslate += 1;
-                  console.log("Found auto translate " + l);
                 }
               }
             }

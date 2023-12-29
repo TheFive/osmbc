@@ -13,6 +13,8 @@ import language from "../model/language.js";
 import userModule from "../model/user.js";
 import logModule from "../model/logModule.js";
 import blogRenderer from "../render/BlogRenderer.js";
+import { generateUserPage } from "../genstaticpage/user_gen.js";
+
 import _debug from "debug";
 const debug = _debug("OSMBC:routes:users");
 const router     = Router();
@@ -196,7 +198,9 @@ function postUserId(req, res, next) {
     mailBlogLanguageStatusChange: req.body.mailBlogLanguageStatusChange,
     mailCommentGeneral: req.body.mailCommentGeneral,
     email: req.body.email,
-    access: req.body.access
+    access: req.body.access,
+    publicProfile: req.body.publicProfile,
+    publicHtml: req.body.publicHtml
   };
 
   if (typeof (changes.mailComment) === "string") {
@@ -243,11 +247,14 @@ function postUserId(req, res, next) {
         return cb();
       });
     },
-    function saveUser(cb) {
+    function saveUserStep(cb) {
       user.setAndSave(req.user, changes, function(err) {
         debug("setAndSaveCB");
         cb(err);
       });
+    },
+    function generateUserPageStep(cb) {
+      generateUserPage(req.user.OSMUser, cb);
     }
 
   ], function(err) {
@@ -293,14 +300,5 @@ router.get("/createApiKey", auth.checkRole("full"), createApiKey);
 router.get("/:user_id", auth.checkRole(["full", "guest"]), renderUserId);
 router.post("/:user_id", auth.checkRole(["full", "guest"]), postUserId);
 
-const _createUser = createUser;
-export { _createUser as createUser };
-const _postUserId = postUserId;
-export { _postUserId as postUserId };
-const _renderUserId = renderUserId;
-export { _renderUserId as renderUserId };
-const _renderList = renderList;
-export { _renderList as renderList };
 
-const _router = router;
-export { _router as router };
+export { router };
