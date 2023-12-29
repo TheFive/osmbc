@@ -2,8 +2,8 @@
 
 import markdownIt from "markdown-it";
 import { full as markdownItEmoji } from "markdown-it-emoji";
-import markdownItSup from "markdown-it-sup";
-import markdownItImsize from "markdown-it-imsize";
+import markdownItSup from "./markdown-it-sup.js";
+import markdownItImsize from "./markdown-it-imsize.js";
 import mila from "markdown-it-link-attributes";
 import config from "../config.js";
 import { regex } from "list-matcher";

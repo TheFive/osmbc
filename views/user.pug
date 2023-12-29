@@ -117,6 +117,15 @@ block content
                 ["two", "three","four"],
                 ["two", "three","four"],
                 "Set this to 3 if you would like to see the new article editor with 3 languages.")
+      +labeledSelect("Public Profile",
+                "publicProfile",
+                usershown.publicProfile,
+                ["No","Yes"],
+                ["No","Yes"],
+                "Choose yes, if you want public stats and social media validation by markdown.")
+      if (usershown.publicProfile === "Yes")
+        +labeledTextarea("Public Markdown","publicHtml",usershown.publicHtml,"Markdown for your public OSMBC Profile")
+        -console.dir(usershown)
       .row 
         .col
           label.col-form-label(for="Color")="Color"

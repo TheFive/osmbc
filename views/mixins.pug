@@ -51,6 +51,14 @@ mixin labeledInput(label,name,value,explanation)
     input.col-5.form-control(name=name,id=name,value = value)
     label.col.d-none.d-md-block.form-text=explanation
 
+mixin labeledTextarea(label,name,value,explanation)
+  - if (!value) value =""
+  div.row.mb-3
+    label.col.col-form-label(for=name)=label
+    textarea.col-5.form-control(name=name,id=name)=value
+
+    label.col.d-none.d-md-block.form-text=explanation
+
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
   - if (!value) value =""
   div.row.mb-3
