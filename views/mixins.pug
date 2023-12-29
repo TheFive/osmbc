@@ -272,8 +272,11 @@ mixin blogStatusTable(blogWithLink)
         else
           td=openBlog.name
         for l in layout.activeLanguages
-          td
+          td.text-center
             div.badge.osmbclabel-openblog=openBlog.getUnEdited(l)
+            - autoTranslate = openBlog.getAutoTranslate(l)
+            if (autoTranslate > 0)
+              div.badge.automated-translation=autoTranslate
 
     for editBlog in layout.editBlog.slice(0).reverse()
       tr
@@ -283,14 +286,19 @@ mixin blogStatusTable(blogWithLink)
         else
           td=editBlog.name
         for l in layout.activeLanguages
-          td
+          td.text-center
             if (editBlog["close" + l])
               div.badge.osmbclabel-closedblog
                 i.fa.fa-check
-            else if (editBlog["reviewComment" + l])
-              div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
-            else
-              div.badge.osmbclabel-editblog=editBlog.getUnEdited(l)
+            else 
+              if (editBlog["reviewComment" + l])
+                div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
+              - unedited = editBlog.getUnEdited(l)
+              if (unedited > 0 )
+                div.badge.osmbclabel-editblog=unedited
+              - autoTranslate = editBlog.getAutoTranslate(l)
+              if (autoTranslate > 0)
+                div.badge.automated-translation=autoTranslate
               
 mixin helpMenu
   li.dropdown.nav-item
