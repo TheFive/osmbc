@@ -131,7 +131,7 @@ class User {
       }
     }
     const defaultChangeToNo = ((!self.publicProfile || self.publicProfile.trim() === "") && data.publicProfile === "No");
-    if (!defaultChangeToNo && (self.publicProfile !== data.publicProfile)) {
+    if (!defaultChangeToNo && (self.publicProfile !== data.publicProfile) && (user.OSMUser !== self.OSMUser)) {
       const err = Error("Public Profile can only be changed by the user himself");
       err.status = UNAUTHORIZED;
       return callback(err);
