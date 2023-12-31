@@ -247,10 +247,11 @@ describe("uc/blog", function() {
 
         await blogPage.clickOnArticle("jeden Tag...");
         await sleep(5000);
-        const data = await driver.takeScreenshot();
 
-        const base64Data = data.replace(/^data:image\/png;base64,/, "");
-        fs.writeFileSync("out.png", base64Data, "base64");
+        // democote to take a screenshot => to be migrated to testutil.
+        // const data = await driver.takeScreenshot();
+        // const base64Data = data.replace(/^data:image\/png;base64,/, "");
+        // fs.writeFileSync("out.png", base64Data, "base64");
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
         await sleep(500);
