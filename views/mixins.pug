@@ -293,7 +293,7 @@ mixin blogStatusTable(blogWithLink)
             a(href=layout.htmlroot+'/blog/' + editBlog.name)=editBlog.name
         else
           td=editBlog.name
-        - const rowWithReview = layout.activeLanguages.some((value,x,y) => {return editBlog["reviewComment" + value]})
+        - const rowWithReview = layout.activeLanguages.some((value,x,y) => {return editBlog.isReviewStarted(value)})
         for l in layout.activeLanguages
           td.text-center
             if (editBlog["close" + l])
@@ -301,7 +301,7 @@ mixin blogStatusTable(blogWithLink)
                 i.fa.fa-check
             else 
               - showUneditedFrom = 0
-              if (editBlog["reviewComment" + l])
+              if (editBlog.isReviewStarted(l))
                 div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
                 - showUneditedFrom = 1
               if rowWithReview

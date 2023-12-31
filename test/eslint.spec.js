@@ -24,22 +24,22 @@ async function lintModule(module) {
 
 
 describe("ESLint", function() {
-  it("should lint model", async function() {
+  it("should eslint model", async function() {
     await lintModule("model");
   });
-  it("should lint routes", async function() {
+  it("should eslint routes", async function() {
     await lintModule("routes");
   });
-  it("should lint notification", async function() {
+  it("should eslint notification", async function() {
     await lintModule("notification");
   });
-  it("should lint render", async function() {
+  it("should eslint render", async function() {
     await lintModule("render");
   });
-  it("should lint util", async function() {
+  it("should eslint util", async function() {
     await lintModule("util");
   });
-  it("should lint public/javascripts", async function() {
+  it("should eslint public/javascripts", async function() {
     await lintModule("public/javascripts");
   });
 });

@@ -102,13 +102,13 @@ block content
                 if (blog["close" + lang])
                   div.badge.badge-pill.osmbclabel-closedblog
                     i.fa.fa-check
-                else if (blog["reviewComment" + lang])
+                else if (blog.isReviewStarted(lang))
                   div.badge.badge-pill.osmbclabel-reviewblog=(blog.getClosedReviewCount(lang))
                 else
                   div.badge.badge-pill.osmbclabel-editblog=blog.getUnEdited(lang)
               //- Review Start Column
               td
-                if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                if (!blog["close" + lang] && blog.isReviewStarted(lang) && blog["reviewComment"+lang].length>0)
                   span.badge.small-margin(class="osmbclabel-reviewblog")= blog["reviewComment"+lang][0].user
                 
               //- Review Start time
