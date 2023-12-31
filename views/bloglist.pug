@@ -39,7 +39,7 @@ block content
                       - urlblog = layout.htmlroot+"/blog/"+blog.name
 
                     else
-                      if blog["reviewComment"+lang]
+                      if blog.isReviewStarted(lang)
                         - labeltype = "osmbclabel-reviewblog"
                         - urlblog =  layout.htmlroot+"/blog/"+blog.name
 

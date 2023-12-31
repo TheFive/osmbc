@@ -6,7 +6,7 @@ import nock from "nock";
 import should from "should";
 import { set, reset } from "mockdate";
 import { load } from "js-yaml";
-import { readFileSync } from "fs";
+import * as fs from "fs";
 import { resolve } from "path";
 import { URL } from "url";
 import testutil from "../../test/testutil.js";
@@ -32,10 +32,6 @@ describe("uc/blog", function() {
   this.timeout(1000 * 60);
 
   before(async function() {
-    nock("https://missingmattermost.example.com/")
-      .post(/\/services\/.*/)
-      .times(999)
-      .reply(200, "ok");
     process.env.TZ = "Europe/Amsterdam";
     set(new Date("2016-05-25T19:00:00Z"));
     await testutil.clearDB();
@@ -47,19 +43,21 @@ describe("uc/blog", function() {
     reset();
     testutil.stopServer();
   });
-  const nocklist = [];
   beforeEach(async function() {
-    const list = load(readFileSync(resolve(config.getDirName(), "test", "blog", "DataWN290LinkList.txt"), "UTF8"));
+    const list = load(fs.readFileSync(resolve(config.getDirName(), "test", "blog", "DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item) {
       const url = new URL(item);
       let path = url.pathname;
       if (url.search) path = path + url.search;
 
-      const n = nock(url.protocol + "//" + url.host)
+      nock(url.protocol + "//" + url.host)
         .head(path)
         .times(99)
         .reply(201, "OK");
-      nocklist.push(n);
+      nock("https://missingmattermost.example.com/")
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200, "ok");
     });
   });
   afterEach(async function() {
@@ -202,6 +200,26 @@ describe("uc/blog", function() {
       if (this.currentTest.state !== "failed") await driver.quit();
     });
     describe("Blog Display", function() {
+      it("should show Full View", async function() {
+        const osmbcApp = new OsmbcApp(driver);
+        await osmbcApp.getMainPage().clickBlogInList("WN290");
+        const blogPage = osmbcApp.getBlogPage();
+        await blogPage.cickMode("Full");
+
+        await testutil.expectHtml(driver, "blog", "blog_wn290_full");
+
+        const previousText = `Belgian Mapper of the Month:`;
+
+        await blogPage.clickOnArticle(previousText);
+
+        await blogPage.typeEditForm(previousText, "Changed Text in full review");
+        // should(1).eql(0);
+        sleep(1000);
+        await blogPage.clickOnArticle("Digitalcourage suggests");
+        sleep(500);
+
+        should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
+      });
       it("should show Overview and Edit Article", async function() {
         const errors = [];
         const osmbcApp = new OsmbcApp(driver);
@@ -228,39 +246,24 @@ describe("uc/blog", function() {
 
 
         await blogPage.clickOnArticle("jeden Tag...");
-        sleep(3000);
+        await sleep(5000);
+
+        // democote to take a screenshot => to be migrated to testutil.
+        // const data = await driver.takeScreenshot();
+        // const base64Data = data.replace(/^data:image\/png;base64,/, "");
+        // fs.writeFileSync("out.png", base64Data, "base64");
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
-        sleep(500);
+        await sleep(500);
 
         await blogPage.clickOnArticle("jeden Tag...");
 
         await blogPage.clickBlogMenu("WN290");
-        sleep(750);
+        await sleep(500);
 
         should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
 
         should(errors).eql([]);
-      });
-      it("should show Full View", async function() {
-        const osmbcApp = new OsmbcApp(driver);
-        await osmbcApp.getMainPage().clickBlogInList("WN290");
-        const blogPage = osmbcApp.getBlogPage();
-        await blogPage.cickMode("Full");
-
-        await testutil.expectHtml(driver, "blog", "blog_wn290_full");
-
-        const previousText = `Belgian Mapper of the Month:`;
-
-        await blogPage.clickOnArticle(previousText);
-
-        await blogPage.typeEditForm(previousText, "Changed Text in full review");
-        // should(1).eql(0);
-        sleep(1000);
-        await blogPage.clickOnArticle("Digitalcourage suggests");
-        sleep(500);
-
-        should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
       });
       it("should show Review View", async function() {
         const osmbcApp = new OsmbcApp(driver);

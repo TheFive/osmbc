@@ -84,6 +84,10 @@ class Blog {
     return "blog";
   }
 
+  isReviewStarted(lang) {
+    return Boolean(this["reviewComment" + lang]);
+  }
+
   // setAndSave(user,data,callback)
   // user: actual username for logging purposes
   // data: json with values that has to be changed
@@ -722,7 +726,7 @@ class Blog {
 
   getStatus(lang) {
     let status = this.status;
-    if (this["reviewComment" + lang]) status = "Review " + lang;
+    if (this.isReviewStarted(lang)) status = "Review " + lang;
     if (this["exported" + lang]) status = "Export " + lang;
     if (this["close" + lang]) status = "Close " + lang;
     return status;
