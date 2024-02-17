@@ -29,7 +29,7 @@ const sleep = _util.sleep;
 
 
 describe("uc/blog", function() {
-  this.timeout(1000 * 60);
+  this.timeout(1000 * 30);
 
   before(async function() {
     process.env.TZ = "Europe/Amsterdam";
@@ -82,7 +82,6 @@ describe("uc/blog", function() {
       await osmbcAppTheFive.openAdminPage();
 
       await osmbcAppTheFive.getAdminPage().clickCreateBlogMenu({ confirm: true });
-      await sleep(300);
 
       await osmbcAppTheFive.getBlogListPage().clickBlogInList("WN251");
 
@@ -197,7 +196,7 @@ describe("uc/blog", function() {
       driver = await testutil.getNewDriver("TheFive");
     });
     afterEach(async function() {
-      if (this.currentTest.state !== "failed") await driver.quit();
+      await driver.quit();
     });
     describe("Blog Display", function() {
       it("should show Full View", async function() {
@@ -228,25 +227,29 @@ describe("uc/blog", function() {
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview");
 
+        console.log("A");
+
         await blogPage.clickShowVisibleLanguagesCheckbox();
-        await sleep(500);
+        console.log("b");
+
         await blogPage.clickShowNumbersCheckbox();
-        await sleep(500);
+        console.log("c");
         await blogPage.clickShowCollectorCheckbox();
-        await sleep(500);
+        console.log("d");
         await blogPage.clickShowEditorCheckbox();
-        await sleep(500);
+        console.log("e");
         await blogPage.clickShowColoredUserCheckbox();
-        await sleep(500);
+        console.log("f");
         await blogPage.clickShowLanguagesCheckbox();
-        await sleep(500);
+        console.log("G");
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
+        console.log("h");
 
 
 
         await blogPage.clickOnArticle("jeden Tag...");
-        await sleep(5000);
+        console.log("i");
 
         // democote to take a screenshot => to be migrated to testutil.
         // const data = await driver.takeScreenshot();
@@ -254,14 +257,16 @@ describe("uc/blog", function() {
         // fs.writeFileSync("out.png", base64Data, "base64");
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
-        await sleep(500);
+        console.log("j");
 
         await blogPage.clickOnArticle("jeden Tag...");
+        console.log("k");
 
         await blogPage.clickBlogMenu("WN290");
-        await sleep(500);
+        console.log("l");
 
         should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
+        console.log("m");
 
         should(errors).eql([]);
       });

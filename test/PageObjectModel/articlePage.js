@@ -1,6 +1,6 @@
 import util from "../../util/util.js";
 
-import { By, Key } from "selenium-webdriver";
+import { By, Key, until } from "selenium-webdriver";
 
 
 import StandardPage from "./standardPage.js";
@@ -78,12 +78,16 @@ class ArticlePage extends StandardPage {
 
   async clickNoTranslationButton() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("button#noTranslationButton"))).click();
+    const noTranslationButton = await this._driver.findElement(By.css("button#noTranslationButton"));
+    await (noTranslationButton).click();
+    await this._driver.wait(until.stalenessOf(noTranslationButton), 2000);
   }
 
   async clickAddComment() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("button[name='AddComment']"))).click();
+    const addCommentButton = await this._driver.findElement(By.css("button[name='AddComment']"));
+    await (addCommentButton).click();
+    await this._driver.wait(until.stalenessOf(addCommentButton), 2000);
   }
 
   async selectAndPasteTextInMarkdown(lang, from, to, text) {

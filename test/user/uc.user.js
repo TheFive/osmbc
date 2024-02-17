@@ -40,7 +40,7 @@ describe("views/user", function() {
   });
   afterEach(async function() {
     mockdate.reset();
-    if (this.currentTest.state !== "failed") await driver.quit();
+    await driver.quit();
     mailChecker.restore();
     testutil.stopServer();
   });
