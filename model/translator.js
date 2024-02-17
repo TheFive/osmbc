@@ -52,9 +52,11 @@ function translateDeeplPro(options, callback) {
   }
 
 
-  const fromLang = language.deeplProSourceLang(options.fromLang);
+  const fromLangDeepl = language.deeplProSourceLang(options.fromLang);
+  const fromLangOsmbc = options.fromLang;
   const formality = language.deeplProFormality(options.toLang);
-  const toLang = language.deeplProTargetLang(options.toLang);
+  const toLangDeepl = language.deeplProTargetLang(options.toLang);
+  const toLangOsmbc = options.toLang;
   const text = options.text;
 
 
@@ -62,8 +64,8 @@ function translateDeeplPro(options, callback) {
 
   const deeplParams = {};
   deeplParams.text = htmltext;
-  deeplParams.source_lang = fromLang.toUpperCase();
-  deeplParams.target_lang = toLang.toUpperCase();
+  deeplParams.source_lang = fromLangDeepl.toUpperCase();
+  deeplParams.target_lang = toLangDeepl.toUpperCase();
   deeplParams.auth_key = deeplConfig.authKey;
   deeplParams.tag_handling = "xml";
   if (formality) deeplParams.formality = formality;
@@ -80,9 +82,11 @@ function translateDeeplPro(options, callback) {
       turndownService.use(turndownItEmoji);
       turndownService.use(turndownItImsize);
       let mdresult = turndownService.turndown(htmlresult);
-      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toLowerCase());
-      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLang.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLang.toUpperCase());
-      mdresult = mdresult.replaceAll(":" + fromLang.toUpperCase() + "-t:", ":" + toLang.toUpperCase() + "-t:");
+      console.log(mdresult);
+      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLangOsmbc.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLangOsmbc.toLowerCase());
+      mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLangOsmbc.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLangOsmbc.toUpperCase());
+      mdresult = mdresult.replaceAll(":" + fromLangOsmbc.toUpperCase() + "-t:", ":" + toLangOsmbc.toUpperCase() + "-t:");
+      console.log(mdresult);
       return callback(null, mdresult);
     })
     .catch(err => { return callback(err); });
