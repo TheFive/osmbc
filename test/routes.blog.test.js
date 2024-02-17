@@ -552,7 +552,7 @@ describe("routes/blog", function() {
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
       const body = await client.get(baseLink + "/blog/BLOG/previewHeader");
 
-      should(body.data).eql("[:de]Wochennotiz OG[:en]weeklyOSM OG[:es]semanarioOSM OG[:]");
+      should(body.data).eql("[:de]Wochennotiz OG[:en]weeklyOSM OG[:fr]hebdoOSM OG[:es]semanarioOSM OG[:]");
     });
     it("should get a preview in the markdown format ", async function () {
       await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
