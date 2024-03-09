@@ -487,7 +487,8 @@ function postArticle(req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect(returnToUrl);
+      setTimeout(()=>{res.redirect(returnToUrl);},5000);
+      //res.redirect(returnToUrl);
     });
   }
   );

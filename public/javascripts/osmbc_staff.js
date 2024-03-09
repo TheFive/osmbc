@@ -4,6 +4,7 @@
 /* exported chooseLanguage */
 /* exported chooseLanguageSet */
 /* exported setUserConfig */
+/* exported addSpinnerAndSubmit */
 
 
 function highlightWrongLinks() {
@@ -104,3 +105,13 @@ function setUserConfig(options) {
     console.error(err);
   });
 }
+
+function addSpinnerAndSubmit(element) {
+  const el = document.querySelector(element);
+
+  el.innerHTML = el.innerHTML + "<i class='fa fa-spinner fa-pulse'></i>";
+  el.disabled = true;
+  setTimeout(() => { el.form.submit(); }, 10);
+}
+
+
