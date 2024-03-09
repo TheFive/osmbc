@@ -1,0 +1,8 @@
+extends config
+
+block showContentOfConfig
+  h2= "Test Menue withPreview"
+
+  .row 
+    .col-sm-3
+      +helpMenu(config.json)

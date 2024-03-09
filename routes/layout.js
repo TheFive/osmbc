@@ -6,6 +6,7 @@ import util from "../util/util.js";
 import config from "../config.js";
 import language from "../model/language.js";
 import { osmbcMarkdown } from "../util/md_util.js";
+import configModule from "../model/config.js";
 
 import { getTBC, find } from "../model/blog.js";
 import { getAvatar as _getAvatar } from "../model/user.js";
@@ -167,6 +168,7 @@ function prepareRenderLayout(req, res, next) {
 
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
+    const helpMenu = configModule.getConfig("helpmenu");
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
 
@@ -183,6 +185,7 @@ function prepareRenderLayout(req, res, next) {
       tbc: result.tbc,
       activeLanguages: activeLanguages,
       style: style,
+      helpMenu: helpMenu,
       user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),

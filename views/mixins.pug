@@ -313,23 +313,21 @@ mixin blogStatusTable(blogWithLink)
               if (autoTranslate > 0)
                 div.badge.automated-translation=autoTranslate
               
-mixin helpMenu
+mixin helpMenu(configarray)
   li.dropdown.nav-item
     a.nav-link.dropdown-toggle#helpDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
       | Help
-    div.dropdown-menu(aria-labelledby="helpDropdown")
-      a.dropdown-header OSMBC
-      if (layout)
-        a.dropdown-item(href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md")="Version "+layout.osmbc_version
-      a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help") Help
-      div.dropdown-divider
-      a.dropdown-header WeeklyOSM & Wochennotiz
-      a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules") Vision & Rules
-      a.dropdown-item(href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting") Editorial Meetings
-      a.dropdown-item(href="http://wiki.openstreetmap.org/wiki/Wochennotiz") Wochennotiz in OSM Wiki
-      a.dropdown-item(href="http://wiki.openstreetmap.org/wiki/WeeklyOSM") Weekly in OSM Wiki
-      a.dropdown-item(href="https://framacalc.org/WN_DEnglisch") Glossary
-      
+    div.dropdown-menu.dropdown-menu-right(aria-labelledby="helpDropdown")
+      if configarray
+        for item in configarray
+          if item == "---"
+            div.dropdown-divider
+          else if item[0] && item[1]
+            if item[1] == "header"
+              a.dropdown-header=item[0]
+            else
+              a.dropdown-item(href=item[1])=item[0]
+
 mixin homeButton(addclass)
   if !layout || !layout.user || layout.osmbc_version === layout.user.lastChangeLogView
     a(href=htmlroot+'/osmbc.html' class=addclass)=appName
