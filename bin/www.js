@@ -34,6 +34,10 @@ const debug = _debug("OSMBC:server");
 const port = normalizePort(process.env.PORT || config.getServerPort());
 app.set("port", port);
 
+let hostname = null;
+if (process.env.HOSTNAME || config.getServerHostname()) hostname = (process.env.HOSTNAME || config.getServerHostname());
+
+
 
 /* check node version */
 
@@ -73,10 +77,10 @@ function initialiseServer() {
       config.logger.error(err);
       process.exit(1);
     }
-    server.listen(port);
+    server.listen(port, hostname);
     server.on("error", onError);
     server.on("listening", onListening);
-    config.logger.info("Server Listening on port " + port);
+    config.logger.info("Server Listening on port:" + port + " hostname: " + hostname);
     const used = process.memoryUsage();
     for (const key in used) {
       config.logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
