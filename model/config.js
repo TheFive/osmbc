@@ -332,6 +332,11 @@ const checkAndRepair = {
     if (!cf) cf = {};
     c.json = cf;
   },
+  helpmenu: function(c) {
+    let cf = c.getJSON();
+    if (!cf) cf = {};
+    c.json = cf;
+  },
   ignoreforsearch: function(c) {
     let cf = c.getJSON();
     if (!cf) cf = [];
@@ -427,6 +432,7 @@ function initialise(callback) {
       initConfigElement.bind(null, "categorydescription"),
       initConfigElement.bind(null, "languageflags"),
       initConfigElement.bind(null, "calendarflags"),
+      initConfigElement.bind(null, "helpmenu"),
       initConfigElement.bind(null, "slacknotification"),
       initConfigElement.bind(null, "licenses"),
       initConfigElement.bind(null, "categorytranslation"),

@@ -56,6 +56,7 @@ function renderConfigName(req, res, next) {
     if (err) return next(err);
     assert(res.rendervar);
     let jadeFile = "config";
+    if (name === "helpmenu") jadeFile = name;
     if (name === "calendarflags") jadeFile = name;
     if (name === "categorydescription") jadeFile = name;
     if (name === "languageflags") jadeFile = "calendarflags";
