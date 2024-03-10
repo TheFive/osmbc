@@ -111,7 +111,16 @@ function addSpinnerAndSubmit(element) {
 
   el.innerHTML = el.innerHTML + "<i class='fa fa-spinner fa-pulse'></i>";
   el.disabled = true;
-  setTimeout(() => { el.form.submit(); }, 10);
+
+  // try to force repaint (safari)
+  // https://martinwolf.org/before-2018/blog/2014/06/force-repaint-of-an-element-with-javascript/
+  el.style.display = "none";
+  el.offsetHeight; // eslint-disable-line no-unused-expressions
+  // no need to store this anywhere, the reference is enough
+  el.style.display = "block";
+  // end of redraw fix
+
+  setTimeout(() => { el.form.submit(); }, 1);
 }
 
 
