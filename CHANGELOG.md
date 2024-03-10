@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.0.24](https://github.com/TheFive/osmbc/tree/4.0.24) (2024-03-10)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.23...4.0.24)
+
+**Closed issues:**
+
+- Make Hostname vor Server configurable [\#1026](https://github.com/TheFive/osmbc/issues/1026)
+- Replace request module by axios [\#833](https://github.com/TheFive/osmbc/issues/833)
+
 ## [4.0.23](https://github.com/TheFive/osmbc/tree/4.0.23) (2024-03-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.22...4.0.23)
