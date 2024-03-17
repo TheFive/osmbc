@@ -211,7 +211,6 @@ function languageSetSwitcher(req, res, next) {
 
 function setUserConfig(req, res, next) {
   debug("setUserConfig");
-  console.log("Setting user config .......");
 
   const user = req.user;
   if (!req.body.view) {
@@ -229,15 +228,10 @@ function setUserConfig(req, res, next) {
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
-  console.log("to " + req.body.view);
-  console.log("option " + req.body.option);
-  console.log("value " + req.body.value);
-
   user.setOption(req.body.view, req.body.option, req.body.value);
 
   req.user.save(function finalLanguageSwitcher(err) {
     if (err) return next(err);
-    console.log("fine");
     res.end("OK");
   });
 }

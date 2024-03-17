@@ -227,29 +227,24 @@ describe("uc/blog", function() {
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview");
 
-        console.log("A");
-
         await blogPage.clickShowVisibleLanguagesCheckbox();
-        console.log("b");
-
+        await blogPage.waitForPageReload();
         await blogPage.clickShowNumbersCheckbox();
-        console.log("c");
+        await blogPage.waitForPageReload();
         await blogPage.clickShowCollectorCheckbox();
-        console.log("d");
+        await blogPage.waitForPageReload();
         await blogPage.clickShowEditorCheckbox();
-        console.log("e");
+        await blogPage.waitForPageReload();
         await blogPage.clickShowColoredUserCheckbox();
-        console.log("f");
+        await blogPage.waitForPageReload();
         await blogPage.clickShowLanguagesCheckbox();
-        console.log("G");
+        await blogPage.waitForPageReload();
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
-        console.log("h");
 
 
 
         await blogPage.clickOnArticle("jeden Tag...");
-        console.log("i");
 
         // democote to take a screenshot => to be migrated to testutil.
         // const data = await driver.takeScreenshot();
@@ -257,16 +252,12 @@ describe("uc/blog", function() {
         // fs.writeFileSync("out.png", base64Data, "base64");
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
-        console.log("j");
 
         await blogPage.clickOnArticle("jeden Tag...");
-        console.log("k");
 
         await blogPage.clickBlogMenu("WN290");
-        console.log("l");
 
         should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
-        console.log("m");
 
         should(errors).eql([]);
       });

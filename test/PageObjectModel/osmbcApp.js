@@ -59,7 +59,8 @@ export default class OsmbcApp {
   }
 
   getBlogPage() {
-    return new BlogPage(this._driver);
+    const blogPage = new BlogPage(this._driver);
+    return blogPage;
   }
 
   getBlogDetailPage() {

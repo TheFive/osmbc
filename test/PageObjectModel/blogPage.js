@@ -45,18 +45,9 @@ class BlogPage extends StandardPage {
 
   async #clickACheckbox(checkboxName) {
     await this.assertPage();
-    console.log("1");
     const checkbox = (await this._driver.findElement(By.css(checkboxName)));
-    console.log(await checkbox.getAttribute("change"));
-    console.log("2");
     await this._driver.actions().scroll(0, 0, 0, 50, checkbox).perform();
-    console.log("3");
     await checkbox.click();
-    console.log("4");
-
-
-    await this._driver.wait(function(v) { let a = until.stalenessOf(checkbox); console.log("lll " + a); return a; }, 2);
-    console.log("5");
   }
 
   async clickStoreReviewText(lang) {

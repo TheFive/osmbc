@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 
 import Page from "../../test/PageObjectModel/page.js";
 
@@ -9,6 +9,15 @@ export default class StandardPage extends Page {
   constructor(driver) {
     super(driver);
   }
+
+
+  async waitForPageReload() {
+    // set marker to "old Page"
+    this._page = await this._driver.findElement(By.css("a.navbar-brand"));
+    // wait for Old Marker to be obsolete
+    await this._driver.wait(until.stalenessOf(this._page));
+  }
+
 
   async clickBlogMenu(blog) {
     await this.assertPage();
