@@ -16,7 +16,7 @@
     "async": "3.2.x",
     "axios": "1.6.x",
     "body-parser": "1.20.x",
-    "bootstrap": "4.6.2",
+    "bootstrap": "5.3.3",
     "bootstrap-select": "^1.13.18",
     "cheerio": "^1.0.0-rc.12",
     "commander": "12.0.x",

@@ -315,7 +315,7 @@ mixin blogStatusTable(blogWithLink)
               
 mixin helpMenu(configarray)
   li.dropdown.nav-item
-    a.nav-link.dropdown-toggle#helpDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
+    a.nav-link.dropdown-toggle#helpDropdown(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
       | Help
     div.dropdown-menu.dropdown-menu-right(aria-labelledby="helpDropdown")
       if configarray
@@ -352,7 +352,7 @@ mixin langChooser(choosenLang,cssClass,langString,languages,choosenLangs)
 
   li.dropdown.nav-item
     - label_temp = "language" + ((langNumber > 0 ) ? langNumber : "")
-    a.nav-link.dropdown-toggle(id=label_temp, class=cssClass, href='#', style="color:white", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=choosenLang
+    a.nav-link.dropdown-toggle(id=label_temp, class=cssClass, href='#', style="color:white", data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")=choosenLang
     div.dropdown-menu.dropdown-menu-right(aria-labelledby=label_temp)
       +langDropdownList(langString,languages, choosenLangs)
       if block 
@@ -376,7 +376,7 @@ mixin langMenu(size)
   - const u = layout.user
   if (u.languageSet)
     li.dropdown.nav-item
-      a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+      a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
         span.badge.badge-pill.badge-pill.osmbcbadge-lang=u.getLang(0)
         if (u.getLang(1))
           span.badge.badge-pill.osmbcbadge-lang2=u.getLang(1)

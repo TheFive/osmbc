@@ -60,7 +60,7 @@ mixin inboxMenu
 mixin articleMenu
   if (layout && layout.user && layout.user && layout.user.hasFullAccess())
     li.dropdown.nav-item.active
-      a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Search
+      a.nav-link.dropdown-toggle#articleMenuDropdown(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Search
       div.dropdown-menu(aria-labelledby="articleMenuDropdown")
         a.dropdown-header Articles
         a.dropdown-item#articleMenuSearch(href=layout.htmlroot + '/article/search') Search
@@ -75,7 +75,7 @@ mixin articleMenu
 mixin toolMenu
   if (layout && layout.user && layout.user.hasFullAccess())
     li.dropdown.nav-item.active
-      a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Tools
+      a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Tools
       div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
         if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
           div.dropdown-divider
@@ -115,32 +115,32 @@ block all
 
       // Fixed navbar
       nav.navbar.navbar-light.bg-light.navbar-expand-lg.fixed-top#fixedNavbar
-        - var listall = []
-        if (layout)
-          - listall = [].concat(layout.listOfReviewBlog)
-          - listall = listall.concat(layout.listOfEditBlog)
-          - listall = listall.concat(layout.listOfOpenBlog)
+        div.container-fluid
+          - var listall = []
+          if (layout)
+            - listall = [].concat(layout.listOfReviewBlog)
+            - listall = listall.concat(layout.listOfEditBlog)
+            - listall = listall.concat(layout.listOfOpenBlog)
 
-        
-        button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
-          span.navbar-toggler-icon
-        +homeButton("navbar-brand")  
-        ul.navbar-nav.mr-auto
-        div.collapse.navbar-collapse#navbarSupportedContent
-          ul.navbar-nav.mr-auto
-            +collectMenu
-            +inboxMenu
-            
-            +tbcMenu
-            +myGuestArticleMenu
-            +firstBlogOfList(listall,2)
-            +articleMenu    
-            +toolMenu
-            block additionalMenuMain    
-          ul.navbar-nav
-            +helpMenu(layout.helpMenu)
-            block additionalMenuRight
-            +userAvatar
+          
+          button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+            span.navbar-toggler-icon
+          +homeButton("navbar-brand")  
+          div.collapse.navbar-collapse#navbarSupportedContent
+            ul.navbar-nav
+              +collectMenu
+              +inboxMenu
+              
+              +tbcMenu
+              +myGuestArticleMenu
+              +firstBlogOfList(listall,2)
+              +articleMenu    
+              +toolMenu
+              block additionalMenuMain    
+            ul.navbar-nav.ms-auto
+              +helpMenu(layout.helpMenu)
+              block additionalMenuRight
+              +userAvatar
 
 
       .container-fluid
