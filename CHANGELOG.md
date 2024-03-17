@@ -1,5 +1,21 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...HEAD)
+
+**Implemented enhancements:**
+
+- Improve Diff Behavior [\#1028](https://github.com/TheFive/osmbc/issues/1028)
+
+**Fixed bugs:**
+
+- markdown-it-imsize is not complete translated with deepl [\#841](https://github.com/TheFive/osmbc/issues/841)
+
+**Closed issues:**
+
+- Add Spinner to Collect Save button, to inform about "in progress" [\#1021](https://github.com/TheFive/osmbc/issues/1021)
+
 ## [4.0.24](https://github.com/TheFive/osmbc/tree/4.0.24) (2024-03-10)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.23...4.0.24)
