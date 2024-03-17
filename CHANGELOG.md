@@ -1,5 +1,46 @@
 # Changelog
 
+## [4.0.23](https://github.com/TheFive/osmbc/tree/4.0.23) (2024-03-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.22...4.0.23)
+
+## [4.0.22](https://github.com/TheFive/osmbc/tree/4.0.22) (2024-02-17)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.21...4.0.22)
+
+**Fixed bugs:**
+
+- remove pt-pt-t [\#1022](https://github.com/TheFive/osmbc/issues/1022)
+
+**Closed issues:**
+
+- remove PT-PT-t [\#1023](https://github.com/TheFive/osmbc/issues/1023)
+- untouched articles in a second row - if possible [\#1017](https://github.com/TheFive/osmbc/issues/1017)
+
+## [4.0.21](https://github.com/TheFive/osmbc/tree/4.0.21) (2023-12-29)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.20...4.0.21)
+
+**Closed issues:**
+
+- Feature: Hide the warning of "Please enter your email to receive comments..." [\#993](https://github.com/TheFive/osmbc/issues/993)
+
+## [4.0.20](https://github.com/TheFive/osmbc/tree/4.0.20) (2023-12-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.19...4.0.20)
+
+**Closed issues:**
+
+- Show number of auto translated articles in blog progress bars [\#1016](https://github.com/TheFive/osmbc/issues/1016)
+
+## [4.0.19](https://github.com/TheFive/osmbc/tree/4.0.19) (2023-12-26)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.18...4.0.19)
+
+**Merged pull requests:**
+
+- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [4.0.18](https://github.com/TheFive/osmbc/tree/4.0.18) (2023-09-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.17...4.0.18)

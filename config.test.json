@@ -45,9 +45,11 @@
   "SessionSecret":"keyboard cat",
   "SessionName":"session name",
   "AppName":"TESTBC",
+  "MaxDiffLength": 1500,
   "languages":[
     {"lid":"DE","displayLong":"German","displayShort":"DED","deeplProFormality":"less"}, 
     {"lid":"EN","momentLocale":"en-gb"},
+    {"lid":"FR","deeplProTarget":"fr-paris"},
     {"lid":"ES","displayLong":"Spain","displayShort":"ES"},
     {"lid":"PT-PT","deeplProSource":"PT","deeplProTarget":"PT-PT"}
   ],

@@ -96,7 +96,7 @@ describe("model/changes", function() {
       const markdownDE2 = fs.readFileSync(path.resolve(config.getDirName(), "test", "data", "model.longmarkdownDE2.txt"), "UTF8");
 
       const change = new logModule.Class({ to: markdownDE, from: markdownDE2 });
-      should(change.htmlDiffText(40)).eql("Disabled for texts longer than 2000 chars.");
+      should(change.htmlDiffText(40)).eql("Disabled for texts longer than 1500 chars.");
     });
     /* eslint-enable mocha/no-synchronous-tests */
   });

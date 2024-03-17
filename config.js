@@ -203,6 +203,11 @@ function getServerPort() {
   return getValue("serverport", { mustExist: true });
 };
 
+function getServerHostname() {
+  initialise();
+  return getValue("serverhostname");
+}
+
 function getServerKey() {
   initialise();
   return getValue("serverkey");
@@ -240,7 +245,7 @@ const config = {
   getCallbackUrl: getCallbackUrl,
   initialise: initialise,
   getDirName: () => { return __dirname; },
-  version: "T.B.D."
+  getServerHostname: getServerHostname
 };
 
 export default config;

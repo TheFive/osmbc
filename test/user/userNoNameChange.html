@@ -28,8 +28,8 @@
         <ul class="navbar-nav">
           <li class="navbar-item active"></li>
           <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-            <div class="dropdown-menu" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a><a class="dropdown-item" href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Version T.V.S</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/OSMBC-Help">Help</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; Rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
             </div>
           </li>
           <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
@@ -52,6 +52,7 @@
         <div class="row mb-3"><label class="col col-form-label" for="language">Language</label><select class="col-5 form-control" id="language" name="language">
             <option value="DE" selected="selected">DE</option>
             <option value="EN">EN</option>
+            <option value="FR">FR</option>
             <option value="ES">ES</option>
             <option value="PT-PT">PT-PT</option>
           </select><label class="col d-none d-md-block form-text">Main Language for the user, used for default values.</label></div>
@@ -72,6 +73,7 @@
           <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailComment" id="mailComment" multiple="multiple">
               <option id="mailComment_DE" value="DE">DE</option>
               <option id="mailComment_EN" value="EN">EN</option>
+              <option id="mailComment_FR" value="FR">FR</option>
               <option id="mailComment_ES" value="ES">ES</option>
               <option id="mailComment_PT-PT" value="PT-PT">PT-PT</option>
               <option id="mailComment_TestUser" value="TestUser">TestUser</option>
@@ -97,6 +99,7 @@
           <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange" multiple="multiple">
               <option id="mailBlogLanguageStatusChange_DE" value="DE">DE</option>
               <option id="mailBlogLanguageStatusChange_EN" value="EN">EN</option>
+              <option id="mailBlogLanguageStatusChange_FR" value="FR">FR</option>
               <option id="mailBlogLanguageStatusChange_ES" value="ES">ES</option>
               <option id="mailBlogLanguageStatusChange_PT-PT" value="PT-PT">PT-PT</option>
             </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-2" aria-haspopup="listbox" aria-expanded="false" data-id="mailBlogLanguageStatusChange" title="Nothing selected">

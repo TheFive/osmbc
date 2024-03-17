@@ -99,7 +99,9 @@ block content
                 .col-md-7
                   p.osmbc-help-text(id="categoryDisplay")
                 .col-md-5
-                  input.btn.btn-large.btn-primary(type="submit", id="OK",value="OK")
+                  button.btn.btn-large.btn-primary(onclick="javascript:window.addSpinnerAndSubmit('#OK')", id="OK")="OK"
+                    //span(style="visibility:hidden" id="OK-Spinner")
+                      i(class="fa fa-solid fa-spinner fa-pulse")
                   a(href=layout.htmlroot+`/article/create` class="btn btn-secondary" role="button") Cancel
 
           .row
