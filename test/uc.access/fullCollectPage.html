@@ -122,7 +122,9 @@
                 <div class="col-md-7">
                   <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
                 </div>
-                <div class="col-md-5"><input class="btn btn-large btn-primary" type="submit" id="OK" value="OK" disabled=""><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
+                <div class="col-md-5"><button class="btn btn-large btn-primary" onclick="javascript:window.addSpinnerAndSubmit('#OK')" id="OK" disabled="">OK
+                    <!--span(style="visibility:hidden" id="OK-Spinner")i(class="fa fa-solid fa-spinner fa-pulse")-->
+                  </button><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
               </div>
             </div>
           </div>

@@ -35,9 +35,9 @@ class SlackAPI {
     let err = null;
     axios.post(command, body)
       .then(response => {
-        if (response.body !== "OK") {
-          err = { message: response.body };
-          config.logger.error(err);
+        if (response.data !== "ok") {
+          err = { message: response.data };
+          config.logger.error(JSON.stringify(err));
           config.logger.error("While sending");
           config.logger.error(JSON.stringify(message));
           config.logger.error("To Hook: " + command);
@@ -46,7 +46,7 @@ class SlackAPI {
       })
       .catch(error => {
         err = error;
-        config.logger.error(err);
+        config.logger.error(JSON.stringify(err));
         config.logger.error("While sending");
         config.logger.error(JSON.stringify(message));
         config.logger.error("To Hook: " + command);

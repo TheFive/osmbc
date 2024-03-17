@@ -2,13 +2,16 @@
 
 import db from "../model/db.js";
 import pgMap from "../model/pgMap.js";
+import config from "../config.js";
 
 
-import { diffChars, diffWordsWithSpace } from "diff";
+
+import { diffChars, diffWordsWithSpace, diffLines } from "diff";
 import _debug from "debug";
 const debug = _debug("OSMBC:model:logModule");
 
 
+const maxDiffLength = config.getValue("MaxDiffLength", { mustExist: true });
 
 class Change {
   constructor(proto) {
@@ -27,12 +30,16 @@ class Change {
     if (this.from) from = String(this.from);
     if (this.to) to = String(this.to);
 
-    if (from.length > 2000 || to.length > 2000) {
-      return "Disabled for texts longer than 2000 chars.";
+    if (from.length > maxDiffLength || to.length > maxDiffLength) {
+      return "Disabled for texts longer than " + maxDiffLength.toString() + " chars.";
     }
 
     // first check on only spaces
-    let diff = diffChars(from, to);
+    let diffTool = diffChars;
+    if (this.table === "config") {
+      diffTool = diffLines;
+    }
+    let diff = diffTool(from, to);
     let onlySpacesAdd = true;
     let onlySpacesDel = true;
     if (from === to) {
@@ -60,6 +67,7 @@ class Change {
 
     let result = "";
     let chars = maxChars;
+    if (chars === undefined) chars = 9999999;
     diff.forEach(function (part) {
       // green for additions, red for deletions
       // grey for common parts

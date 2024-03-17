@@ -74,7 +74,7 @@ block content
                   a(href=layout.htmlroot + '/changes/' + change.id)=change.id
                 td= change.user
                 td= change.property
-                td
+                td(style="white-space:pre-line")
                   |!{change.htmlDiffText()}
 
                 td= layout.moment(change.timestamp).fromNow() 
