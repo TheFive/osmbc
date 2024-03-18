@@ -16,7 +16,6 @@ import util from "../../util/util.js";
 import config from "../../config.js";
 
 const osmbcLink = util.osmbcLink;
-const sleep = util.sleep;
 
 
 const maxTimer = 20000;
@@ -242,9 +241,8 @@ describe("uc.article", function() {
       article.markdownES = "";
       await article.save();
       await driver.get(osmbcLink("/article/" + articleId));
-      osmbcApp.getArticlePage().clickNoTranslationButton();
-      // wait for article to be stored
-      await sleep(500);
+      await osmbcApp.getArticlePage().clickNoTranslationButton();
+      await osmbcApp.getArticlePage().waitForPageReload();
       article = await articleModule.findById(articleId);
       should(article.markdownDE).eql("Text");
       should(article.markdownEN).eql("no translation");
@@ -258,9 +256,7 @@ describe("uc.article", function() {
     });
 
     it("should show multiple links from collection field under the field", async function() {
-      osmbcApp.getArticlePage().fillCollectionInput("Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
-      // wait for link to be set on page
-      await sleep(500);
+      await osmbcApp.getArticlePage().fillCollectionInput("Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
 
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE")).eql({
         text: "https://productforums.google.com/forum/# . . . v-kzE",
@@ -316,10 +312,6 @@ describe("uc.article", function() {
       should(article.commentList[0].user).eql("TheFive");
 
       await articlePage.editComment(0, "And Change It");
-      // wait for article to be stored
-
-      await sleep(300);
-
 
       article = await articleModule.findById(1);
 

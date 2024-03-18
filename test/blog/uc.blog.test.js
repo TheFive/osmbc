@@ -21,7 +21,6 @@ import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 
 import initialiseModules from "../../util/initialise.js";
 import userModule from "../../model/user.js";
-const sleep = _util.sleep;
 
 
 
@@ -212,10 +211,8 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle(previousText);
 
         await blogPage.typeEditForm(previousText, "Changed Text in full review");
-        // should(1).eql(0);
-        sleep(1000);
+    
         await blogPage.clickOnArticle("Digitalcourage suggests");
-        sleep(500);
 
         should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
       });
@@ -274,10 +271,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle(previousText);
 
         await blogPage.typeEditForm(previousText, "Changed Text in Review review");
-        // should(1).eql(0);
-        sleep(1000);
         await blogPage.clickOnArticle("Im Forum wird darüber");
-        sleep(500);
 
         should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in Review review");
       });

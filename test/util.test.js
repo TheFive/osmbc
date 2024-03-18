@@ -25,7 +25,6 @@ turndownService.use(turndownItSup);
 turndownService.use(turndownItImsize);
 const markdown = markdownIt();
 markdown.use(markdownItImsize);
-const sleep = util.sleep;
 
 
 /* eslint-disable mocha/no-synchronous-tests */
@@ -264,7 +263,6 @@ describe("util", function() {
     it("should store a key persistent", async function() {
       should(internalCache.get("key")).eql(undefined);
       internalCache.set("key", "value");
-      await (sleep(1200));
       const differentCache = internalCache = new InternalCache({ file: "testCache.json" });
 
       should(differentCache.get("key")).eql("value");

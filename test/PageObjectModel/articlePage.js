@@ -12,6 +12,7 @@ class ArticlePage extends StandardPage {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrlStartsWith(util.osmbcLink("/article"));
   }
 
@@ -42,8 +43,9 @@ class ArticlePage extends StandardPage {
     ele = await this._driver.findElement(By.css("#editComment"));
     await (ele).sendKeys(await this.getCtrlA());
     await (ele).sendKeys(text);
-    ele = await this._driver.findElement(By.xpath("//button[text()='Update']"));
-    await ele.click();
+    const button = await this._driver.findElement(By.xpath("//button[text()='Update']"));
+    await button.click();
+    await this._driver.wait(until.stalenessOf(ele));
   }
 
 

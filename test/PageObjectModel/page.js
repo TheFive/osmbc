@@ -1,10 +1,26 @@
 import should from "should";
+import assert from 'node:assert/strict'; 
+
 import { Key } from "selenium-webdriver";
 
 export default class Page {
   constructor(driver) {
     this._driver = driver;
+    this._navbarBrand = null;
   }
+
+  async assertPage() {
+    this._navbarBrand = await this._driver.findElement(By.css("a.navbar-brand"));
+  }
+
+  async waitForPageReload() {
+    // check that old marker is set
+    assert(this._navbarBrand);
+    // wait for Old Marker to be obsolete
+    await this._driver.wait(until.stalenessOf(this._navbarBrand));
+  }
+
+
 
   async _checkUrl(url) {
     return (await this._driver.getCurrentUrl() === url);

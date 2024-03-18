@@ -15,7 +15,7 @@ class BlogPage extends StandardPage {
   }
 
   async assertPage() {
-    this._page = await this._driver.findElement(By.css("a.navbar-brand"));
+    await super.assertPage()
     await this._assertUrlStartsWith(osmbcLink("/blog"));
   }
 

@@ -16,7 +16,6 @@ import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 
 import util from "../../util/util.js";
 const osmbcLink = util.osmbcLink;
-const sleep = util.sleep;
 
 
 
@@ -99,8 +98,7 @@ describe("views/user", function() {
 
     await adminPage.assertPage();
     await adminPage.clickCreateUserMenu();
-    await sleep(300);
-
+    await adminPage.waitForPageReload();
     await userPage.assertPage();
     await userPage.fillOSMUser("TestUser");
     await userPage.selectPrimaryLanguage("DE");
@@ -133,7 +131,7 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
-    await sleep(1000);
+    await userPage.waitForPageReload();
 
 
 
