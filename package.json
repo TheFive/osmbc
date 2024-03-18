@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=development node ./bin/www.js",
-    "test": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha",
+    "test": "NODE_ENV=test TEST_HEADLESS=TRUE start=`date +%s`; npx nyc mocha; end=`date +%s`; echo $((end-start))" ,
     "test-github": "NODE_ENV=test TEST_HEADLESS=TRUE mocha -f eslint",
     "staticHtmlServerd": "NODE_ENV=development node ./staticFileServer.js",
     "postinstall": "node ./postinstall.js"
