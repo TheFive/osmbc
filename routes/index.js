@@ -13,6 +13,8 @@ import userModule from "../model/user.js";
 import articleModule from "../model/article.js";
 import moment from "moment";
 import auth from "../routes/auth.js";
+import translator from "../model/translator.js";
+
 const debug = _debug("OSMBC:routes:index");
 
 const router = express.Router();
@@ -96,10 +98,15 @@ function renderAdminHome(req, res, next) {
   let date = new moment();
   date = date.subtract(userIsOldInDays, "Days").toISOString();
 
+  function usageTemp(callback) {
+    translator.deeplUsage().then((result) => { return callback(null, result); }).catch((err) => { return callback(err); });
+  }
+
 
   async.auto({
     historie: logModule.find.bind(logModule, { table: "IN('usert','config')" }, { column: "id", desc: true, limit: 20 }),
-    longAbsent: userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" })
+    longAbsent: userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" }),
+    deeplUsage: usageTemp
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -107,7 +114,8 @@ function renderAdminHome(req, res, next) {
       title: appName,
       layout: res.rendervar.layout,
       longAbsent: result.longAbsent,
-      changes: result.historie
+      changes: result.historie,
+      deeplUsage: result.deeplUsage
     });
   }
   );

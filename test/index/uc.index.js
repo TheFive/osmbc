@@ -65,6 +65,18 @@ describe("uc/index", function() {
     });
     describe("Admin Homepage", function() {
       it("should show it", async function() {
+        nock("https://api.deepl.com",
+          {
+            headers: {
+              accept: "application/json, text/plain, */*",
+              authorization: "DeepL-Auth-Key APIKEY",
+              "user-agent": "axios/1.6.2",
+              "accept-encoding": "gzip, compress, deflate, br"
+            }
+          })
+          .get("/v2/usage")
+          .reply(200, { character_count: 10, character_limit: 100 });
+
         const mainPage = new MainPage(driver);
         await mainPage.assertPage();
         await mainPage.clickLinkToAdminPage();

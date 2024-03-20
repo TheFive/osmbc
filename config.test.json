@@ -81,7 +81,8 @@
   "User-Agent": "Hello i am Kitty",
   "DeeplProConfig": {
     "authKey":"Test Key Fake",
-    "url":"https://api.deepl.com/v2/translate"
+    "url":"https://api.deepl.com/v2/translate",
+    "usageUrl":"https://api.deepl.com/v2/usage"
   },
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
