@@ -11,7 +11,6 @@ import { resolve } from "path";
 import { URL } from "url";
 import testutil from "../../test/testutil.js";
 
-import _util from "../../util/util.js";
 import config from "../../config.js";
 
 
@@ -28,7 +27,7 @@ import userModule from "../../model/user.js";
 
 
 describe("uc/blog", function() {
-  this.timeout(1000 * 30);
+  this.timeout(1000 * 10);
 
   before(async function() {
     process.env.TZ = "Europe/Amsterdam";
@@ -211,9 +210,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle(previousText);
 
         await blogPage.typeEditForm(previousText, "Changed Text in full review");
-    
         await blogPage.clickOnArticle("Digitalcourage suggests");
-
         should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
       });
       it("should show Overview and Edit Article", async function() {

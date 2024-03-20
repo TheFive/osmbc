@@ -19,6 +19,7 @@ import InternalCache from "../util/internalCache.js";
 
 
 import util from "../util/util.js";
+const sleep = util.sleep;
 const turndownService = turndown();
 
 turndownService.use(turndownItSup);
@@ -263,6 +264,8 @@ describe("util", function() {
     it("should store a key persistent", async function() {
       should(internalCache.get("key")).eql(undefined);
       internalCache.set("key", "value");
+      // sleep as internal cache delays store of key for 1000 ms
+      await (sleep(1200));
       const differentCache = internalCache = new InternalCache({ file: "testCache.json" });
 
       should(differentCache.get("key")).eql("value");

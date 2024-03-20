@@ -213,7 +213,7 @@ describe("notification/mailReceiver", function() {
           let result1 = mailChecker.getCall(0).args[0];
           let result2 = mailChecker.getCall(1).args[0];
 
-          if (result1.to !== "UserMailDeUser3General@mail.bc") {
+          if (result1.to !== "UserAllComment@mail.bc") {
             result1 = result2;
             result2 = mailChecker.getCall(0).args[0];
           }

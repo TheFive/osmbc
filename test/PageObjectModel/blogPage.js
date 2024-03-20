@@ -3,6 +3,8 @@
 import { By, until } from "selenium-webdriver";
 import util from "../../util/util.js";
 import StandardPage from "./standardPage.js";
+import should from "should";
+
 
 const osmbcLink = util.osmbcLink;
 
@@ -114,7 +116,10 @@ class BlogPage extends StandardPage {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
 
-    await this._driver.wait(until.elementIsVisible(editForm), 2000);
+    await this._driver.wait(until.elementIsEnabled(editForm), 1000);
+    await this._driver.actions().scroll(0, 0, 0, 200, editForm).perform();
+
+    should(await editForm.isDisplayed()).be.true();
     const ctrlA = await this.getCtrlA();
 
     await (editForm).sendKeys(ctrlA);
