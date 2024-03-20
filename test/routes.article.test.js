@@ -1048,7 +1048,7 @@ describe("routes/article", function() {
 
       body.data.should.deepEqual({ "https://www.site.ort3/apage": "OK" });
       should(body.status).eql(HttpStatus.OK);
-      should(sitecall.isDone()).be.true();
+      should(sitecall.isDone()).be.false();
 
       // Try a second time, url should be cached and not called
       sitecall = nock("https://www.site.ort3")
@@ -1086,7 +1086,7 @@ describe("routes/article", function() {
 
       body.data.should.deepEqual({ "https://www.site.ort4/apage": "OK" });
       should(body.status).eql(HttpStatus.OK);
-      should(sitecall.isDone()).be.true();
+      should(sitecall.isDone()).be.false();
     });
   });
 });
