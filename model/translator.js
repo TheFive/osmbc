@@ -37,6 +37,43 @@ async function deeplTranslate(url, params) {
   }
 }
 
+async function deeplUsage() {
+  const deeplParams = {};
+
+  if (typeof deeplConfig.authKey === "undefined") {
+    return new Error("No Deepl Key registered");
+  }
+  if (typeof deeplConfig.usageUrl === "undefined") {
+    return new Error("No Deepl Url registered configured");
+  }
+  deeplParams.auth_key = deeplConfig.authKey;
+
+  try {
+    const response = await request(deeplConfig.usageUrl, {
+      method: "GET",
+      headers: {
+        Authorization: "DeepL-Auth-Key " + deeplConfig.authKey
+      }
+    });
+    const data = response.data;
+    data.character_limit = data.character_limit ?? "not defined";
+    data.character_count = data.character_count ?? "not defined";
+
+    if (Number.isInteger(response.data.character_limit)) {
+      response.data.character_percent = parseInt(100 * response.data.character_count / response.data.character_limit).toString() + "%";
+    } else {
+      response.data.character_percent = "not a number";
+    }
+
+
+
+    return response.data;
+  } catch (err) {
+    // ignore error and deliver some data
+    return ({ character_count: "request failed", character_limit: "request failed", character_percent: "request failed" });
+  }
+}
+
 
 const deeplConfig = config.getValue("DeeplProConfig", { mustExist: true });
 
@@ -124,7 +161,8 @@ copy.user = "Copy User";
 
 const translator = {
   deeplPro: deeplPro,
-  copy: copy
+  copy: copy,
+  deeplUsage: deeplUsage
 };
 
 export default translator;

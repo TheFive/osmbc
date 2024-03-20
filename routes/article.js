@@ -901,7 +901,7 @@ function urlExist(req, res) {
 
   each(urls,
     (url, callback) => {
-      if (linkCache.get(url) === "OK") {
+      if ((linkCache.get(url) === "OK") || (req.user.access === "guest")) {
         result[url] = "OK";
         return callback();
       }
