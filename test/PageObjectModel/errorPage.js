@@ -18,6 +18,7 @@ class ErrorPage extends Page {
   }
 
   async assertPage() {
+    await super.assertPage();
     should(this.isPage());
   }
 

@@ -1,7 +1,7 @@
 import should from "should";
-import assert from 'node:assert/strict'; 
+import assert from "node:assert/strict";
 
-import { Key } from "selenium-webdriver";
+import { Key, By, until } from "selenium-webdriver";
 
 export default class Page {
   constructor(driver) {

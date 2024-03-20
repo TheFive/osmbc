@@ -15,6 +15,7 @@ export default class SearchAndCollectPage extends StandardPage {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink(["/article/create", "/article/search"]));
   }
 
