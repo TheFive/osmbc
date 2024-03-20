@@ -18,6 +18,7 @@ class LoginPage extends Page {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrl(osmbcLink("/htaccess/login"));
   }
 

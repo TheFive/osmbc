@@ -16,7 +16,6 @@ import util from "../../util/util.js";
 import config from "../../config.js";
 
 const osmbcLink = util.osmbcLink;
-const sleep = util.sleep;
 
 
 const maxTimer = 20000;
@@ -62,7 +61,7 @@ describe("uc.article", function() {
   });
   afterEach(async function() {
     nock.cleanAll();
-    if (this.currentTest.state !== "failed") await driver.quit();
+    await driver.quit();
     testutil.stopServer();
   });
   describe("Scripting Functions", function() {
@@ -92,17 +91,17 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(Key.COMMAND, "v"));
-        await sleep(500);
+
         should(await ap.getMarkdownInput("EN")).eql("Text to be inserted.the origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(Key.COMMAND, "v"));
-        await sleep(500);
+
         should(await ap.getMarkdownInput("EN")).eql("the origin text.Text to be inserted.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 11, 11, Key.chord(Key.COMMAND, "v"));
-        await sleep(500);
+
         should(await ap.getMarkdownInput("EN")).eql("the origin Text to be inserted.text.");
       });
       it("should past normal text with overwrite", async function() {
@@ -114,17 +113,17 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "ex the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 0, 2, Key.chord(Key.COMMAND, "v"));
-        await sleep(500);
+
         should(await ap.getMarkdownInput("EN")).eql("Text with replace the origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text. TheEnd");
         await ap.selectAndPasteTextInMarkdown("EN", 17, 23, Key.chord(Key.COMMAND, "v"));
-        await sleep(500);
+
         should(await ap.getMarkdownInput("EN")).eql("the origin text. Text with replace");
 
         await ap.fillMarkdownInput("EN", "the origin --change here -- text.");
         await ap.selectAndPasteTextInMarkdown("EN", 11, 27, Key.chord(Key.COMMAND, "v"));
-        await sleep(500);
+
         should(await ap.getMarkdownInput("EN")).eql("the origin Text with replace text.");
       });
       it("should should paste link without overwrite", async function() {
@@ -136,17 +135,17 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(Key.COMMAND, "v"));
-        await sleep(100);
+
         should(await ap.getMarkdownInput("EN")).eql("[](https://Link-to-be-insert.ed)the origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(Key.COMMAND, "v"));
-        await sleep(100);
+
         should(await ap.getMarkdownInput("EN")).eql("the origin text.[](https://Link-to-be-insert.ed)");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 4, 4, Key.chord(Key.COMMAND, "v"));
-        await sleep(100);
+
         should(await ap.getMarkdownInput("EN")).eql("the [](https://Link-to-be-insert.ed)origin text.");
       });
       it("should return new value if link is inserted with selection", async function() {
@@ -158,17 +157,17 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 0, 3, Key.chord(Key.COMMAND, "v"));
-        await sleep(100);
+
         should(await ap.getMarkdownInput("EN")).eql("[the](https://Link-to-be-insert.ed) origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 4, 10, Key.chord(Key.COMMAND, "v"));
-        await sleep(100);
+
         should(await ap.getMarkdownInput("EN")).eql("the [origin](https://Link-to-be-insert.ed) text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 11, 16, Key.chord(Key.COMMAND, "v"));
-        await sleep(100);
+
         should(await ap.getMarkdownInput("EN")).eql("the origin [text.](https://Link-to-be-insert.ed)");
       });
     });
@@ -203,7 +202,7 @@ describe("uc.article", function() {
     it("should ignore brackets in a collection (No Markdown)", async function() {
       const osmbcApp = new OsmbcApp(driver);
       await osmbcApp.getArticlePage().fillCollectionInput("Some collection [link](https://www.openstreetmap.org/a_brilliant_map in Markdown");
-      await sleep(300);
+
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.openstreetmap.org/a_brilliant_map")).eql({
         text: "https://www.openstreetmap.org/a_brilliant_map",
         warning: false
@@ -213,7 +212,7 @@ describe("uc.article", function() {
     it("should work on links with queries", async function() {
       const osmbcApp = new OsmbcApp(driver);
       await osmbcApp.getArticlePage().fillCollectionInput("https://www.site.org/didl?query=some");
-      await sleep(300);
+
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.site.org/didl?query=some")).eql({
         text: "https://www.site.org/didl?query=some",
         warning: false
@@ -242,8 +241,7 @@ describe("uc.article", function() {
       article.markdownES = "";
       await article.save();
       await driver.get(osmbcLink("/article/" + articleId));
-      osmbcApp.getArticlePage().clickNoTranslationButton();
-      await sleep(500);
+      await osmbcApp.getArticlePage().clickNoTranslationButton();
       article = await articleModule.findById(articleId);
       should(article.markdownDE).eql("Text");
       should(article.markdownEN).eql("no translation");
@@ -257,8 +255,7 @@ describe("uc.article", function() {
     });
 
     it("should show multiple links from collection field under the field", async function() {
-      osmbcApp.getArticlePage().fillCollectionInput("Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
-      await sleep(500);
+      await osmbcApp.getArticlePage().fillCollectionInput("Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
 
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE")).eql({
         text: "https://productforums.google.com/forum/# . . . v-kzE",
@@ -271,7 +268,7 @@ describe("uc.article", function() {
     });
     it("should show multiple links from collection only separated by carrige return", async function() {
       await osmbcApp.getArticlePage().fillCollectionInput("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
-      await sleep(500);
+
 
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE")).eql({
         text: "https://productforums.google.com/forum/# . . . v-kzE",
@@ -303,7 +300,7 @@ describe("uc.article", function() {
       const articlePage = osmbcApp.getArticlePage();
       await articlePage.fillCommentInput("Add a test comment");
       await articlePage.clickAddComment();
-      await sleep(500);
+
 
 
 
@@ -314,8 +311,6 @@ describe("uc.article", function() {
       should(article.commentList[0].user).eql("TheFive");
 
       await articlePage.editComment(0, "And Change It");
-      await sleep(300);
-
 
       article = await articleModule.findById(1);
 

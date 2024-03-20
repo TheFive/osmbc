@@ -236,7 +236,6 @@ function setUserConfig(req, res, next) {
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
-
   user.setOption(req.body.view, req.body.option, req.body.value);
 
   req.user.save(function finalLanguageSwitcher(err) {

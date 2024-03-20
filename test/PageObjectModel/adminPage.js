@@ -17,6 +17,7 @@ class AdminPage extends Page {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrl(util.osmbcLink("/osmbc/admin"));
   }
 

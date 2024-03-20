@@ -210,15 +210,22 @@ describe("notification/mailReceiver", function() {
           };
 
           should(mailChecker.callCount).eql(2);
+          let result1 = mailChecker.getCall(0).args[0];
+          let result2 = mailChecker.getCall(1).args[0];
+
+          if (result1.to !== "UserAllComment@mail.bc") {
+            result1 = result2;
+            result2 = mailChecker.getCall(0).args[0];
+          }
+
 
           // First Mail Check
-          let result = mailChecker.getCall(0).args[0];
-          should(result).eql(expectedMail);
+
+          should(result1).eql(expectedMail);
 
           // Second Mail Check
-          result = mailChecker.getCall(1).args[0];
           expectedMail.to = "UserMailDeUser3General@mail.bc";
-          should(result).eql(expectedMail);
+          should(result2).eql(expectedMail);
           bddone();
         });
       });

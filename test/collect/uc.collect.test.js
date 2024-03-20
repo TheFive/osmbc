@@ -52,7 +52,7 @@ describe("uc/collect", function() {
     driver = await testutil.getNewDriver("TheFive");
   });
   afterEach(async function() {
-    if (this.currentTest.state !== "failed") await driver.quit();
+    await driver.quit();
     await testutil.stopServer();
   });
 
