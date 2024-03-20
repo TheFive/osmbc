@@ -14,6 +14,8 @@
 
 **Closed issues:**
 
+- Deepl Cost control on Admin Page [\#1030](https://github.com/TheFive/osmbc/issues/1030)
+- Disable link Control Feature for Guests [\#1029](https://github.com/TheFive/osmbc/issues/1029)
 - Add Spinner to Collect Save button, to inform about "in progress" [\#1021](https://github.com/TheFive/osmbc/issues/1021)
 
 ## [4.0.24](https://github.com/TheFive/osmbc/tree/4.0.24) (2024-03-10)
