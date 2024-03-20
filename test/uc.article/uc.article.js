@@ -242,7 +242,6 @@ describe("uc.article", function() {
       await article.save();
       await driver.get(osmbcLink("/article/" + articleId));
       await osmbcApp.getArticlePage().clickNoTranslationButton();
-      await osmbcApp.getArticlePage().waitForPageReload();
       article = await articleModule.findById(articleId);
       should(article.markdownDE).eql("Text");
       should(article.markdownEN).eql("no translation");
