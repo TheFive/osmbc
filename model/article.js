@@ -891,23 +891,30 @@ function findEmptyUserCollectedArticles(lang, user, callback) {
            and article.data->>'blog' != 'Trash' \
            and changes.data->>'property' = 'collection' \
            and article.data->>'categoryEN' != '--unpublished--' \
-           and changes.data->>'user' = '" + user + "' \
+           and changes.data->>'user' = $1 \
            and blog.data->>'status' != 'closed' \
-           and ((blog.data->'exported" + lang + "') is null or blog.data->>'exorted" + lang + "'!='true') \
-           and ((article.data->'markdown" + lang + "') is null or article.data->>'markdown" + lang + "' = '')";
-
-  pgMap.find({ table: "article", create: create }, query, callback);
+           and ((blog.data->concat( 'exported' , $2::character)) is null or blog.data->>concat('exported', $2) != 'true') \
+           and ((article.data->>concat('markdown',$2) ) is null or article.data->>concat('markdown', $2) = '')";
+  const queryObject = {
+    sql: query,
+    params: [user, lang]
+  };
+  console.dir(queryObject);
+  pgMap.find({ table: "article", create: create }, queryObject, callback);
 }
 
 function findUserEditFieldsArticles(blog, user, field, callback) {
   debug("findUserEditFieldsArticles");
   const query = "select distinct on (article.id) article.id as id, article.data as data from article, changes \
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
-           and changes.data->>'blog' = '" + blog + "' \
-           and changes.data->>'user' = '" + user + "' \
-           and changes.data->>'property' like '" + field + "'";
-
-  pgMap.find({ table: "article", create: create }, query, callback);
+           and changes.data->>'blog' = '$1' \
+           and changes.data->>'user' = '$2' \
+           and changes.data->>'property' like '$3'";
+  const queryObject = {
+    sql: query,
+    params: [blog, user, field]
+  };
+  pgMap.find({ table: "article", create: create }, queryObject, callback);
 }
 
 
