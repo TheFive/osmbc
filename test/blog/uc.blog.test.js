@@ -28,7 +28,6 @@ import userModule from "../../model/user.js";
 
 describe("uc/blog", function() {
   this.timeout(1000 * 10);
-  this.retries(2);
 
   before(async function() {
     process.env.TZ = "Europe/Amsterdam";
