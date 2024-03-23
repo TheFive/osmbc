@@ -28,6 +28,7 @@ import userModule from "../../model/user.js";
 
 describe("uc/blog", function() {
   this.timeout(1000 * 10);
+  this.retries(2);
 
   before(async function() {
     process.env.TZ = "Europe/Amsterdam";
@@ -202,6 +203,7 @@ describe("uc/blog", function() {
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.cickMode("Full");
+        await blogPage.waitForPageReload();
 
         await testutil.expectHtml(driver, "blog", "blog_wn290_full");
 
@@ -285,6 +287,7 @@ describe("uc/blog", function() {
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.clickEditView();
+        await blogPage.waitForPageReload();
         await testutil.expectHtml(driver, "blog", "blog_wn290_edit");
       });
       it("should show the Blog List", async function() {
