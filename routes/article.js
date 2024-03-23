@@ -924,7 +924,11 @@ function urlExist(req, res) {
         return callback();
       }
 
-      axios.head(url, { headers: { "User-Agent": userAgent } }).then(function() {
+      axios.head(url, {
+        httpAgent: ssrfFilter(url),
+        httpsAgent: ssrfFilter(url),
+        headers: { "User-Agent": userAgent }
+      }).then(function() {
         linkCache.set(url, "OK");
         result[url] = "OK";
         return callback();
