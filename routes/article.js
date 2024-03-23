@@ -7,6 +7,8 @@ import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
 import { URL } from "url";
 import { renderFile } from "pug";
+import ssrfFilter from "ssrf-req-filter";
+
 
 
 import util from "../util/util.js";
@@ -777,6 +779,8 @@ function getExternalText(req, res, next) {
   const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   if (link) {
     axios.get(link, {
+      httpAgent: ssrfFilter(link),
+      httpsAgent: ssrfFilter(link),
       headers:
       { "User-Agent": userAgent },
       responseType: "arraybuffer",
