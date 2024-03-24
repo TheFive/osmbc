@@ -60,7 +60,7 @@
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
   "cookieMaxAge": 10000,
-  "url":"http://localhost:35043",
+  "url":"https://localhost:35043",
   "SMTP":{},
   "apiKey":"testapikey",
   "apiKey.TBC":"testapikey.TBC",
@@ -87,7 +87,7 @@
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
   "urlWoErrorWhileEdit": [],
-  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":500},
+  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":2000},
   "auth": {
     "openstreetmap": {
       "enabled":true,

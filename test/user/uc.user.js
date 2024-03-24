@@ -39,7 +39,7 @@ describe("views/user", function() {
   });
   afterEach(async function() {
     mockdate.reset();
-    await driver.quit();
+    // await driver.quit();
     mailChecker.restore();
     testutil.stopServer();
   });
@@ -214,9 +214,14 @@ describe("views/user", function() {
 
     should(mailChecker.calledOnce);
 
-    // find valication link in email
+    // find verification link in email
     const mail = mailChecker.getCall(0).args[0].text;
-    const link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
+    let link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
+    // link should be https, but for test cases use http
+
+    should(link).startWith("https://");
+    link = link.replace("https://", "http://");
+    console.dir(link);
 
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();

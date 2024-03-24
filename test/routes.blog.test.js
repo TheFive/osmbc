@@ -21,7 +21,7 @@ import testutil from "../test/testutil.js";
 
 
 
-const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
+const baseLink = "http:///localhost:" + config.getServerPort() + config.htmlRoot();
 
 
 

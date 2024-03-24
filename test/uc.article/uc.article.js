@@ -36,11 +36,11 @@ describe("uc.article", function() {
 
     // nock the test data here, so that nock is known
     // when instancing browser
-    nock("http://www.test.de")
+    nock("https://www.test.de")
       .get("/holla")
       .times(5)
       .reply(200, "OK");
-    nock("http://www.test.de")
+    nock("https://www.test.de")
       .head("/holla")
       .times(5)
       .reply(200, "OK");
@@ -51,10 +51,10 @@ describe("uc.article", function() {
 
     await userModule.createNewUser({ OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", secondLang: "EN", email: "a@b.c" });
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "blog" });
-    await articleModule.createNewArticle({ blog: "blog", collection: "http://www.test.de/holla", markdownDE: "[Text](http://www.test.de/holla) lorem ipsum dolores.", markdownEN: "[Text](http://www.test.de/holla) lerom upsim deloros." });
-    await articleModule.createNewArticle({ blog: "blog", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz." });
-    await articleModule.createNewArticle({ blog: "", collection: "http://www.tst.äd/holla", markdownDE: "[Text](http://www.tst.äd/holla) ist eine gute Referenz." });
-    const article = await articleModule.createNewArticle({ blog: "blog", collection: "Link1: http://www.test.de/holla and other" });
+    await articleModule.createNewArticle({ blog: "blog", collection: "https://www.test.de/holla", markdownDE: "[Text](https://www.test.de/holla) lorem ipsum dolores.", markdownEN: "[Text](https://www.test.de/holla) lerom upsim deloros." });
+    await articleModule.createNewArticle({ blog: "blog", collection: "https://www.tst.äd/holla", markdownDE: "[Text](https://www.tst.äd/holla) ist eine gute Referenz." });
+    await articleModule.createNewArticle({ blog: "", collection: "https://www.tst.äd/holla", markdownDE: "[Text](https://www.tst.äd/holla) ist eine gute Referenz." });
+    const article = await articleModule.createNewArticle({ blog: "blog", collection: "Link1: https://www.test.de/holla and other" });
     articleId = article.id;
     driver = await testutil.getNewDriver("TheFive");
     osmbcApp = new OsmbcApp(driver);
@@ -185,7 +185,7 @@ describe("uc.article", function() {
   describe("Change Collection", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      nock("http://www.test.de").head("/holla").times(99).reply(200, "OK");
+      nock("https://www.test.de").head("/holla").times(99).reply(200, "OK");
       nock("https://www.openstreetmap.org").head("/a_brilliant_map").times(99).reply(200, "result");
       nock("https://www.site.org").head("/didl?query=some").times(99).reply(200, "result");
       nock("https://www.openstreetmap.org").get("/user/Severák/diary/37681").times(99).reply(200, "result");
@@ -194,8 +194,8 @@ describe("uc.article", function() {
     });
     it("should have converted collection correct", async function() {
       const osmbcApp = new OsmbcApp(driver);
-      should(await osmbcApp.getArticlePage().getValueFromLinkArea("http://www.test.de/holla")).eql({
-        text: "http://www.test.de/holla #(Check for Doublette)",
+      should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.test.de/holla")).eql({
+        text: "https://www.test.de/holla #(Check for Doublette)",
         warning: true
       });
     });
@@ -220,13 +220,13 @@ describe("uc.article", function() {
     });
     it("should show multiple links from collection", async function() {
       const osmbcApp = new OsmbcApp(driver);
-      await osmbcApp.getArticlePage().fillCollectionInput("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
+      await osmbcApp.getArticlePage().fillCollectionInput("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: https://www.openstreetmap.org/user/Severák/diary/37681");
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE")).eql({
         text: "https://productforums.google.com/forum/# . . . v-kzE",
         warning: false
       });
-      should(await osmbcApp.getArticlePage().getValueFromLinkArea("http://www.openstreetmap.org/user/Severák/diary/37681")).eql({
-        text: "http://www.openstreetmap.org/user/Severá . . . 37681",
+      should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.openstreetmap.org/user/Severák/diary/37681")).eql({
+        text: "https://www.openstreetmap.org/user/Sever . . . 37681",
         warning: false
       });
     });
@@ -255,27 +255,27 @@ describe("uc.article", function() {
     });
 
     it("should show multiple links from collection field under the field", async function() {
-      await osmbcApp.getArticlePage().fillCollectionInput("Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: http://www.openstreetmap.org/user/Severák/diary/37681");
+      await osmbcApp.getArticlePage().fillCollectionInput("Wumbi told something about https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE \n here: https://www.openstreetmap.org/user/Severák/diary/37681");
 
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE")).eql({
         text: "https://productforums.google.com/forum/# . . . v-kzE",
         warning: false
       });
-      should(await osmbcApp.getArticlePage().getValueFromLinkArea("http://www.openstreetmap.org/user/Severák/diary/37681")).eql({
-        text: "http://www.openstreetmap.org/user/Severá . . . 37681",
+      should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.openstreetmap.org/user/Severák/diary/37681")).eql({
+        text: "https://www.openstreetmap.org/user/Sever . . . 37681",
         warning: false
       });
     });
     it("should show multiple links from collection only separated by carrige return", async function() {
-      await osmbcApp.getArticlePage().fillCollectionInput("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: http://www.openstreetmap.org/user/Severák/diary/37681");
+      await osmbcApp.getArticlePage().fillCollectionInput("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE\nhere: https://www.openstreetmap.org/user/Severák/diary/37681");
 
 
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://productforums.google.com/forum/#!topic/map-maker/Kk6AG2v-kzE")).eql({
         text: "https://productforums.google.com/forum/# . . . v-kzE",
         warning: false
       });
-      should(await osmbcApp.getArticlePage().getValueFromLinkArea("http://www.openstreetmap.org/user/Severák/diary/37681")).eql({
-        text: "http://www.openstreetmap.org/user/Severá . . . 37681",
+      should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.openstreetmap.org/user/Severák/diary/37681")).eql({
+        text: "https://www.openstreetmap.org/user/Sever . . . 37681",
         warning: false
       });
     });

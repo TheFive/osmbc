@@ -123,7 +123,7 @@ class BlogPage extends StandardPage {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
 
-    //await this._driver.wait(until.elementIsEnabled(editForm), 1000);
+    // await this._driver.wait(until.elementIsEnabled(editForm), 1000);
     await this._driver.wait(until.elementIsVisible(editForm), 1000);
     await this._driver.actions().scroll(0, 0, 0, 200, editForm).perform();
 
