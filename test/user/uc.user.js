@@ -23,7 +23,6 @@ const osmbcLink = util.osmbcLink;
 
 describe("views/user", function() {
   this.timeout(300000);
-  this.retries(2);
   let driver;
   let mailChecker;
   beforeEach(async function() {
@@ -221,7 +220,6 @@ describe("views/user", function() {
 
     should(link).startWith("https://");
     link = link.replace("https://", "http://");
-    console.dir(link);
 
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();

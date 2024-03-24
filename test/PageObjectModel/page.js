@@ -67,4 +67,8 @@ export default class Page {
       await field.sendKeys(Key.chord(Key.SHIFT, Key.ARROW_RIGHT));
     }
   }
+
+  async scrollIntoView(object) {
+    await this._driver.executeScript("arguments[0].scrollIntoView({block:'center'});", object);
+  }
 };
