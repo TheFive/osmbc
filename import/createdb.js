@@ -1,23 +1,19 @@
+import async from "async";
+import should from "should";
+import {program} from "commander";
+
+import config from "../config.js";
+import pgMap from "../model/pgMap.js";
+import db from "../model/db.js";
+import blogModule from "../model/blog.js";
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
+import userModule from "../model/user.js";
+import configModule from "../model/config.js";
+import session from "../model/session.js";
 
 
-const async   = require("async");
-const should  = require("should");
-const program = require("commander");
-
-
-
-const config        = require("../config.js");
-const pgMap         = require("../model/pgMap.js");
-const db            = require("../model/db.js");
-const blogModule    = require("../model/blog.js");
-const articleModule = require("../model/article.js");
-const logModule     = require("../model/logModule.js");
-const userModule    = require("../model/user.js");
-const configModule  = require("../model/config.js");
-const session       = require("../model/session.js");
-
-
-const jsdiff = require("diff");
+import * as jsdiff from 'diff';
 
 function coloredDiffLog(one, other) {
   should(typeof (one) === "string");
