@@ -91,7 +91,7 @@ describe("util", function() {
       should((util.isURL() instanceof RegExp)).is.True();
     });
     it("should return false for markdown", function() {
-      should((util.isURL("On October 8th, 2015 [Locus](http://www.locusmap.eu/) version [3.13.1](http://www.locusmap.eu/news-version-3-13.0/) was released."))).is.False();
+      should((util.isURL("On October 8th, 2015 [Locus](https://www.locusmap.eu/) version [3.13.1](https://www.locusmap.eu/news-version-3-13.0/) was released."))).is.False();
     });
     it("should return false for complex google url", function() {
       should((util.isURL("https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c"))).is.True();
@@ -120,10 +120,10 @@ describe("util", function() {
       }
     });
     it("should return several url for a 'markdown'", function() {
-      should(util.getAllURL('* Wer schon immer mal einen ["Fehlerbereich"]( https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c) besuchen wollte, kann sich von Google Maps dahin leiten lassen. Wer sich von Google Maps zum [Brecon Beacons National Park](http://www.openstreetmap.org/#map=10/51.8031/-3.5170) in Wales hat führen lassen, ist an einem Ort südlich des Londoner Hyde Parks gelandet, wie die BBC [berichtet](http://www.bbc.com/news/uk-wales-mid-wales-34410736).'))
+      should(util.getAllURL('* Wer schon immer mal einen ["Fehlerbereich"]( https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c) besuchen wollte, kann sich von Google Maps dahin leiten lassen. Wer sich von Google Maps zum [Brecon Beacons National Park](https://www.openstreetmap.org/#map=10/51.8031/-3.5170) in Wales hat führen lassen, ist an einem Ort südlich des Londoner Hyde Parks gelandet, wie die BBC [berichtet](https://www.bbc.com/news/uk-wales-mid-wales-34410736).'))
         .eql(["https://www.google.de/maps/place/Fehlerbereich,+01067+Dresden/@51.0515917,13.7388822,19z/data=!3m1!4b1!4m2!3m1!1s0x4709cf67e58aaa97:0xf782605d9ac23f2c",
-          "http://www.openstreetmap.org/#map=10/51.8031/-3.5170",
-          "http://www.bbc.com/news/uk-wales-mid-wales-34410736"]);
+          "https://www.openstreetmap.org/#map=10/51.8031/-3.5170",
+          "https://www.bbc.com/news/uk-wales-mid-wales-34410736"]);
     });
   });
   describe("linkify", function() {
@@ -148,24 +148,24 @@ describe("util", function() {
       should(mdRenderInline(null)).eql("");
     });
     it("should convert a simple link", function() {
-      const r = mdRenderInline("http://www.google.de/hallo");
-      should(r).eql('<p><a href=\"http://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">http://www.google.de/hallo</a></p>\n');
+      const r = mdRenderInline("https://www.google.de/hallo");
+      should(r).eql('<p><a href=\"https://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">https://www.google.de/hallo</a></p>\n');
     });
     it("should convert a simple link at the end", function() {
-      const r = mdRenderInline("*italic* http://www.google.de/hallo");
-      should(r).eql("<p><em>italic</em> <a href=\"http://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">http://www.google.de/hallo</a></p>\n");
+      const r = mdRenderInline("*italic* https://www.google.de/hallo");
+      should(r).eql("<p><em>italic</em> <a href=\"https://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">https://www.google.de/hallo</a></p>\n");
     });
     it("should convert a simple link at the start and ignore a MD LInk", function() {
-      const r = mdRenderInline("http://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
-      should(r).eql('<p><a href=\"http://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">http://www.google.de/hallo</a> is a synonym for <a href=\"https://www.google.de/hallo2\" target=\"_blank\" rel=\"noopener\">this</a></p>\n');
+      const r = mdRenderInline("https://www.google.de/hallo is a synonym for [this](https://www.google.de/hallo2)");
+      should(r).eql('<p><a href=\"https://www.google.de/hallo\" target=\"_blank\" rel=\"noopener\">https://www.google.de/hallo</a> is a synonym for <a href=\"https://www.google.de/hallo2\" target=\"_blank\" rel=\"noopener\">this</a></p>\n');
     });
     it("should render a shorted link", function() {
       const r = mdRenderInline("this is a link #1928 to an article", {});
-      should(r).eql("<p>this is a link <a href=\"http://localhost:35043/article/1928\" target=\"_blank\" rel=\"noopener\">#1928</a> to an article</p>\n");
+      should(r).eql("<p>this is a link <a href=\"https://localhost:35043/article/1928\" target=\"_blank\" rel=\"noopener\">#1928</a> to an article</p>\n");
     });
     it("should render user names", function() {
       const r = mdRenderInline("@thefive is telling @user1 about @user2", { TheFive: "full", user1: "denied", user2: "guest" });
-      should(r).eql('<p><a href="http://localhost:35043/usert/thefive" class="bg-success" style="color:black" target="_blank" rel="noopener">@thefive</a> is telling <a href="http://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="http://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
+      should(r).eql('<p><a href="https://localhost:35043/usert/thefive" class="bg-success" style="color:black" target="_blank" rel="noopener">@thefive</a> is telling <a href="https://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="https://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
     it("should not render mentions as user name if not in accessMap", function() {
       const r = mdRenderInline("@EN has to do something here, what can be relevant for @DE", { TheFive: "full", user1: "denied", user2: "guest" });
@@ -173,11 +173,11 @@ describe("util", function() {
     });
     it("should not conflict with if username / language is contained in other username", function() {
       const r = mdRenderInline("@ende is telling @user1 about @user2", { ende: "full", user1: "denied", user2: "guest", en: "full" });
-      should(r).eql('<p><a href="http://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling <a href="http://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="http://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
+      should(r).eql('<p><a href="https://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling <a href="https://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="https://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
     it("should do colour mentions after a linebreak", function() {
       const r = mdRenderInline("@ende is telling \n@user1 about @user2\n", { ende: "full", user1: "denied", user2: "guest", en: "full" });
-      should(r).eql('<p><a href="http://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling\n<a href="http://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="http://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
+      should(r).eql('<p><a href="https://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling\n<a href="https://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="https://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
   });
   describe("turndown-it", function() {

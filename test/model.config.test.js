@@ -25,7 +25,7 @@ describe("model/config", function() {
   it("should read initialised values", function (bddone) {
     const c = configModule.getConfig("calendarflags");
     should.exist(c);
-    should(c.brasil).eql("http://blog.openstreetmap.de/wp-uploads/2016/03/br.svg");
+    should(c.brasil).eql("https://blog.openstreetmap.de/wp-uploads/2016/03/br.svg");
     bddone();
   });
   it("should have stored initialised value", async function () {

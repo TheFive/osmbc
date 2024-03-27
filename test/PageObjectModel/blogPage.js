@@ -49,7 +49,7 @@ class BlogPage extends StandardPage {
   async #clickACheckbox(checkboxName) {
     await this.assertPage();
     const checkbox = (await this._driver.findElement(By.css(checkboxName)));
-    await this._driver.actions().scroll(0, 0, 0, 50, checkbox).perform();
+    await this.scrollIntoView(checkbox);
     await checkbox.click();
   }
 
@@ -101,7 +101,7 @@ class BlogPage extends StandardPage {
   async clickOnArticle(articleText) {
     await this.assertPage();
     const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, articleElement).perform();
+    await this.scrollIntoView(articleElement);
     await (articleElement).click();
   }
 
@@ -123,9 +123,10 @@ class BlogPage extends StandardPage {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
 
-    //await this._driver.wait(until.elementIsEnabled(editForm), 1000);
+
+    await this._driver.wait(until.elementIsEnabled(editForm), 1000);
+    await this.scrollIntoView(editForm);
     await this._driver.wait(until.elementIsVisible(editForm), 1000);
-    await this._driver.actions().scroll(0, 0, 0, 200, editForm).perform();
 
     should(await editForm.isDisplayed()).be.true();
     const ctrlA = await this.getCtrlA();
@@ -152,21 +153,21 @@ class BlogPage extends StandardPage {
   async cickMode(mode) {
     await this.assertPage();
     const fullTab = await this._driver.findElement(By.xpath(`//a[(text()="${mode}") and contains(@class, 'nav-link')]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, fullTab).perform();
+    await this.scrollIntoView(fullTab);
     await (fullTab).click();
   }
 
   async clickStatisticView() {
     await this.assertPage();
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, statisticView).perform();
+    await this.scrollIntoView(statisticView);
     await statisticView.click();
   }
 
   async clickEditView() {
     await this.assertPage();
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, editView).perform();
+    await this.scrollIntoView(editView);
     await editView.click();
   }
 }
