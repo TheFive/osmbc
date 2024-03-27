@@ -1,8 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [2.0.27](https://github.com/TheFive/osmbc/tree/2.0.27) (2024-03-27)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...2.0.27)
 
 **Implemented enhancements:**
 
@@ -14,6 +14,9 @@
 
 **Closed issues:**
 
+- Fix Security Issue [\#1034](https://github.com/TheFive/osmbc/issues/1034)
+- Fix Security Issue [\#1033](https://github.com/TheFive/osmbc/issues/1033)
+- Fix Security Issue [\#1032](https://github.com/TheFive/osmbc/issues/1032)
 - Deepl Cost control on Admin Page [\#1030](https://github.com/TheFive/osmbc/issues/1030)
 - Disable link Control Feature for Guests [\#1029](https://github.com/TheFive/osmbc/issues/1029)
 - Add Spinner to Collect Save button, to inform about "in progress" [\#1021](https://github.com/TheFive/osmbc/issues/1021)
