@@ -18,6 +18,9 @@ class ErrorPage extends Page {
   }
 
   async assertPage() {
+    // error page is not storing navbar brand
+    // as id does not contain one.
+    // await super.assertPage();
     should(this.isPage());
   }
 

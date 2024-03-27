@@ -15,6 +15,7 @@ export default class UserListPage extends Page {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/usert/list"));
   }
 

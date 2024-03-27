@@ -19,6 +19,7 @@ class MainPage extends StandardPage {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrl([osmbcLink("/index"), osmbcLink("/")]);
   }
 

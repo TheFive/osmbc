@@ -19,6 +19,7 @@ class LoginChooserPage extends Page {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrl(osmbcLink("/login"));
   }
 

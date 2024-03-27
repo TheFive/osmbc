@@ -514,7 +514,7 @@ async function getNewDriver(username) {
   const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
-  await driver.manage().setTimeouts({ implicit: 5000 });
+  await driver.manage().setTimeouts({ implicit: 700, script: 700 });
   try {
     await driver.get(osmbcLink("/osmbc"));
     await loginChooserPage.clickHtAccessLogin();

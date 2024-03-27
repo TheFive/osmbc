@@ -14,12 +14,11 @@ import AdminPage from "../../test/PageObjectModel/adminPage.js";
 
 import mockdate from "mockdate";
 
-import { By } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 
 
 import util from "../../util/util.js";
 const osmbcLink = util.osmbcLink;
-const sleep = util.sleep;
 
 
 describe("uc/index", function() {
@@ -54,7 +53,7 @@ describe("uc/index", function() {
       driver = await testutil.getNewDriver("TheFive");
     });
     afterEach(async function() {
-      if (this.currentTest.state !== "failed") await driver.quit();
+      await driver.quit();
     });
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
@@ -107,13 +106,14 @@ describe("uc/index", function() {
         await driver.get(osmbcLink("/osmbc"));
 
         await (await driver.findElement(By.id("language"))).click();
-        await (await driver.findElement(By.id("lang_EN"))).click();
-        await sleep(1000);
+        const langEnMenu = await driver.findElement(By.id("lang_EN"));
+        await (langEnMenu).click();
+        // wait for manue to get stale
+        await driver.wait(until.stalenessOf(langEnMenu), 2000);
 
         await (await driver.findElement(By.id("language"))).click();
 
         await (await driver.findElement(By.id("lang_DE"))).click();
-        await sleep(1000);
 
         await testutil.expectHtml(driver, "index", "switchedToEnglishAndGerman");
       });
@@ -121,8 +121,10 @@ describe("uc/index", function() {
         await driver.get(osmbcLink("/osmbc"));
 
         await (await driver.findElement(By.id("language"))).click();
-        await (await driver.findElement(By.id("lang_EN"))).click();
-        await sleep(1000);
+        const langEnMenu = await driver.findElement(By.id("lang_EN"));
+        await (langEnMenu).click();
+        // wait for manue to get stale
+        await driver.wait(until.stalenessOf(langEnMenu), 2000);
 
         await (await driver.findElement(By.id("language"))).click();
         try {
@@ -131,22 +133,26 @@ describe("uc/index", function() {
           should(err.message).containEql('no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"*[id=\"lang_EN\"]\"}');
         }
 
-        await sleep(1000);
 
         await testutil.expectHtml(driver, "index", "switchedToEnglishAndEnglish");
       });
       it("should store a language set", async function() {
         await driver.get(osmbcLink("/osmbc"));
         await (await driver.findElement(By.id("language"))).click();
-        await (await driver.findElement(By.id("lang_EN"))).click();
-        await sleep(1000);
+        const langEnMenu = await driver.findElement(By.id("lang_EN"));
+        await (langEnMenu).click();
+        // wait for manue to get stale
+        await driver.wait(until.stalenessOf(langEnMenu), 2000);
 
 
         // test has to be optimised, as two languages are now longer supported in index
         await (await driver.findElement(By.id("language2"))).click();
         await (await driver.findElement(By.id("newSetToBeSaved"))).sendKeys("A Name To Save");
-        await (await driver.findElement(By.id("saveNewSet"))).click();
-        await sleep(300);
+        const saveNewSetButton = await driver.findElement(By.id("saveNewSet"));
+        await (saveNewSetButton).click();
+        // wait for manue to get stale
+        await driver.wait(until.stalenessOf(saveNewSetButton), 2000);
+
 
         const user = await userModule.findOne({ OSMUser: "TheFive" });
         should(user.languageSet).eql("A Name To Save");
@@ -160,7 +166,7 @@ describe("uc/index", function() {
     let driver;
 
     afterEach(async function() {
-      if (this.currentTest.state !== "failed") await driver.quit();
+      await driver.quit();
     });
     it("should throw an error if user not exits", async function() {
       driver = await testutil.getNewDriver("TheFiveNotExist");

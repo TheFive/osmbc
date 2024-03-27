@@ -1,14 +1,14 @@
 {
 	"https://www.mediawiki.org" :
        {"/wiki/Maps/Conversation_about_interactive_map_use":"wikimedia_mapsconversation.html"},
-    "http://mapoftheweek.blogspot.ch":
+    "https://mapoftheweek.blogspot.ch":
        {"/2016/04/mapping-playgrounds.html":"MapOfTheWeekBlogspot.html"},
-    "http://forum.openstreetmap.org":
+    "https://forum.openstreetmap.org":
       {"/viewtopic.php?id=54487":"OSMForumBridgesOffWay.html",
         "/viewtopic.php?id=53173":"InternationaleAdminGrenzen.html"},
     "https://twitter.com":
       {"/WeeklyOSM/status/726026930479370241":"WeeklyNewOnTwitter.html"},
-    "http://www.openstreetmap.org":
+    "https://www.openstreetmap.org":
       {"/user/phuonglinh9/diary/38568":"OSMBlogpage.html"},
   "https://www.gesetze-im-internet.de":
   {"/satdsig/BJNR259000007.html":"GefährdungSicherheit.html"}

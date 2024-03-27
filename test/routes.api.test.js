@@ -187,7 +187,7 @@ describe("routes/api", function() {
         baseLink + "/api/collect/334433?collection=simple%20text",
         { validateStatus: (status) => true });
 
-      should(body.data).eql("http://localhost:35043/article/1");
+      should(body.data).eql("https://localhost:35043/article/1");
       should(body.status).eql(200);
       articleModule.find({}, function(err, articles) {
         should.not.exist(err);

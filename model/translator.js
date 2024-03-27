@@ -119,11 +119,9 @@ function translateDeeplPro(options, callback) {
       turndownService.use(turndownItEmoji);
       turndownService.use(turndownItImsize);
       let mdresult = turndownService.turndown(htmlresult);
-      console.log(mdresult);
       mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLangOsmbc.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLangOsmbc.toLowerCase());
       mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLangOsmbc.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLangOsmbc.toUpperCase());
       mdresult = mdresult.replaceAll(":" + fromLangOsmbc.toUpperCase() + "-t:", ":" + toLangOsmbc.toUpperCase() + "-t:");
-      console.log(mdresult);
       return callback(null, mdresult);
     })
     .catch(err => { return callback(err); });
