@@ -67,12 +67,12 @@ describe("model/pgMap", function() {
             to.save(cb);
           },
           function(cb) {
-            const to = new TestTable({ id: 0, name: "Hallo", value: 3 });
+            const to = new TestTable({ id: 0, name: "Hallo", value: "3" });
             to.save = pgMap.save;
             to.save(cb);
           },
           function(cb) {
-            const to = new TestTable({ id: 0, name: "Hallo", value: 4 });
+            const to = new TestTable({ id: 0, name: "Hallo", value: "4" });
             to.save = pgMap.save;
             to.save(cb);
           }
@@ -92,7 +92,7 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, { name: "Hallo", value: "!=3" }, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(1);
-          should(result[0].value).equal(4);
+          should(result[0].value).equal("4");
           bddone();
         });
       });
@@ -100,7 +100,7 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, { name: "Hallo", value: "<4" }, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(1);
-          should(result[0].value).equal(3);
+          should(result[0].value).equal("3");
           bddone();
         });
       });
@@ -108,7 +108,7 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, { name: "Hallo", value: ">3" }, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(1);
-          should(result[0].value).equal(4);
+          should(result[0].value).equal("4");
           bddone();
         });
       });
@@ -116,8 +116,9 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, { name: "Hallo", value: "<=4" }, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
-          should(result).eql([new TestTable({ id: "3", name: "Hallo", value: 3, version: 1 }),
-            new TestTable({ id: "4", name: "Hallo", value: 4, version: 1 })]);
+          should(result).eql([
+            new TestTable({ id: "3", name: "Hallo", value: "3", version: 1 }),
+            new TestTable({ id: "4", name: "Hallo", value: "4", version: 1 })]);
           bddone();
         });
       });
@@ -125,17 +126,18 @@ describe("model/pgMap", function() {
         pgMap.find(testModule, { name: "Hallo", value: ">=3" }, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
-          should(result).eql([new TestTable({ id: "3", name: "Hallo", value: 3, version: 1 }),
-            new TestTable({ id: "4", name: "Hallo", value: 4, version: 1 })]);
+          should(result).eql([
+            new TestTable({ id: "3", name: "Hallo", value: "3", version: 1 }),
+            new TestTable({ id: "4", name: "Hallo", value: "4", version: 1 })]);
           bddone();
         });
       });
       it("should find on element with IN", function(bddone) {
-        pgMap.find(testModule, { name: "Hallo", value: "IN('3','4')" }, function(err, result) {
+        pgMap.find(testModule, { name: "Hallo", value: "IN(3,4)" }, function(err, result) {
           should.not.exist(err);
           should(result.length).equal(2);
-          should(result[0].value).equal(3);
-          should(result[1].value).equal(4);
+          should(result[0].value).equal("3");
+          should(result[1].value).equal("4");
           bddone();
         });
       });

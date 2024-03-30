@@ -58,7 +58,7 @@ function renderHistoryLog(req, res, next) {
   if (table) {
     search.table = table;
   } else {
-    search.table = "IN ('usert','article','blog')";
+    search.table = "IN(usert,article,blog)";
   }
 
   if (blog) search.blog = blog;

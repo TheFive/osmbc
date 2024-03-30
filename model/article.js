@@ -34,7 +34,7 @@ const url = config.url();
 
 class Article {
   constructor(proto) {
-    debug("Article");
+    debug("Article constructor");
     this.id = 0;
     for (const k in proto) {
       this[k] = proto[k];
@@ -899,7 +899,6 @@ function findEmptyUserCollectedArticles(lang, user, callback) {
     sql: query,
     params: [user, lang]
   };
-  console.dir(queryObject);
   pgMap.find({ table: "article", create: create }, queryObject, callback);
 }
 
