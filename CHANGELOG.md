@@ -1,8 +1,17 @@
 # Changelog
 
-## [2.0.27](https://github.com/TheFive/osmbc/tree/2.0.27) (2024-03-27)
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...2.0.27)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.27...HEAD)
+
+**Merged pull requests:**
+
+- update libraries of importdb script [\#1036](https://github.com/TheFive/osmbc/pull/1036) ([call-me-matt](https://github.com/call-me-matt))
+- Bugfix/title image dimensions [\#1035](https://github.com/TheFive/osmbc/pull/1035) ([call-me-matt](https://github.com/call-me-matt))
+
+## [4.0.27](https://github.com/TheFive/osmbc/tree/4.0.27) (2024-03-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...4.0.27)
 
 **Implemented enhancements:**
 
@@ -66,10 +75,6 @@
 ## [4.0.19](https://github.com/TheFive/osmbc/tree/4.0.19) (2023-12-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.18...4.0.19)
-
-**Merged pull requests:**
-
-- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.0.18](https://github.com/TheFive/osmbc/tree/4.0.18) (2023-09-24)
 
@@ -174,7 +179,6 @@
 - Better titles for collected toots [\#981](https://github.com/TheFive/osmbc/issues/981)
 - Links to twitter show a red \#404 [\#946](https://github.com/TheFive/osmbc/issues/946)
 - Reveiw OSMCAL generation for faster generation. [\#945](https://github.com/TheFive/osmbc/issues/945)
-- Update createdb.js [\#706](https://github.com/TheFive/osmbc/issues/706)
 
 **Closed issues:**
 
@@ -185,6 +189,7 @@
 
 **Merged pull requests:**
 
+- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
 - repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
 - do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
 - Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
