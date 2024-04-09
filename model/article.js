@@ -906,9 +906,9 @@ function findUserEditFieldsArticles(blog, user, field, callback) {
   debug("findUserEditFieldsArticles");
   const query = "select distinct on (article.id) article.id as id, article.data as data from article, changes \
            where (article.id)::text = changes.data->>'oid' and changes.data->>'table'='article' \
-           and changes.data->>'blog' = '$1' \
-           and changes.data->>'user' = '$2' \
-           and changes.data->>'property' like '$3'";
+           and changes.data->>'blog' = $1 \
+           and changes.data->>'user' = $2 \
+           and changes.data->>'property' like $3";
   const queryObject = {
     sql: query,
     params: [blog, user, field]
