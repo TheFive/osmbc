@@ -280,6 +280,9 @@ describe("uc/blog", function() {
         await blogPage.clickStatisticView();
 
         await testutil.expectHtml(driver, "blog", "blog_wn290_stat");
+        const statisticViewPage = osmbcApp.getStatisticPage();
+        await statisticViewPage.clickStatisticItem("WN290", "Katja Ulbert", "collection");
+        await testutil.expectHtml(driver, "blog", "blog_wn290_stat_detail");
       });
       it("should show edit View", async function() {
         const osmbcApp = new OsmbcApp(driver);
