@@ -266,7 +266,7 @@ function renderBlogPreview(req, res, next) {
       if (err) return next(err);
       if (req.query.download === "true") {
         if (asMarkdown) {
-          res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`).end(overallResult);
+          res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.md`).end(overallResult);
         } else {
           res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`).end(overallResult);
         }
