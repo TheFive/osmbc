@@ -13,6 +13,7 @@ import util from "../util/util.js";
 import moment from "moment";
 import yaml from "js-yaml";
 import configModule from "../model/config.js";
+import archiver from "archiver";
 
 
 import blogModule from "../model/blog.js";
@@ -237,19 +238,11 @@ function renderBlogPreview(req, res, next) {
   let overallResult = "";
   if (multiExport) req.query.download = "true";
 
-
-
-
-
-
-
-  async.eachSeries(lang,
-    function(exportLang, callback) {
-      debug("converter function");
+  function mergeHtmlResultFunction() {
+    return function _mergeHtmlResultFunction(exportLang, callback) {
       blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
         if (err) return callback(err);
-        let renderer = new blogRenderer.HtmlRenderer(blog, { target: "production" });
-        if (asMarkdown) renderer = new blogRenderer.MarkdownRenderer(blog);
+        const renderer = new blogRenderer.HtmlRenderer(blog, { target: "production" });
         const result = renderer.renderBlog(exportLang, data);
         if (multiExport) {
           overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
@@ -258,17 +251,53 @@ function renderBlogPreview(req, res, next) {
         }
         return callback(null);
       });
-    },
+    };
+  }
+  function mergeMdResultFunction() {
+    const archiv = archiver("zip", { zlib: { level: 9 } });
+    if (multiExport) { overallResult = archiv; }
+    return function _mergeMdResultFunction(exportLang, callback) {
+      blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
+        if (err) return callback(err);
+        const renderer = new blogRenderer.MarkdownRenderer(blog);
+        const result = renderer.renderBlog(exportLang, data);
+        if (multiExport) {
+          overallResult.append(result, { name: `${blog.name} ${moment().locale(language.momentLocale(lang)).format()}.${exportLang}.md` });
+        } else {
+          overallResult = result;
+        }
+        return callback(null);
+      });
+    };
+  }
+
+
+
+
+
+
+
+
+  async.eachSeries(lang, (asMarkdown) ? mergeMdResultFunction() : mergeHtmlResultFunction(),
     function(err) {
       debug("renderBlogPreview->final function");
-      if (multiExport) overallResult = overallResult + "[:]";
+      if (asMarkdown && multiExport) overallResult.finalize();
+      if (!asMarkdown && multiExport) overallResult = overallResult + "[:]";
       const languageFlags = configModule.getConfig("languageflags");
       if (err) return next(err);
       if (req.query.download === "true") {
+        let fileName = `${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`;
         if (asMarkdown) {
-          res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.md`).end(overallResult);
+          fileName = `${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.md`;
+          if (multiExport) {
+            fileName = `${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.zip`;
+          }
+        }
+        if (typeof overallResult === "string") {
+          res.attachment(fileName).end(overallResult);
         } else {
-          res.attachment(`${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`).end(overallResult);
+          res.attachment(fileName);
+          overallResult.pipe(res);
         }
       } else {
         assert(res.rendervar);
