@@ -1,8 +1,12 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.0.28](https://github.com/TheFive/osmbc/tree/4.0.28) (2024-04-09)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.27...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.27...4.0.28)
+
+**Closed issues:**
+
+- error: bind message supplies 3 parameters, but prepared statement "" requires 0 [\#1040](https://github.com/TheFive/osmbc/issues/1040)
 
 **Merged pull requests:**
 
@@ -75,6 +79,10 @@
 ## [4.0.19](https://github.com/TheFive/osmbc/tree/4.0.19) (2023-12-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.18...4.0.19)
+
+**Merged pull requests:**
+
+- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.0.18](https://github.com/TheFive/osmbc/tree/4.0.18) (2023-09-24)
 
@@ -189,7 +197,6 @@
 
 **Merged pull requests:**
 
-- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
 - repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
 - do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
 - Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
