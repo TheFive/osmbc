@@ -510,6 +510,7 @@ async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
   if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless");
   chromeOptions.addArguments("window-size=1920,1080");
+  chromeOptions.addArguments("disable-search-engine-choice-screen");
 
   const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);

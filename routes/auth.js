@@ -54,6 +54,7 @@ function initialise(app) {
   }
 
   if (authConfig.openstreetmap_oauth20.enabled) {
+    config.logger.info("Installing OAUTH 2.0 callbacks");
     app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2",
       {
         successReturnToOrRedirect: htmlRoot + "/",
@@ -119,6 +120,7 @@ function initialise(app) {
     passport.use(strategy);
   }
   if (authConfig.openstreetmap_oauth20.enabled) {
+    config.logger.info("Installing OAUTH 2.0 passport strategy");
     const oauth2 = authConfig.openstreetmap_oauth20;
     const client =  new OAuth2Strategy({
       authorizationURL: oauth2.authorizationURL,
