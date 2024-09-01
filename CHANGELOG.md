@@ -199,7 +199,6 @@
 
 - repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
 - do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
-- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.0.7](https://github.com/TheFive/osmbc/tree/4.0.7) (2022-12-04)
 
@@ -265,6 +264,7 @@
 
 **Merged pull requests:**
 
+- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
 - remove typo in KO header [\#951](https://github.com/TheFive/osmbc/pull/951) ([call-me-matt](https://github.com/call-me-matt))
 
 
