@@ -40,21 +40,6 @@ function initialise(app) {
   app.get(htmlRoot + "/login", renderLogin);
   app.get(htmlRoot + "/login_failure", renderLoginFailure);
 
-  if (authConfig.openstreetmap.enabled) {
-    app.get(htmlRoot + "/auth/openstreetmap", passport.authenticate("openstreetmap",
-      {
-        successReturnToOrRedirect: htmlRoot + "/osmbc.html",
-        failureRedirect: htmlRoot + "/login",
-        keepSessionInfo: true
-      }));
-    app.get(htmlRoot + "/auth/openstreetmap/callback",
-      passport.authenticate("openstreetmap",
-        {
-          successReturnToOrRedirect: htmlRoot + "/osmbc.html",
-          failureRedirect: htmlRoot + "/login",
-          keepSessionInfo: true
-        }));
-  }
   if (authConfig.htaccess.enabled) {
     function renderHtAccessLogin(req, res) {
       res.render("login-wpwd", { layout: layoutRouter.layoutConst });
@@ -69,6 +54,7 @@ function initialise(app) {
   }
 
   if (authConfig.openstreetmap_oauth20.enabled) {
+    config.logger.info("Installing OAUTH 2.0 callbacks");
     app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2",
       {
         successReturnToOrRedirect: htmlRoot + "/",
@@ -134,6 +120,7 @@ function initialise(app) {
     passport.use(strategy);
   }
   if (authConfig.openstreetmap_oauth20.enabled) {
+    config.logger.info("Installing OAUTH 2.0 passport strategy");
     const oauth2 = authConfig.openstreetmap_oauth20;
     const client =  new OAuth2Strategy({
       authorizationURL: oauth2.authorizationURL,

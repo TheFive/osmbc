@@ -7,9 +7,6 @@ block content
   
      
   div.btn-group-vertical
-    if layout.auth.openstreetmap.enabled
-      div
-        a.btn.btn-primary#login(href=htmlroot+"/auth/openstreetmap")="Login with OpenStreetMap"
     if layout.auth.openstreetmap_oauth20.enabled
       div
         a.btn.btn-primary#login(href=htmlroot+"/auth/openstreetmap_oauth20")="Login with OpenStreetMap OAuth 2.0"
