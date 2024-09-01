@@ -89,12 +89,6 @@
   "urlWoErrorWhileEdit": [],
   "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":2000},
   "auth": {
-    "openstreetmap": {
-      "enabled":true,
-      "OPENSTREETMAP_CONSUMER_KEY" : "######",
-      "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
-      "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback"
-    },
     "htaccess": {
       "enabled": true
     },
