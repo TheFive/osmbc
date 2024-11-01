@@ -24,7 +24,7 @@ function buildLicenseObject(object, cb) {
     should.not.exist(err);
     for (const k in json) {
       if (k === "osmbc@0.0.0") continue;
-      if (k === "caniuse-lite@1.0.30001507") {
+      if ( (k === "caniuse-lite@1.0.30001507") || (k === "caniuse-lite@1.0.30001676")) {
         // currently (jul 23) caniuse is only used in DEV for ladjs, which should be allowed to use
         json[k] = "only-used-in-dev-branch-ladjs";
         continue;
