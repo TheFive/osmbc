@@ -1,5 +1,13 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...HEAD)
+
+**Closed issues:**
+
+- Cannot rad properties of null \(reading '0'\) [\#1043](https://github.com/TheFive/osmbc/issues/1043)
+
 ## [4.1.02](https://github.com/TheFive/osmbc/tree/4.1.02) (2024-09-01)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.01...4.1.02)
