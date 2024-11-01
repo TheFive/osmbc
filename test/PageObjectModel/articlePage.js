@@ -75,7 +75,9 @@ class ArticlePage extends StandardPage {
 
   async clickSave() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("button#saveButton"))).click();
+    const saveButton = await this._driver.findElement(By.css("button#saveButton"));
+    await (saveButton).click();
+    await this._driver.wait(until.stalenessOf(saveButton), 2000);
   }
 
   async clickNoTranslationButton() {
