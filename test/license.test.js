@@ -1,5 +1,5 @@
 
-import checker from "license-checker-rseidelsohn";
+import {init} from "license-checker-rseidelsohn";
 import should from "should";
 import path from "path";
 import config from "../config.js";
@@ -115,7 +115,7 @@ describe("license-check", function() {
   describe("license-check-Production", function() {
     const usedLicenses = {};
     before(function(bddone) {
-      checker.init({
+      init({
         production: true,
         start: path.join(config.getDirName())
       }, buildLicenseObject(usedLicenses, bddone));
@@ -136,7 +136,7 @@ describe("license-check", function() {
   describe("license-check-development", function() {
     const usedLicenses = {};
     before(function(bddone) {
-      checker.init({
+      init({
         development: true,
         start: path.join(config.getDirName())
       }, buildLicenseObject(usedLicenses, bddone));
