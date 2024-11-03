@@ -13,83 +13,92 @@ const sqldebug  = _debug("OSMBC:model:sql");
 function generateQuery(table, obj, order) {
   debug("generateQuery %s", table);
 
+
+
   let whereClause = "";
 
+  let parameters = [];
   let paramWhere = obj;
-  if (obj && typeof (obj) === "object" && obj.sql) paramWhere = obj.sql;
+  if (obj && typeof (obj) === "object" && obj.sql) {
+    paramWhere = obj.sql;
+    parameters = obj.params;
+  }
   if (typeof (paramWhere) === "string") {
     whereClause = " " + paramWhere;
 
     // if there is a select statement, expect and id and data, and take it.
     if (paramWhere.substring(0, 6) === "select") {
       debug(paramWhere);
-      return paramWhere;
+      return [paramWhere, parameters];
     }
   } else {
     if (obj) {
       for (const k in obj) {
         let value = obj[k];
         let op = "=";
+        let operation = null;
         if (typeof (value) === "string") {
           // check first operator in string
           if (value.substring(0, 2) === "!=") {
             op = "!=";
             value = value.substring(2, 9999);
-          }
-          if (value.substring(0, 2) === "IN") {
+          } else if (value.substring(0, 2) === "IN") {
             op = "in";
-            value = value.substring(2, 999999);
-          }
-          if (value.substring(0, 2) === "<=") {
+            const len = value.length;
+            assert(value.substring(2, 3) === "(");
+            assert(value.substring(len - 1, len) === ")");
+            value = value.substring(3, len - 1).split(",");
+          } else if (value.substring(0, 2) === "<=") {
             op = "<=";
-            value = value.substring(2, 999999);
-          }
-          if (value.substring(0, 2) === ">=") {
+            value = value.substring(2);
+          } else if (value.substring(0, 2) === ">=") {
             op = ">=";
-            value = value.substring(2, 999999);
-          }
-          if (value.substring(0, 3) === "GE:") {
+            value = value.substring(2);
+          } else if (value.substring(0, 3) === "GE:") {
             op = ">=";
             value = value.substring(3, 999999);
-          }
-          if (value.substring(0, 1) === ">") {
+          } else if (value.substring(0, 1) === ">") {
             op = ">";
             value = value.substring(1, 999999);
-          }
-          if (value.substring(0, 1) === "<") {
+          } else if (value.substring(0, 1) === "<") {
             op = "<";
             value = value.substring(1, 999999);
-          }
-          if (value.indexOf("%") >= 0) op = "like";
-          if (op !== "in") {
-            // escape the Apostroph
-            value = value.replace("'", "''");
-          }
-        }
-
-        let n = "data->>'" + k + "'" + op + "'" + value + "'";
-        if (op === "in") {
-          n = "data->>'" + k + "'" + op + " " + value;
-          n = "(" + n + " and (data->'" + k + "') is not null)";
+          } else if (value.indexOf("%") >= 0) op = "like";
         }
 
         if (value === "") {
           if (op === "=") {
-            n = "(" + n + " or (data->'" + k + "') is null)";
+            const param = "$" + (parameters.length + 1);
+            parameters.push(k);
+            operation = "((data->" + param + ") is null or (data->>" + param + " = ''))";
           }
           if (op === "!=") {
-            n = "(" + n + " and (data->'" + k + "') is not null)";
+            const param = "$" + (parameters.length + 1);
+            parameters.push(k);
+            operation = "((data->" + param + ") is not null) and ((data->>" + param + ") != '')";
+          }
+        } else {
+          const param = "$" + (parameters.length + 1);
+          parameters.push(value);
+
+          operation = "data->>'" + k + "'" + op + " " + param;
+          if (op === "in") {
+            operation = "((data->'" + k + "') is not null) and ((data->>'" + k + "') = any (" + param + " ))";
           }
         }
-        if (whereClause === "") whereClause = " where " + n;
-        else whereClause += " and " + n;
+        if (whereClause === "") whereClause = " where " + operation;
+        else whereClause += " and " + operation;
       }
     }
   }
   let orderby = " order by id";
   if (order) {
     assert(order.column);
-    if (order.column !== "id") orderby = " order by data->>'" + order.column + "'";
+    const param = "$" + (parameters.length + 1);
+    if (order.column !== "id") {
+      parameters.push(order.column);
+      orderby = " order by data->>" + param;
+    }
     if (order.desc) {
       orderby += " desc";
     }
@@ -98,9 +107,9 @@ function generateQuery(table, obj, order) {
       orderby += " LIMIT " + order.limit;
     }
   }
+
   const query = "select id,data from " + table + whereClause + orderby;
-  sqldebug(query);
-  return query;
+  return [query, parameters];
 }
 
 
@@ -276,14 +285,14 @@ function find(module, obj, order, callback) {
   assert(typeof (callback) === "function");
   debug("Connecting to DB");
   const table = module.table;
-  const sqlQuery = generateQuery(table, obj, order);
-  debug("Query: %s", sqlQuery);
+  const preparedQuery = generateQuery(table, obj, order);
+  const sqlQuery = preparedQuery[0];
+  const sqlParams = preparedQuery[1];
 
-  if (obj && obj.params) {
-    db.query(sqlQuery, obj.params, convertResultFunction(module, callback));
-  } else {
-    db.query(sqlQuery, undefined, convertResultFunction(module, callback));
-  }
+  sqldebug(sqlQuery);
+
+  debug("Query: %s", sqlQuery);
+  db.query(sqlQuery, sqlParams, convertResultFunction(module, callback));
 }
 
 
@@ -374,10 +383,14 @@ function findOne(module, obj, order, callback) {
   }
 
 
-  const sqlQuery = generateQuery(module.table, obj, order);
+  const preparedQuery = generateQuery(module.table, obj, order);
+  const sqlQuery = preparedQuery[0];
+  const sqlParams = preparedQuery[1];
+
+  sqldebug(sqlQuery);
 
 
-  db.query(sqlQuery + " limit 1", convertOneResultFunction(module, callback));
+  db.query(sqlQuery + " limit 1", sqlParams, convertOneResultFunction(module, callback));
 }
 
 

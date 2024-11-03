@@ -12,7 +12,7 @@ describe("model/language", function() {
     bddone();
   });
   it("should return lids", function (bddone) {
-    should(language.getLid()).deepEqual(["DE", "EN","FR", "ES", "PT-PT"]);
+    should(language.getLid()).deepEqual(["DE", "EN", "FR", "ES", "PT-PT"]);
     bddone();
   });
   it("should return alternative language strings for translators", function (bddone) {

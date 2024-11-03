@@ -21,10 +21,10 @@ describe("model/htmltitle", function() {
   describe("linkFrom", function() {
     const linkFrom = htmltitle.fortestonly.linkFrom;
     it("should recognize http sources", function(bddone) {
-      should(linkFrom("http://twitter.com/irgendwas", "twitter.com")).be.True();
-      should(linkFrom("http://forum.openstreetmap.org/viewtopic.php?id=54487", "forum.openstreetmap.org")).be.True();
-      should(linkFrom("http://forum.openstreetmap.org/viewtopic.php?id=54487", "witter.com")).be.False();
-      should(linkFrom("http://forum.openstreetmap.org/viewtopic.php?id=54487", "google.de")).be.False();
+      should(linkFrom("https://twitter.com/irgendwas", "twitter.com")).be.True();
+      should(linkFrom("https://forum.openstreetmap.org/viewtopic.php?id=54487", "forum.openstreetmap.org")).be.True();
+      should(linkFrom("https://forum.openstreetmap.org/viewtopic.php?id=54487", "witter.com")).be.False();
+      should(linkFrom("https://forum.openstreetmap.org/viewtopic.php?id=54487", "google.de")).be.False();
       return bddone();
     });
     it("should recognize https sources", function(bddone) {
@@ -37,7 +37,7 @@ describe("model/htmltitle", function() {
   });
   it("should check a html title", async function() {
     try {
-      const result = await htmltitle.getTitle("http://forum.openstreetmap.org/viewtopic.php?id=54487");
+      const result = await htmltitle.getTitle("https://forum.openstreetmap.org/viewtopic.php?id=54487");
       should(result).eql("Bridges which aren't on any Way? / Questions and Answers");
     } catch (err) {
       should.not.exist(err);
@@ -58,7 +58,7 @@ describe("model/htmltitle", function() {
     should(result).eql("“The weekly issue #301 now available in *English* the news from the #openstreetmap #osm world <..>”");
   });
   it("should get title from mapoftheweek", async function() {
-    const result = await htmltitle.getTitle("http://mapoftheweek.blogspot.ch/2016/04/mapping-playgrounds.html");
+    const result = await htmltitle.getTitle("https://mapoftheweek.blogspot.ch/2016/04/mapping-playgrounds.html");
     should(result).eql("Map of the Week: Mapping the Playgrounds");
   });
   it("should get title from Media Wiki", async function() {
@@ -66,7 +66,7 @@ describe("model/htmltitle", function() {
     should(result).eql("Maps/Conversation about interactive map use - MediaWiki");
   });
   it("should get title from OSMBlog", async function() {
-    const result = await htmltitle.getTitle("http://www.openstreetmap.org/user/phuonglinh9/diary/38568");
+    const result = await htmltitle.getTitle("https://www.openstreetmap.org/user/phuonglinh9/diary/38568");
     should(result).eql("Blog von phuonglinh9 | Xin chào các bạn");
   });
   it("should get title with other encoding", async function() {

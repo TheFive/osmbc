@@ -13,6 +13,7 @@ class UserPage extends Page {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/usert"));
   }
 

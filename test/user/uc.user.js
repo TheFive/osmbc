@@ -16,7 +16,6 @@ import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 
 import util from "../../util/util.js";
 const osmbcLink = util.osmbcLink;
-const sleep = util.sleep;
 
 
 
@@ -24,7 +23,6 @@ const sleep = util.sleep;
 
 describe("views/user", function() {
   this.timeout(300000);
-  this.retries(2);
   let driver;
   let mailChecker;
   beforeEach(async function() {
@@ -40,7 +38,7 @@ describe("views/user", function() {
   });
   afterEach(async function() {
     mockdate.reset();
-    if (this.currentTest.state !== "failed") await driver.quit();
+    // await driver.quit();
     mailChecker.restore();
     testutil.stopServer();
   });
@@ -99,8 +97,7 @@ describe("views/user", function() {
 
     await adminPage.assertPage();
     await adminPage.clickCreateUserMenu();
-    await sleep(300);
-
+    await adminPage.waitForPageReload();
     await userPage.assertPage();
     await userPage.fillOSMUser("TestUser");
     await userPage.selectPrimaryLanguage("DE");
@@ -133,7 +130,7 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
-    await sleep(1000);
+    await userPage.waitForPageReload();
 
 
 
@@ -216,9 +213,13 @@ describe("views/user", function() {
 
     should(mailChecker.calledOnce);
 
-    // find valication link in email
+    // find verification link in email
     const mail = mailChecker.getCall(0).args[0].text;
-    const link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
+    let link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
+    // link should be https, but for test cases use http
+
+    should(link).startWith("https://");
+    link = link.replace("https://", "http://");
 
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();

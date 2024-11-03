@@ -97,8 +97,8 @@ class HtmlRenderer {
           if (width > 0) {
             liON = liON.replace("##width##", width);
           } else {
-            liON = '<div class="wp-caption alignnone"> \n';
-            text = text.replace("></p>", ' width="555"></p>');
+            liON = '<div style="width: 810px" class="wp-caption alignnone"> \n';
+            text = text.replace("></p>", ' width="800" height="500"></p>');
           }
         }
         text = text.replace('alt=""', 'alt="lead picture"');

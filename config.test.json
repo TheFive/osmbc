@@ -60,7 +60,7 @@
   "ReviewInWP":["DE"],
   "EmailSender":"noreply@gmail.com",
   "cookieMaxAge": 10000,
-  "url":"http://localhost:35043",
+  "url":"https://localhost:35043",
   "SMTP":{},
   "apiKey":"testapikey",
   "apiKey.TBC":"testapikey.TBC",
@@ -81,19 +81,14 @@
   "User-Agent": "Hello i am Kitty",
   "DeeplProConfig": {
     "authKey":"Test Key Fake",
-    "url":"https://api.deepl.com/v2/translate"
+    "url":"https://api.deepl.com/v2/translate",
+    "usageUrl":"https://api.deepl.com/v2/usage"
   },
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
   "urlWoErrorWhileEdit": [],
-  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":500},
+  "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":2000},
   "auth": {
-    "openstreetmap": {
-      "enabled":true,
-      "OPENSTREETMAP_CONSUMER_KEY" : "######",
-      "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
-      "callbackUrl":"http://127.0.0.1:35043/auth/openstreetmap/callback"
-    },
     "htaccess": {
       "enabled": true
     },

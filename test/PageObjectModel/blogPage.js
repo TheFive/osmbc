@@ -1,11 +1,12 @@
 "use strict;";
 
-import { By } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 import util from "../../util/util.js";
 import StandardPage from "./standardPage.js";
+import should from "should";
+
 
 const osmbcLink = util.osmbcLink;
-const sleep = util.sleep;
 
 
 
@@ -16,6 +17,7 @@ class BlogPage extends StandardPage {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/blog"));
   }
 
@@ -44,6 +46,13 @@ class BlogPage extends StandardPage {
     await (await this._driver.findElement(By.css("textarea#reviewComment" + lang))).sendKeys(text);
   }
 
+  async #clickACheckbox(checkboxName) {
+    await this.assertPage();
+    const checkbox = (await this._driver.findElement(By.css(checkboxName)));
+    await this.scrollIntoView(checkbox);
+    await checkbox.click();
+  }
+
   async clickStoreReviewText(lang) {
     await this.assertPage();
     await (await this._driver.findElement(By.css("button#reviewButton" + lang))).click();
@@ -56,45 +65,43 @@ class BlogPage extends StandardPage {
 
   async clickShowNumbersCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showNumbers"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showNumbers"]');
   }
 
   async clickShowMailCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showMail"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showMail"]');
   }
 
   async clickShowCollectorCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showCollector"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showCollector"]');
   }
 
   async clickShowEditorCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showEditor"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showEditor"]');
   }
 
   async clickShowColoredUserCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showColoredUser"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showColoredUser"]');
   }
 
   async clickShowVisibleLanguagesCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showVisibleLanguages"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showVisibleLanguages"]');
   }
 
   async clickShowLanguagesCheckbox() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css('div[name="choose_showLanguages"]'))).click();
+    await this.#clickACheckbox('div[name="choose_showLanguages"]');
   }
 
   async clickOnArticle(articleText) {
     await this.assertPage();
     const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, articleElement).perform();
-    await sleep(500);
-
+    await this.scrollIntoView(articleElement);
     await (articleElement).click();
   }
 
@@ -116,6 +123,12 @@ class BlogPage extends StandardPage {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
 
+
+    await this._driver.wait(until.elementIsEnabled(editForm), 1000);
+    await this.scrollIntoView(editForm);
+    await this._driver.wait(until.elementIsVisible(editForm), 1000);
+
+    should(await editForm.isDisplayed()).be.true();
     const ctrlA = await this.getCtrlA();
 
     await (editForm).sendKeys(ctrlA);
@@ -140,21 +153,21 @@ class BlogPage extends StandardPage {
   async cickMode(mode) {
     await this.assertPage();
     const fullTab = await this._driver.findElement(By.xpath(`//a[(text()="${mode}") and contains(@class, 'nav-link')]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, fullTab).perform();
+    await this.scrollIntoView(fullTab);
     await (fullTab).click();
   }
 
   async clickStatisticView() {
     await this.assertPage();
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, statisticView).perform();
+    await this.scrollIntoView(statisticView);
     await statisticView.click();
   }
 
   async clickEditView() {
     await this.assertPage();
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
-    await this._driver.actions().scroll(0, 0, 0, 200, editView).perform();
+    await this.scrollIntoView(editView);
     await editView.click();
   }
 }

@@ -510,11 +510,12 @@ async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
   if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless");
   chromeOptions.addArguments("window-size=1920,1080");
+  chromeOptions.addArguments("disable-search-engine-choice-screen");
 
   const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
-  await driver.manage().setTimeouts({ implicit: 5000 });
+  await driver.manage().setTimeouts({ implicit: 700, script: 700 });
   try {
     await driver.get(osmbcLink("/osmbc"));
     await loginChooserPage.clickHtAccessLogin();

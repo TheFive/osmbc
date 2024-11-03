@@ -39,6 +39,7 @@ function getGlobalCategories() {
 
 function sanitizeBlogKey(blog) {
   if (blog === undefined || blog === null) return blog;
+  if (blog === "TBC" || blog === "Trash" || blog === "Future") return blog;
   const str = blog.replace(/[^WN0-9]/gim, "");
   return str.trim();
 }

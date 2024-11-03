@@ -672,24 +672,22 @@ describe("model/article", function() {
       link = article.calculateLinks();
       should(link).eql(["https://www.google.de"]);
 
-      article = articleModule.create({ collection: "Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200" });
+      article = articleModule.create({ collection: "Forum Article is good: https://forum.openstreetmap.org/thisIsALink?id=200" });
       link = article.calculateLinks();
-      should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200"]);
+      should(link).eql(["https://forum.openstreetmap.org/thisIsALink?id=200"]);
       return bddone();
     });
     it("should collect Multiple Links from markdown and collection without doubling", function(bddone) {
       article = articleModule.create(
         {
-          collection: "Forum Article is good: http://forum.openstreetmap.org/thisIsALink?id=200 \
-              but be aware of http://bing.de/subpage/relation and of ftp://test.de",
+          collection: "Forum Article is good: https://forum.openstreetmap.org/thisIsALink?id=200 \
+              but be aware of https://bing.de/subpage/relation and of ftp://test.de",
           markdownDE: "The [Forum Article](https://forum.openstreetmap.org/thisIsALink?id=200) \
                      reads nice, but have a look to [this](https://bing.de/subpage/relation) \
                      and [that](ftp://test.de)"
         });
       link = article.calculateLinks();
-      should(link).eql(["http://forum.openstreetmap.org/thisIsALink?id=200",
-        "http://bing.de/subpage/relation",
-        "https://forum.openstreetmap.org/thisIsALink?id=200",
+      should(link).eql(["https://forum.openstreetmap.org/thisIsALink?id=200",
         "https://bing.de/subpage/relation"
       ]);
       return bddone();
@@ -739,13 +737,13 @@ describe("model/article", function() {
       // Initialise some Test Data for the find functions
       async.series([
         testutil.clearDB,
-        function c1(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA" }, cb); },
-        function c02(cb) { articleModule.createNewArticle({ blog: "Trash", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "catA" }, cb); },
-        function c01(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 http://link.to/hallo", categoryEN: "--unpublished--" }, cb); },
-        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo) http://www.osm.de/12345", collection: "http://www.osm.de/12345", categoryEN: "catB" }, cb); },
-        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [google](http://www.google.de)", collection: "http://www.osm.de/12345", categoryEN: "catB" }, cb); },
+        function c1(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 https://link.to/hallo", categoryEN: "catA" }, cb); },
+        function c02(cb) { articleModule.createNewArticle({ blog: "Trash", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 https://link.to/hallo", categoryEN: "catA" }, cb); },
+        function c01(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col1 https://link.to/hallo", categoryEN: "--unpublished--" }, cb); },
+        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [ping](https://link.to/hallo) https://www.osm.de/12345", collection: "https://www.osm.de/12345", categoryEN: "catB" }, cb); },
+        function c2(cb) { articleModule.createNewArticle({ blog: "WN1", markdownDE: "test1 some [google](https://www.google.de)", collection: "https://www.osm.de/12345", categoryEN: "catB" }, cb); },
         function c3(cb) {
-          articleModule.createNewArticle({ blog: "WN2", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col3 http://www.google.de", categoryEN: "catA" },
+          articleModule.createNewArticle({ blog: "WN2", markdownDE: "test1 some [ping](https://link.to/hallo)", collection: "col3 https://www.google.de", categoryEN: "catA" },
             function(err, result) {
               should.not.exist(err);
               idToFindLater = result.id;
@@ -767,7 +765,7 @@ describe("model/article", function() {
           should.exist(result);
           should(result.count).equal(3);
           should(result["https://link.to/hallo"].length).equal(2);
-          should(result["http://www.google.de"].length).equal(1);
+          should(result["https://www.google.de"].length).equal(1);
 
           bddone();
         });
@@ -781,7 +779,7 @@ describe("model/article", function() {
           should.exist(result);
           should(result.count).equal(2);
           should(result["https://link.to/hallo"].length).equal(2);
-          should.not.exist(result["http://www.google.de"]);
+          should.not.exist(result["https://www.google.de"]);
 
           bddone();
         });
@@ -793,16 +791,16 @@ describe("model/article", function() {
       // Initialise some Test Data for the find functions
       await testutil.clearDB();
       await articleModule.createNewArticle({ blog: "1", markdownDE: "test1", collection: "Try this link https://www.test.at/link ?", category: "catA" });
-      await articleModule.createNewArticle({ blog: "5", markdownDE: "[test](http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "[test](https://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842)", collection: "text", category: "catA" });
       await articleModule.createNewArticle({ blog: "2", markdownEN: "See more special [here](https://www.test.at/link)", collection: "col1", category: "catA" });
-      await articleModule.createNewArticle({ blog: "3", markdownDE: "test2", collection: "http://www.test.at/link", category: "catB" });
+      await articleModule.createNewArticle({ blog: "3", markdownDE: "test2", collection: "https://www.test.at/link", category: "catB" });
       await articleModule.createNewArticle({ blog: "4", markdownDE: "test3", collection: "https://simple.link/where", category: "catA" });
       await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest1", collection: "https://simple.link/whereisit", category: "catA" });
       await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest2", collection: "https://simple.link/whereisit/", category: "catA" });
-      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest3", collection: "http://simple.link/whereisit", category: "catA" });
-      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest4", collection: "http://simple.link/whereisit/", category: "catA" });
-      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest5", markdownEN: "[link](http://simple.link/whereisit/)", category: "catA" });
-      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest6 to short", markdownEN: "[link](http://simple.link/whereisi)", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest3", collection: "https://simple.link/whereisit", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest4", collection: "https://simple.link/whereisit/", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest5", markdownEN: "[link](https://simple.link/whereisit/)", category: "catA" });
+      await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest6 to short", markdownEN: "[link](https://simple.link/whereisi)", category: "catA" });
       await articleModule.createNewArticle({ blog: "5", markdownDE: "linktest7 to short", markdownEN: "[link](https://simple.link/whereisi)", category: "catA" });
     });
     it("should find the simple link", async function() {
@@ -814,7 +812,7 @@ describe("model/article", function() {
       should(result.flatMap(x => x.blog)).deepEqual(["1", "2", "3"]);
     });
     it("should search links with apostroph in it", async function() {
-      const result = await articleModule.fullTextSearch("http://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842", { column: "blog" });
+      const result = await articleModule.fullTextSearch("https://www.abc.net.au/news/2016-02-24/cyclone-winston-entire-villages-wiped-out-on-fiji's-koro-island/7195842", { column: "blog" });
       should(result.flatMap(x => x.blog)).deepEqual(["5"]);
     });
     it("should search links independent from httpS or closing /", async function() {
@@ -824,10 +822,10 @@ describe("model/article", function() {
       result = await articleModule.fullTextSearch("https://simple.link/whereisit/", { column: "blog" });
       should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
 
-      result = await articleModule.fullTextSearch("http://simple.link/whereisit", { column: "blog" });
+      result = await articleModule.fullTextSearch("https://simple.link/whereisit", { column: "blog" });
       should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
 
-      result = await articleModule.fullTextSearch("http://simple.link/whereisit/", { column: "blog" });
+      result = await articleModule.fullTextSearch("https://simple.link/whereisit/", { column: "blog" });
       should(result.flatMap(x => x.markdownDE)).deepEqual(["linktest1", "linktest2", "linktest3", "linktest4", "linktest5"]);
     });
   });

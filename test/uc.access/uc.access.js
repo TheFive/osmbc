@@ -3,7 +3,6 @@
 import mockdate from "mockdate";
 import testutil from "../testutil.js";
 import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
-import util from "../../util/util.js";
 import should from "should";
 import nock from "nock";
 
@@ -13,7 +12,6 @@ import nock from "nock";
 import userModule from "../../model/user.js";
 import initialiseModules from "../../util/initialise.js";
 
-const sleep = util.sleep;
 
 
 
@@ -89,9 +87,6 @@ describe("uc.access", function() {
     await articlePageTheFive.fillCommentInput("This is a comment for @EN");
     await articlePageTheFive.clickAddComment();
 
-    await sleep(500);
-
-
     await articlePageTheFive.fillCommentInput("This is a comment for @GuestUser");
     await articlePageTheFive.clickAddComment();
 
@@ -100,7 +95,6 @@ describe("uc.access", function() {
     // Guest user comes and collects an article
     const driverGuest = await testutil.getNewDriver("GuestUser");
     const osmbcAppGuest = new OsmbcApp(driverGuest);
-    await sleep(1000);
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestStartPage");
 
@@ -135,12 +129,10 @@ describe("uc.access", function() {
     await articlePageGuest.fillCommentInput("This is a comment for @EN");
     await articlePageGuest.clickAddComment();
 
-    await sleep(500);
 
     await articlePageGuest.fillCommentInput("This is a comment for @TheFive");
     await articlePageGuest.clickAddComment();
 
-    await sleep(500);
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticlePage");
 
@@ -151,7 +143,6 @@ describe("uc.access", function() {
 
     // Check Guest Users Inbox
     await articlePageGuest.clickInboxMenu();
-    await sleep(600);
 
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestUserInbox");

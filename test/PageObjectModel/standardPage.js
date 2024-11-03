@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 
 import Page from "../../test/PageObjectModel/page.js";
 
@@ -9,6 +9,7 @@ export default class StandardPage extends Page {
   constructor(driver) {
     super(driver);
   }
+
 
   async clickBlogMenu(blog) {
     await this.assertPage();

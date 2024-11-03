@@ -63,6 +63,12 @@ block content
                   span
                     a(href=layout.htmlroot + "/usert/" + user.OSMUser)=user.OSMUser
                     span=", "
+        if deeplUsage
+          h4="DeeplUsage"
+          p="Used Characters: " + deeplUsage.character_count
+          p="Limit Characters: " + deeplUsage.character_limit
+          p="Usage Percent: " + deeplUsage.character_percent
+          
         if changes
           h4="Last Changes "
             - var d = new Date();

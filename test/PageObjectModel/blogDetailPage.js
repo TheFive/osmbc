@@ -12,6 +12,7 @@ class BlogDetailPage extends StandardPage {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrlStartsWith(util.osmbcLink("/blog/edit"));
   }
 

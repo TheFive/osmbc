@@ -20,6 +20,7 @@ class InboxPage extends StandardPage {
   }
 
   async assertPage() {
+    await super.assertPage();
     await this._assertUrl([osmbcLink("/usert/inbox"), osmbcLink("/")]);
   }
 

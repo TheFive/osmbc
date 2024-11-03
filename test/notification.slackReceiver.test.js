@@ -38,9 +38,9 @@ describe("notification/slackReceiver", function() {
       const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/article/1|Test Title> added to <http://localhost:35043/blog/WN789|WN789>\n",
+            text: "<https://localhost:35043/article/1|Test Title> added to <https://localhost:35043/blog/WN789|WN789>\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcarticle"
           })
         .reply(200, "ok");
@@ -57,9 +57,9 @@ describe("notification/slackReceiver", function() {
       let slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/article/1|Test «..» «..» Title> added to <http://localhost:35043/blog/WN789|WN789>\n",
+            text: "<https://localhost:35043/article/1|Test «..» «..» Title> added to <https://localhost:35043/blog/WN789|WN789>\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcarticle"
           })
         .reply(200, "ok");
@@ -71,9 +71,9 @@ describe("notification/slackReceiver", function() {
           slack = nock("https://missingmattermost.example.com")
             .post("/services/osmde",
               {
-                text: "<http://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
+                text: "<https://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
                 username: "testbc(testuser)",
-                icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+                icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
                 channel: "#osmbcarticle"
               })
             .reply(200, "ok");
@@ -89,9 +89,9 @@ describe("notification/slackReceiver", function() {
       const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
+            text: "<https://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcarticle"
           })
         .reply(200, "ok");
@@ -108,9 +108,9 @@ describe("notification/slackReceiver", function() {
       const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
+            text: "<https://localhost:35043/article/1|Test Title> added comment:\nInformation for @User3",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcarticle"
           })
         .reply(200, "ok");
@@ -121,9 +121,9 @@ describe("notification/slackReceiver", function() {
           const slack2 = nock("https://missingmattermost.example.com")
             .post("/services/osmde",
               {
-                text: "<http://localhost:35043/article/1|Test Title> changed comment:\nInformation for all",
+                text: "<https://localhost:35043/article/1|Test Title> changed comment:\nInformation for all",
                 username: "testbc(testuser)",
-                icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+                icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
                 channel: "#osmbcarticle"
               })
             .reply(200, "ok");
@@ -142,18 +142,18 @@ describe("notification/slackReceiver", function() {
       const slack1 = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            text: "<https://localhost:35043/blog/WN251|WN251> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack2 = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            text: "<https://localhost:35043/blog/WN251|WN251> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -169,18 +169,18 @@ describe("notification/slackReceiver", function() {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            text: "<https://localhost:35043/blog/WN251|WN251> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/WN251|WN251> was created\n",
+            text: "<https://localhost:35043/blog/WN251|WN251> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -188,18 +188,18 @@ describe("notification/slackReceiver", function() {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
-              text: "<http://localhost:35043/blog/WN251|WN251> changed status to edit\n",
+              text: "<https://localhost:35043/blog/WN251|WN251> changed status to edit\n",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
         const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
-              text: "<http://localhost:35043/blog/WN251|WN251> changed status to edit\n",
+              text: "<https://localhost:35043/blog/WN251|WN251> changed status to edit\n",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
@@ -220,18 +220,18 @@ describe("notification/slackReceiver", function() {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -239,18 +239,18 @@ describe("notification/slackReceiver", function() {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (, )",
+              text: "<https://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (, )",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
         const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
+              text: "<https://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed ()",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
@@ -272,18 +272,18 @@ describe("notification/slackReceiver", function() {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -291,18 +291,18 @@ describe("notification/slackReceiver", function() {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been reviewed: I have reviewed (<http://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__&user=testuser|User Review>, <http://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__|Full Review>)",
+              text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been reviewed: I have reviewed (<https://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__&user=testuser|User Review>, <https://localhost:35043/changes/log?blog=blog&table=article&property=markdownPT-PT&date=GE:__timestamp__|Full Review>)",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
         const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (<http://localhost:35043/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
+              text: "<https://localhost:35043/blog/blog|blog>(ES) has been reviewed: I have reviewed (<https://localhost:35043/changes/log?blog=blog&table=article&property=markdownES&date=GE:__timestamp__| view changes>)",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
@@ -324,18 +324,18 @@ describe("notification/slackReceiver", function() {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -343,18 +343,18 @@ describe("notification/slackReceiver", function() {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
+              text: "<https://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
         const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
+              text: "<https://localhost:35043/blog/blog|blog>(DE) is exported to WordPress",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
@@ -376,18 +376,18 @@ describe("notification/slackReceiver", function() {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -395,18 +395,18 @@ describe("notification/slackReceiver", function() {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
         const slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
@@ -427,18 +427,18 @@ describe("notification/slackReceiver", function() {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
       const slack1b = nock("https://missingmattermost.example.com")
         .post("/services/theweeklyosm",
           {
-            text: "<http://localhost:35043/blog/blog|blog> was created\n",
+            text: "<https://localhost:35043/blog/blog|blog> was created\n",
             username: "testbc(testuser)",
-            icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+            icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
@@ -446,18 +446,18 @@ describe("notification/slackReceiver", function() {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
         let slack2b = nock("https://missingmattermost.example.com")
           .post("/services/theweeklyosm",
             {
-              text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
+              text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been closed",
               username: "testbc(testuser)",
-              icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
               channel: "#osmbcblog"
             })
           .reply(200, "ok");
@@ -471,9 +471,9 @@ describe("notification/slackReceiver", function() {
           slack2b = nock("https://missingmattermost.example.com")
             .post("/services/theweeklyosm",
               {
-                text: "<http://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",
+                text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",
                 username: "testbc(testuser)",
-                icon_url: "http://localhost:35043/images/osmbc_im_logo.png",
+                icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
                 channel: "#osmbcblog"
               })
             .reply(200, "ok");

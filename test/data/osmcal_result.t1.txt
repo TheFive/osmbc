@@ -1,4 +1,4 @@
-|Where    |What                                                               |Online|When      |Country                                                        |
-|---------|-------------------------------------------------------------------|------|----------|---------------------------------------------------------------|
-|大阪市      |event [:osmcalpic:](https://osmcal.org/event/verweis/)             |      |24/05/2020|![flag](http://blog.openstreetmap.de/wp-uploads/2016/02/jp.svg)|
-|Stuttgart|Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |30/05/2020|de                                                             |
+|Where    |What                                                               |Online|When      |Country                                                         |
+|---------|-------------------------------------------------------------------|------|----------|----------------------------------------------------------------|
+|大阪市      |event [:osmcalpic:](https://osmcal.org/event/verweis/)             |      |24/05/2020|![flag](https://blog.openstreetmap.de/wp-uploads/2016/02/jp.svg)|
+|Stuttgart|Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |30/05/2020|de                                                              |

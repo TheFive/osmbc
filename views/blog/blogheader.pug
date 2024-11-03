@@ -269,6 +269,15 @@ block content
                       span=" "
                       i.fa.fa-exclamation-triangle
                     span=","
+              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true&markdown=true")
+                span
+                  span="Export All as zipped *.md: "
+                  each lang in closedLangs
+                    span=lang+" "
+                    if !(blog.getUnEdited(lang) == 0)
+                      span=" "
+                      i.fa.fa-exclamation-triangle
+                    span=","
               a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/previewHeader")
                 span="Download corresponding Headers."
                 

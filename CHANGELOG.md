@@ -1,5 +1,64 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...HEAD)
+
+**Closed issues:**
+
+- Cannot rad properties of null \(reading '0'\) [\#1043](https://github.com/TheFive/osmbc/issues/1043)
+
+## [4.1.02](https://github.com/TheFive/osmbc/tree/4.1.02) (2024-09-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.01...4.1.02)
+
+## [4.1.01](https://github.com/TheFive/osmbc/tree/4.1.01) (2024-05-05)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.28...4.1.01)
+
+## [4.0.28](https://github.com/TheFive/osmbc/tree/4.0.28) (2024-04-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.27...4.0.28)
+
+**Closed issues:**
+
+- error: bind message supplies 3 parameters, but prepared statement "" requires 0 [\#1040](https://github.com/TheFive/osmbc/issues/1040)
+
+**Merged pull requests:**
+
+- update libraries of importdb script [\#1036](https://github.com/TheFive/osmbc/pull/1036) ([call-me-matt](https://github.com/call-me-matt))
+- Bugfix/title image dimensions [\#1035](https://github.com/TheFive/osmbc/pull/1035) ([call-me-matt](https://github.com/call-me-matt))
+
+## [4.0.27](https://github.com/TheFive/osmbc/tree/4.0.27) (2024-03-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...4.0.27)
+
+**Implemented enhancements:**
+
+- Improve Diff Behavior [\#1028](https://github.com/TheFive/osmbc/issues/1028)
+
+**Fixed bugs:**
+
+- markdown-it-imsize is not complete translated with deepl [\#841](https://github.com/TheFive/osmbc/issues/841)
+
+**Closed issues:**
+
+- Fix Security Issue [\#1034](https://github.com/TheFive/osmbc/issues/1034)
+- Fix Security Issue [\#1033](https://github.com/TheFive/osmbc/issues/1033)
+- Fix Security Issue [\#1032](https://github.com/TheFive/osmbc/issues/1032)
+- Deepl Cost control on Admin Page [\#1030](https://github.com/TheFive/osmbc/issues/1030)
+- Disable link Control Feature for Guests [\#1029](https://github.com/TheFive/osmbc/issues/1029)
+- Add Spinner to Collect Save button, to inform about "in progress" [\#1021](https://github.com/TheFive/osmbc/issues/1021)
+
+## [4.0.24](https://github.com/TheFive/osmbc/tree/4.0.24) (2024-03-10)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.23...4.0.24)
+
+**Closed issues:**
+
+- Make Hostname vor Server configurable [\#1026](https://github.com/TheFive/osmbc/issues/1026)
+- Replace request module by axios [\#833](https://github.com/TheFive/osmbc/issues/833)
+
 ## [4.0.23](https://github.com/TheFive/osmbc/tree/4.0.23) (2024-03-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.22...4.0.23)
@@ -144,7 +203,6 @@
 - Better titles for collected toots [\#981](https://github.com/TheFive/osmbc/issues/981)
 - Links to twitter show a red \#404 [\#946](https://github.com/TheFive/osmbc/issues/946)
 - Reveiw OSMCAL generation for faster generation. [\#945](https://github.com/TheFive/osmbc/issues/945)
-- Update createdb.js [\#706](https://github.com/TheFive/osmbc/issues/706)
 
 **Closed issues:**
 

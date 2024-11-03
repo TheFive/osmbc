@@ -21,7 +21,7 @@ const debug = _debug("OSMBC:util:initialize");
 // Initialise Mail Module with all users
 function startMailReceiver(callback) {
   debug("startMailReceiver");
-  userModule.find({ access: "IN('full','guest')" }, function initUsers(err, result) {
+  userModule.find({ access: "IN(full,guest)" }, function initUsers(err, result) {
     if (err) {
       return callback(new Error("Error during User Initialising for Mail " + err.message));
     }

@@ -9,7 +9,7 @@ import StandardPage from "./standardPage.js";
 
 const osmbcLink = util.osmbcLink;
 
-export default class BlogListPage extends StandardPage {
+export default class BlogStatisticPage extends StandardPage {
   // eslint-disable-next-line no-useless-constructor
   constructor(driver) {
     super(driver);
@@ -17,11 +17,15 @@ export default class BlogListPage extends StandardPage {
 
   async assertPage() {
     await super.assertPage();
-    await this._assertUrlStartsWith(osmbcLink("/blog/list"));
+    await this._assertUrlStartsWith(osmbcLink("stat.html"));
   }
 
-  async clickBlogInList(blog) {
+  async clickStatisticItem(blog, user, datatype) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"))).click();
+
+
+    await (await this._driver.findElement(By.css("a[href='/article/list?blog=" + blog +
+    "&user=" + user +
+    "&property=" + datatype + "%']"))).click();
   }
 }

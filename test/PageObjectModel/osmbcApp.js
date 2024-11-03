@@ -10,6 +10,7 @@ import UserListPage from "../../test/PageObjectModel/userListPage.js";
 import BlogListPage from "../../test/PageObjectModel/blogListPage.js";
 import SearchAndCollectPage from "../../test/PageObjectModel/searchAndCollectPage.js";
 import InboxPage from "../../test/PageObjectModel/inboxPage.js";
+import BlogStatisticPage from "../../test/PageObjectModel/blogStatisticPage.js";
 import util from "../../util/util.js";
 
 const osmbcLink = util.osmbcLink;
@@ -59,7 +60,8 @@ export default class OsmbcApp {
   }
 
   getBlogPage() {
-    return new BlogPage(this._driver);
+    const blogPage = new BlogPage(this._driver);
+    return blogPage;
   }
 
   getBlogDetailPage() {
@@ -76,5 +78,9 @@ export default class OsmbcApp {
 
   getInboxPage() {
     return new InboxPage(this._driver);
+  }
+
+  getStatisticPage() {
+    return new BlogStatisticPage(this._driver);
   }
 };

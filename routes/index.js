@@ -13,6 +13,8 @@ import userModule from "../model/user.js";
 import articleModule from "../model/article.js";
 import moment from "moment";
 import auth from "../routes/auth.js";
+import translator from "../model/translator.js";
+
 const debug = _debug("OSMBC:routes:index");
 
 const router = express.Router();
@@ -36,7 +38,7 @@ function renderHome(req, res, next) {
 
 
   async.auto({
-    historie: logModule.find.bind(logModule, { table: "IN('blog','article')" }, { column: "id", desc: true, limit: 20 }),
+    historie: logModule.find.bind(logModule, { table: "IN(blog,article)" }, { column: "id", desc: true, limit: 20 }),
     activeUser: userModule.find.bind(userModule, { lastAccess: ">" + date.toISOString() }, { column: "lastAccess", desc: true }),
     fullVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "full" }, { column: "OSMUser", desc: false }),
     guestVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "guest" }, { column: "OSMUser", desc: false }),
@@ -96,10 +98,15 @@ function renderAdminHome(req, res, next) {
   let date = new moment();
   date = date.subtract(userIsOldInDays, "Days").toISOString();
 
+  function usageTemp(callback) {
+    translator.deeplUsage().then((result) => { return callback(null, result); }).catch((err) => { return callback(err); });
+  }
+
 
   async.auto({
-    historie: logModule.find.bind(logModule, { table: "IN('usert','config')" }, { column: "id", desc: true, limit: 20 }),
-    longAbsent: userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" })
+    historie: logModule.find.bind(logModule, { table: "IN(usert,config)" }, { column: "id", desc: true, limit: 20 }),
+    longAbsent: userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" }),
+    deeplUsage: usageTemp
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -107,7 +114,8 @@ function renderAdminHome(req, res, next) {
       title: appName,
       layout: res.rendervar.layout,
       longAbsent: result.longAbsent,
-      changes: result.historie
+      changes: result.historie,
+      deeplUsage: result.deeplUsage
     });
   }
   );
@@ -228,7 +236,6 @@ function setUserConfig(req, res, next) {
     err.status = HttpStatus.BAD_REQUEST;
     return next(err);
   }
-
   user.setOption(req.body.view, req.body.option, req.body.value);
 
   req.user.save(function finalLanguageSwitcher(err) {
