@@ -47,51 +47,59 @@ mixin voteLabel(vote,article)
 mixin labeledInput(label,name,value,explanation)
   - if (!value) value =""
   div.row.mb-3
-    label.col.col-form-label(for=name)=label
-    input.col-5.form-control(name=name,id=name,value = value)
-    label.col.d-none.d-md-block.form-text=explanation
+    div.col
+      label.col-form-label(for=name)=label
+    div.col-5
+      input.form-control(name=name,id=name,value = value)
+    div.col
+      label.d-none.d-md-block.form-text=explanation
 
 mixin labeledTextarea(label,name,value,explanation)
   - if (!value) value =""
   div.row.mb-3
-    label.col.col-form-label(for=name)=label
-    textarea.col-5.form-control(name=name,id=name)=value
-
-    label.col.d-none.d-md-block.form-text=explanation
+    div.col
+      label.col-form-label(for=name)=label
+    div.col-5
+      textarea.form-control(name=name,id=name)=value
+    div.col
+      label.d-none.d-md-block.form-text=explanation
 
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
   - if (!value) value =""
   div.row.mb-3
     label.col.col-form-label(for=name)=label
-    select.col-5(id=name,name=name).form-control
-      each v,i in values
-          if (value ==v)
-              option(value=v selected)=displayValues[i]
-          else
-              option(value=v )=displayValues[i]
-                  
+    div.col-5
+      select(id=name,name=name).form-control
+        each v,i in values
+            if (value ==v)
+                option(value=v selected)=displayValues[i]
+            else
+                option(value=v )=displayValues[i]
+                    
     label.col.d-none.d-md-block.form-text=explanation
 
 mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
-    - if (!value) value =""
-    div.row.mb-3
-      label.col.col-form-label(for=name)=label
-    
-      select.col-5.selectpicker(name=name id=name multiple)
-        each v,i in values
-          if (value.indexOf(v)>=0)
-              option(selected id = name + "_" + v value = v)=displayValues[i]
-          else 
-              option(id = name + "_" + v value = v)=displayValues[i]
-      label.col.d-none.d-md-block.form-text=explanation
+  - if (!value) value =""
+  div.row.mb-3
+    label.col.col-form-label(for=name)=label
+    select.col-5.selectpicker(name=name id=name multiple)
+      each v,i in values
+        if (value.indexOf(v)>=0)
+            option(selected id = name + "_" + v value = v)=displayValues[i]
+        else 
+            option(id = name + "_" + v value = v)=displayValues[i]
+    label.col.d-none.d-md-block.form-text=explanation
 
 
 mixin labeledText(label,name,value,explanation)
     - if (!value) value =""
     div.row.mb-3
-      label.col.col-form-label( for=name)=label
-      input.col-5.form-control(name=name,id=name,value = value readonly)
-      label.col.d-none.d-md-block.form-text=explanation
+      div.col
+        label.col-sm-4.col-form-label( for=name)=label
+      div.col-5
+        input.form-control(name=name,id=name,value = value readonly)
+      div.col
+        label.col-sm-4.d-none.d-md-block.form-text=explanation
 
 
 

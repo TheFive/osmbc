@@ -127,13 +127,14 @@ block content
         +labeledTextarea("Public Markdown","publicHtml",usershown.publicHtml,"Markdown for your public OSMBC Profile")
         -console.dir(usershown)
       .row 
-        .col
+        div.col
           label.col-form-label(for="Color")="Color"
-        div.col-5.input-group
-          input.form-control(name="color",id="color",value = usershown.color aria-describedby="colorDisplayAddon")
-          div.input-group-append
-            span.btn.btn-secondary#colorDisplayAddon(style=`background-color:${usershown.color};`)
-        p.col.d-none.d-md-block
+        div.col-5
+          div.input-group
+            input.form-control(name="color",id="color",value = usershown.color aria-describedby="colorDisplayAddon")
+            div.input-group-append
+              span.btn.btn-secondary#colorDisplayAddon(style=`background-color:${usershown.color};`)
+        div.col.d-none.d-md-block
             span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
             a(href="http://www.w3schools.com/colors/colors_picker.asp")="Color Picker"
             span=","
