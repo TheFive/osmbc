@@ -20,7 +20,7 @@ import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
 
 import { Builder, Browser } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
-//import safari from "selenium-webdriver/safari.js";
+// import safari from "selenium-webdriver/safari.js";
 
 import util from "../util/util.js";
 
@@ -514,8 +514,7 @@ async function getNewDriver(username) {
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
 
-  // const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
-  const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
+  const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
   await driver.manage().setTimeouts({ implicit: 700, script: 700 });
