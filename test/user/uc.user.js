@@ -205,7 +205,6 @@ describe("views/user", function() {
     // Check Homepage for Missing Email Warning
     should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here: Goto User Configuration");
 
-
     await driver.get(osmbcLink("/usert/1"));
     const userPage = osmbcApp.getUserPage();
     await userPage.fillEMail("test@test.org");

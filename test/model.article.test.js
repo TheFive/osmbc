@@ -681,14 +681,16 @@ describe("model/article", function() {
       article = articleModule.create(
         {
           collection: "Forum Article is good: https://forum.openstreetmap.org/thisIsALink?id=200 \
-              but be aware of https://bing.de/subpage/relation and of ftp://test.de",
+              but be aware of https://bing.de/subpage/relation and of ftp://test.de/collection  ",
           markdownDE: "The [Forum Article](https://forum.openstreetmap.org/thisIsALink?id=200) \
                      reads nice, but have a look to [this](https://bing.de/subpage/relation) \
-                     and [that](ftp://test.de)"
+                     and [that](ftp://test.de) and was wrote [by](https://www.openstreetmap.org/user/Josh%20Glenn%20(xuid0)/)"
         });
       link = article.calculateLinks();
       should(link).eql(["https://forum.openstreetmap.org/thisIsALink?id=200",
-        "https://bing.de/subpage/relation"
+        "https://bing.de/subpage/relation",
+        "ftp://test.de",
+        "https://www.openstreetmap.org/user/Josh%20Glenn%20(xuid0)/"
       ]);
       return bddone();
     });

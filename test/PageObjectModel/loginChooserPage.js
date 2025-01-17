@@ -27,7 +27,6 @@ class LoginChooserPage extends Page {
     const button = await this._driver.findElement(By.id("htaccesLoginButton"));
     await button.click();
     await this._driver.wait(until.stalenessOf(button), 2000);
-    console.log("htaccess clicked button is stale");
   }
 }
 export default LoginChooserPage;

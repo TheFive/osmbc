@@ -20,6 +20,7 @@ import logModule from "../model/logModule.js";
 import configModule from "../model/config.js";
 import pgMap from "../model/pgMap.js";
 import translator from "../model/translator.js";
+import markdownLinkExtractor from "markdown-link-extractor";
 
 const debug = _debug("OSMBC:model:article");
 
@@ -323,21 +324,26 @@ class Article {
     for (const l in language.getLanguages()) {
       listOfField.push("markdown" + l);
     }
-    for (let i = 0; i < listOfField.length; i++) {
-      if (typeof (this[listOfField[i]]) !== "undefined") {
-        const res = util.getAllURL(this[listOfField[i]]);
-        // var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
-        for (let respoint = 0; respoint < res.length; respoint++) {
-          let add = true;
-          for (const k in languageFlags) {
-            if (res[respoint] === languageFlags[k]) {
-              add = false;
-              break;
-            }
+    for (const field of listOfField) {
+      let res = [];
+      if (this[field] === undefined) continue;
+      if (this[field] === "") continue;
+      if (field === "collection") {
+        res = util.getAllURL(this[field]);
+      } else {
+        res = markdownLinkExtractor(this[field]);
+      }
+      // var res = this[listOfField[i]].match(/(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g);
+      for (let respoint = 0; respoint < res.length; respoint++) {
+        let add = true;
+        for (const k in languageFlags) {
+          if (res[respoint] === languageFlags[k]) {
+            add = false;
+            break;
           }
-          if (links.indexOf(res[respoint]) >= 0) add = false;
-          if (add && res[respoint]) links = links.concat(res[respoint]);
         }
+        if (links.indexOf(res[respoint]) >= 0) add = false;
+        if (add && res[respoint]) links = links.concat(res[respoint]);
       }
     }
     return links;
@@ -399,7 +405,9 @@ class Article {
         // search in the full Module for the link
         fullTextSearch(reference, { column: "blog", desc: true }, function (err, result) {
           debug("fullTextSearch Result");
-          if (err) return cb(err);
+          if (err) {
+            return cb(err);
+          }
           if (result) {
             for (let i = result.length - 1; i >= 0; i--) {
               let dropIt = false;

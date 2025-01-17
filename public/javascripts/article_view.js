@@ -10,6 +10,8 @@
 // Init This Window with jQuery ready Callback
 $(document).ready(init);
 
+const regexUrlFromCollection = /\b(https?:\/\/[^\[\] \n\r]*)\b/g;
+
 
 
 
@@ -334,8 +336,9 @@ function checkMarkdownError() {
   let errorLinkTwice = null;
   let errorLinkNotInCollection = null;
 
-  const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+  const regexToken = regexUrlFromCollection;
   while ((linkList = regexToken.exec(md)) !== null) {
+    console.dir(linkList);
     linksInCollection = true;
     const link = linkList[0];
 
@@ -453,7 +456,7 @@ function dragstart(event, text) {
 function onchangeCollection() {
   const cl = $("#collection").val();
   const linkArea = $("#linkArea");
-  const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+  const regexToken = regexUrlFromCollection;
   let linkList;
   window.linklist = [];
   let result = "";

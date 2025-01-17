@@ -20,7 +20,7 @@ import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
 
 import { Builder, Browser } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
-//import safari from "selenium-webdriver/safari.js";
+// import safari from "selenium-webdriver/safari.js";
 
 import util from "../util/util.js";
 
