@@ -45,12 +45,43 @@ function initialise(app) {
       res.render("login-wpwd", { layout: layoutRouter.layoutConst });
     }
     app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
-    app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
+    /* app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
       {
         successReturnToOrRedirect: htmlRoot + "/",
         failureRedirect: htmlRoot + "/login_failure",
         keepSessionInfo: true
-      }));
+      })); */
+    app.post("/login",
+      // wrap passport.authenticate call in a middleware function
+      function (req, res, next) {
+        // call passport authentication passing the "local" strategy name and a callback function
+        passport.authenticate("local-htpasswd", function (error, user, info) {
+          // this will execute in any case, even if a passport strategy will find an error
+          // log everything to console
+          console.log("ERROR");
+          console.log(error);
+          console.log("USER");
+          console.log(user);
+          console.log("INFO");
+          console.log(info);
+
+          if (error) {
+            res.status(401).send(error);
+          } else if (!user) {
+            res.status(401).send(info);
+          } else {
+            next();
+          }
+
+          res.status(401).send(info);
+        })(req, res);
+      },
+
+      // function to call once successfully authenticated
+      function (req, res) {
+        console.log(htmlRoot + "/");
+        res.redirect(htmlRoot + "/");
+      });
   }
 
   if (authConfig.openstreetmap_oauth20.enabled) {
@@ -213,11 +244,15 @@ function checkUser(user) {
 
 function hasRole(role) {
   debug("hasRole");
+  console.log("Has Role Called");
   let roleArray = role;
   if (typeof role === "string") roleArray = [role];
   return function checkAuthentification (req, res, next) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
+    console.log("checking roles");
+    console.log(req.user.access);
+    console.dir(roleArray);
     if (roleArray.indexOf(req.user.access) >= 0) return next();
     return next("route");
   };

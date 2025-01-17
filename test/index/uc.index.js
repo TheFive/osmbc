@@ -58,6 +58,7 @@ describe("uc/index", function() {
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
         const mainPage = new MainPage(driver);
+        await testutil.expectHtml(driver, "index", "TESTTEST");
         await mainPage.assertPage();
         should(await mainPage.getFirstHeader()).eql("Welcome to OSM BC");
       });
