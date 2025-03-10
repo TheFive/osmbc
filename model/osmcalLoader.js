@@ -33,8 +33,8 @@ async function loadEvents(lang) {
     if (!event.location) continue;
     if (!event.location.coords) continue;
     const requestString = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=" + encodeURI(event.location.coords[1]) +
-    "&lon=" + encodeURI(event.location.coords[0]) +
-    "&accept-language=" + lang;
+      "&lon=" + encodeURI(event.location.coords[0]) +
+      "&accept-language=" + lang;
 
     let loc = nominatimCache.get(requestString);
     if (loc === undefined) {
@@ -200,13 +200,13 @@ async function getEventMd(lang, blogStartDate) {
   enrichData(filteredEvents, lang);
 
   const table = [
+    { field: "country_flag", name: countryName },
     { field: "town", name: townName },
     { field: "name", name: titleName },
     { field: "online", name: onlineName },
-    { field: "dateString", name: dateName },
-    { field: "country_flag", name: countryName }
+    { field: "dateString", name: dateName }
   ];
-  const result =  mdUtil.mdTable(filteredEvents, table);
+  const result = mdUtil.mdTable(filteredEvents, table);
   return result;
 }
 
