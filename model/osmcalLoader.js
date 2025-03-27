@@ -157,7 +157,14 @@ function enrichData(json, lang) {
 
     // generate Calendar Flags
     event.country_flag = event.country_code;
-    if (cf[event.country_code]) event.country_flag = `![flag](${cf[event.country_code]})`;
+    if (cf[event.country_code]) {
+      const mdFlag = cf[event.country_code];
+      if (mdFlag.substr(0, 8) === "https://") {
+        event.country_flag = `![flag](${mdFlag})`;
+      } else {
+        event.country_flag = mdFlag;
+      }
+    }
 
     if (event.online) {
       if (cf.online) event.online = `![online](${cf.online})`;
