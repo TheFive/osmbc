@@ -228,8 +228,9 @@ function articleNameSlack(article, change) {
   let title = article.title;
   if (change) title = change;
   if (!title) title = "";
-  title = title.replace(/(<)/gm, "«");
-  title = title.replace(/(>)/gm, "»");
+  title = title.replaceAll("<", "«");
+  title = title.replaceAll(">", "»");
+  title = title.replaceAll("|", "-");
 
   return "<" + osmbcUrl + "/article/" + article.id + "|" + title + ">";
 }
