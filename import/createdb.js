@@ -1,6 +1,5 @@
 import async from "async";
-import should from "should";
-import {program} from "commander";
+import { program } from "commander";
 
 import config from "../config.js";
 import pgMap from "../model/pgMap.js";
@@ -13,25 +12,7 @@ import configModule from "../model/config.js";
 import session from "../model/session.js";
 
 
-import * as jsdiff from 'diff';
 
-function coloredDiffLog(one, other) {
-  should(typeof (one) === "string");
-  should(typeof (other) === "string");
-
-
-  const diff = jsdiff.diffWords(one, other);
-
-  diff.forEach(function (part) {
-    // green for additions, red for deletions
-    // grey for common parts
-    const color = part.added
-      ? "green"
-      : part.removed ? "red" : "grey";
-    console.info(part.value[color]);
-  });
-  console.info();
-}
 
 program
   .option("--dropTable [table]", "Drop specific table before creation", "")
@@ -81,10 +62,6 @@ const pgOptions = {
 function analyseTable(pgObject, pgOptions, callback) {
   // first copy all expected indexes
   const expected = {};
-  const foundOK = {};
-  const foundNOK = {};
-  const foundUnnecessary = {};
-  const database = {};
   for (const k in pgObject.indexDefinition) {
     expected[k] = pgObject.indexDefinition[k];
   }
@@ -95,67 +72,8 @@ function analyseTable(pgObject, pgOptions, callback) {
       console.error("Can not connect to DB. " + err);
       process.exit(1);
     }
-    const sql = "select indexname,indexdef from pg_indexes where tablename ='" + pgObject.table + "' and indexname not in (select conname from pg_constraint);";
     // const query = client.query(new pg.Query(sql));
-    const query = client.query(sql, function (err, res) {
-    if (err) {
-      pgdone();
-      return callback(err);
-    };
-    for (var row of res.rows) {
-      const index = row.indexname;
-      const indexdef = row.indexdef;
-      database[index] = indexdef;
-
-      if (expected[index]) {
-        const diff = jsdiff.diffWords(expected[index], indexdef);
-        if (diff.length == 1 && !diff[0].added && !diff[0].removed) {
-          // index is the same in DB than expected
-          foundOK[index] = expected[index];
-          delete expected[index];
-        } else {
-          foundNOK[index] = expected[index];
-          delete expected[index];
-        }
-      } else {
-        foundUnnecessary[index] = indexdef;
-      }
-    };
-    pgdone();
-    let k;
-    if (pgOptions.verbose) {
-      console.info("");
-      console.info("");
-      console.info("Checking Table", pgObject.table);
-      console.info(" Found indexes OK");
-      for (k in foundOK) {
-        console.info("  " + k);
-      }
-      console.info(" Found indexes Need Update");
-      for (k in foundNOK) {
-        console.info("  " + k + " Difference:");
-        coloredDiffLog(foundNOK[k], database[k]);
-      }
-      console.info(" Missing indexes");
-      for (k in expected) {
-        console.info("  " + k);
-        coloredDiffLog(expected[k], "");
-      }
-      console.info(" Unnecessary indexes");
-      for (k in foundUnnecessary) {
-        console.info("  " + k);
-        coloredDiffLog("", foundUnnecessary[k]);
-      }
-    }
-    const result = {
-      foundOK: foundOK,
-      foundNOK: foundNOK,
-      foundUnnecessary: foundUnnecessary,
-      expected: expected
-    };
-    return callback(null, result);
   });
-});
 };
 
 
@@ -193,7 +111,7 @@ clearDB(pgOptions, function() {
       if (err) {
         console.error("Error Clearing Database (in createDB.js)");
         console.error(err);
-        return(err);
+        return (err);
       }
       result.save(function () {
         console.info("User " + pgOptions.addUser + " created. Ready.");

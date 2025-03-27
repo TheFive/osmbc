@@ -25,7 +25,15 @@ describe("model/translator", function() {
     const translatedTextMd = "This is the translated Text (less formal translated)";
 
     nock("https://api.deepl.com")
-      .post("/v2/translate", "auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%3C%2Fp%3E%0A")
+      .post("/v2/translate",
+        {
+          text: ["<p>Originaler Text</p>\n"],
+          source_lang: "EN",
+          target_lang: "DE",
+          auth_key: "Test Key Fake",
+          tag_handling: "xml",
+          formality: "less"
+        })
       .reply(200, { translations: [{ detected_source_language: "EN", text: translatedTextHtml }] });
 
     const options = {
@@ -67,7 +75,15 @@ describe("model/translator", function() {
     nock("https://api.deepl.com")
 
 
-      .post("/v2/translate", "auth_key=Test%20Key%20Fake&formality=less&source_lang=EN&tag_handling=xml&target_lang=DE&text=%3Cp%3EOriginaler%20Text%20mit%20%3Ca%20href%3D%22https%3A%2F%2Fmarkdown.link%2Fdemo%22%3EMarkdown%3C%2Fa%3E%20Link%3C%2Fp%3E%0A")
+      .post("/v2/translate",
+        {
+          text: ["<p>Originaler Text mit <a href=\"https://markdown.link/demo\">Markdown</a> Link</p>\n"],
+          source_lang: "EN",
+          target_lang: "DE",
+          auth_key: "Test Key Fake",
+          tag_handling: "xml",
+          formality: "less"
+        })
       .reply(200, { translations: [{ detected_source_language: "EN", text: translatedTextHtml }] });
 
     const options = {
@@ -94,7 +110,7 @@ describe("model/translator", function() {
 
     nock("https://api.deepl.com")
       .post("/v2/translate", {
-        text: '<p>Link :RU-s: &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a> und zweiter LInk :EN-t: &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a></p>\n',
+        text: ['<p>Link :RU-s: &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a> und zweiter LInk :EN-t: &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a></p>\n'],
         source_lang: "DE",
         target_lang: "FR-PARIS",
         auth_key: "Test Key Fake",

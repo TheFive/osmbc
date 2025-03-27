@@ -1,5 +1,5 @@
 
-import {init} from "license-checker-rseidelsohn";
+import { init } from "license-checker-rseidelsohn";
 import should from "should";
 import path from "path";
 import config from "../config.js";
