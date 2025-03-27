@@ -1,6 +1,5 @@
 
 
-import queryString from "query-string";
 import axios from "axios";
 import language from "../model/language.js";
 
@@ -23,16 +22,22 @@ const debug = _debug("OSMBC:model:translator");
 
 
 async function deeplTranslate(url, params) {
+  params.text = [params.text];
   try {
-    const query = queryString.stringify(params);
-    const response = await request(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: query
-    });
+    const response = await axios.post(
+      url,
+      params,
+      {
+        headers: { "Content-Type": "application/json" }
+      });
     return response.data;
   } catch (err) {
-    const message = err.message.replaceAll(deeplConfig.authKey, "APIKEY");
+    let message = err.messsage;
+    if (err.response && err.response.data && err.response.data.message) {
+      message = message + "\n" + err.response.data.message;
+    }
+    if (typeof message === "undefined") throw err;
+    message.replaceAll(deeplConfig.authKey, "APIKEY");
     throw (new Error(message));
   }
 }

@@ -705,7 +705,14 @@ describe("model/blog", function() {
     });
     it("should translate article and write changelog", function(bddone) {
       nock("https://api.deepl.com")
-        .post("/v2/translate", "auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDeutscher%20%3Cem%3EText%3C%2Fem%3E%3C%2Fp%3E%0A")
+        .post("/v2/translate",
+          {
+            text: ["<p>Deutscher <em>Text</em></p>\n"],
+            source_lang: "DE",
+            target_lang: "EN",
+            auth_key: "Test Key Fake",
+            tag_handling: "xml"
+          })
         .reply(200, { translations: [{ detected_source_language: "EN", text: "<p>English <b>text</b></p>" }] });
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);
