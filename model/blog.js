@@ -433,6 +433,7 @@ class Blog {
         debug("translateArticles");
         each(articleList, function (article, cb2) {
           debug("translateArticles.forEach");
+          if (article.categoryEN === "Upcoming Events") return cb2();
 
           // to lang already defined
           if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
