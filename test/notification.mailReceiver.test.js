@@ -278,32 +278,50 @@ describe("notification/mailReceiver", function() {
           article.editComment({ OSMUser: "testuser" }, 0, "Information for @UserMailDeUser3", function(err) {
             should.not.exist(err);
 
-            const expectedMail = {
-              from: "noreply@gmail.com",
-              to: "UserAllComment@mail.bc",
-              subject: "[TESTBC] WN278 comment: To Add A Comment",
-              html: '<h2>Change in article of WN278</h2><p>Article <a href="https://localhost:35043/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>',
-              text: "CHANGE IN ARTICLE OF WN278\n\nArticle To Add A Comment [https://localhost:35043/article/1] was changed by\ntestuser\n\n\nCOMMENT WAS ADDED\n\nInformation for none"
-            };
-
+            let expectedMails =
+            [
+              {
+                from: "noreply@gmail.com",
+                to: "UserAllComment@mail.bc",
+                subject: "[TESTBC] WN278 comment: To Add A Comment",
+                html: '<h2>Change in article of WN278</h2><p>Article <a href="https://localhost:35043/article/1">To Add A Comment</a> was changed by testuser </p><h3>comment was added</h3><p>Information for none</p>',
+                text: "CHANGE IN ARTICLE OF WN278\n\nArticle To Add A Comment [https://localhost:35043/article/1] was changed by\ntestuser\n\n\nCOMMENT WAS ADDED\n\nInformation for none"
+              },
+              {
+                from: "noreply@gmail.com",
+                to: "UserAllComment@mail.bc",
+                subject: "[TESTBC] WN278 comment: To Add A Comment",
+                html: "<h2>Change in article of WN278</h2><p>Article <a href=\"https://localhost:35043/article/1\">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @UserMailDeUser3</p>",
+                text: "CHANGE IN ARTICLE OF WN278\n\nArticle To Add A Comment [https://localhost:35043/article/1] was changed by\ntestuser\n\n\nCOMMENT WAS CHANGED\n\nInformation for @UserMailDeUser3"
+              },
+              {
+                from: "noreply@gmail.com",
+                to: "UserMailDeUser3@mail.bc",
+                subject: "[TESTBC] WN278 comment: To Add A Comment",
+                html: "<h2>Change in article of WN278</h2><p>Article <a href=\"https://localhost:35043/article/1\">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @UserMailDeUser3</p>",
+                text: "CHANGE IN ARTICLE OF WN278\n\nArticle To Add A Comment [https://localhost:35043/article/1] was changed by\ntestuser\n\n\nCOMMENT WAS CHANGED\n\nInformation for @UserMailDeUser3"
+              }
+            ];
             should(mailChecker.callCount).eql(3);
 
-            // First Mail Check
-            let result = mailChecker.getCall(0).args[0];
-            should(result).eql(expectedMail);
-
-            // Second Mail Check
-            result = mailChecker.getCall(1).args[0];
-            expectedMail.to = "UserAllComment@mail.bc";
-            expectedMail.text = "CHANGE IN ARTICLE OF WN278\n\nArticle To Add A Comment [https://localhost:35043/article/1] was changed by\ntestuser\n\n\nCOMMENT WAS CHANGED\n\nInformation for @UserMailDeUser3";
-            expectedMail.html = "<h2>Change in article of WN278</h2><p>Article <a href=\"https://localhost:35043/article/1\">To Add A Comment</a> was changed by testuser </p><h3>comment was changed</h3><p>Information for @UserMailDeUser3</p>";
-
-            should(result).eql(expectedMail);
-
-            // Third Mail Check
-            result = mailChecker.getCall(2).args[0];
-            expectedMail.to = "UserMailDeUser3@mail.bc";
-            should(result).eql(expectedMail);
+            for (let k = 0; k < mailChecker.callCount; k++) {
+              const result = mailChecker.getCall(k).args[0];
+              expectedMails = expectedMails.filter((item) => {
+                console.dir(item);
+                for (const key in item) {
+                  if (item[key] !== result[key]) {
+                    console.log(key);
+                    console.log(item[key])
+                    console.log(result[key])
+                    console.log(true);
+                    return true;
+                  }
+                }
+                console.log(false);
+                return false;
+              });
+            }
+            should(expectedMails.length).eql(0);
 
             bddone();
           });
