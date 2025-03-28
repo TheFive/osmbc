@@ -56,6 +56,8 @@ class BlogPage extends StandardPage {
   async clickStoreReviewText(lang) {
     await this.assertPage();
     await (await this._driver.findElement(By.css("button#reviewButton" + lang))).click();
+    const startReviewButton = (await this._driver.findElement(By.css("button#reviewButton" + lang)));
+    await this._driver.wait(until.elementIsVisible(startReviewButton), 1000);
   }
 
   async clickDidExport(lang) {

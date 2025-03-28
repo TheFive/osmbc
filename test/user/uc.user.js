@@ -159,6 +159,8 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
+    await userPage.waitForPageReload();
+
 
 
     const result = await userModule.findById(2);
