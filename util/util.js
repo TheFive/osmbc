@@ -123,6 +123,8 @@ function getAllURL(t) {
 
 
 function requireTypes(vars, types) {
+  assert(Array.isArray(vars));
+  assert(Array.isArray(types));
   for (let i = 0; i < vars.length; i++) {
     assert.equal(typeof (vars[i]), types[i]);
   }

@@ -127,6 +127,9 @@ function languageSwitcher(req, res, next) {
 
   let lang = req.user.langArray;
   if (!lang) lang = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()];
+  if (!(lang instanceof Array)) {
+    return res.end("Internal Error ");
+  }
 
   function isValidLang(lang) {
     return language.getLanguages()[lang] !== undefined;
