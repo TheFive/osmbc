@@ -1,5 +1,21 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...HEAD)
+
+**Closed issues:**
+
+- Cannot rad properties of null \(reading '0'\) [\#1043](https://github.com/TheFive/osmbc/issues/1043)
+
+## [4.1.02](https://github.com/TheFive/osmbc/tree/4.1.02) (2024-09-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.01...4.1.02)
+
+## [4.1.01](https://github.com/TheFive/osmbc/tree/4.1.01) (2024-05-05)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.28...4.1.01)
+
 ## [4.0.28](https://github.com/TheFive/osmbc/tree/4.0.28) (2024-04-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.27...4.0.28)
@@ -199,6 +215,7 @@
 
 - repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
 - do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
+- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.0.7](https://github.com/TheFive/osmbc/tree/4.0.7) (2022-12-04)
 
@@ -264,7 +281,6 @@
 
 **Merged pull requests:**
 
-- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
 - remove typo in KO header [\#951](https://github.com/TheFive/osmbc/pull/951) ([call-me-matt](https://github.com/call-me-matt))
 
 

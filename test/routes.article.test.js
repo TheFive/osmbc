@@ -927,7 +927,14 @@ describe("routes/article", function() {
     const form = { text: "Dies ist ein deutscher Text." };
     beforeEach(async function() {
       nock("https://api.deepl.com")
-        .post("/v2/translate", "auth_key=Test%20Key%20Fake&source_lang=DE&tag_handling=xml&target_lang=EN&text=%3Cp%3EDies%20ist%20ein%20deutscher%20Text.%3C%2Fp%3E%0A")
+        .post("/v2/translate",
+          {
+            text: ["<p>Dies ist ein deutscher Text.</p>\n"],
+            source_lang: "DE",
+            target_lang: "EN",
+            auth_key: "Test Key Fake",
+            tag_handling: "xml"
+          })
         .reply(200, { translations: [{ text: "This is an english text.", source_lang: "DE", target_lang: "EN" }] });
     });
     afterEach(async function() {

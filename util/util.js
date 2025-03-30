@@ -100,9 +100,12 @@ function mdRender(text, accessMap) {
 
 
 const isUrlRegex =      /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
-const getAllUrlRegex = /(https?:\/\/[^\[\] \n\r()]*)/g;
 
-// var getAllUrlRegex  = /(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+// this regex is simplified for plain text (collection box) usage
+// for Markdown Link Extraction use the markdown link extractor
+const getAllUrlRegex = /\b(https?:\/\/[^\[\] \n\r]*)\b/g;
+
+// const getAllUrlRegex  = /(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
 
 // var getAllUrlRegex  = /(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
 // var isUrlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
@@ -118,7 +121,10 @@ function getAllURL(t) {
   return r;
 };
 
+
 function requireTypes(vars, types) {
+  assert(Array.isArray(vars));
+  assert(Array.isArray(types));
   for (let i = 0; i < vars.length; i++) {
     assert.equal(typeof (vars[i]), types[i]);
   }

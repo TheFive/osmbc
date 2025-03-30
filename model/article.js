@@ -399,7 +399,12 @@ class Article {
         // search in the full Module for the link
         fullTextSearch(reference, { column: "blog", desc: true }, function (err, result) {
           debug("fullTextSearch Result");
-          if (err) return cb(err);
+          if (err) {
+            result = [];
+            // eslint-disable-next-line object-curly-spacing
+            result.add({id: 0, blog: "Error"});
+            return cb(err);
+          }
           if (result) {
             for (let i = result.length - 1; i >= 0; i--) {
               let dropIt = false;
