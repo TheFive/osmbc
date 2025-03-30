@@ -206,13 +206,30 @@ async function getEventMd(lang, blogStartDate) {
 
   enrichData(filteredEvents, lang);
 
-  const table = [
-    { field: "country_flag", name: countryName },
-    { field: "town", name: townName },
-    { field: "name", name: titleName },
-    { field: "online", name: onlineName },
-    { field: "dateString", name: dateName }
-  ];
+  let tableColumns = ["town", "title", "online", "date", "country"];
+  // ["town", "name", "online", "dateString", "country_flag"]
+  const tableColumnsMap = {
+    country_flag: countryName,
+    town: townName,
+    name: titleName,
+    online: onlineName,
+    dateString: dateName
+  };
+  const fieldColumnMap = {
+    town: "town",
+    title: "name",
+    online: "online",
+    date: "dateString",
+    country: "country_flag"
+  };
+  if (ct.table) tableColumns = ct.table;
+  const table = [];
+  for (const k of tableColumns) {
+    table.push({
+      field: fieldColumnMap[k],
+      name: (tableColumnsMap[fieldColumnMap[k]]) ?? ""
+    });
+  }
   const result = mdUtil.mdTable(filteredEvents, table);
   return result;
 }

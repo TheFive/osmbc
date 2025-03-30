@@ -50,21 +50,21 @@ describe("model/osmcalLoader", function () {
           .get("/api/v2/events/")
           .replyWithError("something unexpeced happened");
         const result = await osmcalLoader.getEventMd("EN");
-        should(result).eql("|Country|Where|What                               |Online|When|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
+        should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
       it("should handle String as result in OSMCAL API Call", async function () {
         nock("https://osmcal.org")
           .get("/api/v2/events/")
           .reply(200, "string result");
         const result = await osmcalLoader.getEventMd("EN");
-        should(result).eql("|Country|Where|What                               |Online|When|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
+        should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
       it("should handle non 200 results on osmcal API", async function () {
         nock("https://osmcal.org")
           .get("/api/v2/events/")
           .reply(300, "forbidden error");
         const result = await osmcalLoader.getEventMd("EN");
-        should(result).eql("|Country|Where|What                               |Online|When|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
+        should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
       it("should handle non 200 results on nominatim API", async function () {
         nock("https://osmcal.org")
@@ -97,7 +97,7 @@ describe("model/osmcalLoader", function () {
           .reply(301, "misusage info or something else");
 
         const result = await osmcalLoader.getEventMd("EN");
-        should(result).eql("|Country|Where|What|Online|When|\n|-----|----|------|----|-------|\n");
+        should(result).eql("|Where|What|Online|When|Country|\n|-----|----|------|----|-------|\n");
       });
     });
     describe("Successfull Calls", function () {
