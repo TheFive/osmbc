@@ -514,6 +514,13 @@ async function getNewDriver(username) {
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
 
+  // try to disable passwort Manager Popup
+  // https://stackoverflow.com/questions/69799196/chrome-arguments-to-disable-save-password-prompt
+  chromeOptions.addArguments("guest");
+  // End try disable passwort Manager Popup
+
+
+
   const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);

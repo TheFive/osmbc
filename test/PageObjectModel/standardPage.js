@@ -28,7 +28,9 @@ export default class StandardPage extends Page {
 
   async clickCollect() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("#collect"))).click();
+    const collectButton = await this._driver.findElement(By.css("#collect"));
+    await (collectButton).click();
+    await this._driver.wait(until.stalenessOf(collectButton));
   }
 
   async clickUserIcon() {
