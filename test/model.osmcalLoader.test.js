@@ -13,8 +13,8 @@ import osmcalLoader from "../model/osmcalLoader.js";
 
 
 async function doTest(option) {
-  const inputFile =  path.resolve(config.getDirName(), "test", "data", `osmcal_api_v2.${option.file}.json`);
-  const input =  JSON.parse(fs.readFileSync(inputFile));
+  const inputFile = path.resolve(config.getDirName(), "test", "data", `osmcal_api_v2.${option.file}.json`);
+  const input = JSON.parse(fs.readFileSync(inputFile));
 
   const outputFile = path.resolve(config.getDirName(), "test", "data", `osmcal_result.${option.file}.txt`);
   const expectedResult = fs.readFileSync(outputFile, { encoding: "utf8" });
@@ -35,38 +35,38 @@ async function doTest(option) {
   should(result).eql(expectedResult);
 }
 
-describe("model/osmcalLoader", function() {
-  before(function(bddone) {
+describe("model/osmcalLoader", function () {
+  before(function (bddone) {
     config.initialise();
     testutil.clearDB(bddone);
   });
-  after(async function() {
+  after(async function () {
     mockdate.reset();
   });
-  describe("getEventMD", function() {
-    describe("broken API's", function() {
-      it("should handle error in OSMCAL API Call", async function() {
+  describe("getEventMD", function () {
+    describe("broken API's", function () {
+      it("should handle error in OSMCAL API Call", async function () {
         nock("https://osmcal.org")
           .get("/api/v2/events/")
           .replyWithError("something unexpeced happened");
         const result = await osmcalLoader.getEventMd("EN");
         should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
-      it("should handle String as result in OSMCAL API Call", async function() {
+      it("should handle String as result in OSMCAL API Call", async function () {
         nock("https://osmcal.org")
           .get("/api/v2/events/")
           .reply(200, "string result");
         const result = await osmcalLoader.getEventMd("EN");
         should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
-      it("should handle non 200 results on osmcal API", async function() {
+      it("should handle non 200 results on osmcal API", async function () {
         nock("https://osmcal.org")
           .get("/api/v2/events/")
           .reply(300, "forbidden error");
         const result = await osmcalLoader.getEventMd("EN");
         should(result).eql("|Where|What                               |Online|When|Country|\n|-----|-----------------------------------|------|----|-------|\n|     |osmcal did not reply with Eventlist|      |    |       |\n");
       });
-      it("should handle non 200 results on nominatim API", async function() {
+      it("should handle non 200 results on nominatim API", async function () {
         nock("https://osmcal.org")
           .get("/api/v2/events/")
           .reply(200, [
@@ -100,35 +100,35 @@ describe("model/osmcalLoader", function() {
         should(result).eql("|Where|What|Online|When|Country|\n|-----|----|------|----|-------|\n");
       });
     });
-    describe("Successfull Calls", function() {
-      it("should generate a standard calendar in EN", async function() {
+    describe("Successfull Calls", function () {
+      it("should generate a standard calendar in EN", async function () {
         await doTest({ file: "t1", date: "2020-05-20T19:00:00Z", lang: "EN" });
       });
-      it("should generate a standard calendar in ES", async function() {
+      it("should generate a standard calendar in ES", async function () {
         await doTest({ file: "t2", date: "2020-05-20T19:00:00Z", lang: "ES" });
       });
-      it("should generate handle timezones correct", async function() {
+      it("should generate handle timezones correct", async function () {
         await doTest({ file: "t2", date: "2020-05-20T22:00:00Z", lang: "ES" });
         await doTest({ file: "t2", date: "2020-05-20T02:00:00Z", lang: "ES" });
       });
-      it("should generate canceled Events", async function() {
+      it("should generate canceled Events", async function () {
         await doTest({ file: "t3", date: "2020-05-20T19:00:00Z", lang: "ES" });
       });
     });
-    describe("Successfull Calls Missing Values", function() {
-      it("should generate canceled Events", async function() {
+    describe("Successfull Calls Missing Values", function () {
+      it("should generate canceled Events", async function () {
         await doTest({ file: "t4", date: "2020-05-20T19:00:00Z", lang: "ES" });
       });
     });
   });
-  describe("filterEvent", function() {
-    beforeEach(async function() {
+  describe("filterEvent", function () {
+    beforeEach(async function () {
       mockdate.set(new Date("2015-12-06"));
     });
-    afterEach(async function() {
+    afterEach(async function () {
       mockdate.reset();
     });
-    it("should filter a one day event, thats not big", async function() {
+    it("should filter a one day event, thats not big", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21 };
@@ -139,7 +139,7 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-20" } }, option)).be.False();
       should(filterTest({ date: { start: "2015-12-31" } }, option)).be.True();
     });
-    it("should filter a one day event, thats big", async function() {
+    it("should filter a one day event, thats big", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21 };
@@ -150,7 +150,7 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-27" }, big: true }, option)).be.False();
       should(filterTest({ date: { start: "2015-12-31" }, big: true }, option)).be.True();
     });
-    it("should filter a three day event, thats not big", async function() {
+    it("should filter a three day event, thats not big", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21 };
@@ -160,7 +160,7 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-20", end: "2015-12-23" } }, option)).be.False();
       should(filterTest({ date: { start: "2015-12-21", end: "2015-12-22" } }, option)).be.True();
     });
-    it("should filter a three day event, thats big", async function() {
+    it("should filter a three day event, thats big", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21 };
@@ -171,7 +171,7 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-27", end: "2015-12-29" }, big: true }, option)).be.False();
       should(filterTest({ date: { start: "2015-12-28", end: "2015-12-31" }, big: true }, option)).be.True();
     });
-    it("should filter with included countries", async function() {
+    it("should filter with included countries", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21, includeCountries: ["DE"] };
@@ -182,7 +182,7 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-08" }, country_code: "DE", big: true }, option)).be.False();
       should(filterTest({ date: { start: "2015-12-08" }, country_code: "UK", big: true }, option)).be.True();
     });
-    it("should filter with excluded countries", async function() {
+    it("should filter with excluded countries", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21, excludeCountries: ["DE"] };
@@ -193,7 +193,7 @@ describe("model/osmcalLoader", function() {
       should(filterTest({ date: { start: "2015-12-08" }, country_code: "DE", big: true }, option)).be.True();
       should(filterTest({ date: { start: "2015-12-08" }, country_code: "UK", big: true }, option)).be.False();
     });
-    it("should filter based on Start Date", async function() {
+    it("should filter based on Start Date", async function () {
       const filterTest = osmcalLoader.forTestOnly.filterEvent;
       // clock is set to "2015-12-06" !!
       const option = { date: 0, duration: 14, big_duration: 21, daysAfterBlogStart: 5 };

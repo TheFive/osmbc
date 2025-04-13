@@ -13,7 +13,7 @@ import blogModule from "../../model/blog.js";
 
 import util from "../../util/util.js";
 
-import { By } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 const osmbcLink = util.osmbcLink;
 
 
@@ -75,7 +75,8 @@ describe("uc/collect", function() {
       await (driver.findElement(By.name("title"))).sendKeys("Test Title for Article");
       await (await driver.findElement(By.id("OK"))).click();
       // wait for page to be loaded use language 2 as indicator
-      await driver.findElement(By.css("a#language2"));
+      const deMarkdownEdit = await driver.findElement(By.css("textarea#markdownDE"));
+      await driver.wait(until.elementIsVisible(deMarkdownEdit));
 
       await testutil.expectHtml(driver, "collect", "editPageAfterCollect");
     });

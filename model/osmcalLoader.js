@@ -33,8 +33,8 @@ async function loadEvents(lang) {
     if (!event.location) continue;
     if (!event.location.coords) continue;
     const requestString = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=" + encodeURI(event.location.coords[1]) +
-    "&lon=" + encodeURI(event.location.coords[0]) +
-    "&accept-language=" + lang;
+      "&lon=" + encodeURI(event.location.coords[0]) +
+      "&accept-language=" + lang;
 
     let loc = nominatimCache.get(requestString);
     if (loc === undefined) {
@@ -206,14 +206,31 @@ async function getEventMd(lang, blogStartDate) {
 
   enrichData(filteredEvents, lang);
 
-  const table = [
-    { field: "town", name: townName },
-    { field: "name", name: titleName },
-    { field: "online", name: onlineName },
-    { field: "dateString", name: dateName },
-    { field: "country_flag", name: countryName }
-  ];
-  const result =  mdUtil.mdTable(filteredEvents, table);
+  let tableColumns = ["town", "title", "online", "date", "country"];
+  // ["town", "name", "online", "dateString", "country_flag"]
+  const tableColumnsMap = {
+    country_flag: countryName,
+    town: townName,
+    name: titleName,
+    online: onlineName,
+    dateString: dateName
+  };
+  const fieldColumnMap = {
+    town: "town",
+    title: "name",
+    online: "online",
+    date: "dateString",
+    country: "country_flag"
+  };
+  if (ct.table) tableColumns = ct.table;
+  const table = [];
+  for (const k of tableColumns) {
+    table.push({
+      field: fieldColumnMap[k],
+      name: (tableColumnsMap[fieldColumnMap[k]]) ?? ""
+    });
+  }
+  const result = mdUtil.mdTable(filteredEvents, table);
   return result;
 }
 

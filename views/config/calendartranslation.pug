@@ -5,19 +5,24 @@ block showContentOfConfig
     h2= "Calendar Preview"
     - lang = layout.user.getLang(0)
     if config.json
+      - table = ["town", "title", "online", "date", "country"];
+      - if (config.json.table)  {table = config.json.table};
       table#resulttable.table.table-striped.table-responsive
         thead
           tr
-            th=config.json.town[lang]
-            th=config.json.title[lang]
-            th=config.json.date[lang]
-            th=config.json.country[lang]
+            for c of table
+              - d = false
+              - if (["town","title","date","country"].indexOf(c) >= 0) {d = true}
+              if d
+                th=config.json[c][lang]
+              else
+                th
         tbody
-          tr
-            td="Munich"
-            td="OpenStreetMap Default Meeting"
-            td="2015-12-15"
-            td="Germany"
+          tr 
+            - dataMap = {town:"Munich","title":"OpenStreetMap Default Meeting",date: "2015-12-15","country":"Germany","online":"online"}
+            for c of table
+              td= dataMap[c]
+            
       p
         if (config.json.footer)
           |!{config.json.footer[lang]}
