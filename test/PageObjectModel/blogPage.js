@@ -33,7 +33,9 @@ class BlogPage extends StandardPage {
 
   async clickClose(blog, lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`))).click();
+    const closeLang = await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`));
+    await (closeLang).click();
+    await (this._driver.wait(until.stalenessOf(closeLang)));
   }
 
   async clickStartPersonalReview(lang) {

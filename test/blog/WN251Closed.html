@@ -21,7 +21,6 @@
           <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
           <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
           <li class="navbar-item active"></li>
-          <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN251">WN251<span class="badge badge-pill osmbcbadge-lang">1</span></a></li>
           <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
             <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
               <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -81,14 +80,9 @@
       <div class="d-none d-md-block"></div>
       <div class="row">
         <div class="col-md-6">
-          <h2><span class="d-none d-md-block">Wochennotiz </span>WN251<span class="d-none d-md-block"> (Export DE)</span></h2>
+          <h2><span class="d-none d-md-block">Wochennotiz </span>WN251<span class="d-none d-md-block"> (Close DE)</span></h2>
         </div>
-        <div class="col-md-3">
-          <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;DE&quot;,&quot;closelang&quot;,this);" disabled="">Close WN251(DE)</button></div>
-          <div class="div">
-            <div class="alert bg-danger text-center bold"><strong>Blog is exported, please do the last Review in WordPress</strong></div>
-          </div>
-        </div>
+        <div class="col-md-3"></div>
         <div class="col-md-3 d-none d-md-block"></div>
       </div>
       <div class="row">
@@ -98,22 +92,13 @@
               <div class="card-title"><span>Review DE</span><span class="text-muted small"> (enabled by TheFive</span><span class="text-muted small"> a few seconds ago</span><span class="text-muted small">) </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></div>
             </div>
             <div class="card-body">
-              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE1').classList.remove('d-none');document.getElementById('reviewLeftTextDE1').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></p>
+              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></p>
               <p id="reviewLeftTextDE1">1rst Review Text for DE</p>
-              <div class="d-none" id="editReviewDE1">
-                <form id="editreviewDE1" name="reviewDE1" action="/blog/WN251/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE1">1rst Review Text for DE</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE1" type="submit">Change</button></form>
-              </div>
-              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE2').classList.remove('d-none');document.getElementById('reviewLeftTextDE2').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></p>
+              <div class="d-none" id="editReviewDE1"></div>
+              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=>=2016-05-25T19:00:00.000Z">[changes]</a></p>
               <p id="reviewLeftTextDE2">2nd Review Text for DE</p>
-              <div class="d-none" id="editReviewDE2">
-                <form id="editreviewDE2" name="reviewDE2" action="/blog/WN251/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE2">2nd Review Text for DE</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE2" type="submit">Change</button></form>
-              </div>
-              <div class="form-group">
-                <form id="reviewDE" name="reviewDE" action="/blog/WN251/setReviewComment" method="post">
-                  <div class="col-md-8"><input class="d-none form-control" type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');"><input class="d-none" type="text" name="lang" value="DE"></div>
-                  <div class="col-md-4"><button class="btn btn-large btn-primary" id="reviewButtonDE" type="submit">Start Personal Review</button></div>
-                </form>
-              </div>
+              <div class="d-none" id="editReviewDE2"></div>
+              <div class="form-group"></div>
             </div>
           </div>
         </div>

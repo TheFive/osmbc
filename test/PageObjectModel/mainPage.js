@@ -64,7 +64,7 @@ class MainPage extends StandardPage {
   }
 
   async waitForInitialisation() {
-    // await this.assertPage();
+    await this.assertPage();
     // use language 2 element as indicator to have finished page load
     await this._driver.findElement(By.css("a#adminlink"));
   }

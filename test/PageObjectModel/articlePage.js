@@ -100,6 +100,7 @@ class ArticlePage extends StandardPage {
     await this.selectTextInField(ele, from, to);
     await (ele).sendKeys(text);
     await (ele).sendKeys(Key.TAB);
+    await (this._driver.wait(until.elementIsEnabled(ele)));
   }
 
   async getValueFromLinkArea(link) {

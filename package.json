@@ -76,7 +76,7 @@
     "xml2js": "0.6.x"
   },
   "devDependencies": {
-    "axios-cookiejar-support": "5.0.x",
+    "axios-cookiejar-support": "6.0.0",
     "eslint": "8.57.x",
     "eslint-config-standard": "17.1.x",
     "eslint-plugin-import": "2.29.x",
@@ -93,7 +93,7 @@
     "selenium-webdriver": "4.31.0",
     "serve-index": "^1.9.1",
     "should": "^13.2.3",
-    "sinon": "19.0.x",
+    "sinon": "20.0.0",
     "timemachine": "0.3.x",
     "tough-cookie": "5.1.2"
   }
