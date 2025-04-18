@@ -192,6 +192,9 @@ describe("uc.article", function() {
       nock("https://productforums.google.com").get("/forum/#!topic/map-maker/Kk6AG2v-kzE").times(99).reply(200, "OK");
       await driver.get(osmbcLink("/article/" + articleId));
     });
+    afterEach(async function() {
+      nock.cleanAll();
+    });
     it("should have converted collection correct", async function() {
       const osmbcApp = new OsmbcApp(driver);
       should(await osmbcApp.getArticlePage().getValueFromLinkArea("https://www.test.de/holla")).eql({
@@ -284,7 +287,6 @@ describe("uc.article", function() {
   describe("onchangeMarkdown", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      // await browser.click("#lang2_none");
       await driver.get(osmbcLink("/article/" + articleId));
     });
     it("should warn on double links", async function() {

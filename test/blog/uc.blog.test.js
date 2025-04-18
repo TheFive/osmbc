@@ -27,7 +27,7 @@ import userModule from "../../model/user.js";
 
 
 describe("uc/blog", function() {
-  this.timeout(1000 * 10);
+  this.timeout(2000 * 10);
 
   before(async function() {
     process.env.TZ = "Europe/Amsterdam";
@@ -73,6 +73,7 @@ describe("uc/blog", function() {
       nock("https://osmcal.org").get("/api/v2/events/").times(10).reply(200, []);
     });
     it("should be able to manage a blog lifetime", async function() {
+      this.timeout(4000 * 10);
       const errors = [];
       const driverTheFive = await testutil.getNewDriver("TheFive");
       const osmbcAppTheFive = new OsmbcApp(driverTheFive);

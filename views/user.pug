@@ -150,11 +150,6 @@ block content
         div.col-sm-offset-2.col-sm-10
           input#save(name="OK" type="submit", class="btn btn-primary",value="OK")
 
-  if (usershown.OSMUser === layout.user.OSMUser)
-    p.row
-      h1="Inspect your Data"
-      a(href=htmlroot+"/gdpr")="Show Your Data Link"
-
   p.row
     div.d-none.d-md-block
       h1=usershown.OSMUser + " Heatmap"
