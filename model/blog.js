@@ -1,7 +1,7 @@
 
 // Exported Functions and prototypes are defined at end of file
 
-import { series, eachOf, each } from "async";
+import { series, eachOf, each, eachLimit } from "async";
 import language from "../model/language.js";
 import util from "../util/util.js";
 import { FORBIDDEN } from "http-status-codes";
@@ -431,7 +431,7 @@ class Blog {
       },
       function translateArticles(cb) {
         debug("translateArticles");
-        each(articleList, function (article, cb2) {
+        eachLimit(articleList, 1, function (article, cb2) {
           debug("translateArticles.forEach");
           if (article.categoryEN === "Upcoming Events") return cb2();
 
