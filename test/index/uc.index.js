@@ -95,10 +95,7 @@ describe("uc/index", function() {
           should(err.message).eql("Server returned status code 404 from http://localhost:35043/notdefined.html");
         }
         const header = await driver.findElement(By.xpath("//h1"));
-        // browser.assert.text("h1", "Page Not Found /notdefined.html");
         should(await header.getText()).eql("Page Not Found /notdefined.html");
-
-        // browser.assert.text("h1", "Page Not Found /notdefined.html");
       });
     });
     describe("LanguageSetter", function() {

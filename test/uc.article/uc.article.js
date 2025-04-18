@@ -287,7 +287,6 @@ describe("uc.article", function() {
   describe("onchangeMarkdown", function() {
     this.timeout(maxTimer * 3);
     beforeEach(async function() {
-      // await browser.click("#lang2_none");
       await driver.get(osmbcLink("/article/" + articleId));
     });
     it("should warn on double links", async function() {
