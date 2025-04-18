@@ -2,7 +2,29 @@
 
 ## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.04...HEAD)
+
+**Closed issues:**
+
+- flip the columns of the Calendar ? [\#1042](https://github.com/TheFive/osmbc/issues/1042)
+
+**Merged pull requests:**
+
+- move country flag to front for osmcal [\#1045](https://github.com/TheFive/osmbc/pull/1045) ([call-me-matt](https://github.com/call-me-matt))
+
+## [4.1.04](https://github.com/TheFive/osmbc/tree/4.1.04) (2025-03-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.03...4.1.04)
+
+**Closed issues:**
+
+- Pipe | breaks the Mattermost links [\#1052](https://github.com/TheFive/osmbc/issues/1052)
+- use emoticons in OSMcal table [\#1049](https://github.com/TheFive/osmbc/issues/1049)
+- Don't translate calendar [\#1047](https://github.com/TheFive/osmbc/issues/1047)
+
+## [4.1.03](https://github.com/TheFive/osmbc/tree/4.1.03) (2025-03-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...4.1.03)
 
 **Closed issues:**
 
@@ -204,6 +226,10 @@
 - Links to twitter show a red \#404 [\#946](https://github.com/TheFive/osmbc/issues/946)
 - Reveiw OSMCAL generation for faster generation. [\#945](https://github.com/TheFive/osmbc/issues/945)
 
+**Security fixes:**
+
+- Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
+
 **Closed issues:**
 
 - Consider publish date to identify relevant calendar items [\#980](https://github.com/TheFive/osmbc/issues/980)
@@ -277,7 +303,6 @@
 **Security fixes:**
 
 - Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
-- Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
 
 **Merged pull requests:**
 
