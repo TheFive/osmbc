@@ -70,6 +70,10 @@ class ArticlePage extends StandardPage {
     return text;
   }
 
+  async waitMarkdownInputToBe(lang, text) {
+    const ele =  await this._driver.findElement(By.id("markdown" + lang));
+    await (this._driver.wait(until.elementTextIs(ele, text)));
+  }
 
 
 

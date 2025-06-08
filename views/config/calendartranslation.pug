@@ -12,14 +12,14 @@ block showContentOfConfig
           tr
             for c of table
               - d = false
-              - if (["town","title","date","country"].indexOf(c) >= 0) {d = true}
+              - if (["town","venue","title","date","country"].indexOf(c) >= 0) {d = true}
               if d
-                th=config.json[c][lang]
+                th=(config.json[c] && config.json[c][lang]) ? config.json[c][lang] : c
               else
                 th
         tbody
           tr 
-            - dataMap = {town:"Munich","title":"OpenStreetMap Default Meeting",date: "2015-12-15","country":"Germany","online":"online"}
+            - dataMap = {town:"Munich",title:"OpenStreetMap Default Meeting",date: "2015-12-15",country:"Germany",online:"online",venue:"Meeting Hall"}
             for c of table
               td= dataMap[c]
             

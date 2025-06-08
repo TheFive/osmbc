@@ -162,7 +162,8 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 4, 10, Key.chord(Key.COMMAND, "v"));
-
+        // await ap.waitMarkdownInputToBe("EN", "the [origin](https://Link-to-be-insert.ed) text.");
+        // was: by waiting error occurs due to timing isshue
         should(await ap.getMarkdownInput("EN")).eql("the [origin](https://Link-to-be-insert.ed) text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");

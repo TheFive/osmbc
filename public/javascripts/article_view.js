@@ -271,7 +271,6 @@ function pasteEvent() {
   setTimeout(function () {
     // Generate a triple of text, start selection and end selection AFTER Pasting new text
     const after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
-
     // And use the result, to generate the markdown link
     const r = generateMarkdownLink2(before, after);
 
@@ -338,7 +337,6 @@ function checkMarkdownError() {
 
   const regexToken = regexUrlFromCollection;
   while ((linkList = regexToken.exec(md)) !== null) {
-    console.dir(linkList);
     linksInCollection = true;
     const link = linkList[0];
 
