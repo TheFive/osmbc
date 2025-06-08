@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.06](https://github.com/TheFive/osmbc/tree/4.1.06) (2025-06-08)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.05...4.1.06)
+
+**Closed issues:**
+
+- Add Venue / Location from OSMCAL to automated generated calendar [\#1055](https://github.com/TheFive/osmbc/issues/1055)
+
 ## [4.1.05](https://github.com/TheFive/osmbc/tree/4.1.05) (2025-04-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.04...4.1.05)
