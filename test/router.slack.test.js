@@ -109,7 +109,7 @@ describe("router/slack", function() {
     it("should store an URL variant 2", async function() {
       userName = "TestSlackUseTBC";
       userId = "55";
-      await talk.bind(null, "mixed https://forum.openstreetmap.org/viewtopic.php?id=53173", "@TestSlackUseTBC Please enter an url.");
+      await talk("mixed https://forum.openstreetmap.org/viewtopic.php?id=53173", "@TestSlackUseTBC Please enter an url.");
     });
     it("should store only store urls", async function() {
       userName = "TestSlackUseTBC";

@@ -46,13 +46,13 @@ async function loadEvents(lang) {
       }
       if (loc && !loc.error) nominatimCache.set(requestString, loc);
     }
-    if (loc && loc.name) event.town = loc.name; else event.town = "no location";
+    if (loc && loc.address && loc.address.city) event.town = loc.address.city; else event.town = "";
 
-    // special fix for not delivering town (e.g. Berlin)
-
-    if (loc && loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
+    // special fix for not delivering town (e.g. Berlin) (after change in citiy name obsolete ?)
+    // if (loc && loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
     if (loc && loc.address && loc.address.country) event.country = loc.address.country;
     if (loc && loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
+    if (event.location.venue) event.venue = event.location.venue;
   }
   return json;
 }
@@ -176,6 +176,8 @@ function enrichData(json, lang) {
 async function getEventMd(lang, blogStartDate) {
   const ef = configModule.getConfig("eventsfilter");
   const ct = configModule.getConfig("calendartranslation");
+  let venueName = "Venue";
+  if (ct.venue && ct.venue[lang]) venueName = ct.venue[lang];
   let townName = "Town";
   if (ct.town && ct.town[lang]) townName = ct.town[lang];
   let countryName = "Country";
@@ -206,21 +208,23 @@ async function getEventMd(lang, blogStartDate) {
 
   enrichData(filteredEvents, lang);
 
-  let tableColumns = ["town", "title", "online", "date", "country"];
+  let tableColumns = ["venue", "town", "title", "online", "date", "country"];
   // ["town", "name", "online", "dateString", "country_flag"]
   const tableColumnsMap = {
     country_flag: countryName,
     town: townName,
     name: titleName,
     online: onlineName,
-    dateString: dateName
+    dateString: dateName,
+    venue: venueName
   };
   const fieldColumnMap = {
     town: "town",
     title: "name",
     online: "online",
     date: "dateString",
-    country: "country_flag"
+    country: "country_flag",
+    venue: "venue"
   };
   if (ct.table) tableColumns = ct.table;
   const table = [];
