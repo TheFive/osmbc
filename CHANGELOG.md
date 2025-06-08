@@ -1,8 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.1.05](https://github.com/TheFive/osmbc/tree/4.1.05) (2025-04-18)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.04...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.04...4.1.05)
 
 **Closed issues:**
 
@@ -226,10 +226,6 @@
 - Links to twitter show a red \#404 [\#946](https://github.com/TheFive/osmbc/issues/946)
 - Reveiw OSMCAL generation for faster generation. [\#945](https://github.com/TheFive/osmbc/issues/945)
 
-**Security fixes:**
-
-- Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
-
 **Closed issues:**
 
 - Consider publish date to identify relevant calendar items [\#980](https://github.com/TheFive/osmbc/issues/980)
@@ -303,6 +299,7 @@
 **Security fixes:**
 
 - Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
+- Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
 
 **Merged pull requests:**
 
