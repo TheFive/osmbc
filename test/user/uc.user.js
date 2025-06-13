@@ -205,7 +205,7 @@ describe("views/user", function() {
 
 
     // Check Homepage for Missing Email Warning
-    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here: Goto User Configuration");
+    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here: Go to User Configuration");
 
     await driver.get(osmbcLink("/usert/1"));
     const userPage = osmbcApp.getUserPage();
@@ -225,7 +225,7 @@ describe("views/user", function() {
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();
 
-    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox. Goto User Configuration");
+    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox. Go to User Configuration");
 
     await driver.get(link);
     result = await userModule.findById(1);
