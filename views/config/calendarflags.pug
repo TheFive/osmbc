@@ -15,8 +15,12 @@ block showContentOfConfig
     - for (i =0;i*6<=(all.length);i++)
       .row
         - for (j=i*6;j<Math.min(all.length,(i+1)*6);j++)
-          .col-sm-2=all[j].key
-            img(src= all[j].val, class="img-thumbnail" ,width = 30)
+          .col-sm-2
+            span=all[j].key
+            if (all[j].val.substr(0,8) === "https://")
+              img(src= all[j].val, class="img-thumbnail" ,width = 30)
+            else
+              span=all[j].val
     
     
     if (config.json.emoji)
