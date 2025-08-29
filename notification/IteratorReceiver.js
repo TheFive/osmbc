@@ -47,10 +47,6 @@ class IteratorReceiver {
     }, function (err) {
       // in case of error log it
       if (err) logger.error("Error in sendReviewStatus " + err.message());
-      console.log("------------------------------");
-      console.log("updated article");
-      console.dir(err);
-      console.log("------------------------");
     });
   }
 
