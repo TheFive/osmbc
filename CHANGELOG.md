@@ -1,5 +1,13 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.07...HEAD)
+
+**Closed issues:**
+
+- OSMCal Events are mapped to timezone of server [\#1059](https://github.com/TheFive/osmbc/issues/1059)
+
 ## [4.1.07](https://github.com/TheFive/osmbc/tree/4.1.07) (2025-07-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.06...4.1.07)
@@ -316,6 +324,10 @@
 
 - Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
 - Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
+
+**Merged pull requests:**
+
+- remove typo in KO header [\#951](https://github.com/TheFive/osmbc/pull/951) ([call-me-matt](https://github.com/call-me-matt))
 
 
 
