@@ -35,6 +35,7 @@
 **Closed issues:**
 
 - Pipe | breaks the Mattermost links [\#1052](https://github.com/TheFive/osmbc/issues/1052)
+- use emoticons in OSMcal table [\#1049](https://github.com/TheFive/osmbc/issues/1049)
 - Don't translate calendar [\#1047](https://github.com/TheFive/osmbc/issues/1047)
 
 ## [4.1.03](https://github.com/TheFive/osmbc/tree/4.1.03) (2025-03-27)
@@ -80,7 +81,6 @@
 
 **Closed issues:**
 
-- use emoticons in OSMcal table [\#1049](https://github.com/TheFive/osmbc/issues/1049)
 - Fix Security Issue [\#1034](https://github.com/TheFive/osmbc/issues/1034)
 - Fix Security Issue [\#1033](https://github.com/TheFive/osmbc/issues/1033)
 - Fix Security Issue [\#1032](https://github.com/TheFive/osmbc/issues/1032)
@@ -239,6 +239,7 @@
 **Implemented enhancements:**
 
 - Better titles for collected toots [\#981](https://github.com/TheFive/osmbc/issues/981)
+- Links to twitter show a red \#404 [\#946](https://github.com/TheFive/osmbc/issues/946)
 - Reveiw OSMCAL generation for faster generation. [\#945](https://github.com/TheFive/osmbc/issues/945)
 
 **Closed issues:**
@@ -315,10 +316,6 @@
 
 - Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
 - Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
-
-**Merged pull requests:**
-
-- remove typo in KO header [\#951](https://github.com/TheFive/osmbc/pull/951) ([call-me-matt](https://github.com/call-me-matt))
 
 
 
