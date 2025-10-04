@@ -140,8 +140,8 @@ function enrichData(json, lang) {
 
     // convert date
     let dateString;
-    const sd = moment(event.date && event.date.start);
-    const ed = moment(event.date && event.date.end);
+    const sd = moment.parseZone(event.date && event.date.start);
+    const ed = moment.parseZone(event.date && event.date.end);
     sd.locale(language.momentLocale(lang));
     ed.locale(language.momentLocale(lang));
 
