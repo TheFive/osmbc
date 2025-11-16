@@ -510,7 +510,7 @@ function getWrappedAxiosClient(options) {
 
 async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
-  if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless");
+  if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless=new");
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
 
