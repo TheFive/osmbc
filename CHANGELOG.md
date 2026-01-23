@@ -1,8 +1,16 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.1.09](https://github.com/TheFive/osmbc/tree/4.1.09) (2026-01-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.07...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.08...4.1.09)
+
+**Closed issues:**
+
+- Translate deeplPro - Legacy authentication method 'JSON body' is no longer supported [\#1062](https://github.com/TheFive/osmbc/issues/1062)
+
+## [4.1.08](https://github.com/TheFive/osmbc/tree/4.1.08) (2025-10-04)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.07...4.1.08)
 
 **Closed issues:**
 
