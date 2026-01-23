@@ -932,7 +932,6 @@ describe("routes/article", function() {
             text: ["<p>Dies ist ein deutscher Text.</p>\n"],
             source_lang: "DE",
             target_lang: "EN",
-            auth_key: "Test Key Fake",
             tag_handling: "xml"
           })
         .reply(200, { translations: [{ text: "This is an english text.", source_lang: "DE", target_lang: "EN" }] });

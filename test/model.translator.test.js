@@ -30,7 +30,6 @@ describe("model/translator", function() {
           text: ["<p>Originaler Text</p>\n"],
           source_lang: "EN",
           target_lang: "DE",
-          auth_key: "Test Key Fake",
           tag_handling: "xml",
           formality: "less"
         })
@@ -80,7 +79,6 @@ describe("model/translator", function() {
           text: ["<p>Originaler Text mit <a href=\"https://markdown.link/demo\">Markdown</a> Link</p>\n"],
           source_lang: "EN",
           target_lang: "DE",
-          auth_key: "Test Key Fake",
           tag_handling: "xml",
           formality: "less"
         })
@@ -113,7 +111,6 @@ describe("model/translator", function() {
         text: ['<p>Link :RU-s: &gt;&gt;&gt; <a href="https://forum-openstreetmap-org.translate.goog/viewtopic.php?pid=786827&amp;_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a> und zweiter LInk :EN-t: &gt;&gt;&gt; <a href="https://hide-webhop-me.translate.goog/mapsme/daily/?_x_tr_sl=auto&amp;_x_tr_tl=de&amp;_x_tr_hl=DE">:DE-t:</a></p>\n'],
         source_lang: "DE",
         target_lang: "FR-PARIS",
-        auth_key: "Test Key Fake",
         tag_handling: "xml"
       }
       )

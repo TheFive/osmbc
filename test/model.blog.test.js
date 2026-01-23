@@ -710,7 +710,6 @@ describe("model/blog", function() {
             text: ["<p>Deutscher <em>Text</em></p>\n"],
             source_lang: "DE",
             target_lang: "EN",
-            auth_key: "Test Key Fake",
             tag_handling: "xml"
           })
         .reply(200, { translations: [{ detected_source_language: "EN", text: "<p>English <b>text</b></p>" }] });
