@@ -48,6 +48,7 @@ describe("uc/config", function() {
     const source = await driver.getPageSource();
     should(source).containEql("YAMLException: duplicated mapping key (8:3)");
   });
+
   it("should open and save calendartranslation", async function() {
     await driver.get(osmbcLink("/config/calendartranslation"));
     let textElement = await driver.findElement(By.css("table#resulttable"));

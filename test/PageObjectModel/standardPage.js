@@ -13,7 +13,9 @@ export default class StandardPage extends Page {
 
   async clickBlogMenu(blog) {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("a[href='/blog/" + blog + "']"))).click();
+    const blogMenu = await this._driver.findElement(By.css("a[href='/blog/" + blog + "']"));
+    await blogMenu.click();
+    await this._driver.wait(until.stalenessOf(blogMenu));
   }
 
   async clickInboxMenu(blog) {
