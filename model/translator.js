@@ -1,6 +1,5 @@
 
 
-import queryString from "query-string";
 import axios from "axios";
 import language from "../model/language.js";
 
@@ -23,36 +22,43 @@ const debug = _debug("OSMBC:model:translator");
 
 
 async function deeplTranslate(url, params) {
+  params.text = [params.text];
   try {
-    const query = queryString.stringify(params);
-    const response = await request(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: query
-    });
+    const response = await axios.post(
+      url,
+      params,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `DeepL-Auth-Key ${deeplConfig.authKey}`
+        }
+      });
     return response.data;
   } catch (err) {
-    const message = err.message.replaceAll(deeplConfig.authKey, "APIKEY");
+    let message = err.messsage;
+    if (err.response && err.response.data && err.response.data.message) {
+      message = message + "\n" + err.response.data.message;
+    }
+    if (typeof message === "undefined") throw err;
+    message.replaceAll(deeplConfig.authKey, "APIKEY");
     throw (new Error(message));
   }
 }
 
 async function deeplUsage() {
-  const deeplParams = {};
-
   if (typeof deeplConfig.authKey === "undefined") {
     return new Error("No Deepl Key registered");
   }
   if (typeof deeplConfig.usageUrl === "undefined") {
     return new Error("No Deepl Url registered configured");
   }
-  deeplParams.auth_key = deeplConfig.authKey;
+  // deeplParams.auth_key = deeplConfig.authKey;
 
   try {
     const response = await request(deeplConfig.usageUrl, {
       method: "GET",
       headers: {
-        Authorization: "DeepL-Auth-Key " + deeplConfig.authKey
+        Authorization: `DeepL-Auth-Key ${deeplConfig.authKey}`
       }
     });
     const data = response.data;
@@ -103,7 +109,6 @@ function translateDeeplPro(options, callback) {
   deeplParams.text = htmltext;
   deeplParams.source_lang = fromLangDeepl.toUpperCase();
   deeplParams.target_lang = toLangDeepl.toUpperCase();
-  deeplParams.auth_key = deeplConfig.authKey;
   deeplParams.tag_handling = "xml";
   if (formality) deeplParams.formality = formality;
 

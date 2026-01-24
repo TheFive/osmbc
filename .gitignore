@@ -53,3 +53,4 @@ cache
 config local.txt
 configserver.txt
 public/profile
+github-changelog-http-cache

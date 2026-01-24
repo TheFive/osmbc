@@ -25,7 +25,8 @@ class ArticlePage extends StandardPage {
   async fillTitleInput(text) {
     await this.assertPage();
     const ele =  await this._driver.findElement(By.id("title"));
-    await (ele).sendKeys(await this.getCtrlA());
+    const ctrlA = await this.getCtrlA();
+    await (ele).sendKeys(ctrlA);
     await (ele).sendKeys(text);
   }
 
@@ -70,6 +71,14 @@ class ArticlePage extends StandardPage {
     return text;
   }
 
+  async waitMarkdownInputToBe(lang, text) {
+    const ele =  await this._driver.findElement(By.id("markdown" + lang));
+    // Sample for a fluent wait with selenium
+    await this._driver.wait(async function() {
+      const textFromField = await ele.getAttribute("value").catch(() => null);
+      return textFromField === text;
+    }, 10000, 500);
+  }
 
 
 
@@ -100,6 +109,7 @@ class ArticlePage extends StandardPage {
     await this.selectTextInField(ele, from, to);
     await (ele).sendKeys(text);
     await (ele).sendKeys(Key.TAB);
+    await (this._driver.wait(until.elementIsEnabled(ele)));
   }
 
   async getValueFromLinkArea(link) {

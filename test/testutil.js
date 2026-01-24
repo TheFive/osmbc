@@ -510,11 +510,19 @@ function getWrappedAxiosClient(options) {
 
 async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
-  if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless");
+  if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless=new");
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
 
+  // try to disable passwort Manager Popup
+  // https://stackoverflow.com/questions/69799196/chrome-arguments-to-disable-save-password-prompt
+  chromeOptions.addArguments("guest");
+  // End try disable passwort Manager Popup
+
+
+
   const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
+  // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
   await driver.manage().setTimeouts({ implicit: 700, script: 700 });

@@ -38,7 +38,7 @@ describe("views/user", function() {
   });
   afterEach(async function() {
     mockdate.reset();
-    // await driver.quit();
+    await driver.quit();
     mailChecker.restore();
     testutil.stopServer();
   });
@@ -159,6 +159,8 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
+    await userPage.waitForPageReload();
+
 
 
     const result = await userModule.findById(2);
@@ -203,8 +205,7 @@ describe("views/user", function() {
 
 
     // Check Homepage for Missing Email Warning
-    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here: Goto User Configuration");
-
+    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here: Go to User Configuration");
 
     await driver.get(osmbcLink("/usert/1"));
     const userPage = osmbcApp.getUserPage();
@@ -224,7 +225,7 @@ describe("views/user", function() {
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();
 
-    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox. Goto User Configuration");
+    should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox. Go to User Configuration");
 
     await driver.get(link);
     result = await userModule.findById(1);

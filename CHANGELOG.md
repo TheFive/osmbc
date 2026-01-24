@@ -1,8 +1,62 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.1.09](https://github.com/TheFive/osmbc/tree/4.1.09) (2026-01-23)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.08...4.1.09)
+
+**Closed issues:**
+
+- Translate deeplPro - Legacy authentication method 'JSON body' is no longer supported [\#1062](https://github.com/TheFive/osmbc/issues/1062)
+
+## [4.1.08](https://github.com/TheFive/osmbc/tree/4.1.08) (2025-10-04)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.07...4.1.08)
+
+**Closed issues:**
+
+- OSMCal Events are mapped to timezone of server [\#1059](https://github.com/TheFive/osmbc/issues/1059)
+
+## [4.1.07](https://github.com/TheFive/osmbc/tree/4.1.07) (2025-07-19)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.06...4.1.07)
+
+**Merged pull requests:**
+
+- Remove space from start of link, and fix spelling \("Goto" → "Go to"\) [\#1056](https://github.com/TheFive/osmbc/pull/1056) ([waldyrious](https://github.com/waldyrious))
+
+## [4.1.06](https://github.com/TheFive/osmbc/tree/4.1.06) (2025-06-08)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.05...4.1.06)
+
+**Closed issues:**
+
+- Add Venue / Location from OSMCAL to automated generated calendar [\#1055](https://github.com/TheFive/osmbc/issues/1055)
+
+## [4.1.05](https://github.com/TheFive/osmbc/tree/4.1.05) (2025-04-18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.04...4.1.05)
+
+**Closed issues:**
+
+- flip the columns of the Calendar ? [\#1042](https://github.com/TheFive/osmbc/issues/1042)
+
+**Merged pull requests:**
+
+- move country flag to front for osmcal [\#1045](https://github.com/TheFive/osmbc/pull/1045) ([call-me-matt](https://github.com/call-me-matt))
+
+## [4.1.04](https://github.com/TheFive/osmbc/tree/4.1.04) (2025-03-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.03...4.1.04)
+
+**Closed issues:**
+
+- Pipe | breaks the Mattermost links [\#1052](https://github.com/TheFive/osmbc/issues/1052)
+- use emoticons in OSMcal table [\#1049](https://github.com/TheFive/osmbc/issues/1049)
+- Don't translate calendar [\#1047](https://github.com/TheFive/osmbc/issues/1047)
+
+## [4.1.03](https://github.com/TheFive/osmbc/tree/4.1.03) (2025-03-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...4.1.03)
 
 **Closed issues:**
 

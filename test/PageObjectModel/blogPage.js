@@ -33,7 +33,9 @@ class BlogPage extends StandardPage {
 
   async clickClose(blog, lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`))).click();
+    const closeLang = await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`));
+    await (closeLang).click();
+    await (this._driver.wait(until.stalenessOf(closeLang)));
   }
 
   async clickStartPersonalReview(lang) {
@@ -55,7 +57,11 @@ class BlogPage extends StandardPage {
 
   async clickStoreReviewText(lang) {
     await this.assertPage();
+    const reviewComment = (await this._driver.findElement(By.css("textarea#reviewComment" + lang)));
     await (await this._driver.findElement(By.css("button#reviewButton" + lang))).click();
+    await this._driver.wait(until.stalenessOf(reviewComment), 1000);
+    const startReviewButton = (await this._driver.findElement(By.css("button#reviewButton" + lang)));
+    await this._driver.wait(until.elementIsVisible(startReviewButton), 1000);
   }
 
   async clickDidExport(lang) {
@@ -103,6 +109,7 @@ class BlogPage extends StandardPage {
     const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
     await this.scrollIntoView(articleElement);
     await (articleElement).click();
+    await (until.stalenessOf(articleElement));
   }
 
   async isMode(mode) {
@@ -114,16 +121,7 @@ class BlogPage extends StandardPage {
 
   async typeEditForm(articleShown, newArticleText) {
     await this.assertPage();
-    let editForm;
-    if (await this.isMode("Overview")) {
-      editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../../following-sibling::tr[1]//textarea`));
-    } else if (await this.isMode("Full")) {
-      editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../..//textarea[1]`));
-    } else if (await this.isMode("Review")) {
-      editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
-    }
-
-
+    const editForm = await this.getEditForm(articleShown);
     await this._driver.wait(until.elementIsEnabled(editForm), 1000);
     await this.scrollIntoView(editForm);
     await this._driver.wait(until.elementIsVisible(editForm), 1000);
@@ -146,7 +144,12 @@ class BlogPage extends StandardPage {
     } else if (await this.isMode("Review")) {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
+    return editForm;
+  }
 
+  async getEditFormContent(articleShown) {
+    await this.assertPage();
+    const editForm = await this.getEditForm(articleShown);
     return await editForm.getAttribute("innerHTML");
   }
 
@@ -169,6 +172,11 @@ class BlogPage extends StandardPage {
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
     await this.scrollIntoView(editView);
     await editView.click();
+  }
+
+  async triggerOnChange(articleShown) {
+    const input = await this.getEditForm(articleShown);
+    await this._driver.executeScript("const changeEvent = new Event('change');arguments[0].dispatchEvent(changeEvent);", input);
   }
 }
 

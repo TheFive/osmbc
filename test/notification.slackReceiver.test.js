@@ -38,7 +38,7 @@ describe("notification/slackReceiver", function() {
       const slack = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
           {
-            text: "<https://localhost:35043/article/1|Test Title> added to <https://localhost:35043/blog/WN789|WN789>\n",
+            text: "<https://localhost:35043/article/1|Test with Pipe - Title> added to <https://localhost:35043/blog/WN789|WN789>\n",
             username: "testbc(testuser)",
             icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
             channel: "#osmbcarticle"
@@ -46,7 +46,7 @@ describe("notification/slackReceiver", function() {
         .reply(200, "ok");
       articleModule.createNewArticle(function(err, article) {
         should.not.exist(err);
-        article.setAndSave({ OSMUser: "testuser" }, { version: 1, blog: "WN789", collection: "newtext", title: "Test Title" }, function(err) {
+        article.setAndSave({ OSMUser: "testuser" }, { version: 1, blog: "WN789", collection: "newtext", title: "Test with Pipe | Title" }, function(err) {
           should.not.exist(err);
           should(slack.isDone()).is.True();
           bddone();

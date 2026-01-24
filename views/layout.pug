@@ -149,13 +149,15 @@ block all
             div.alert.alert-danger.text-center#mailalert
               span="Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox."
               span
-                a.alert-link(href=layout.htmlroot+"/usert/self")=" Goto User Configuration"
+                | 
+                a.alert-link(href=layout.htmlroot+"/usert/self")="Go to User Configuration"
         if (layout && layout.user && layout.user && !layout.user.email && !layout.user.emailInvalidation)
           p
             div.alert.alert-danger.text-center#mailalert
               span="Please enter your email to receive comments and feedback here:"
               span
-                a.alert-link(href=layout.htmlroot + "/usert/self")=" Goto User Configuration"
+                | 
+                a.alert-link(href=layout.htmlroot + "/usert/self")="Go to User Configuration"
 
         p
          block content

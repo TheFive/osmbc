@@ -27,7 +27,7 @@ import userModule from "../../model/user.js";
 
 
 describe("uc/blog", function() {
-  this.timeout(1000 * 10);
+  this.timeout(2000 * 10);
 
   before(async function() {
     process.env.TZ = "Europe/Amsterdam";
@@ -73,6 +73,7 @@ describe("uc/blog", function() {
       nock("https://osmcal.org").get("/api/v2/events/").times(10).reply(200, []);
     });
     it("should be able to manage a blog lifetime", async function() {
+      this.timeout(4000 * 10);
       const errors = [];
       const driverTheFive = await testutil.getNewDriver("TheFive");
       const osmbcAppTheFive = new OsmbcApp(driverTheFive);
@@ -212,7 +213,7 @@ describe("uc/blog", function() {
 
         await blogPage.typeEditForm(previousText, "Changed Text in full review");
         await blogPage.clickOnArticle("Digitalcourage suggests");
-        should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in full review");
+        should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in full review");
       });
       it("should show Overview and Edit Article", async function() {
         const errors = [];
@@ -241,18 +242,19 @@ describe("uc/blog", function() {
 
         await blogPage.clickOnArticle("jeden Tag...");
 
-        // democote to take a screenshot => to be migrated to testutil.
-        // const data = await driver.takeScreenshot();
-        // const base64Data = data.replace(/^data:image\/png;base64,/, "");
-        // fs.writeFileSync("out.png", base64Data, "base64");
+
 
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
 
+
         await blogPage.clickOnArticle("jeden Tag...");
 
-        await blogPage.clickBlogMenu("WN290");
 
-        should((await blogPage.getEditForm("jeden Tag..."))).eql("Changed Text");
+        await blogPage.clickBlogMenu("WN290");
+        // additional trigger for on change used in Headless Mode
+        // await blogPage.triggerOnChange("jeden Tag...");
+
+        should(await blogPage.getEditFormContent("jeden Tag...")).eql("Changed Text");
 
         should(errors).eql([]);
       });
@@ -271,7 +273,7 @@ describe("uc/blog", function() {
         await blogPage.typeEditForm(previousText, "Changed Text in Review review");
         await blogPage.clickOnArticle("Im Forum wird darüber");
 
-        should((await blogPage.getEditForm("Changed Text"))).eql("Changed Text in Review review");
+        should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in Review review");
       });
       it("should show Statistic View", async function() {
         const osmbcApp = new OsmbcApp(driver);

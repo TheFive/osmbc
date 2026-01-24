@@ -37,7 +37,25 @@ app.set("port", port);
 let hostname = null;
 if (process.env.HOSTNAME || config.getServerHostname()) hostname = (process.env.HOSTNAME || config.getServerHostname());
 
+(async function logRuntimeVersions() {
+  const nodeVersion = process.version;
+  let npmVersion = process.env.npm_config_user_agent ? (process.env.npm_config_user_agent.match(/^(\w+)\/([\d.]+)/) || [])[2] : null;
 
+  if (!npmVersion) {
+    try {
+      const { execSync } = await import("child_process");
+      npmVersion = execSync("npm -v", { encoding: "utf8" }).trim();
+    } catch (e) {
+      npmVersion = "unknown";
+    }
+  }
+
+  const msg = `Node: ${nodeVersion}  NPM: ${npmVersion}`;
+  config.logger.info(msg);
+  console.info(msg);
+})().catch(err => {
+  config.logger.warn("Could not determine Node/NPM versions: " + err.message);
+});
 
 /* check node version */
 

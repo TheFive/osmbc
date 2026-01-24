@@ -10,6 +10,8 @@
 // Init This Window with jQuery ready Callback
 $(document).ready(init);
 
+const regexUrlFromCollection = /\b(https?:\/\/[^\[\] \n\r]*)\b/g;
+
 
 
 
@@ -269,7 +271,6 @@ function pasteEvent() {
   setTimeout(function () {
     // Generate a triple of text, start selection and end selection AFTER Pasting new text
     const after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
-
     // And use the result, to generate the markdown link
     const r = generateMarkdownLink2(before, after);
 
@@ -334,7 +335,7 @@ function checkMarkdownError() {
   let errorLinkTwice = null;
   let errorLinkNotInCollection = null;
 
-  const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+  const regexToken = regexUrlFromCollection;
   while ((linkList = regexToken.exec(md)) !== null) {
     linksInCollection = true;
     const link = linkList[0];
@@ -453,7 +454,7 @@ function dragstart(event, text) {
 function onchangeCollection() {
   const cl = $("#collection").val();
   const linkArea = $("#linkArea");
-  const regexToken = /(https?:\/\/[^\[\] \n\r()]*)/g;
+  const regexToken = regexUrlFromCollection;
   let linkList;
   window.linklist = [];
   let result = "";

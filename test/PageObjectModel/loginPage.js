@@ -33,9 +33,7 @@ class LoginPage extends Page {
   async clickOK() {
     const submitButton = await this._driver.findElement(By.id("submitbutton"));
     await (submitButton).click();
-    console.log("submitbutton button clicked");
     await this._driver.wait(until.stalenessOf(submitButton), 2000);
-    console.log("submitbutton button stale");
   }
 }
 export default LoginPage;

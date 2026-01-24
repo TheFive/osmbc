@@ -50,6 +50,7 @@ const limitValues = config.getValue("limitValues", { mustExist: true });
 
 const limitWindowMs = limitValues.limitWindowsMs ?? 15 * 60 * 1000;
 const limitMaxCount = limitValues.limitMaxCount ?? 150;
+const limitTrustProxy = limitValues.trustProxy ?? 0;
 
 const limiter = rateLimit({
   windowMs: limitWindowMs,
@@ -60,6 +61,7 @@ const limiter = rateLimit({
 
 
 const app = express();
+app.set("trust proxy", limitTrustProxy);
 
 
 app.locals.htmlroot = config.htmlRoot();

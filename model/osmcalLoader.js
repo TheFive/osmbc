@@ -33,8 +33,8 @@ async function loadEvents(lang) {
     if (!event.location) continue;
     if (!event.location.coords) continue;
     const requestString = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=" + encodeURI(event.location.coords[1]) +
-    "&lon=" + encodeURI(event.location.coords[0]) +
-    "&accept-language=" + lang;
+      "&lon=" + encodeURI(event.location.coords[0]) +
+      "&accept-language=" + lang;
 
     let loc = nominatimCache.get(requestString);
     if (loc === undefined) {
@@ -46,13 +46,13 @@ async function loadEvents(lang) {
       }
       if (loc && !loc.error) nominatimCache.set(requestString, loc);
     }
-    if (loc && loc.name) event.town = loc.name; else event.town = "no location";
+    if (loc && loc.address && loc.address.city) event.town = loc.address.city; else event.town = "";
 
-    // special fix for not delivering town (e.g. Berlin)
-
-    if (loc && loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
+    // special fix for not delivering town (e.g. Berlin) (after change in citiy name obsolete ?)
+    // if (loc && loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
     if (loc && loc.address && loc.address.country) event.country = loc.address.country;
     if (loc && loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
+    if (event.location.venue) event.venue = event.location.venue;
   }
   return json;
 }
@@ -140,8 +140,8 @@ function enrichData(json, lang) {
 
     // convert date
     let dateString;
-    const sd = moment(event.date && event.date.start);
-    const ed = moment(event.date && event.date.end);
+    const sd = moment.parseZone(event.date && event.date.start);
+    const ed = moment.parseZone(event.date && event.date.end);
     sd.locale(language.momentLocale(lang));
     ed.locale(language.momentLocale(lang));
 
@@ -157,7 +157,14 @@ function enrichData(json, lang) {
 
     // generate Calendar Flags
     event.country_flag = event.country_code;
-    if (cf[event.country_code]) event.country_flag = `![flag](${cf[event.country_code]})`;
+    if (cf[event.country_code]) {
+      const mdFlag = cf[event.country_code];
+      if (mdFlag.substr(0, 8) === "https://") {
+        event.country_flag = `![flag](${mdFlag})`;
+      } else {
+        event.country_flag = mdFlag;
+      }
+    }
 
     if (event.online) {
       if (cf.online) event.online = `![online](${cf.online})`;
@@ -169,6 +176,8 @@ function enrichData(json, lang) {
 async function getEventMd(lang, blogStartDate) {
   const ef = configModule.getConfig("eventsfilter");
   const ct = configModule.getConfig("calendartranslation");
+  let venueName = "Venue";
+  if (ct.venue && ct.venue[lang]) venueName = ct.venue[lang];
   let townName = "Town";
   if (ct.town && ct.town[lang]) townName = ct.town[lang];
   let countryName = "Country";
@@ -199,14 +208,33 @@ async function getEventMd(lang, blogStartDate) {
 
   enrichData(filteredEvents, lang);
 
-  const table = [
-    { field: "town", name: townName },
-    { field: "name", name: titleName },
-    { field: "online", name: onlineName },
-    { field: "dateString", name: dateName },
-    { field: "country_flag", name: countryName }
-  ];
-  const result =  mdUtil.mdTable(filteredEvents, table);
+  let tableColumns = ["venue", "town", "title", "online", "date", "country"];
+  // ["town", "name", "online", "dateString", "country_flag"]
+  const tableColumnsMap = {
+    country_flag: countryName,
+    town: townName,
+    name: titleName,
+    online: onlineName,
+    dateString: dateName,
+    venue: venueName
+  };
+  const fieldColumnMap = {
+    town: "town",
+    title: "name",
+    online: "online",
+    date: "dateString",
+    country: "country_flag",
+    venue: "venue"
+  };
+  if (ct.table) tableColumns = ct.table;
+  const table = [];
+  for (const k of tableColumns) {
+    table.push({
+      field: fieldColumnMap[k],
+      name: (tableColumnsMap[fieldColumnMap[k]]) ?? ""
+    });
+  }
+  const result = mdUtil.mdTable(filteredEvents, table);
   return result;
 }
 

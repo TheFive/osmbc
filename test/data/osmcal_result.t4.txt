@@ -1,5 +1,5 @@
-|Dónde    |Qué                                                                |Online|Fecha     |País|
-|---------|-------------------------------------------------------------------|------|----------|----|
-|Stuttgart|Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |30/05/2020|de  |
-|         |Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |30/05/2020|    |
-|Stuttgart|Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |          |de  |
+|Venue |Dónde    |Qué                                                                |Online|Fecha     |País|
+|------|---------|-------------------------------------------------------------------|------|----------|----|
+|Online|Stuttgart|Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |30/05/2020|de  |
+|      |         |Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |30/05/2020|    |
+|Online|Stuttgart|Stuttgarter Stammtisch [:osmcalpic:](https://osmcal.org/event/353/)|      |          |de  |
