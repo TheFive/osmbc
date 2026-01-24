@@ -65,5 +65,5 @@ BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user, artic
 
 
 
-module.exports = BlogStatusFilter;
+export default BlogStatusFilter;
 
