@@ -23,7 +23,14 @@ class BlogPage extends StandardPage {
 
   async clickEditBlogDetail() {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("editBlogDetail"))).click();
+    const clickEditBlogDetail = await this._driver.findElement(By.id("editBlogDetail"));
+    await this.scrollIntoView(clickEditBlogDetail);
+    await this._waitForBootstrapOverlaysToDisappear();
+    // await this._driver.wait(until.elementIsVisible(clickEditBlogDetail)); // Warte auf Sichtbarkeit
+    // await this._driver.wait(until.elementIsEnabled(clickEditBlogDetail)); // Zusätzlich: Warte auf Aktivierung
+    await clickEditBlogDetail.click();
+    // await this._driver.executeScript("arguments[0].click();", clickEditBlogDetail); // JavaScript-Klick als Fallback
+    await this._driver.wait(until.stalenessOf(clickEditBlogDetail)); // Warte, bis das Element nicht mehr im DOM ist
   }
 
   async clickReadyReview(blog, lang) {
@@ -52,6 +59,8 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const checkbox = (await this._driver.findElement(By.css(checkboxName)));
     await this.scrollIntoView(checkbox);
+    await this._waitForBootstrapOverlaysToDisappear();
+
     await checkbox.click();
   }
 
@@ -108,8 +117,8 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
     await this.scrollIntoView(articleElement);
+    await this._waitForBootstrapOverlaysToDisappear();
     await (articleElement).click();
-    await (until.stalenessOf(articleElement));
   }
 
   async isMode(mode) {
