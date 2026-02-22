@@ -304,8 +304,6 @@ describe("uc.article", function() {
       await driver.get(osmbcLink("/article/1"));
       const articlePage = osmbcApp.getArticlePage();
       await articlePage.fillCommentInput("Add a test comment");
-      // Scroll the comment section into view to ensure the button is clickable
-      await driver.executeScript("arguments[0].scrollIntoView(true);", await articlePage.getAddCommentButton());
       await articlePage.clickAddComment();
 
 

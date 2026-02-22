@@ -98,7 +98,11 @@ class ArticlePage extends StandardPage {
 
   async clickAddComment() {
     await this.assertPage();
+
     const addCommentButton = await this._driver.findElement(By.css("button[name='AddComment']"));
+    // Scroll the comment section into view to ensure the button is clickable
+    await this.scrollIntoView(addCommentButton);
+    await this._waitForBootstrapOverlaysToDisappear();
     await (addCommentButton).click();
     await this._driver.wait(until.stalenessOf(addCommentButton), 2000);
   }
