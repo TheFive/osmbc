@@ -242,7 +242,6 @@ function hasRole(role) {
   return function checkAuthentification (req, res, next) {
     debug("checkAuthentification");
     if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    console.dir(roleArray);
     if (roleArray.indexOf(req.user.access) >= 0) return next();
     return next("route");
   };

@@ -57,6 +57,9 @@ class BlogPage extends StandardPage {
 
   async #clickACheckbox(checkboxName) {
     await this.assertPage();
+    
+    await this._driver.wait(until.elementLocated(By.css(checkboxName)), 5000);
+
     const checkbox = (await this._driver.findElement(By.css(checkboxName)));
     await this.scrollIntoView(checkbox);
     await this._waitForBootstrapOverlaysToDisappear();
@@ -172,15 +175,15 @@ class BlogPage extends StandardPage {
   async clickStatisticView() {
     await this.assertPage();
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
-    await this.scrollIntoView(statisticView);
-    await statisticView.click();
+    await this._waitForBootstrapOverlaysToDisappear();
+    await this._driver.executeScript("arguments[0].click();", statisticView);
   }
 
   async clickEditView() {
     await this.assertPage();
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
-    await this.scrollIntoView(editView);
-    await editView.click();
+    await this._waitForBootstrapOverlaysToDisappear();
+    await this._driver.executeScript("arguments[0].click();", editView);
   }
 
   async triggerOnChange(articleShown) {
