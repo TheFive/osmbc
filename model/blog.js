@@ -1138,6 +1138,7 @@ const blogModule = {
   findOne: findOne,
   findById: findById,
   find: find,
+  getTBC: getTBC,
   create: create,
   sortArticles: sortArticles,
   sanitizeBlogKey: sanitizeBlogKey,
