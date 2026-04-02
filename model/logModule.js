@@ -101,9 +101,15 @@ function create(proto) {
 
 function log(object, callback) {
   debug("log");
-  if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
-  db.query("insert into changes (data) values ($1) ", [object], function(err) {
-    return callback(err);
+  function _log(object, callback) {
+    if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
+    db.query("insert into changes (data) values ($1) ", [object], function(err) {
+      return callback(err);
+    });
+  }
+  if (callback) return _log(object, callback);
+  return new Promise((resolve, reject) => {
+    _log(object, (err) => (err) ? reject(err) : resolve());
   });
 }
 
