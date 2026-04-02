@@ -45,6 +45,8 @@ class ArticlePage extends StandardPage {
     await (ele).sendKeys(await this.getCtrlA());
     await (ele).sendKeys(text);
     const button = await this._driver.findElement(By.xpath("//button[text()='Update']"));
+    await this.scrollIntoView(button);
+
     await button.click();
     await this._driver.wait(until.stalenessOf(ele));
   }

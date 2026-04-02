@@ -14,60 +14,81 @@
   </head>
 
   <body><!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top"><a class="bg-success navbar-brand" href="/changelog">What's New?</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle active" id="userLists" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">UserLists</a>
-            <div class="dropdown-menu" aria-labelledby="userLists"> <a class="dropdown-item" id="createUser" href="/usert/create">Create</a><a class="dropdown-header">User Lists</a><a class="dropdown-item" href="/usert/list?access=full">List Active</a><a class="dropdown-item" href="/usert/list?access=guest">List Guest</a><a class="dropdown-item" href="/usert/list?temporaryGuest=true">List Full User Testing Guest</a><a class="dropdown-item" href="/usert/list?access=denied">List Denied</a><a class="dropdown-item" href="/usert/list">List All</a><a class="dropdown-item" href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true&amp;lastAccess=!=never">Who Is Online</a></div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link active dropdown-toggle" id="toolsMenu" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
-            <div class="dropdown-menu" aria-labelledby="toolsMenu"> <a class="dropdown-header">Action</a><a class="dropdown-item" id="createblog" href="/createblog">Create Blog</a></div>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="navbar-item active"></li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language">
-              <div class="dropdown-divider"> </div>
-            </div>
-          </li>
-          <li><img onclick="location.href='/usert/1';" style="height:40px;width:40px"></li>
-        </ul>
-      </div><!-- /.nav-collapse-->
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top">
+      <div class="container-fluid"><a class="bg-success navbar-brand" href="/changelog">What's New?</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle active" id="userLists" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">UserLists</a>
+              <div class="dropdown-menu" aria-labelledby="userLists"> <a class="dropdown-item" id="createUser" href="/usert/create">Create</a><a class="dropdown-header">User Lists</a><a class="dropdown-item" href="/usert/list?access=full">List Active</a><a class="dropdown-item" href="/usert/list?access=guest">List Guest</a><a class="dropdown-item" href="/usert/list?temporaryGuest=true">List Full User Testing Guest</a><a class="dropdown-item" href="/usert/list?access=denied">List Denied</a><a class="dropdown-item" href="/usert/list">List All</a><a class="dropdown-item" href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true&amp;lastAccess=!=never">Who Is Online</a></div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link active dropdown-toggle" id="toolsMenu" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+              <div class="dropdown-menu" aria-labelledby="toolsMenu"> <a class="dropdown-header">Action</a><a class="dropdown-item" id="createblog" href="/createblog">Create Blog</a></div>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language">
+                <div class="dropdown-divider"> </div>
+              </div>
+            </li>
+            <li><img onclick="location.href='/usert/1';" style="height:40px;width:40px"></li>
+          </ul>
+        </div><!-- /.nav-collapse-->
+      </div>
     </nav>
     <div class="container-fluid">
       <p></p>
       <h1><span><img style="height:50px;width:50px"></span><span>  Edit OSMBC User TestUser</span></h1>
       <p>OpenStreetMap User Links: <a href="https://www.openstreetmap.org/user/TestUser"><i class="fa fa-map text-muted"></i></a><span> </span><a href="https://hdyc.neis-one.org/?TestUser"><i class="fa fa-line-chart text-muted"></i></a></p>
       <form name="input" action="/usert/2" method="post">
-        <div class="row mb-3"><label class="col col-form-label" for="OSMUser">OSMUser</label><input class="col-5 form-control" name="OSMUser" id="OSMUser" value="TestUser"><label class="col d-none d-md-block form-text">The OpenStreetMap user name</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="email">EMail</label><input class="col-5 form-control" name="email" id="email" value=""><label class="col d-none d-md-block form-text">This mail is used for information about changes. To delete the email just submit a space for this field.</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="mdWeeklyAuthor">Author for Blog</label><input class="col-5 form-control" name="mdWeeklyAuthor" id="mdWeeklyAuthor" value=""><label class="col d-none d-md-block form-text">Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.osm.org/user/OSM%20User)</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="language">Language</label><select class="col-5 form-control" id="language" name="language">
-            <option value="DE" selected="selected">DE</option>
-            <option value="EN">EN</option>
-            <option value="FR">FR</option>
-            <option value="ES">ES</option>
-            <option value="PT-PT">PT-PT</option>
-          </select><label class="col d-none d-md-block form-text">Main Language for the user, used for default values.</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="access">Access</label><select class="col-5 form-control" id="access" name="access">
-            <option value="full" selected="selected">full</option>
-            <option value="guest">guest</option>
-            <option value="denied">denied</option>
-          </select><label class="col d-none d-md-block form-text">Define Users Access to OSMBC</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="mailNewCollection">Mail a new Collection</label><select class="col-5 form-control" id="mailNewCollection" name="mailNewCollection">
-            <option value="true">on</option>
-            <option value="false" selected="selected">off</option>
-          </select><label class="col d-none d-md-block form-text">Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="mailAllComment">Mail All Comments</label><select class="col-5 form-control" id="mailAllComment" name="mailAllComment">
-            <option value="true">on</option>
-            <option value="false" selected="selected">off</option>
-          </select><label class="col d-none d-md-block form-text">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</label></div>
+        <div class="row mb-3">
+          <div class="col"><label class="col-form-label" for="OSMUser">OSMUser</label></div>
+          <div class="col-5"><input class="form-control" name="OSMUser" id="OSMUser" value="TestUser"></div>
+          <div class="col"><label class="d-none d-md-block form-text">The OpenStreetMap user name</label></div>
+        </div>
+        <div class="row mb-3">
+          <div class="col"><label class="col-form-label" for="email">EMail</label></div>
+          <div class="col-5"><input class="form-control" name="email" id="email" value=""></div>
+          <div class="col"><label class="d-none d-md-block form-text">This mail is used for information about changes. To delete the email just submit a space for this field.</label></div>
+        </div>
+        <div class="row mb-3">
+          <div class="col"><label class="col-form-label" for="mdWeeklyAuthor">Author for Blog</label></div>
+          <div class="col-5"><input class="form-control" name="mdWeeklyAuthor" id="mdWeeklyAuthor" value=""></div>
+          <div class="col"><label class="d-none d-md-block form-text">Use anonymous to skip mentioning. Markdown for any link (e.g. [OSM User](https://www.osm.org/user/OSM%20User)</label></div>
+        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="language">Language</label>
+          <div class="col-5"><select class="form-control" id="language" name="language">
+              <option value="DE" selected="selected">DE</option>
+              <option value="EN">EN</option>
+              <option value="FR">FR</option>
+              <option value="ES">ES</option>
+              <option value="PT-PT">PT-PT</option>
+            </select></div><label class="col d-none d-md-block form-text">Main Language for the user, used for default values.</label>
+        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="access">Access</label>
+          <div class="col-5"><select class="form-control" id="access" name="access">
+              <option value="full" selected="selected">full</option>
+              <option value="guest">guest</option>
+              <option value="denied">denied</option>
+            </select></div><label class="col d-none d-md-block form-text">Define Users Access to OSMBC</label>
+        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="mailNewCollection">Mail a new Collection</label>
+          <div class="col-5"><select class="form-control" id="mailNewCollection" name="mailNewCollection">
+              <option value="true">on</option>
+              <option value="false" selected="selected">off</option>
+            </select></div><label class="col d-none d-md-block form-text">Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.</label>
+        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="mailAllComment">Mail All Comments</label>
+          <div class="col-5"><select class="form-control" id="mailAllComment" name="mailAllComment">
+              <option value="true">on</option>
+              <option value="false" selected="selected">off</option>
+            </select></div><label class="col d-none d-md-block form-text">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</label>
+        </div>
         <div class="row mb-3"><label class="col col-form-label" for="mailComment">Mail defined comments</label>
           <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailComment" id="mailComment" multiple="multiple">
               <option id="mailComment_DE" value="DE">DE</option>
@@ -76,24 +97,26 @@
               <option id="mailComment_ES" value="ES">ES</option>
               <option id="mailComment_PT-PT" value="PT-PT">PT-PT</option>
               <option id="mailComment_TestUser" value="TestUser">TestUser</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" data-id="mailComment" title="Nothing selected">
+            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" data-id="mailComment" title="Nothing selected">
               <div class="filter-option">
                 <div class="filter-option-inner">
                   <div class="filter-option-inner-inner">Nothing selected</div>
                 </div>
-              </div>
+              </div><span class="bs-caret"><span class="caret"></span></span>
             </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-1" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
+            <div class="dropdown-menu open">
+              <div class="inner open" role="listbox" id="bs-select-1" tabindex="-1" aria-multiselectable="true">
+                <ul class="dropdown-menu inner " role="presentation"></ul>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</label>
         </div>
-        <div class="row mb-3"><label class="col col-form-label" for="mailCommentGeneral">Thread Mentioning</label><select class="col-5 form-control" id="mailCommentGeneral" name="mailCommentGeneral">
-            <option value="false" selected="selected">off</option>
-            <option value="true">on</option>
-          </select><label class="col d-none d-md-block form-text">Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.</label></div>
+        <div class="row mb-3"><label class="col col-form-label" for="mailCommentGeneral">Thread Mentioning</label>
+          <div class="col-5"><select class="form-control" id="mailCommentGeneral" name="mailCommentGeneral">
+              <option value="false" selected="selected">off</option>
+              <option value="true">on</option>
+            </select></div><label class="col d-none d-md-block form-text">Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.</label>
+        </div>
         <div class="row mb-3"><label class="col col-form-label" for="mailBlogLanguageStatusChange">Mail Change in Review Status</label>
           <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange" multiple="multiple">
               <option id="mailBlogLanguageStatusChange_DE" value="DE">DE</option>
@@ -101,16 +124,16 @@
               <option id="mailBlogLanguageStatusChange_FR" value="FR">FR</option>
               <option id="mailBlogLanguageStatusChange_ES" value="ES">ES</option>
               <option id="mailBlogLanguageStatusChange_PT-PT" value="PT-PT">PT-PT</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-2" aria-haspopup="listbox" aria-expanded="false" data-id="mailBlogLanguageStatusChange" title="Nothing selected">
+            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-2" aria-haspopup="listbox" aria-expanded="false" data-id="mailBlogLanguageStatusChange" title="Nothing selected">
               <div class="filter-option">
                 <div class="filter-option-inner">
                   <div class="filter-option-inner-inner">Nothing selected</div>
                 </div>
-              </div>
+              </div><span class="bs-caret"><span class="caret"></span></span>
             </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-2" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
+            <div class="dropdown-menu open">
+              <div class="inner open" role="listbox" id="bs-select-2" tabindex="-1" aria-multiselectable="true">
+                <ul class="dropdown-menu inner " role="presentation"></ul>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</label>
@@ -120,16 +143,16 @@
               <option id="translationServices_deeplPro" value="deeplPro">Deepl Translator API</option>
               <option id="translationServices_deepl" value="deepl">DeeplTranslator Online</option>
               <option id="translationServices_copy" value="copy">Simple Text Copy</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-3" aria-haspopup="listbox" aria-expanded="false" data-id="translationServices" title="Nothing selected">
+            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-3" aria-haspopup="listbox" aria-expanded="false" data-id="translationServices" title="Nothing selected">
               <div class="filter-option">
                 <div class="filter-option-inner">
                   <div class="filter-option-inner-inner">Nothing selected</div>
                 </div>
-              </div>
+              </div><span class="bs-caret"><span class="caret"></span></span>
             </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-3" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
+            <div class="dropdown-menu open">
+              <div class="inner open" role="listbox" id="bs-select-3" tabindex="-1" aria-multiselectable="true">
+                <ul class="dropdown-menu inner " role="presentation"></ul>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. (one language to one language)</label>
@@ -139,36 +162,46 @@
               <option id="translationServicesMany_deeplPro" value="deeplPro">Deepl Translator API</option>
               <option id="translationServicesMany_deepl" value="deepl">DeeplTranslator Online</option>
               <option id="translationServicesMany_copy" value="copy">Simple Text Copy</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-4" aria-haspopup="listbox" aria-expanded="false" data-id="translationServicesMany" title="Nothing selected">
+            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-4" aria-haspopup="listbox" aria-expanded="false" data-id="translationServicesMany" title="Nothing selected">
               <div class="filter-option">
                 <div class="filter-option-inner">
                   <div class="filter-option-inner-inner">Nothing selected</div>
                 </div>
-              </div>
+              </div><span class="bs-caret"><span class="caret"></span></span>
             </button>
-            <div class="dropdown-menu ">
-              <div class="inner show" role="listbox" id="bs-select-4" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner show" role="presentation"></ul>
+            <div class="dropdown-menu open">
+              <div class="inner open" role="listbox" id="bs-select-4" tabindex="-1" aria-multiselectable="true">
+                <ul class="dropdown-menu inner " role="presentation"></ul>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. one language to many open languages</label>
         </div>
-        <div class="row mb-3"><label class="col col-form-label" for="SlackUser">Mattermost User</label><input class="col-5 form-control" name="SlackUser" id="SlackUser" value=""><label class="col d-none d-md-block form-text">Username in the slack for using the collect feature.</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="languageCount">Num Languages</label><select class="col-5 form-control" id="languageCount" name="languageCount">
-            <option value="two" selected="selected">two</option>
-            <option value="three">three</option>
-            <option value="four">four</option>
-          </select><label class="col d-none d-md-block form-text">Set this to 3 if you would like to see the new article editor with 3 languages.</label></div>
-        <div class="row mb-3"><label class="col col-form-label" for="publicProfile">Public Profile</label><select class="col-5 form-control" id="publicProfile" name="publicProfile">
-            <option value="No" selected="selected">No</option>
-            <option value="Yes">Yes</option>
-          </select><label class="col d-none d-md-block form-text">Choose yes, if you want public stats and social media validation by markdown.</label></div>
+        <div class="row mb-3">
+          <div class="col"><label class="col-form-label" for="SlackUser">Mattermost User</label></div>
+          <div class="col-5"><input class="form-control" name="SlackUser" id="SlackUser" value=""></div>
+          <div class="col"><label class="d-none d-md-block form-text">Username in the slack for using the collect feature.</label></div>
+        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="languageCount">Num Languages</label>
+          <div class="col-5"><select class="form-control" id="languageCount" name="languageCount">
+              <option value="two" selected="selected">two</option>
+              <option value="three">three</option>
+              <option value="four">four</option>
+            </select></div><label class="col d-none d-md-block form-text">Set this to 3 if you would like to see the new article editor with 3 languages.</label>
+        </div>
+        <div class="row mb-3"><label class="col col-form-label" for="publicProfile">Public Profile</label>
+          <div class="col-5"><select class="form-control" id="publicProfile" name="publicProfile">
+              <option value="No" selected="selected">No</option>
+              <option value="Yes">Yes</option>
+            </select></div><label class="col d-none d-md-block form-text">Choose yes, if you want public stats and social media validation by markdown.</label>
+        </div>
         <div class="row">
           <div class="col"><label class="col-form-label" for="Color">Color</label></div>
-          <div class="col-5 input-group"><input class="form-control" name="color" id="color" aria-describedby="colorDisplayAddon">
-            <div class="input-group-append"><span class="btn btn-secondary" id="colorDisplayAddon" style="background-color:undefined;"></span></div>
+          <div class="col-5">
+            <div class="input-group"><input class="form-control" name="color" id="color" aria-describedby="colorDisplayAddon">
+              <div class="input-group-append"><span class="btn btn-secondary" id="colorDisplayAddon" style="background-color:undefined;"></span></div>
+            </div>
           </div>
-          <p class="col d-none d-md-block"><span>Color for colored lists in OSMBC. Use a html colorpicker to define. (</span><a href="http://www.w3schools.com/colors/colors_picker.asp">Color Picker</a><span>,</span><a href="http://www.w3schools.com/colors/colors_names.asp">Color Names</a><span>)</span></p>
+          <div class="col d-none d-md-block"><span>Color for colored lists in OSMBC. Use a html colorpicker to define. (</span><a href="http://www.w3schools.com/colors/colors_picker.asp">Color Picker</a><span>,</span><a href="http://www.w3schools.com/colors/colors_names.asp">Color Names</a><span>)</span></div>
         </div><form-group>
           <div class="col-sm-offset-2 col-sm-10"><input class="btn btn-primary" id="save" name="OK" type="submit" value="OK"></div>
         </form-group>

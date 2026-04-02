@@ -39,7 +39,7 @@ describe("views/user", function() {
   });
   afterEach(async function() {
     mockdate.reset();
-    // await driver.quit();
+    await driver.quit();
     mailChecker.restore();
     testutil.stopServer();
   });

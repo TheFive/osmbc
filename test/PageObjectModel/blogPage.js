@@ -57,7 +57,7 @@ class BlogPage extends StandardPage {
 
   async #clickACheckbox(checkboxName) {
     await this.assertPage();
-    
+
     await this._driver.wait(until.elementLocated(By.css(checkboxName)), 5000);
 
     const checkbox = (await this._driver.findElement(By.css(checkboxName)));
