@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.10](https://github.com/TheFive/osmbc/tree/4.1.10) (2026-03-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.09...4.1.10)
+
+**Fixed bugs:**
+
+- TBC \(To Be Collected\) concept for API seems broken [\#1065](https://github.com/TheFive/osmbc/issues/1065)
+
 ## [4.1.09](https://github.com/TheFive/osmbc/tree/4.1.09) (2026-01-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.08...4.1.09)

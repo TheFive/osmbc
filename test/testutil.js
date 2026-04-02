@@ -520,9 +520,25 @@ async function getNewDriver(username) {
   chromeOptions.addArguments("guest");
   // End try disable passwort Manager Popup
 
+  // Fix Chrome crashes on headless mode
+  chromeOptions.addArguments("no-sandbox");
+  chromeOptions.addArguments("disable-dev-shm-usage");
+  chromeOptions.addArguments("disable-gpu");
+  chromeOptions.addArguments("single-process");
+  
+  // Disable popup dialogs
+  chromeOptions.addArguments("disable-blink-features=AutomationControlled");
 
 
-  const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
+
+  let driver;
+  try {
+    driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
+  } catch (err) {
+    console.error("Failed to create WebDriver. Check ChromeDriver version matches Chrome version.");
+    console.error("Error:", err.message);
+    throw err;
+  }
   // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
@@ -539,8 +555,16 @@ async function getNewDriver(username) {
     await loginPage.clickOK();
   } catch (err) {
     console.error(err);
-  // eslint-disable-next-line no-empty
-  } finally {};
+    // Ensure driver is properly closed on error
+    if (driver) {
+      try {
+        await driver.quit();
+      } catch (quitErr) {
+        console.error("Error quitting driver:", quitErr.message);
+      }
+    }
+    throw err;
+  }
   return driver;
 }
 

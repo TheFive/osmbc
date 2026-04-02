@@ -9,6 +9,7 @@ import fs from "fs";
 
 
 import userModule from "../../model/user.js";
+import logModule from "../../model/logModule.js";
 import articleModule from "../../model/article.js";
 import { MailReceiverForTestOnly } from "../../notification/mailReceiver.js";
 
@@ -244,6 +245,18 @@ describe("views/user", function() {
     await userModule.createNewUser({ OSMUser: "Test1", access: "full", mdWeeklyAuthor: "b", color: "green" });
     await userModule.createNewUser({ OSMUser: "Test2", access: "full", mdWeeklyAuthor: "[a](https://a.a)", color: "blue" });
     await userModule.createNewUser({ OSMUser: "Test3", access: "denied" });
+    await logModule.log({ user: "Test1", table: "article", blog: "Test", oid: "1", property: "field1" });
+    await logModule.log({ user: "Test1", table: "article", blog: "Test", oid: "1", property: "field1" });
+    await logModule.log({ user: "Test1", table: "article", blog: "Test", oid: "2", property: "field1" });
+    await logModule.log({ user: "Test2", table: "article", blog: "Test", oid: "3", property: "field2" });
+    await logModule.log({ user: "Test2", table: "article", blog: "Test", oid: "4", property: "field3" });
+    await logModule.log({ user: "Test2", table: "article", blog: "Test", oid: "5", property: "field4" });
+    await logModule.log({ user: "Test2", table: "article", blog: "Test", oid: "6", property: "comment1" });
+    await logModule.log({ user: "Test2", table: "article", blog: "Test", oid: "6", property: "comment2" });
+    await logModule.log({ user: "Test2", table: "article", blog: "Test", oid: "7", property: "comment1" });
+    await logModule.log({ user: "Test2", table: "article", blog: "OtherTest", oid: "6", property: "field1" });
+
+
     const osmbcApp = new OsmbcApp(driver);
 
     await osmbcApp.openUserListPage("full");

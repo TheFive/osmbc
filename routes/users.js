@@ -1,7 +1,7 @@
 
 
 import { strict as assert } from "assert";
-import { parallel, each, series } from "async";
+import { parallel, series } from "async";
 
 
 import { Router } from "express";
@@ -45,12 +45,24 @@ function renderList(req, res, next) {
       userModule.find(query, sort, function(err, result) {
         if (err) return callback(err);
         users = result;
-        each(users, function (item, eachcb) {
-          item.calculateChanges(eachcb);
-        }, function(err) {
+
+        // Lade alle User-Counts in einer Query statt N Queries
+        if (users.length === 0) return callback();
+
+        const userNames = users.map(u => u.OSMUser);
+        logModule.getCountsForUsers(userNames, function(err, countsMap) {
+          if (err) return callback(err);
+
+          // Weise Counts den Usern zu
+          users.forEach(user => {
+            user._countChanges = countsMap[user.OSMUser] || 0;
+          });
+
+          // Sortierung nach Counts falls gewünscht
           if (req.query.sort === "OSMBC-changes") {
             users.sort(function(b, a) { return a._countChanges - b._countChanges; });
           }
+
           return callback(err);
         });
       });

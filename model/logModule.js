@@ -101,9 +101,15 @@ function create(proto) {
 
 function log(object, callback) {
   debug("log");
-  if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
-  db.query("insert into changes (data) values ($1) ", [object], function(err) {
-    return callback(err);
+  function _log(object, callback) {
+    if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
+    db.query("insert into changes (data) values ($1) ", [object], function(err) {
+      return callback(err);
+    });
+  }
+  if (callback) return _log(object, callback);
+  return new Promise((resolve, reject) => {
+    _log(object, (err) => (err) ? reject(err) : resolve());
   });
 }
 
@@ -219,11 +225,40 @@ Change.prototype.save = pgMap.save;
 
 
 
+function getCountsForUsers(userNames, callback) {
+  debug("getCountsForUsers");
+  if (!userNames || userNames.length === 0) return callback(null, {});
+
+  const placeholders = userNames.map((_, i) => `$${i + 1}`).join(",");
+  const sqlQuery = `
+    SELECT data->>'user' as user, COUNT(*) as count
+    FROM changes
+    WHERE data->>'table' = 'article' 
+    AND data->>'user' IN (${placeholders})
+    GROUP BY data->>'user'
+  `;
+
+  db.query(sqlQuery, userNames, function(err, result) {
+    if (err) return callback(err);
+
+    // Konvertiere zu Map für schnellen Zugriff
+    const countsMap = {};
+    if (result && result.rows) {
+      result.rows.forEach(row => {
+        countsMap[row.user] = parseInt(row.count);
+      });
+    }
+
+    callback(null, countsMap);
+  });
+}
+
 const logModule = {
   table: "changes",
   countLogsForBlog: countLogsForBlog,
   create: create,
   countLogsForUser: countLogsForUser,
+  getCountsForUsers: getCountsForUsers,
   log: log,
   find: find,
   findById: findById,
