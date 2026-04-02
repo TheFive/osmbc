@@ -222,8 +222,8 @@ Change.prototype.save = pgMap.save;
 function getCountsForUsers(userNames, callback) {
   debug("getCountsForUsers");
   if (!userNames || userNames.length === 0) return callback(null, {});
-  
-  const placeholders = userNames.map((_, i) => `$${i + 1}`).join(',');
+
+  const placeholders = userNames.map((_, i) => `$${i + 1}`).join(",");
   const sqlQuery = `
     SELECT data->>'user' as user, COUNT(*) as count
     FROM changes
@@ -231,10 +231,10 @@ function getCountsForUsers(userNames, callback) {
     AND data->>'user' IN (${placeholders})
     GROUP BY data->>'user'
   `;
-  
+
   db.query(sqlQuery, userNames, function(err, result) {
     if (err) return callback(err);
-    
+
     // Konvertiere zu Map für schnellen Zugriff
     const countsMap = {};
     if (result && result.rows) {
@@ -242,7 +242,7 @@ function getCountsForUsers(userNames, callback) {
         countsMap[row.user] = parseInt(row.count);
       });
     }
-    
+
     callback(null, countsMap);
   });
 }
