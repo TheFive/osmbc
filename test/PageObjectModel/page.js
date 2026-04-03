@@ -69,7 +69,7 @@ export default class Page {
   }
 
   async scrollIntoView(object) {
-    await this._driver.executeScript("arguments[0].scrollIntoView({block:'nearest'});", object);
+    await this._driver.actions().move({ origin: object }).perform();
   }
 
   async _waitForBootstrapOverlaysToDisappear() {

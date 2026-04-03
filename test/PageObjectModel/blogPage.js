@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By, until, error as webdriverError } from "selenium-webdriver";
 import util from "../../util/util.js";
 import StandardPage from "./standardPage.js";
 import should from "should";
@@ -60,11 +60,21 @@ class BlogPage extends StandardPage {
 
     await this._driver.wait(until.elementLocated(By.css(checkboxName)), 5000);
 
-    const checkbox = (await this._driver.findElement(By.css(checkboxName)));
-    await this.scrollIntoView(checkbox);
-    await this._waitForBootstrapOverlaysToDisappear();
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const checkbox = await this._driver.findElement(By.css(checkboxName));
+      await this.scrollIntoView(checkbox);
+      await this._waitForBootstrapOverlaysToDisappear();
 
-    await checkbox.click();
+      try {
+        await checkbox.click();
+        return;
+      } catch (e) {
+        if (!(e instanceof webdriverError.ElementClickInterceptedError) || attempt === 1) {
+          throw e;
+        }
+        await this._driver.sleep(150);
+      }
+    }
   }
 
   async clickStoreReviewText(lang) {
@@ -118,10 +128,24 @@ class BlogPage extends StandardPage {
 
   async clickOnArticle(articleText) {
     await this.assertPage();
-    const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
-    await this.scrollIntoView(articleElement);
-    await this._waitForBootstrapOverlaysToDisappear();
-    await (articleElement).click();
+    const articleXpath = `//li[text()[contains(.,'${articleText}')]]`;
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const articleElement = await this._driver.findElement(By.xpath(articleXpath));
+      await this.scrollIntoView(articleElement);
+      await this._waitForBootstrapOverlaysToDisappear();
+
+      try {
+        await articleElement.click();
+        return;
+      } catch (e) {
+        if (!(e instanceof webdriverError.ElementClickInterceptedError) || attempt === 1) {
+          throw e;
+        }
+        // Manche Reflows nach Bootstrap-Updates überlagern den ersten Klick kurzzeitig.
+        await this._driver.sleep(150);
+      }
+    }
   }
 
   async isMode(mode) {
