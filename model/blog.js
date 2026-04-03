@@ -1,7 +1,7 @@
 
 // Exported Functions and prototypes are defined at end of file
 
-import { series, eachOf, each, eachLimit } from "async";
+import { series, eachOfSeries, each, eachLimit } from "async";
 import language from "../model/language.js";
 import util from "../util/util.js";
 import { FORBIDDEN } from "http-status-codes";
@@ -854,8 +854,8 @@ function createNewBlog(user, proto, noArticle, callback) {
       const emptyBlog = create();
       emptyBlog.id = -1;
       const newArticles = configModule.getConfig("newArticles");
-
-      eachOf(newArticles,
+      // use series to have a definite order of articles, which helps in testscripts
+      eachOfSeries(newArticles,
         function createArticle(value, key, cb) {
           if (noArticle) return cb();
           const newArticle = { blog: blog.name };
