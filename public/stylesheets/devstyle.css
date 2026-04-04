@@ -299,3 +299,49 @@ color:lightgrey;
 .preview > div.wp-caption  {
   max-width: 320px;
 }
+
+.blog-status-table td.blog-status-blog {
+  min-width: 10rem;
+  white-space: nowrap;
+}
+
+.blog-status-table td.blog-status-lang {
+  min-width: 3.5rem;
+}
+
+.table-responsive .blog-status-table {
+  width: max-content;
+  min-width: 100%;
+}
+
+.blog-status-table td {
+  padding: 0.16rem 0.24rem;
+  line-height: 1.05;
+  vertical-align: middle;
+}
+
+.blog-status-table td.blog-status-lang-head {
+  min-width: 3.2rem;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.blog-status-table td.blog-status-blog-head {
+  min-width: 4.5rem;
+  max-width: 7rem;
+  font-size: 0.85rem;
+  line-height: 1.1;
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.blog-status-table td.blog-status-value {
+  min-width: 3rem;
+}
+
+.blog-status-table td.blog-status-value > .badge {
+  display: inline-block;
+  margin: 0.04rem;
+  padding: 0.14em 0.3em;
+}

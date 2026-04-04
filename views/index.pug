@@ -8,7 +8,7 @@ block content
   // Full Access Index Page
   .div
     .row.align-items-start
-      .col-6
+      .col-12.col-xl-6
           h2.d-none.d-sm-block
             | Welcome to OSM BC
           p.osmbc-help-text.d-none.d-sm-block
@@ -17,6 +17,36 @@ block content
             a(href=layout.htmlroot+"/blog/list?status=IN(open,edit)") (more)
           div
             +blogStatusTable(true)
+          .mt-1.mb-2
+            small.osmbc-help-text Badge legend
+            table.table.table-sm.w-auto.mb-0
+              tbody
+                tr
+                  td.text-center.align-middle
+                    span.badge.osmbclabel-openblog open
+                  td.text-start.align-middle 
+                    span.osmbc-help-text number of pending articles in open blogs
+                tr
+                  td.text-center.align-middle
+                    span.badge.osmbclabel-editblog edit
+                  td.text-start.align-middle.osmbc-help-text 
+                    span.osmbc-help-text number of pending articles in edit blogs
+                tr
+                  td.text-center.align-middle
+                    span.badge.automated-translation auto
+                  td.text-start.align-middle.osmbc-help-text 
+                    span.osmbc-help-text number of automated translations
+                tr
+                  td.text-center.align-middle
+                    span.badge.osmbclabel-reviewblog review
+                  td.text-start.align-middle.osmbc-help-text 
+                    span.osmbc-help-text number of reviews
+                tr
+                  td.text-center.align-middle
+                    span.badge.osmbclabel-closedblog
+                      i.fa.fa-check
+                  td.text-start.align-middle.osmbc-help-text 
+                    span.osmbc-help-text language is closed
           h4="Current Users"
           p
             table.table
@@ -76,7 +106,7 @@ block content
             p
               a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here" 
               span=" to go to the Admin Section of OSMBC"
-      .col-6.col-xs-auto.d-none.d-sm-block
+      .col-12.col-xl-6.d-none.d-lg-block
         if changes
           h4="Last Changes "
             - var d = new Date();
@@ -87,19 +117,12 @@ block content
               thead
                 tr 
                   th
-                  | 
-                  th
-                  | blog
-                  th
-                  | user
-                  th
-                  | table
-                  th
-                  | what
-                  th
-                  | Change
-                  th
-                  | when
+                  th blog
+                  th user
+                  th table
+                  th what
+                  th Change
+                  th when
               tbody
                 each change, i in changes
                   tr

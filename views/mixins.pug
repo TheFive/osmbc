@@ -274,52 +274,50 @@ mixin voteButtonList(votes)
       +voteButton(vote,article)
 
 mixin blogStatusTable(blogWithLink)
-  table.table.table-sm
-    tr
-      td=""
+  - const openBlogs = layout.listOfOpenBlog.slice(0).reverse()
+  - const editBlogs = layout.editBlog.slice(0).reverse()
+  .table-responsive
+    table.table.table-sm.blog-status-table
+      tr
+        td.blog-status-lang-head=""
+        for openBlog in openBlogs
+          if (blogWithLink)
+            td.blog-status-blog-head
+              a(href=layout.htmlroot+'/blog/' + openBlog.name)=openBlog.name
+          else
+            td.blog-status-blog-head=openBlog.name
+        for editBlog in editBlogs
+          if (blogWithLink)
+            td.blog-status-blog-head
+              a(href=layout.htmlroot+'/blog/' + editBlog.name)=editBlog.name
+          else
+            td.blog-status-blog-head=editBlog.name
+
       for l in layout.activeLanguages
-        td.text-center=l
-
-    for openBlog in layout.listOfOpenBlog.slice(0).reverse()
-      tr
-        if (blogWithLink)
-          td
-            a(href=layout.htmlroot+'/blog/' + openBlog.name)=openBlog.name
-        else
-          td=openBlog.name
-        for l in layout.activeLanguages
-          td.text-center
-            div.badge.osmbclabel-openblog=openBlog.getUnEdited(l)
-            - autoTranslate = openBlog.getAutoTranslate(l)
-            if (autoTranslate > 0)
-              div.badge.automated-translation=autoTranslate
-
-    for editBlog in layout.editBlog.slice(0).reverse()
-      tr
-        if (blogWithLink)
-          td
-            a(href=layout.htmlroot+'/blog/' + editBlog.name)=editBlog.name
-        else
-          td=editBlog.name
-        - const rowWithReview = layout.activeLanguages.some((value,x,y) => {return editBlog.isReviewStarted(value)})
-        for l in layout.activeLanguages
-          td.text-center
-            if (editBlog["close" + l])
-              div.badge.osmbclabel-closedblog
-                i.fa.fa-check
-            else 
-              - showUneditedFrom = 0
-              if (editBlog.isReviewStarted(l))
-                div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
-                - showUneditedFrom = 1
-              if rowWithReview
-                br
-              - unedited = editBlog.getUnEdited(l)
-              if (unedited >= showUneditedFrom )
-                div.badge.osmbclabel-editblog=unedited
-              - autoTranslate = editBlog.getAutoTranslate(l)
+        tr
+          td.text-center.blog-status-lang-head=l
+          for openBlog in openBlogs
+            td.text-center.blog-status-value
+              div.badge.osmbclabel-openblog=openBlog.getUnEdited(l)
+              - autoTranslate = openBlog.getAutoTranslate(l)
               if (autoTranslate > 0)
                 div.badge.automated-translation=autoTranslate
+          for editBlog in editBlogs
+            td.text-center.blog-status-value
+              if (editBlog["close" + l])
+                div.badge.osmbclabel-closedblog
+                  i.fa.fa-check
+              else 
+                - showUneditedFrom = 0
+                if (editBlog.isReviewStarted(l))
+                  div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
+                  - showUneditedFrom = 1
+                - unedited = editBlog.getUnEdited(l)
+                if (unedited >= showUneditedFrom )
+                  div.badge.osmbclabel-editblog=unedited
+                - autoTranslate = editBlog.getAutoTranslate(l)
+                if (autoTranslate > 0)
+                  div.badge.automated-translation=autoTranslate
               
 mixin helpMenu(configarray)
   li.dropdown.nav-item
