@@ -140,8 +140,8 @@ mixin articleIcons(a,options)
     - numEd = 0;
     - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
     if (a.author && options.showNumbers)
-      span.hidden-xs.badge.osmbclabel-collect.small-margin=numCol
-      span.hidden-xs.badge.osmbclabel-markdown.small-margin=numEd
+      span.d-none.d-sm-inline.badge.osmbclabel-collect.small-margin=numCol
+      span.d-none.d-sm-inline.badge.osmbclabel-markdown.small-margin=numEd
     if options.showMail
       if a.getCommentMention()
         - shown = false
@@ -162,9 +162,9 @@ mixin articleIcons(a,options)
       i.fa.fa-edit.small-margin
     if a.predecessorId
       if (a.predecessorId === options.predecessorId)
-        span.hidden-xs.fa.fa-thumbtack.small-margin
+        span.d-none.d-sm-inline.fa.fa-thumbtack.small-margin
       else
-        span.hidden-xs.fa.fa-stop.small-margin.text-warning
+        span.d-none.d-sm-inline.fa.fa-stop.small-margin.text-warning
 
 
 mixin navbutton(tab,activetab,addClass)

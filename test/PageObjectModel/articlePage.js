@@ -121,9 +121,10 @@ class ArticlePage extends StandardPage {
   async getValueFromLinkArea(link) {
     this.assertPage();
     const ele = await this._driver.findElement(By.css(`div#linkArea>p>a[href='${link}']`));
-    const value = await ele.getAttribute("text");
-    const danger = await ele.getAttribute("class");
-    return { text: value, warning: danger.search("badge-danger") > 0 };
+    const value = await ele.getText();
+    const cssClass = await ele.getAttribute("class");
+    const hasWarningClass = /(?:^|\s)(?:badge-danger|text-bg-danger)(?:\s|$)/.test(cssClass || "");
+    return { text: value, warning: hasWarningClass };
   }
 
   async getWarningMessage(lang) {

@@ -211,11 +211,11 @@ block content
 
 
   if (layout.user.access === "full")
-    .row.d-none.d-xs-block
+    .row.d-block.d-sm-none
       p
         br
         a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
-    .row.d-block.d-xs-none
+    .row.d-none.d-sm-block
       if changes
         h3
           |History

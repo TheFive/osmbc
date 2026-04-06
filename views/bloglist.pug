@@ -102,7 +102,7 @@ block content
        a(href=layout.htmlroot+"/blog/list?status=edit")="(edit) "
        a(href=layout.htmlroot+"/blog/list?status=closed")="(closed) "
        a(href=layout.htmlroot+"/blog/list?status=trash")="(trash) "
-  row.hidden-xs
+  .row.d-none.d-sm-flex
     div(id="additionalText")
       if additionalText
         |!{additionalText}

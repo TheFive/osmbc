@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Submit Link</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbcbadge-user">1</span></a></li>
             <li class="navbar-item active"><a class="nav-link" id="myArticles" href="/osmbc.html">My Articles</a></li>
-            <li class="dropdown navbar-item hidden-xs" id="translation"><a class="nav-link dropdown-toggle" id="articleTranslateMenu" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Translate</a>
+            <li class="dropdown navbar-item d-none d-sm-block" id="translation"><a class="nav-link dropdown-toggle" id="articleTranslateMenu" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Translate</a>
               <ul class="dropdown-menu" id="articleTranslationDropdown" aria-labelledby="articleTranslateMenu" style="overflow-y: auto;">
                 <div class="dropdown-divider"></div><a class="dropdown-item" onclick="location.href='/usert/2';">Configure your Translation services</a>
               </ul>
@@ -114,7 +114,7 @@
                 <p class="osmbc-help-text">black font: language closed</p>
               </div>
               <div class="col-md-1"></div>
-              <div class="col-md-7 text-end"><button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button><button class="btn btn-large btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" disabled="">last Version</button></div>
+              <div class="col-md-7 text-end"><button class="btn btn-lg btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button><button class="btn btn-lg btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" disabled="">last Version</button></div>
             </div>
           </div>
         </div><!-- Display Title Row-->
@@ -201,7 +201,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
             <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post"><textarea class="form-control" spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
 To solve a comment use #solved, and to reopen #open in your text.
-Use @OSMUser to address any special editor."></textarea><button class="btn btn-large btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button><button class="btn btn-large btn-default" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button><button class="btn btn-large btn-default" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button></form>
+Use @OSMUser to address any special editor."></textarea><button class="btn btn-lg btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button><button class="btn btn-lg btn-secondary" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button><button class="btn btn-lg btn-secondary" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button></form>
           </div>
         </div><iframe class="d-none" name="iframeform"></iframe>
       </div>

@@ -7,7 +7,7 @@ mixin firstBlogOfList(list,count,c)
     if (list.length > 0)
       each blog,i in list
         if i<count
-          li.navbar-item.active.d-xs-block
+          li.navbar-item.active
             a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
               span.badge.rounded-pill.osmbcbadge-lang=blogNumber(blog, layout.user.getLang(0))
               if layout.user.getLang(1)
@@ -38,8 +38,8 @@ mixin tbcMenu
       if blogNumber(layout.tbc, layout.user.getLang(0)) > 0
         - dynamicHide = ""
         if (layout.tbc._tbcOwnArticleNumber == 0)
-          - dynamicHide = "hidden-xs"
-        ul.nav.navbar-nav.pull-left(class=dynamicHide)
+          - dynamicHide = "d-none d-sm-flex"
+        ul.nav.navbar-nav.me-auto(class=dynamicHide)
           li.nav-item
             a.nav-link(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
               if (layout.tbc._tbcOwnArticleNumber > 0)

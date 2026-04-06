@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -68,7 +68,7 @@
             <div class="col-6"><input class="form-control" id="searchField" type="text" name="search" value="new Info">
               <p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>
             </div>
-            <div class="col"><button class="btn btn-large btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
+            <div class="col"><button class="btn btn-lg btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
           </div>
         </form>
       </div>
@@ -122,7 +122,7 @@
                 <div class="col-md-7">
                   <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
                 </div>
-                <div class="col-md-5"><button class="btn btn-large btn-primary" onclick="javascript:window.addSpinnerAndSubmit('#OK')" id="OK" disabled="">OK<!--span(style="visibility:hidden" id="OK-Spinner")i(class="fa fa-solid fa-spinner fa-pulse")--></button><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
+                <div class="col-md-5"><button class="btn btn-lg btn-primary" onclick="javascript:window.addSpinnerAndSubmit('#OK')" id="OK" disabled="">OK<!--span(style="visibility:hidden" id="OK-Spinner")i(class="fa fa-solid fa-spinner fa-pulse")--></button><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
               </div>
             </div>
           </div>

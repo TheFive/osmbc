@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -32,7 +32,7 @@
                 <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
               </div>
             </li>
-            <li class="dropdown navbar-item hidden-xs" id="translation"><a class="nav-link dropdown-toggle" id="articleTranslateMenu" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Translate</a>
+            <li class="dropdown navbar-item d-none d-sm-block" id="translation"><a class="nav-link dropdown-toggle" id="articleTranslateMenu" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Translate</a>
               <ul class="dropdown-menu" id="articleTranslationDropdown" aria-labelledby="articleTranslateMenu" style="overflow-y: auto;">
                 <div class="dropdown-divider"></div><a class="dropdown-item" onclick="location.href='/usert/1';">Configure your Translation services</a>
               </ul>
@@ -134,7 +134,7 @@
                 <div id="notranslationArea"></div>
               </div>
               <div class="col-md-1"></div>
-              <div class="col-md-7 text-end"><button class="btn btn-large btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button><button class="btn btn-large btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" disabled="">last Version</button></div>
+              <div class="col-md-7 text-end"><button class="btn btn-lg btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button><button class="btn btn-lg btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" disabled="">last Version</button></div>
             </div>
           </div>
         </div><!-- Display Title Row-->
@@ -210,7 +210,7 @@ Sample: OpenCage data published an interview with David Overton, the doer behind
             <form target="iframeform" name="AddComment" id="AddComment" action="/article/3/addComment?reload=false" method="post"><textarea class="form-control" spellcheck="true" name="comment" id="comment" rows="7" placeholder="Your comment is shared between all weekly teams. 
 So please use english if possible. Do not hesitate to use your language and address your team with @LANG.
 To solve a comment use #solved, and to reopen #open in your text.
-Use @OSMUser to address any special editor."></textarea><button class="btn btn-large btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button><button class="btn btn-large btn-default" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button><button class="btn btn-large btn-default" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button></form>
+Use @OSMUser to address any special editor."></textarea><button class="btn btn-lg btn-primary" name="AddComment" type="button" onclick="if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Add Comment</button><button class="btn btn-lg btn-secondary" type="button" onclick="window.callAndRedraw(null,'/article/3/commentArea');">Reload Comments</button><button class="btn btn-lg btn-secondary" name="AddComment" type="button" onclick="document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/3/commentArea');">Solve Comment</button></form>
           </div>
         </div><iframe class="d-none" name="iframeform"></iframe>
       </div>
@@ -246,10 +246,10 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
         </table>
       </div>
       <div class="row" id="doublettes"></div>
-      <div class="row d-none d-xs-block">
+      <div class="row d-block d-sm-none">
         <p><br><a href="/changes/log?table=article&amp;oid=3">[changes]</a></p>
       </div>
-      <div class="row d-block d-xs-none">
+      <div class="row d-none d-sm-block">
         <h3>History</h3>
         <div>
           <table class="table table-striped table-responsive">
