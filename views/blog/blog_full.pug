@@ -31,30 +31,30 @@ block blogcontent
 
   if disableOwnCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOwnCollection',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableOwnCollection',value:'false'});`)
       i.fa.fa-filter
       span=" Collections of " + layout.user.OSMUser + " are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOtherCollection',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableOtherCollection',value:'false'});`)
       i.fa.fa-filter
       span=" Collections not done by " + layout.user.OSMUser + " are disabled"
   if disableWritten
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableWritten',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableWritten',value:'false'});`)
       i.fa.fa-filter
       span=" Written markdown is disabled"
 
   if disableNewerMarkdown
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableNewerMarkdown',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableNewerMarkdown',value:'false'});`)
       i.fa.fa-filter
       span=" Disable, if left lang article is newer than right lang article"
 
   if disableSolvedComments
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableSolvedComments',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableSolvedComments',value:'false'});`)
       i.fa.fa-filter
       span=" No & Solved Comments are disabled"
   .row

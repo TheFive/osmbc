@@ -10,11 +10,11 @@ block content
       if info.message
         if info.status == 'error'
           .alert.alert-dismissable.alert-danger
-            button.close( type="button", data-dismiss="alert" ) ×
+            button.btn-close(type="button", data-bs-dismiss="alert", aria-label="Close")
             | #{info.message}
         if info.status == 'message'
           .alert.alert-dismissable.alert-success
-            button.close( type="button", data-dismiss="alert" ) ×
+            button.btn-close(type="button", data-bs-dismiss="alert", aria-label="Close")
             | #{info.message}
 
 

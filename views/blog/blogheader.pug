@@ -125,7 +125,7 @@ mixin blogTranslateMenu(langFrom,langTo,service)
 mixin translationBlogMenu
   if (layout.blogTranslationVisibleFor === "full" || (Array.isArray(layout.blogTranslationVisibleFor) && layout.blogTranslationVisibleFor.indexOf(layout.user.OSMUser)>=0))
     li.dropdown.navbar-item
-      a.nav-link.dropdown-toggle#translateMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
+      a.nav-link.dropdown-toggle#translateMenu(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
         | Translate Blog
       div.dropdown-menu(aria-labelledby="translateMenu")
         each tService in layout.user.getTranslations()
@@ -248,7 +248,7 @@ block content
                 i.fa.fa-exclamation-triangle
 
         li.nav-item.dropdown.show
-          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
             i.fa.fa-download
           div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
             - var closedLangs = []

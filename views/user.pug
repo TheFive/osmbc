@@ -131,8 +131,7 @@ block content
         div.col-5
           div.input-group
             input.form-control(name="color",id="color",value = usershown.color aria-describedby="colorDisplayAddon")
-            div.input-group-append
-              span.btn.btn-secondary#colorDisplayAddon(style=`background-color:${usershown.color};`)
+            span.input-group-text#colorDisplayAddon(style=`background-color:${usershown.color};`)
         div.col.d-none.d-md-block
             span="Color for colored lists in OSMBC. Use a html colorpicker to define. ("
             a(href="http://www.w3schools.com/colors/colors_picker.asp")="Color Picker"

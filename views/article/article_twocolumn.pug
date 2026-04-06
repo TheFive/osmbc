@@ -20,7 +20,7 @@ block markdownArea
             id="left_lang"
             class=lbg
             draggable="true"
-            data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+            data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
             ondragstart=`ondragstartLangLabel(event,'${params.left_lang}');`)="  " + params.left_lang + "  "
           span.badge.badge-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
 
@@ -34,24 +34,24 @@ block markdownArea
                 span.badge.osmbclabel-lang2.RL(
                   class="RL-" + l
                   draggable="true"
-                  data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                  data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
                   ondragstart=`ondragstartLangLabel(event,'${l}');`)=l
                 span.badge.badge-secondary.RLOFF.d-none(
                     class="RLOFF-" + l
-                    data-toggle="tooltip" data-placement="left" title="Click on language display to enable")="."
+                    data-bs-toggle="tooltip" data-bs-placement="left" title="Click on language display to enable")="."
                 span.badge.badge-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
               else
                 span.badge.badge-secondary.RL.d-none(
                   class= "RL-" + l
                   draggable="true"
-                  data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+                  data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
                   ondragstart=`ondragstartLangLabel(event,'${l}');`)=l
                 if l === params.left_lang
                   span.badge.badge-secondary.RLOFF(class="RLOFF-" + l)="-"
                 else
                   span.badge.badge-secondary.RLOFF(
                       class="RLOFF-" + l
-                      data-toggle="tooltip" data-placement="left" title="Click on language display to see "+l+" here")="."
+                      data-bs-toggle="tooltip" data-bs-placement="left" title="Click on language display to see "+l+" here")="."
                 span.badge.badge-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
 
 
@@ -84,7 +84,7 @@ block markdownArea
             class="img-thumbnail" ,
             width = 40,
             style="max-width: 40px; height: auto;",
-            data-toggle="tooltip" data-placement="bottom" title=lang
+            data-bs-toggle="tooltip" data-bs-placement="bottom" title=lang
             onclick="javascript:myclick(this.id)"
             ondragstart = "ondragstartflag(event,this.id);")
         p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."

@@ -100,7 +100,7 @@ mixin markdownWithPreview(lang)
   span.badge.badge-secondary(
       class=labelClass
       draggable="true"
-      data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+      data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
       ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
   span.badge.badge-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
@@ -126,7 +126,7 @@ mixin articleTranslateMenu(langFrom,langTo,service)
 mixin translationMenu
   - let emptyMenu = true
   li.dropdown.navbar-item#translation.hidden-xs
-    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
     ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
       - let tsList = layout.user.getTranslations()
       each tService in tsList
