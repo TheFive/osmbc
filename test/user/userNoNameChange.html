@@ -90,23 +90,25 @@
             </select></div><label class="col d-none d-md-block form-text">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</label>
         </div>
         <div class="row mb-3"><label class="col col-form-label" for="mailComment">Mail defined comments</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailComment" id="mailComment" multiple="multiple">
-              <option id="mailComment_DE" value="DE">DE</option>
-              <option id="mailComment_EN" value="EN">EN</option>
-              <option id="mailComment_FR" value="FR">FR</option>
-              <option id="mailComment_ES" value="ES">ES</option>
-              <option id="mailComment_PT-PT" value="PT-PT">PT-PT</option>
-              <option id="mailComment_TestUser" value="TestUser">TestUser</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" data-id="mailComment" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
+          <div class="col-5">
+            <div class="dropdown bootstrap-select show-tick"><select class="selectpicker" name="mailComment" id="mailComment" multiple="multiple">
+                <option id="mailComment_DE" value="DE">DE</option>
+                <option id="mailComment_EN" value="EN">EN</option>
+                <option id="mailComment_FR" value="FR">FR</option>
+                <option id="mailComment_ES" value="ES">ES</option>
+                <option id="mailComment_PT-PT" value="PT-PT">PT-PT</option>
+                <option id="mailComment_TestUser" value="TestUser">TestUser</option>
+              </select><button type="button" tabindex="-1" class="btn dropdown-toggle bs-placeholder btn-light" data-bs-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" title="Nothing selected" data-id="mailComment">
+                <div class="filter-option">
+                  <div class="filter-option-inner">
+                    <div class="filter-option-inner-inner">Nothing selected</div>
+                  </div>
                 </div>
-              </div><span class="bs-caret"><span class="caret"></span></span>
-            </button>
-            <div class="dropdown-menu open">
-              <div class="inner open" role="listbox" id="bs-select-1" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner " role="presentation"></ul>
+              </button>
+              <div class="dropdown-menu ">
+                <div class="inner show" role="listbox" id="bs-select-1" tabindex="-1" aria-multiselectable="true">
+                  <ul class="dropdown-menu inner show" role="presentation"></ul>
+                </div>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</label>
@@ -118,60 +120,66 @@
             </select></div><label class="col d-none d-md-block form-text">Set this to ON, if you are interested in all threads, where you (or people you are interested in) have once participated.</label>
         </div>
         <div class="row mb-3"><label class="col col-form-label" for="mailBlogLanguageStatusChange">Mail Change in Review Status</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange" multiple="multiple">
-              <option id="mailBlogLanguageStatusChange_DE" value="DE">DE</option>
-              <option id="mailBlogLanguageStatusChange_EN" value="EN">EN</option>
-              <option id="mailBlogLanguageStatusChange_FR" value="FR">FR</option>
-              <option id="mailBlogLanguageStatusChange_ES" value="ES">ES</option>
-              <option id="mailBlogLanguageStatusChange_PT-PT" value="PT-PT">PT-PT</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-2" aria-haspopup="listbox" aria-expanded="false" data-id="mailBlogLanguageStatusChange" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
+          <div class="col-5">
+            <div class="dropdown bootstrap-select show-tick"><select class="selectpicker" name="mailBlogLanguageStatusChange" id="mailBlogLanguageStatusChange" multiple="multiple">
+                <option id="mailBlogLanguageStatusChange_DE" value="DE">DE</option>
+                <option id="mailBlogLanguageStatusChange_EN" value="EN">EN</option>
+                <option id="mailBlogLanguageStatusChange_FR" value="FR">FR</option>
+                <option id="mailBlogLanguageStatusChange_ES" value="ES">ES</option>
+                <option id="mailBlogLanguageStatusChange_PT-PT" value="PT-PT">PT-PT</option>
+              </select><button type="button" tabindex="-1" class="btn dropdown-toggle bs-placeholder btn-light" data-bs-toggle="dropdown" role="combobox" aria-owns="bs-select-2" aria-haspopup="listbox" aria-expanded="false" title="Nothing selected" data-id="mailBlogLanguageStatusChange">
+                <div class="filter-option">
+                  <div class="filter-option-inner">
+                    <div class="filter-option-inner-inner">Nothing selected</div>
+                  </div>
                 </div>
-              </div><span class="bs-caret"><span class="caret"></span></span>
-            </button>
-            <div class="dropdown-menu open">
-              <div class="inner open" role="listbox" id="bs-select-2" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner " role="presentation"></ul>
+              </button>
+              <div class="dropdown-menu ">
+                <div class="inner show" role="listbox" id="bs-select-2" tabindex="-1" aria-multiselectable="true">
+                  <ul class="dropdown-menu inner show" role="presentation"></ul>
+                </div>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</label>
         </div>
         <div class="row mb-3"><label class="col col-form-label" for="translationServices">Translation Services Used (One to One)</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="translationServices" id="translationServices" multiple="multiple">
-              <option id="translationServices_deeplPro" value="deeplPro">Deepl Translator API</option>
-              <option id="translationServices_deepl" value="deepl">DeeplTranslator Online</option>
-              <option id="translationServices_copy" value="copy">Simple Text Copy</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-3" aria-haspopup="listbox" aria-expanded="false" data-id="translationServices" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
+          <div class="col-5">
+            <div class="dropdown bootstrap-select show-tick"><select class="selectpicker" name="translationServices" id="translationServices" multiple="multiple">
+                <option id="translationServices_deeplPro" value="deeplPro">Deepl Translator API</option>
+                <option id="translationServices_deepl" value="deepl">DeeplTranslator Online</option>
+                <option id="translationServices_copy" value="copy">Simple Text Copy</option>
+              </select><button type="button" tabindex="-1" class="btn dropdown-toggle bs-placeholder btn-light" data-bs-toggle="dropdown" role="combobox" aria-owns="bs-select-3" aria-haspopup="listbox" aria-expanded="false" title="Nothing selected" data-id="translationServices">
+                <div class="filter-option">
+                  <div class="filter-option-inner">
+                    <div class="filter-option-inner-inner">Nothing selected</div>
+                  </div>
                 </div>
-              </div><span class="bs-caret"><span class="caret"></span></span>
-            </button>
-            <div class="dropdown-menu open">
-              <div class="inner open" role="listbox" id="bs-select-3" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner " role="presentation"></ul>
+              </button>
+              <div class="dropdown-menu ">
+                <div class="inner show" role="listbox" id="bs-select-3" tabindex="-1" aria-multiselectable="true">
+                  <ul class="dropdown-menu inner show" role="presentation"></ul>
+                </div>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. (one language to one language)</label>
         </div>
         <div class="row mb-3"><label class="col col-form-label" for="translationServicesMany">Translation Services Used (One to Many)</label>
-          <div class="dropdown bootstrap-select show-tick col-5"><select class="col-5 selectpicker" name="translationServicesMany" id="translationServicesMany" multiple="multiple">
-              <option id="translationServicesMany_deeplPro" value="deeplPro">Deepl Translator API</option>
-              <option id="translationServicesMany_deepl" value="deepl">DeeplTranslator Online</option>
-              <option id="translationServicesMany_copy" value="copy">Simple Text Copy</option>
-            </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-default bs-placeholder" data-toggle="dropdown" role="combobox" aria-owns="bs-select-4" aria-haspopup="listbox" aria-expanded="false" data-id="translationServicesMany" title="Nothing selected">
-              <div class="filter-option">
-                <div class="filter-option-inner">
-                  <div class="filter-option-inner-inner">Nothing selected</div>
+          <div class="col-5">
+            <div class="dropdown bootstrap-select show-tick"><select class="selectpicker" name="translationServicesMany" id="translationServicesMany" multiple="multiple">
+                <option id="translationServicesMany_deeplPro" value="deeplPro">Deepl Translator API</option>
+                <option id="translationServicesMany_deepl" value="deepl">DeeplTranslator Online</option>
+                <option id="translationServicesMany_copy" value="copy">Simple Text Copy</option>
+              </select><button type="button" tabindex="-1" class="btn dropdown-toggle bs-placeholder btn-light" data-bs-toggle="dropdown" role="combobox" aria-owns="bs-select-4" aria-haspopup="listbox" aria-expanded="false" title="Nothing selected" data-id="translationServicesMany">
+                <div class="filter-option">
+                  <div class="filter-option-inner">
+                    <div class="filter-option-inner-inner">Nothing selected</div>
+                  </div>
                 </div>
-              </div><span class="bs-caret"><span class="caret"></span></span>
-            </button>
-            <div class="dropdown-menu open">
-              <div class="inner open" role="listbox" id="bs-select-4" tabindex="-1" aria-multiselectable="true">
-                <ul class="dropdown-menu inner " role="presentation"></ul>
+              </button>
+              <div class="dropdown-menu ">
+                <div class="inner show" role="listbox" id="bs-select-4" tabindex="-1" aria-multiselectable="true">
+                  <ul class="dropdown-menu inner show" role="presentation"></ul>
+                </div>
               </div>
             </div>
           </div><label class="col d-none d-md-block form-text">Please choose your translation services you would like to use. one language to many open languages</label>
@@ -202,9 +210,10 @@
             </div>
           </div>
           <div class="col d-none d-md-block"><span>Color for colored lists in OSMBC. Use a html colorpicker to define. (</span><a href="http://www.w3schools.com/colors/colors_picker.asp">Color Picker</a><span>,</span><a href="http://www.w3schools.com/colors/colors_names.asp">Color Names</a><span>)</span></div>
-        </div><form-group>
+        </div>
+        <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10"><input class="btn btn-primary" id="save" name="OK" type="submit" value="OK"></div>
-        </form-group>
+        </div>
       </form>
       <p class="row"></p>
       <div class="d-none d-md-block">

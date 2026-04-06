@@ -62,16 +62,46 @@
       <p><!-- Full Access Index Page--></p>
       <div class="div">
         <div class="row align-items-start">
-          <div class="col-6">
+          <div class="col-12 col-xl-6">
             <h2 class="d-none d-sm-block">Welcome to OSM BC</h2>
             <p class="osmbc-help-text d-none d-sm-block">See recent blogs to work on below. If you just want to collect an article or an idea, use the collect menu on in the navbar.</p>
             <h3>Blogs to work on <a href="/blog/list?status=IN(open,edit)">(more)</a></h3>
             <div>
-              <table class="table table-sm">
+              <div class="table-responsive">
+                <table class="table table-sm blog-status-table blog-status-table-compact">
+                  <tbody>
+                    <tr class="blog-status-header">
+                      <td class="blog-status-lang-head"></td>
+                    </tr>
+                    <tr class="blog-status-row">
+                      <td class="text-center blog-status-lang-head">DE</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="mt-1 mb-2"><small class="osmbc-help-text">Badge legend</small>
+              <table class="table table-sm w-auto mb-0">
                 <tbody>
                   <tr>
-                    <td></td>
-                    <td class="text-center">DE</td>
+                    <td class="text-center align-middle"><span class="badge osmbclabel-openblog">open</span></td>
+                    <td class="text-start align-middle"> <span class="osmbc-help-text">number of pending articles in open blogs</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center align-middle"><span class="badge osmbclabel-editblog">edit</span></td>
+                    <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">number of pending articles in edit blogs</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center align-middle"><span class="badge automated-translation">auto</span></td>
+                    <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">number of automated translations</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center align-middle"><span class="badge osmbclabel-reviewblog">review</span></td>
+                    <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">number of reviews</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center align-middle"><span class="badge osmbclabel-closedblog"><i class="fa fa-check"></i></span></td>
+                    <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">language is closed</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -120,17 +150,18 @@
             <p><a id="adminlink" href="/osmbc/admin">click here</a><span> to go to the Admin Section of OSMBC</span></p>
             <p></p>
           </div>
-          <div class="col-6 col-xs-auto d-none d-sm-block">
-            <h4>Last Changes <a href="/changes/log?date=2015-11"> (more)</a></h4>blogusertablewhatChangewhen<table class="table table-striped table-sm">
+          <div class="col-12 col-xl-6 d-none d-lg-block">
+            <h4>Last Changes <a href="/changes/log?date=2015-11"> (more)</a></h4>
+            <table class="table table-striped table-sm">
               <thead>
                 <tr>
                   <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  <th>blog</th>
+                  <th>user</th>
+                  <th>table</th>
+                  <th>what</th>
+                  <th>Change</th>
+                  <th>when</th>
                 </tr>
               </thead>
               <tbody></tbody>
