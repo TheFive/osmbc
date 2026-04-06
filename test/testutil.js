@@ -525,7 +525,7 @@ async function getNewDriver(username) {
   chromeOptions.addArguments("disable-dev-shm-usage");
   chromeOptions.addArguments("disable-gpu");
   chromeOptions.addArguments("single-process");
-  
+
   // Disable popup dialogs
   chromeOptions.addArguments("disable-blink-features=AutomationControlled");
 
