@@ -22,7 +22,7 @@
     "axios": "1.14.0",
     "body-parser": "1.20.x",
     "bootstrap": "5.3.3",
-    "bootstrap-select": "^1.13.18",
+    "bootstrap-select": "^1.14.0-beta3",
     "cheerio": "1.2.0",
     "commander": "14.0.x",
     "compression": "1.8.1",

@@ -82,12 +82,13 @@ mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
   - if (!value) value =""
   div.row.mb-3
     label.col.col-form-label(for=name)=label
-    select.col-5.selectpicker(name=name id=name multiple)
-      each v,i in values
-        if (value.indexOf(v)>=0)
-            option(selected id = name + "_" + v value = v)=displayValues[i]
-        else 
-            option(id = name + "_" + v value = v)=displayValues[i]
+    div.col-5
+      select.selectpicker(name=name id=name multiple)
+        each v,i in values
+          if (value.indexOf(v)>=0)
+              option(selected id = name + "_" + v value = v)=displayValues[i]
+          else 
+              option(id = name + "_" + v value = v)=displayValues[i]
     label.col.d-none.d-md-block.form-text=explanation
 
 
