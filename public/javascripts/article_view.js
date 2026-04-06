@@ -1,6 +1,5 @@
 
 
-/* eslint-env browser:true, node:false, jquery:true, commonjs:false */
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
 /* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
