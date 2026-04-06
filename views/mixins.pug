@@ -273,12 +273,13 @@ mixin voteButtonList(votes)
     if (vote.displayAtTop)
       +voteButton(vote,article)
 
-mixin blogStatusTable(blogWithLink)
+mixin blogStatusTable(blogWithLink, compactView)
+  - if (compactView !== true) compactView = false
   - const openBlogs = layout.listOfOpenBlog.slice(0).reverse()
   - const editBlogs = layout.editBlog.slice(0).reverse()
   .table-responsive
-    table.table.table-sm.blog-status-table
-      tr
+    table.table.table-sm.blog-status-table(class=compactView ? 'blog-status-table-compact' : '')
+      tr.blog-status-header
         td.blog-status-lang-head=""
         for openBlog in openBlogs
           if (blogWithLink)
@@ -294,7 +295,7 @@ mixin blogStatusTable(blogWithLink)
             td.blog-status-blog-head=editBlog.name
 
       for l in layout.activeLanguages
-        tr
+        tr.blog-status-row
           td.text-center.blog-status-lang-head=l
           for openBlog in openBlogs
             td.text-center.blog-status-value

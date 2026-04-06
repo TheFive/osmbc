@@ -12,7 +12,7 @@ block content
 
   row
     div
-      table.table.table-striped.table-responsive
+      table.table.table-striped.table-responsive.text-
         thead
           tr 
             th name
@@ -51,7 +51,7 @@ block content
                         - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
 
                     a(href=urlblog)
-                      span.badge.badge-secondary
+                      span.badge.text-bg-secondary
                         |#{blogNumber(blog,lang)}
                     a(href=urlblog)
                       span.badge(class=labeltype)
@@ -68,26 +68,26 @@ block content
     p
       | Click on any label to edit the articles or view the blog.
     p
-      span.badge.badge-secondary
+      span.badge.text-bg-secondary
         | missing
       span.badge.osmbclabel-closedblog
         | total
       |  Closed Blog
 
     p
-      span.badge.badge-secondary
+      span.badge.text-bg-secondary
         | missing
       span.badge.osmbclabel-reviewblog
         | total
       |  Reviewed Blog
     p
-      span.badge.badge-secondary
+      span.badge.text-bg-secondary
         | missing
       span.badge.osmbclabel-editblog
         | total
       |  Edit Blog
     p
-      span.badge.badge-secondary
+      span.badge.text-bg-secondary
         | missing
       span.badge.osmbclabel-openblog
         | total
