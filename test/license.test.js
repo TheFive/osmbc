@@ -1,5 +1,5 @@
 
-import { init } from "license-checker-rseidelsohn";
+import { init } from "../util/license-checker-internal.js";
 import should from "should";
 import path from "path";
 import config from "../config.js";
@@ -12,7 +12,8 @@ const licenses = {
   "vow-fs@0.3.1": "MIT",
   "vow@0.4.3": "MIT",
   "tweetnacl@0.14.3": "Unlicense",
-  "colors@0.6.2": "MIT"
+  "colors@0.6.2": "MIT",
+  "streamsearch@1.1.0": "MIT"
 
 };
 
