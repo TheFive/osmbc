@@ -86,7 +86,6 @@
     "eslint-plugin-mocha": "10.4.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "license-checker": "^25.0.1",
     "license-checker-rseidelsohn": "4.4.x",
     "mocha": "11.7.x",
     "mockdate": "3.0.x",
