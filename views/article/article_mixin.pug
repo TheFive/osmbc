@@ -97,12 +97,12 @@ mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
-  span.badge.badge-secondary(
+  span.badge.text-bg-secondary(
       class=labelClass
       draggable="true"
       data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
       ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
-  span.badge.badge-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
+  span.badge.text-bg-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
   textarea.d-none.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]

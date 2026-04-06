@@ -19,7 +19,7 @@ block content
 
   if (usershown.temporaryGuest===true)
     h1
-      .badge.badge-secondary="User is testing guest mode"
+      .badge.text-bg-secondary="User is testing guest mode"
 
   form(name="input", action=`${layout.htmlroot}/usert/${usershown.id}`, method="post")
       if (usershown.hasLoggedIn())

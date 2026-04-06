@@ -16,13 +16,13 @@ block markdownArea
     // Markdown Area 2 Columns
     .row#MarkdownArea
       .col-md-6
-          span.badge.badge-secondary(
+          span.badge.text-bg-secondary(
             id="left_lang"
             class=lbg
             draggable="true"
             data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
             ondragstart=`ondragstartLangLabel(event,'${params.left_lang}');`)="  " + params.left_lang + "  "
-          span.badge.badge-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
+          span.badge.text-bg-danger(style="display:none" id="markdown" + params.left_lang + "_unsaved" )="unsaved"
 
           articleMarkdown(params.left_lang,!article.isChangeAllowed("markdown" + params.left_lang))
           +articlePreview(params.left_lang)
@@ -36,23 +36,23 @@ block markdownArea
                   draggable="true"
                   data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
                   ondragstart=`ondragstartLangLabel(event,'${l}');`)=l
-                span.badge.badge-secondary.RLOFF.d-none(
+                span.badge.text-bg-secondary.RLOFF.d-none(
                     class="RLOFF-" + l
                     data-bs-toggle="tooltip" data-bs-placement="left" title="Click on language display to enable")="."
-                span.badge.badge-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
+                span.badge.text-bg-danger(style="display:none" id="markdown" + l + "_unsaved" )="unsaved: "+l
               else
-                span.badge.badge-secondary.RL.d-none(
+                span.badge.text-bg-secondary.RL.d-none(
                   class= "RL-" + l
                   draggable="true"
                   data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
                   ondragstart=`ondragstartLangLabel(event,'${l}');`)=l
                 if l === params.left_lang
-                  span.badge.badge-secondary.RLOFF(class="RLOFF-" + l)="-"
+                  span.badge.text-bg-secondary.RLOFF(class="RLOFF-" + l)="-"
                 else
-                  span.badge.badge-secondary.RLOFF(
+                  span.badge.text-bg-secondary.RLOFF(
                       class="RLOFF-" + l
                       data-bs-toggle="tooltip" data-bs-placement="left" title="Click on language display to see "+l+" here")="."
-                span.badge.badge-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
+                span.badge.text-bg-danger(style="display:none" id="markdown" + l + "_unsaved")="unsaved: "+l
 
 
             for l in layout.activeLanguages

@@ -9,9 +9,9 @@ mixin firstBlogOfList(list,count,c)
         if i<count
           li.navbar-item.active.d-xs-block
             a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
-              span.badge.badge-pill.osmbcbadge-lang=blogNumber(blog, layout.user.getLang(0))
+              span.badge.rounded-pill.osmbcbadge-lang=blogNumber(blog, layout.user.getLang(0))
               if layout.user.getLang(1)
-                span.badge.badge-pill.osmbcbadge-lang2=blogNumber(blog, layout.user.getLang(1))
+                span.badge.rounded-pill.osmbcbadge-lang2=blogNumber(blog, layout.user.getLang(1))
 
 
 
@@ -43,19 +43,19 @@ mixin tbcMenu
           li.nav-item
             a.nav-link(href=layout.htmlroot+'/blog/TBC')=layout.tbc.name
               if (layout.tbc._tbcOwnArticleNumber > 0)
-                span.badge.badge-pill.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
+                span.badge.rounded-pill.osmbcbadge-user=layout.tbc._tbcOwnArticleNumber
 
 mixin inboxMenu
   if (layout && layout.user)
     li.navbar-item.active
       a.nav-link#inbox(href=layout.htmlroot + '/usert/inbox')="Inbox "
         if (layout.userMentions > 0)
-          span.badge.badge-pill.osmbcbadge-user=layout.userMentions
+          span.badge.rounded-pill.osmbcbadge-user=layout.userMentions
         if (layout.user.hasFullAccess())
           if (layout.mainLangMentions > 0)
-            span.badge.badge-pill.badge-pill.osmbcbadge-lang=layout.mainLangMentions
+            span.badge.rounded-pill.osmbcbadge-lang=layout.mainLangMentions
           if (layout.secondLangMentions > 0)
-            span.badge.badge-pill.osmbcbadge-lang2=layout.secondLangMentions
+            span.badge.rounded-pill.osmbcbadge-lang2=layout.secondLangMentions
 
 mixin articleMenu
   if (layout && layout.user && layout.user && layout.user.hasFullAccess())

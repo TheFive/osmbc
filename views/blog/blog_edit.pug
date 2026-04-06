@@ -63,7 +63,7 @@ block content
         .col-sm-3
           h2=blog.name
         .col-sm-3
-        .col-sm-5.text-right
+        .col-sm-5.text-end
           a.btn.btn-primary#edit(href=`${layout.htmlroot}/blog/edit/${blog.name}?edit=true` role="button") Edit
           a.btn.btn-secondary(href=layout.htmlroot + "/article/list?blog=" + blog.name) List of all articles
       .row
@@ -96,16 +96,16 @@ block content
             tr
               //- Language Column
               td
-                span.badge.badge-secondary=lang
+                span.badge.text-bg-secondary=lang
               //- Status Column
               td
                 if (blog["close" + lang])
-                  div.badge.badge-pill.osmbclabel-closedblog
+                  div.badge.rounded-pill.osmbclabel-closedblog
                     i.fa.fa-check
                 else if (blog.isReviewStarted(lang))
-                  div.badge.badge-pill.osmbclabel-reviewblog=(blog.getClosedReviewCount(lang))
+                  div.badge.rounded-pill.osmbclabel-reviewblog=(blog.getClosedReviewCount(lang))
                 else
-                  div.badge.badge-pill.osmbclabel-editblog=blog.getUnEdited(lang)
+                  div.badge.rounded-pill.osmbclabel-editblog=blog.getUnEdited(lang)
               //- Review Start Column
               td
                 if (!blog["close" + lang] && blog.isReviewStarted(lang) && blog["reviewComment"+lang].length>0)
