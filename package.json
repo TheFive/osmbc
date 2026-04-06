@@ -92,7 +92,7 @@
     "mocha": "11.7.x",
     "mockdate": "3.0.x",
     "nock": "13.5.x",
-    "nyc": "^17.1.x",
+    "nyc": "^18.0.0",
     "pretty": "^2.0.0",
     "selenium-webdriver": "^4.41.0",
     "serve-index": "1.9.2",
