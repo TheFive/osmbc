@@ -88,7 +88,6 @@
     "eslint-plugin-n": "17.24.x",
     "eslint-plugin-promise": "7.2.x",
     "globals": "17.4.x",
-    "license-checker-rseidelsohn": "4.4.x",
     "mocha": "11.7.x",
     "mockdate": "3.0.x",
     "nock": "13.5.x",
