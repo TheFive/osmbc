@@ -91,7 +91,7 @@ app.use((req, res, next) => {
       scriptSrcAttr: ["'self'", "'unsafe-inline'"] //, `'nonce-${res.locals.cspNonce}'`
     }
   });
-  cspMiddleware(res, res, next);
+  cspMiddleware(req, res, next);
 });
 app.use(referrerPolicy({ policy: "same-origin" }));
 app.use(crossOriginEmbedderPolicy({ policy: "credentialless" }));
