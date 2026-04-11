@@ -77,6 +77,11 @@
   "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true,
   "scripts":{
+    "user": ["TestUser"],
+    "logFilePath": "script_logs",
+    "scriptFilePath": "scripts",
+    "logFileFilter": "*.log",
+    "scriptFileFilter": "*.yaml"
   },
   "User-Agent": "Hello i am Kitty",
   "DeeplProConfig": {
