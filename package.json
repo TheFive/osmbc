@@ -21,7 +21,6 @@
     "archiver": "^7.0.1",
     "async": "3.2.x",
     "axios": "^1.15.0",
-    "body-parser": "1.20.x",
     "bootstrap": "4.6.2",
     "bootstrap-select": "^1.13.18",
     "cheerio": "1.2.0",
