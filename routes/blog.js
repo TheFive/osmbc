@@ -505,7 +505,7 @@ function renderBlogTab(req, res, next) {
     if (clearParams) {
       const url = htmlroot + "/blog/" + blog.name;
       let styleParam = "";
-      if (req.param.style) styleParam = "?style=" + styleParam;
+      if (req.query.style) styleParam = "?style=" + req.query.style;
       res.redirect(url + styleParam);
       return;
     }

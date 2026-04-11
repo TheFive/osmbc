@@ -31,6 +31,7 @@ describe("routes/changes", function() {
 
   before(async function () {
     await initialiseModules();
+    await testutil.clearDB();
     testutil.startServerSync();
   });
 
