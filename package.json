@@ -93,7 +93,7 @@
     "selenium-webdriver": "4.43.0",
     "serve-index": "1.9.2",
     "should": "^13.2.3",
-    "sinon": "21.1.1",
+    "sinon": "21.1.2",
     "timemachine": "0.3.x",
     "tough-cookie": "6.0.1"
   }
