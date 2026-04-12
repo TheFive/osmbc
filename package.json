@@ -21,7 +21,7 @@
     "archiver": "^7.0.1",
     "async": "3.2.x",
     "axios": "1.15.0",
-    "bootstrap": "5.3.3",
+    "bootstrap": "5.3.8",
     "bootstrap-select": "^1.14.0-beta3",
     "cheerio": "1.2.0",
     "commander": "14.0.x",
@@ -80,8 +80,8 @@
   "devDependencies": {
     "eslint": "^10.2.0",
     "eslint-plugin-mocha": "^11.2.0",
-    "globals": "^17.4.0",
     "mocha": "11.7.x",
+    "globals": "17.5.0",
     "mockdate": "3.0.x",
     "nock": "14.0.12",
     "nyc": "^18.0.0",
