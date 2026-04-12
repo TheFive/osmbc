@@ -15,7 +15,7 @@ import testutil from "../test/testutil.js";
 
 
 
-describe("routes/api", function() {
+describe("router/api", function() {
   let baseLink;
   beforeEach(function(bddone) {
     baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
