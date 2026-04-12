@@ -362,7 +362,7 @@ function setReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.setReviewComment(lang, user, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
+    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
   });
 }
@@ -379,7 +379,7 @@ function editReviewComment(req, res, next) {
   if (!req.blog) return next();
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
+    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
   });
 }
@@ -484,7 +484,7 @@ function renderBlogTab(req, res, next) {
           if (err) return callback(err);
           let referer =  config.htmlRoot() + "/osmbc";
           if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
-            referer = req.header("Referer");
+            referer = util.getSafeRedirectUrl(req.header("Referer"), referer, req.protocol + "://" + req.get("host"));
           }
           res.redirect(referer);
         });
@@ -554,7 +554,7 @@ function copyAllArticles(req, res, next) {
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
+    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
   });
 }
@@ -573,7 +573,7 @@ function translateAllArticles(req, res, next) {
 
   blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
     if (err) return next(err);
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
+    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
   });
 }

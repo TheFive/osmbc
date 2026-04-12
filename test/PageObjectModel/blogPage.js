@@ -16,6 +16,19 @@ class BlogPage extends StandardPage {
     super(driver);
   }
 
+  async #findVisibleElement(selector) {
+    const elements = await this._driver.findElements(By.css(selector));
+    for (const element of elements) {
+      try {
+        if (await element.isDisplayed()) return element;
+      } catch (e) {
+        // ignore stale/non-interactable candidates while searching
+      }
+    }
+    if (elements.length > 0) return elements[0];
+    throw new Error(`No element found for selector: ${selector}`);
+  }
+
   async assertPage() {
     await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/blog"));
@@ -47,12 +60,22 @@ class BlogPage extends StandardPage {
 
   async clickStartPersonalReview(lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("button#reviewButton" + lang))).click();
+    const button = await this.#findVisibleElement(`button[id^='reviewButton${lang}']`);
+    await this.scrollIntoView(button);
+    await this._waitForBootstrapOverlaysToDisappear();
+    await button.click();
+    await this._driver.wait(async () => {
+      const field = await this.#findVisibleElement(`textarea[id^='reviewComment${lang}']`).catch(() => null);
+      return !!field;
+    }, 1500, `Review textarea not visible for ${lang}`);
   }
 
   async typeReviewText(lang, text) {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("textarea#reviewComment" + lang))).sendKeys(text);
+    const textarea = await this.#findVisibleElement(`textarea[id^='reviewComment${lang}']`);
+    await this._driver.wait(until.elementIsVisible(textarea), 1500);
+    await this.scrollIntoView(textarea);
+    await textarea.sendKeys(text);
   }
 
   async #clickACheckbox(checkboxName) {
@@ -79,11 +102,26 @@ class BlogPage extends StandardPage {
 
   async clickStoreReviewText(lang) {
     await this.assertPage();
-    const reviewComment = (await this._driver.findElement(By.css("textarea#reviewComment" + lang)));
-    await (await this._driver.findElement(By.css("button#reviewButton" + lang))).click();
-    await this._driver.wait(until.stalenessOf(reviewComment), 1000);
-    const startReviewButton = (await this._driver.findElement(By.css("button#reviewButton" + lang)));
-    await this._driver.wait(until.elementIsVisible(startReviewButton), 1000);
+    const commentSelector = `textarea[id^='reviewComment${lang}']`;
+    const buttonSelector = `button[id^='reviewButton${lang}']`;
+
+    const submitButton = await this.#findVisibleElement(buttonSelector);
+    await submitButton.click();
+
+    // After submit we either return to "Start Personal Review" or the comment textarea disappears.
+    await this._driver.wait(async () => {
+      const commentFields = await this._driver.findElements(By.css(commentSelector));
+      if (commentFields.length === 0) return true;
+
+      const isDisplayed = await commentFields[0].isDisplayed().catch(() => false);
+      if (!isDisplayed) return true;
+
+      const buttons = await this._driver.findElements(By.css(buttonSelector));
+      if (buttons.length === 0) return false;
+
+      const buttonText = ((await buttons[0].getText()) || "").toLowerCase();
+      return buttonText.includes("start personal review");
+    }, 2000, `Review submit not completed for language ${lang}`);
   }
 
   async clickDidExport(lang) {
@@ -150,7 +188,7 @@ class BlogPage extends StandardPage {
 
   async isMode(mode) {
     await this.assertPage();
-    const modeTab = await this._driver.findElement(By.xpath(`//a[(text()="${mode}") and contains(@class, 'nav-link')]`));
+    const modeTab = await this._driver.findElement(By.xpath(`//a[contains(@class,'nav-link') and normalize-space(.)='${mode}']`));
     const classAttrib = await modeTab.getAttribute("class");
     return classAttrib.includes("active");
   }
@@ -191,7 +229,7 @@ class BlogPage extends StandardPage {
 
   async cickMode(mode) {
     await this.assertPage();
-    const fullTab = await this._driver.findElement(By.xpath(`//a[(text()="${mode}") and contains(@class, 'nav-link')]`));
+    const fullTab = await this._driver.findElement(By.xpath(`//a[contains(@class,'nav-link') and normalize-space(.)='${mode}']`));
     await this.scrollIntoView(fullTab);
     await (fullTab).click();
   }

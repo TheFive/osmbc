@@ -173,6 +173,48 @@ function charsetDecoder(response) {
   return response;
 };
 
+/**
+ * Validates Referer header against same-origin policy to prevent open redirect attacks.
+ * Only allows redirects to URLs on the same hostname as the provided default URL.
+ * @param {string} refererHeader - The Referer header from the request
+ * @param {string} defaultUrl - The fallback URL (used to extract the expected hostname)
+ * @returns {string} - The validated referer URL or the defaultUrl if validation fails
+ */
+function getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin) {
+  if (!refererHeader) {
+    return defaultUrl;
+  }
+
+  // Allow internal relative redirects like "/blog/edit/WN123".
+  if (typeof refererHeader === "string" && refererHeader.startsWith("/") && !refererHeader.startsWith("//")) {
+    return refererHeader;
+  }
+
+  try {
+    const refererUrl = new URL(refererHeader);
+    let allowedOrigin = null;
+
+    if (typeof requestOrigin === "string" && /^https?:\/\//i.test(requestOrigin)) {
+      allowedOrigin = new URL(requestOrigin).origin;
+    }
+
+    if (!allowedOrigin && typeof defaultUrl === "string" && /^https?:\/\//i.test(defaultUrl)) {
+      allowedOrigin = new URL(defaultUrl).origin;
+    } else if (!allowedOrigin && url && /^https?:\/\//i.test(url)) {
+      allowedOrigin = new URL(url).origin;
+    }
+
+    // Only allow redirects to same origin.
+    if (allowedOrigin && refererUrl.origin === allowedOrigin) {
+      return refererHeader;
+    }
+  } catch (err) {
+    debug(`Invalid Referer URL: ${refererHeader}`);
+  }
+
+  return defaultUrl;
+};
+
 
 
 
@@ -190,7 +232,8 @@ const util = {
   charsetDecoder: charsetDecoder,
   sleep: sleep,
   osmbcLink: osmbcLink,
-  md_render: mdRender
+  md_render: mdRender,
+  getSafeRedirectUrl: getSafeRedirectUrl
 };
 
 export default util;
