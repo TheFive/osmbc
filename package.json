@@ -91,5 +91,14 @@
     "should": "^13.2.3",
     "timemachine": "0.3.x",
     "sinon": "21.1.2"
+  },
+  "overrides": {
+    "mocha": {
+      "diff": "8.0.4",
+      "serialize-javascript": "7.0.5"
+    },
+    "email-templates": {
+      "nodemailer": "8.0.5"
+    }
   }
 }
