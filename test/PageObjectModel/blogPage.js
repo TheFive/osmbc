@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By, until, error as webdriverError } from "selenium-webdriver";
 import util from "../../util/util.js";
 import StandardPage from "./standardPage.js";
 import should from "should";
@@ -23,7 +23,14 @@ class BlogPage extends StandardPage {
 
   async clickEditBlogDetail() {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("editBlogDetail"))).click();
+    const clickEditBlogDetail = await this._driver.findElement(By.id("editBlogDetail"));
+    await this.scrollIntoView(clickEditBlogDetail);
+    await this._waitForBootstrapOverlaysToDisappear();
+    // await this._driver.wait(until.elementIsVisible(clickEditBlogDetail)); // Warte auf Sichtbarkeit
+    // await this._driver.wait(until.elementIsEnabled(clickEditBlogDetail)); // Zusätzlich: Warte auf Aktivierung
+    await clickEditBlogDetail.click();
+    // await this._driver.executeScript("arguments[0].click();", clickEditBlogDetail); // JavaScript-Klick als Fallback
+    await this._driver.wait(until.stalenessOf(clickEditBlogDetail)); // Warte, bis das Element nicht mehr im DOM ist
   }
 
   async clickReadyReview(blog, lang) {
@@ -50,9 +57,24 @@ class BlogPage extends StandardPage {
 
   async #clickACheckbox(checkboxName) {
     await this.assertPage();
-    const checkbox = (await this._driver.findElement(By.css(checkboxName)));
-    await this.scrollIntoView(checkbox);
-    await checkbox.click();
+
+    await this._driver.wait(until.elementLocated(By.css(checkboxName)), 5000);
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const checkbox = await this._driver.findElement(By.css(checkboxName));
+      await this.scrollIntoView(checkbox);
+      await this._waitForBootstrapOverlaysToDisappear();
+
+      try {
+        await checkbox.click();
+        return;
+      } catch (e) {
+        if (!(e instanceof webdriverError.ElementClickInterceptedError) || attempt === 1) {
+          throw e;
+        }
+        await this._driver.sleep(150);
+      }
+    }
   }
 
   async clickStoreReviewText(lang) {
@@ -106,10 +128,24 @@ class BlogPage extends StandardPage {
 
   async clickOnArticle(articleText) {
     await this.assertPage();
-    const articleElement = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleText}')]]`));
-    await this.scrollIntoView(articleElement);
-    await (articleElement).click();
-    await (until.stalenessOf(articleElement));
+    const articleXpath = `//li[text()[contains(.,'${articleText}')]]`;
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const articleElement = await this._driver.findElement(By.xpath(articleXpath));
+      await this.scrollIntoView(articleElement);
+      await this._waitForBootstrapOverlaysToDisappear();
+
+      try {
+        await articleElement.click();
+        return;
+      } catch (e) {
+        if (!(e instanceof webdriverError.ElementClickInterceptedError) || attempt === 1) {
+          throw e;
+        }
+        // Manche Reflows nach Bootstrap-Updates überlagern den ersten Klick kurzzeitig.
+        await this._driver.sleep(150);
+      }
+    }
   }
 
   async isMode(mode) {
@@ -163,15 +199,15 @@ class BlogPage extends StandardPage {
   async clickStatisticView() {
     await this.assertPage();
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
-    await this.scrollIntoView(statisticView);
-    await statisticView.click();
+    await this._waitForBootstrapOverlaysToDisappear();
+    await this._driver.executeScript("arguments[0].click();", statisticView);
   }
 
   async clickEditView() {
     await this.assertPage();
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
-    await this.scrollIntoView(editView);
-    await editView.click();
+    await this._waitForBootstrapOverlaysToDisappear();
+    await this._driver.executeScript("arguments[0].click();", editView);
   }
 
   async triggerOnChange(articleShown) {

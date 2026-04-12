@@ -70,12 +70,12 @@ mixin reviewBlog(reviewComments,lang)
                 form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
                   textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
                   input.d-none(type="text",name="lang" value = lang)
-                  button.btn.btn-large.btn-primary(id="reviewButton"+lang+i type="submit") Change
+                  button.btn.btn-lg.btn-primary(id="reviewButton"+lang+i type="submit") Change
           if comment.text == "reviewing..."
             if layout.user.OSMUser === comment.user
               - personalReviewStarted = true
             h3
-              div.badge.badge-warning
+              div.badge.text-bg-warning
                 b.span=comment.user
                 span=" is reviewing since "+layout.moment(comment.timestamp).fromNow()
 
@@ -93,8 +93,8 @@ mixin reviewBlog(reviewComments,lang)
                         onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
                   input.d-none(type="text",name="lang" value = lang)
 
-                  button.btn.btn-large.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
-                  button.btn.btn-large.btn-secondary(
+                  button.btn.btn-lg.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
+                  button.btn.btn-lg.btn-secondary(
                     id="reviewButtonCancel"+lang
                     type="button"
                     onclick="document.getElementById('reviewComment" + lang +"').value='delete';\
@@ -111,7 +111,7 @@ mixin reviewBlog(reviewComments,lang)
                   onkeyup="document.getElementById('reviewButton" + lang + "').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
                   input.d-none(type="text",name="lang" value = lang)
                 .col-md-4
-                  button.btn.btn-large.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
+                  button.btn.btn-lg.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
 
 
 mixin blogTranslateMenu(langFrom,langTo,service)
@@ -125,7 +125,7 @@ mixin blogTranslateMenu(langFrom,langTo,service)
 mixin translationBlogMenu
   if (layout.blogTranslationVisibleFor === "full" || (Array.isArray(layout.blogTranslationVisibleFor) && layout.blogTranslationVisibleFor.indexOf(layout.user.OSMUser)>=0))
     li.dropdown.navbar-item
-      a.nav-link.dropdown-toggle#translateMenu(href='#', data-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
+      a.nav-link.dropdown-toggle#translateMenu(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") 
         | Translate Blog
       div.dropdown-menu(aria-labelledby="translateMenu")
         each tService in layout.user.getTranslations()
@@ -177,7 +177,7 @@ block content
         - ready = (total-unedited - notranslate - autoTranslate)
         - if (total == 0) total = 1
         .col-md-1
-          div.badge.badge-info.osmbclabel-lang2=right_lang
+          div.badge.text-bg-info.osmbclabel-lang2=right_lang
           if blog._unsolvedComments[right_lang] > 0
             span.badge.osmbclabel-no-markdown=blog._unsolvedComments[right_lang] + "(*)"
           else
@@ -248,7 +248,7 @@ block content
                 i.fa.fa-exclamation-triangle
 
         li.nav-item.dropdown.show
-          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
             i.fa.fa-download
           div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
             - var closedLangs = []

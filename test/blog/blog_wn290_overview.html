@@ -13,52 +13,53 @@
   </head>
 
   <body><!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
-      <ul class="navbar-nav mr-auto"></ul>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
-          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">2</span></a></li>
-          <li class="navbar-item active"></li>
-          <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN290">WN290<span class="badge badge-pill osmbcbadge-lang">0</span><span class="badge badge-pill osmbcbadge-lang2">0</span></a></li>
-          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
-            <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
-            <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
-              <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
-            </div>
-          </li>
-          <li class="dropdown navbar-item"><a class="nav-link dropdown-toggle" id="translateMenu" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Translate Blog</a>
-            <div class="dropdown-menu" aria-labelledby="translateMenu"><a class="dropdown-header">Use deeplPro:</a><a class="dropdown-item translateDEEN" name="translateDEEN" onclick="window.translate('DE','EN','deeplPro');return false;">Translate DE-&gt;EN</a><a class="dropdown-item translateENDE" name="translateENDE" onclick="window.translate('EN','DE','deeplPro');return false;">Translate EN-&gt;DE</a></div>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
-              <div class="dropdown-divider"> </div>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
-              <div class="dropdown-divider"></div>
-              <form class="p-1">
-                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
-                  <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
-                </div>
-              </form>
-            </div>
-          </li>
-          <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
-        </ul>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
+      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
+            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbcbadge-lang">0</span><span class="badge rounded-pill osmbcbadge-lang2">0</span></a></li>
+            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
+              <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+              <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
+                <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
+              </div>
+            </li>
+            <li class="dropdown navbar-item"><a class="nav-link dropdown-toggle" id="translateMenu" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Translate Blog</a>
+              <div class="dropdown-menu" aria-labelledby="translateMenu"><a class="dropdown-header">Use deeplPro:</a><a class="dropdown-item translateDEEN" name="translateDEEN" onclick="window.translate('DE','EN','deeplPro');return false;">Translate DE-&gt;EN</a><a class="dropdown-item translateENDE" name="translateENDE" onclick="window.translate('EN','DE','deeplPro');return false;">Translate EN-&gt;DE</a></div>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
+                <div class="dropdown-divider"> </div>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
+                <div class="dropdown-divider"></div>
+                <form class="p-1">
+                  <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
+                    <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
+                  </div>
+                </form>
+              </div>
+            </li>
+            <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
+          </ul>
+        </div>
       </div>
     </nav>
     <div class="container-fluid">
@@ -80,7 +81,7 @@
       <div class="d-none d-md-block">
         <div class="row">
           <div class="col-md-1">
-            <div class="badge badge-info osmbclabel-lang2">EN</div><span class="badge osmbclabel-no-markdown">1(*)</span>
+            <div class="badge text-bg-info osmbclabel-lang2">EN</div><span class="badge osmbclabel-no-markdown">1(*)</span>
           </div>
           <div class="col-md-11">
             <div class="progress" style="margin-bottom:10px">
@@ -97,10 +98,10 @@
           <h2><span class="d-none d-md-block">Wochennotiz </span>WN290<span class="d-none d-md-block"> (Review DE)</span></h2>
         </div>
         <div class="col-md-3">
-          <div class="div"><button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
+          <div class="div"><button class="btn btn-lg btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
         </div>
         <div class="col-md-3 d-none d-md-block">
-          <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
+          <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
         </div>
       </div>
       <div class="row">
@@ -113,37 +114,37 @@
               <p><b class="span">wambacher</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a class="text-muted small" href="/changes/log?blog=WN290&amp;user=wambacher&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-02-10T15:39:44.818Z">[changes]</a></p>
               <p id="reviewLeftTextDE1">bin durch. some spelling errors</p>
               <div class="d-none" id="editReviewDE1">
-                <form id="editreviewDE1" name="reviewDE1" action="/blog/WN290/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE1">bin durch. some spelling errors</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE1" type="submit">Change</button></form>
+                <form id="editreviewDE1" name="reviewDE1" action="/blog/WN290/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE1">bin durch. some spelling errors</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE1" type="submit">Change</button></form>
               </div>
               <p><b class="span">derFred</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a class="text-muted small" href="/changes/log?blog=WN290&amp;user=derFred&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-02-10T15:39:44.818Z">[changes]</a></p>
               <p id="reviewLeftTextDE2">only mailtest</p>
               <div class="d-none" id="editReviewDE2">
-                <form id="editreviewDE2" name="reviewDE2" action="/blog/WN290/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE2">only mailtest</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE2" type="submit">Change</button></form>
+                <form id="editreviewDE2" name="reviewDE2" action="/blog/WN290/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE2">only mailtest</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE2" type="submit">Change</button></form>
               </div>
               <p><b class="span">Peda</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a class="text-muted small" href="/changes/log?blog=WN290&amp;user=Peda&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-02-10T15:39:44.818Z">[changes]</a></p>
               <p id="reviewLeftTextDE3">Kleinigkeiten</p>
               <div class="d-none" id="editReviewDE3">
-                <form id="editreviewDE3" name="reviewDE3" action="/blog/WN290/editReviewComment/3" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE3">Kleinigkeiten</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE3" type="submit">Change</button></form>
+                <form id="editreviewDE3" name="reviewDE3" action="/blog/WN290/editReviewComment/3" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE3">Kleinigkeiten</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE3" type="submit">Change</button></form>
               </div>
               <p><b class="span">Nakaner</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a class="text-muted small" href="/changes/log?blog=WN290&amp;user=Nakaner&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-02-10T15:39:44.818Z">[changes]</a></p>
               <p id="reviewLeftTextDE4">Rechtschreibung und Zeichensetzung, Tippfehler</p>
               <div class="d-none" id="editReviewDE4">
-                <form id="editreviewDE4" name="reviewDE4" action="/blog/WN290/editReviewComment/4" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE4">Rechtschreibung und Zeichensetzung, Tippfehler</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE4" type="submit">Change</button></form>
+                <form id="editreviewDE4" name="reviewDE4" action="/blog/WN290/editReviewComment/4" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE4">Rechtschreibung und Zeichensetzung, Tippfehler</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE4" type="submit">Change</button></form>
               </div>
               <p><b class="span">TheFive</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a onclick="document.getElementById('editReviewDE5').classList.remove('d-none');document.getElementById('reviewLeftTextDE5').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN290&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-02-10T15:39:44.818Z">[changes]</a></p>
               <p id="reviewLeftTextDE5">Review ignorieren, trigger mail und save (TEST)</p>
               <div class="d-none" id="editReviewDE5">
-                <form id="editreviewDE5" name="reviewDE5" action="/blog/WN290/editReviewComment/5" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE5">Review ignorieren, trigger mail und save (TEST)</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE5" type="submit">Change</button></form>
+                <form id="editreviewDE5" name="reviewDE5" action="/blog/WN290/editReviewComment/5" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE5">Review ignorieren, trigger mail und save (TEST)</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE5" type="submit">Change</button></form>
               </div>
               <p><b class="span">Nakaner</b><span> </span><span class="text-muted small">3 months ago</span><span> </span><a class="text-muted small" href="/changes/log?blog=WN290&amp;user=Nakaner&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-02-10T15:39:44.818Z">[changes]</a></p>
               <p id="reviewLeftTextDE6">Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)</p>
               <div class="d-none" id="editReviewDE6">
-                <form id="editreviewDE6" name="reviewDE6" action="/blog/WN290/editReviewComment/6" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE6">Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-large btn-primary" id="reviewButtonDE6" type="submit">Change</button></form>
+                <form id="editreviewDE6" name="reviewDE6" action="/blog/WN290/editReviewComment/6" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE6">Linkprüfung in WP Kategorien WA bis HOT; wertenden Satz aus 1. HOT-Meldung entfernt, Mapzen-Routing nach Programme verschoben (Karten passt nicht)</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE6" type="submit">Change</button></form>
               </div>
               <div class="form-group">
                 <form id="reviewDE" name="reviewDE" action="/blog/WN290/setReviewComment" method="post">
                   <div class="col-md-8"><input class="d-none form-control" type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonDE').disabled = (document.getElementById('reviewCommentDE').value === '');"><input class="d-none" type="text" name="lang" value="DE"></div>
-                  <div class="col-md-4"><button class="btn btn-large btn-primary" id="reviewButtonDE" type="submit">Start Personal Review</button></div>
+                  <div class="col-md-4"><button class="btn btn-lg btn-primary" id="reviewButtonDE" type="submit">Start Personal Review</button></div>
                 </form>
               </div>
             </div>
@@ -158,27 +159,27 @@
               <p><b class="span">bogzab</b><span> </span><span class="text-muted small">4 months ago</span></p>
               <p id="reviewLeftTextEN0">Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</p>
               <div class="d-none" id="editReviewEN0">
-                <form id="editreviewEN0" name="reviewEN0" action="/blog/WN290/editReviewComment/0" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN0">Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-large btn-primary" id="reviewButtonEN0" type="submit">Change</button></form>
+                <form id="editreviewEN0" name="reviewEN0" action="/blog/WN290/editReviewComment/0" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN0">Reviwed by Bogus Zaba 10-02-16. Minor typos and edits done. Graphic needs a caption.</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-lg btn-primary" id="reviewButtonEN0" type="submit">Change</button></form>
               </div>
               <p><b class="span">elpbatista</b><span> </span><span class="text-muted small">3 months ago</span></p>
               <p id="reviewLeftTextEN1">elpbatista</p>
               <div class="d-none" id="editReviewEN1">
-                <form id="editreviewEN1" name="reviewEN1" action="/blog/WN290/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN1">elpbatista</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-large btn-primary" id="reviewButtonEN1" type="submit">Change</button></form>
+                <form id="editreviewEN1" name="reviewEN1" action="/blog/WN290/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN1">elpbatista</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-lg btn-primary" id="reviewButtonEN1" type="submit">Change</button></form>
               </div>
               <p><b class="span">derFred</b><span> </span><span class="text-muted small">3 months ago</span></p>
               <p id="reviewLeftTextEN2">errata: elpbatista made the review of the Spanish 290</p>
               <div class="d-none" id="editReviewEN2">
-                <form id="editreviewEN2" name="reviewEN2" action="/blog/WN290/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN2">errata: elpbatista made the review of the Spanish 290</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-large btn-primary" id="reviewButtonEN2" type="submit">Change</button></form>
+                <form id="editreviewEN2" name="reviewEN2" action="/blog/WN290/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN2">errata: elpbatista made the review of the Spanish 290</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-lg btn-primary" id="reviewButtonEN2" type="submit">Change</button></form>
               </div>
               <p><b class="span">jinalfoflia</b><span> </span><span class="text-muted small">3 months ago</span></p>
               <p id="reviewLeftTextEN3">Reviewed English version #290</p>
               <div class="d-none" id="editReviewEN3">
-                <form id="editreviewEN3" name="reviewEN3" action="/blog/WN290/editReviewComment/3" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN3">Reviewed English version #290</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-large btn-primary" id="reviewButtonEN3" type="submit">Change</button></form>
+                <form id="editreviewEN3" name="reviewEN3" action="/blog/WN290/editReviewComment/3" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentEN3">Reviewed English version #290</textarea><input class="d-none" type="text" name="lang" value="EN"><button class="btn btn-lg btn-primary" id="reviewButtonEN3" type="submit">Change</button></form>
               </div>
               <div class="form-group">
                 <form id="reviewEN" name="reviewEN" action="/blog/WN290/setReviewComment" method="post">
                   <div class="col-md-8"><input class="d-none form-control" type="text" name="text" value="reviewing..." id="reviewCommentEN" placeholder="Please Type your Review here" onkeyup="document.getElementById('reviewButtonEN').disabled = (document.getElementById('reviewCommentEN').value === '');"><input class="d-none" type="text" name="lang" value="EN"></div>
-                  <div class="col-md-4"><button class="btn btn-large btn-primary" id="reviewButtonEN" type="submit">Start Personal Review</button></div>
+                  <div class="col-md-4"><button class="btn btn-lg btn-primary" id="reviewButtonEN" type="submit">Start Personal Review</button></div>
                 </form>
               </div>
             </div>
@@ -199,7 +200,7 @@ while layout.user["blogSetting"+v]
   - v++-->
             <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=DE"><i class="fa fa-download"></i>DE</a></li>
             <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=EN"><i class="fa fa-download"></i>EN</a></li>
-            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
+            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
               <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN290/preview?lang=DE"><span>Export DE</span></a><a class="dropdown-item" href="/blog/WN290/preview?lang=EN"><span>Export EN</span></a><a class="dropdown-item" href="/blog/WN290/preview?lang=ES"><span>Export ES</span></a></div>
             </li>
           </ul>

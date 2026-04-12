@@ -69,17 +69,17 @@ mixin articleTranslateButton(langFrom,langTo)
 
 
 mixin saveButton
-  button.btn.btn-large.btn-primary#saveButton(type = "button" onclick ="window.saveButton()") Save
+  button.btn.btn-lg.btn-primary#saveButton(type = "button" onclick ="window.saveButton()") Save
 
 mixin doublettesButton
   if articleReferences.count >= 1
     a(href="#doublettes")
-      div.button.btn.btn-large.btn-danger=articleReferences.count + " doub."
+      div.button.btn.btn-lg.btn-danger=articleReferences.count + " doub."
 
 
 
 mixin cancelButton
-  button.btn.btn-large.btn-secondary#cancelButton(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
+  button.btn.btn-lg.btn-secondary#cancelButton(type = "button" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
 
 
 mixin noTranslationButton
@@ -97,12 +97,12 @@ mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
   - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
-  span.badge.badge-secondary(
+  span.badge.text-bg-secondary(
       class=labelClass
       draggable="true"
-      data-toggle="tooltip" data-placement="left" title="Drag me for copy full text"
+      data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
       ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
-  span.badge.badge-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
+  span.badge.text-bg-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
   textarea.d-none.form-control(id="old_markdown" + lang, name="old_markdown" + lang,rows=1,hide=true)=article["markdown" + lang]
@@ -125,8 +125,8 @@ mixin articleTranslateMenu(langFrom,langTo,service)
 
 mixin translationMenu
   - let emptyMenu = true
-  li.dropdown.navbar-item#translation.hidden-xs
-    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+  li.dropdown.navbar-item#translation.d-none.d-sm-block
+    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
     ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
       - let tsList = layout.user.getTranslations()
       each tService in tsList

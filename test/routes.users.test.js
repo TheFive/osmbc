@@ -163,7 +163,7 @@ describe("router/user", function() {
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.get(url);
 
-      body.data.should.containEql('<input class="col-5 form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
+      body.data.should.containEql('<input class="form-control" name="OSMUser" id="OSMUser" value="TestUser" readonly="readonly"/>');
       body.data.should.containEql("<h1>TestUser Heatmap</h1>");
     });
     it("should show user data by SELF", async function () {

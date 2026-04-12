@@ -555,6 +555,7 @@ async function getNewDriver(username) {
   if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless=new");
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
+  chromeOptions.addArguments("disable-infobars");
 
   // try to disable passwort Manager Popup
   // https://stackoverflow.com/questions/69799196/chrome-arguments-to-disable-save-password-prompt

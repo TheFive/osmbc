@@ -11,7 +11,7 @@ block content
           h1= "Markdown "+blog.name
         else
           h1= "Preview " + blog.name
-    .col.text-right
+    .col.text-end
       button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}';`) Edit
       if (asMarkdown)
         button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download

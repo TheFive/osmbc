@@ -91,7 +91,7 @@ block content
             if (layout.user.access === "full")
               +noTranslationButton
           .col-md-1
-          .col-md-7.text-right
+          .col-md-7.text-end
             +saveButton
             +cancelButton
 
@@ -109,7 +109,7 @@ block content
     div.form-group.row
       label.col-md-1="Title"
       .col-md-10
-        div.badge.badge-danger#title_unsaved(style="display:none")="unsaved"
+        div.badge.text-bg-danger#title_unsaved(style="display:none")="unsaved"
         textarea.d-none.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
         textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title"))=article.title
 
@@ -143,7 +143,7 @@ block content
       else
         label.col-md-1="Collection"
       .col-md-10
-        div.badge.badge-danger#collection_unsaved(style="display:none")="unsaved"
+        div.badge.text-bg-danger#collection_unsaved(style="display:none")="unsaved"
         textarea.form-control.af(id="collection" name="collection" rows=2 readonly=!article.isChangeAllowed("collection"))=article.collection
         textarea.d-none.form-control(id="old_collection" name="old_collection",rows=1,hide=true)=article.collection
     div.form-group.row#LinkArea
@@ -211,11 +211,11 @@ block content
 
 
   if (layout.user.access === "full")
-    .row.d-none.d-xs-block
+    .row.d-block.d-sm-none
       p
         br
         a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
-    .row.d-block.d-xs-none
+    .row.d-none.d-sm-block
       if changes
         h3
           |History

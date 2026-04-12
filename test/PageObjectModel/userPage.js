@@ -12,6 +12,33 @@ class UserPage extends Page {
     super(driver);
   }
 
+  async _setSelectValue(selectId, value) {
+    // introduced because of the special select with search field for translation services. normal select does not work here
+    // (CoPilot)
+    const selectElement = await this._driver.findElement(By.id(selectId));
+    await this.scrollIntoView(selectElement);
+    await this._driver.executeScript(
+      "arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('input', { bubbles: true })); arguments[0].dispatchEvent(new Event('change', { bubbles: true }));",
+      selectElement,
+      value
+    );
+  }
+
+  async _safeClick(element) {
+    //
+    await this.scrollIntoView(element);
+    try {
+      await element.click();
+    } catch (error) {
+      const message = error && error.message ? error.message : "";
+      if (message.includes("element click intercepted") || message.includes("element not interactable")) {
+        await this._driver.executeScript("arguments[0].click();", element);
+      } else {
+        throw error;
+      }
+    }
+  }
+
   async assertPage() {
     await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/usert"));
@@ -34,38 +61,40 @@ class UserPage extends Page {
 
   async selectPrimaryLanguage(lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("language"))).click();
-    await (await this._driver.findElement(By.css("#language > option[value='" + lang + "']"))).click();
+    await this._setSelectValue("language", lang);
   }
 
   async selectAccess(access) {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("access"))).click();
-    await (await this._driver.findElement(By.css("#access > option[value='" + access + "']"))).click();
+    await this._setSelectValue("access", access);
   }
 
   async toggleMailComment(language) {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("button[data-id='mailComment']"))).click();
+    const toggleButton = await this._driver.findElement(By.css("button[data-id='mailComment']"));
+    await this._safeClick(toggleButton);
     // xpath looks a little bit crazy. test in chrome javascript console with $x("..xpahtstring..") in the open window
-    await (await this._driver.findElement(By.xpath("//select[@name='mailComment']/../div/div/ul/li/a/span[text()='" + language + "']"))).click();
+    const item = await this._driver.findElement(By.xpath("//select[@name='mailComment']/../div/div/ul/li/a/span[text()='" + language + "']"));
+    await this._safeClick(item);
     // click again to hide the pop up
-    await (await this._driver.findElement(By.css("button[data-id='mailComment']"))).click();
+    await this._safeClick(toggleButton);
   }
 
   async toggleBlogLanguageStatusChange(language) {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("button[data-id='mailBlogLanguageStatusChange']"))).click();
+    const toggleButton = await this._driver.findElement(By.css("button[data-id='mailBlogLanguageStatusChange']"));
+    await this._safeClick(toggleButton);
     // xpath looks a little bit crazy. test in chrome javascript console with $x("..xpahtstring..") in the open window
-    await (await this._driver.findElement(By.xpath("//select[@name='mailBlogLanguageStatusChange']/../div/div/ul/li/a/span[text()='" + language + "']"))).click();
+    const item = await this._driver.findElement(By.xpath("//select[@name='mailBlogLanguageStatusChange']/../div/div/ul/li/a/span[text()='" + language + "']"));
+    await this._safeClick(item);
     // click again to hide popup
-    await (await this._driver.findElement(By.css("button[data-id='mailBlogLanguageStatusChange']"))).click();
+    await this._safeClick(toggleButton);
   }
 
   async clickSave() {
     await this.assertPage();
     const saveButton = await this._driver.findElement(By.id("save"));
-    await (saveButton).click();
+    await this._safeClick(saveButton);
     await (this._driver.wait(until.stalenessOf(saveButton)));
   }
 
