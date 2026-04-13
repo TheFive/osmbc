@@ -672,7 +672,7 @@ function postSetMarkdown(req, res, next) {
   article.setAndSave(req.user, change, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
+    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
   });
 }
@@ -692,7 +692,7 @@ function postReviewChange(req, res, next) {
   article.reviewChanges(req.user, object, function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = req.header("Referer") || config.htmlRoot() + "/osmbc";
+    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
   });
 }
@@ -739,7 +739,7 @@ function markCommentRead(req, res, next) {
 
     // Do not loop with auth (can happen in tests)
     if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
-      returnToUrl = req.header("Referer") || returnToUrl;
+      returnToUrl = util.getSafeRedirectUrl(req.header("Referer"), returnToUrl, req.protocol + "://" + req.get("host"));
     }
     if (req.query.reload === "false") {
       res.end("OK");

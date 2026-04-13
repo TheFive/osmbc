@@ -1,6 +1,5 @@
 
 
-/* eslint-env browser:true, node:false, jquery:true, commonjs:false */
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
 /* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
@@ -97,7 +96,7 @@ function init() {
     .change(FitToContent)
     .keyup(FitToContent)
     .trigger("change");
-  // $('[data-toggle="tooltip"]').tooltip();
+  // $('[data-bs-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
   window.getEventTable = getEventTable;
@@ -478,8 +477,8 @@ function onchangeCollection() {
     result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'content\',\'' + link + '\')"><i class="fa fa-file-text-o"></i>  </a>';
 
     if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
-      result += '<a class="badge badge-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
-    } else result += '<a class="badge badge-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+      result += '<a class="badge text-bg-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
+    } else result += '<a class="badge text-bg-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
 
     window.userLanguages.forEach(function(lang) {
       result += " " + generateGoogleTranslateLink(link, lang);

@@ -13,7 +13,7 @@ import initialiseModules from "../util/initialise.js";
 import articleModule from "../model/article.js";
 
 
-describe("router/slack", function() {
+describe("routes/slack", function() {
   let link;
   let userName;
   let userId;

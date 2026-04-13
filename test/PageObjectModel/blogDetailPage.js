@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until} from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 import util from "../../util/util.js";
 
 import StandardPage from "./standardPage.js";

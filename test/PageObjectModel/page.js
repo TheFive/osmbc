@@ -69,6 +69,18 @@ export default class Page {
   }
 
   async scrollIntoView(object) {
-    await this._driver.executeScript("arguments[0].scrollIntoView({block:'center'});", object);
+    await this._driver.actions().move({ origin: object }).perform();
+  }
+
+  async _waitForBootstrapOverlaysToDisappear() {
+    // Prüfe auf mögliche Overlays (z. B. Bootstrap-Modal oder Dropdown) und warte, bis sie verschwinden
+    try {
+      const overlays = await this._driver.findElements(By.css(".modal-backdrop, .dropdown-menu.show, .offcanvas.show"));
+      for (const overlay of overlays) {
+        await this._driver.wait(until.stalenessOf(overlay), 2000); // Warte bis zu 2s pro Overlay
+      }
+    } catch (e) {
+      // Keine Overlays gefunden, weiter
+    }
   }
 };

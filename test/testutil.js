@@ -12,8 +12,6 @@ import pretty from "pretty";
 
 import http from "http";
 import axios from "axios";
-import { wrapper } from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
 
 import LoginPage from "../test/PageObjectModel/loginPage.js";
 import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
@@ -504,8 +502,52 @@ function checkPostUrlWithUser(options) {
 
 function getWrappedAxiosClient(options) {
   if (!options) options = {};
-  const jar = new CookieJar();
-  return wrapper(axios.create({ jar, validateStatus: () => true, maxRedirects: (options.maxRedirects) ?? 0 }));
+  const maxRedirects = options.maxRedirects ?? 0;
+  const cookieStore = new Map();
+  const client = axios.create({ validateStatus: () => true, maxRedirects: maxRedirects });
+
+  function updateCookies(response) {
+    const setCookies = response?.headers?.["set-cookie"];
+    if (!Array.isArray(setCookies)) return;
+    for (const setCookie of setCookies) {
+      if (typeof setCookie !== "string") continue;
+      const pair = setCookie.split(";", 1)[0];
+      const separatorIndex = pair.indexOf("=");
+      if (separatorIndex < 0) continue;
+      const name = pair.substring(0, separatorIndex);
+      const value = pair.substring(separatorIndex + 1);
+      cookieStore.set(name, value);
+    }
+  }
+
+  function applyCookies(config) {
+    const requestConfig = { ...config };
+    requestConfig.headers = { ...(config.headers || {}) };
+    if (cookieStore.size > 0) {
+      requestConfig.headers.Cookie = [...cookieStore.entries()].map(([name, value]) => `${name}=${value}`).join("; ");
+    }
+    return requestConfig;
+  }
+
+  async function request(config) {
+    const response = await client.request(applyCookies(config));
+    updateCookies(response);
+    return response;
+  }
+
+  return {
+    request: request,
+    get(url, config) {
+      return request({ ...(config || {}), method: "get", url: url });
+    },
+    post(url, data, config) {
+      const requestConfig = { ...(config || {}), method: "post", url: url, data: data };
+      if (typeof url === "string" && url.endsWith("/login")) {
+        requestConfig.maxRedirects = 0;
+      }
+      return request(requestConfig);
+    }
+  };
 }
 
 async function getNewDriver(username) {
@@ -513,6 +555,7 @@ async function getNewDriver(username) {
   if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless=new");
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
+  chromeOptions.addArguments("disable-infobars");
 
   // try to disable passwort Manager Popup
   // https://stackoverflow.com/questions/69799196/chrome-arguments-to-disable-save-password-prompt
@@ -524,7 +567,7 @@ async function getNewDriver(username) {
   chromeOptions.addArguments("disable-dev-shm-usage");
   chromeOptions.addArguments("disable-gpu");
   chromeOptions.addArguments("single-process");
-  
+
   // Disable popup dialogs
   chromeOptions.addArguments("disable-blink-features=AutomationControlled");
 

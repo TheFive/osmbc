@@ -5,7 +5,7 @@ import { ESLint } from "eslint";
 import should from "should";
 
 function createESLintInstance() {
-  return new ESLint({ useEslintrc: true });
+  return new ESLint();
 }
 const eslint = createESLintInstance();
 

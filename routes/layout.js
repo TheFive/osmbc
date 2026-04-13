@@ -203,7 +203,7 @@ function prepareRenderLayout(req, res, next) {
 
 
 // And configure router to set the prepare Function
-router.get("*", prepareRenderLayout);
+router.get("/{*path}", prepareRenderLayout);
 
 
 router.layoutConst = layoutConst;

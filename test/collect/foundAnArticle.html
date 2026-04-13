@@ -13,49 +13,50 @@
   </head>
 
   <body><!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
-      <ul class="navbar-nav mr-auto"></ul>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
-          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
-          <li class="navbar-item active"></li>
-          <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/blog">blog<span class="badge badge-pill osmbcbadge-lang">3</span><span class="badge badge-pill osmbcbadge-lang2">4</span></a></li>
-          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
-            <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
-            <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
-              <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
-            </div>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a>
-              <div class="dropdown-divider"> </div>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a>
-              <div class="dropdown-divider"></div>
-              <form class="p-1">
-                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
-                  <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
-                </div>
-              </form>
-            </div>
-          </li>
-          <li><img onclick="location.href='/usert/1';" style="height:40px;width:40px"></li>
-        </ul>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
+      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
+            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
+            <li class="navbar-item active"></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/blog">blog<span class="badge rounded-pill osmbcbadge-lang">3</span><span class="badge rounded-pill osmbcbadge-lang2">4</span></a></li>
+            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
+              <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+              <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
+                <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a>
+                <div class="dropdown-divider"> </div>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a>
+                <div class="dropdown-divider"></div>
+                <form class="p-1">
+                  <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
+                    <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
+                  </div>
+                </form>
+              </div>
+            </li>
+            <li><img onclick="location.href='/usert/1';" style="height:40px;width:40px"></li>
+          </ul>
+        </div>
       </div>
     </nav>
     <div class="container-fluid">
@@ -67,7 +68,7 @@
             <div class="col-6"><input class="form-control" id="searchField" type="text" name="search" value="http://www.test.dä/holla">
               <p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>
             </div>
-            <div class="col"><button class="btn btn-large btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
+            <div class="col"><button class="btn btn-lg btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
           </div>
         </form>
       </div>
@@ -78,15 +79,15 @@
             <tr>
               <th>Blog</th>
               <th>Title</th>
-              <th class="hidden-xs">Cat (EN)</th>
-              <th class="hidden-xs">Collection</th>
+              <th class="d-none d-sm-table-cell">Cat (EN)</th>
+              <th class="d-none d-sm-table-cell">Collection</th>
             </tr>
           </thead>
           <tbody>
             <tr onclick="$('.class_3').toggleClass('d-none');">
               <td><i class="fa fa-caret-right class_3"></i><i class="fa fa-caret-down d-none class_3"></i><a href="/blog/blog">blog</a></td>
               <td><a href="/article/3">No Title</a></td>
-              <td class="hidden-xs"></td>
+              <td class="d-none d-sm-table-cell"></td>
               <td class="pre">http://www.test.dä/holla</td>
             </tr>
             <tr class="d-none class_3">
@@ -97,7 +98,7 @@
             <tr onclick="$('.class_5').toggleClass('d-none');">
               <td><i class="fa fa-caret-right class_5"></i><i class="fa fa-caret-down d-none class_5"></i><a href="/blog/blog">blog</a></td>
               <td><a href="/article/5">No Title</a></td>
-              <td class="hidden-xs"></td>
+              <td class="d-none d-sm-table-cell"></td>
               <td class="pre">Link1: http://www.test.dä/holla and other</td>
             </tr>
             <tr class="d-none class_5">
@@ -155,7 +156,7 @@
                 <div class="col-md-7">
                   <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
                 </div>
-                <div class="col-md-5"><button class="btn btn-large btn-primary" onclick="javascript:window.addSpinnerAndSubmit('#OK')" id="OK">OK<!--span(style="visibility:hidden" id="OK-Spinner")i(class="fa fa-solid fa-spinner fa-pulse")--></button><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
+                <div class="col-md-5"><button class="btn btn-lg btn-primary" onclick="javascript:window.addSpinnerAndSubmit('#OK')" id="OK">OK<!--span(style="visibility:hidden" id="OK-Spinner")i(class="fa fa-solid fa-spinner fa-pulse")--></button><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
               </div>
             </div>
           </div>

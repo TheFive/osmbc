@@ -299,3 +299,66 @@ color:lightgrey;
 .preview > div.wp-caption  {
   max-width: 320px;
 }
+
+.table-responsive .blog-status-table.blog-status-table-compact {
+  width: max-content;
+  min-width: 100%;
+  margin-bottom: 0.4rem;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.blog-status-table.blog-status-table-compact td {
+  padding: 0.16rem 0.24rem;
+  line-height: 1.05;
+  vertical-align: middle;
+  border: 1px solid #e4e9ef;
+  background-color: #ffffff;
+}
+
+.blog-status-table.blog-status-table-compact tr.blog-status-header td {
+  background-color: #f4f7fb;
+}
+
+.blog-status-table.blog-status-table-compact td.blog-status-lang-head {
+  min-width: 3.2rem;
+  white-space: nowrap;
+  font-weight: 600;
+  background-color: #f7fafc;
+}
+
+.blog-status-table.blog-status-table-compact td.blog-status-blog-head {
+  min-width: 4.5rem;
+  max-width: 6.5rem;
+  font-size: 0.85rem;
+  line-height: 1.1;
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.blog-status-table.blog-status-table-compact td.blog-status-blog-head a {
+  color: #2a5f93;
+  text-decoration: none;
+}
+
+.blog-status-table.blog-status-table-compact td.blog-status-blog-head a:hover {
+  text-decoration: underline;
+}
+
+.blog-status-table.blog-status-table-compact td.blog-status-value {
+  min-width: 3rem;
+}
+
+.blog-status-table.blog-status-table-compact td.blog-status-value > .badge {
+  display: inline-block;
+  margin: 0.04rem;
+  padding: 0.14em 0.3em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 0.35rem;
+}
+
+.blog-status-table.blog-status-table-compact tr.blog-status-row:hover td {
+  background-color: #f9fbff;
+}

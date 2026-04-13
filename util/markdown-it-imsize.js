@@ -5,7 +5,7 @@
 // Process ![test]( x =100x200)
 //                    ^^^^^^^^ this size specification
 
-'use strict';
+"use strict";
 
 
 
@@ -89,12 +89,12 @@ function image_with_size(md, options) {
         ref,
         res,
         title,
-        width = '',
-        height = '',
+        width = "",
+        height = "",
         token,
         tokens,
         start,
-        href = '',
+        href = "",
         oldPos = state.pos,
         max = state.posMax;
 
@@ -132,7 +132,7 @@ function image_with_size(md, options) {
         if (state.md.validateLink(href)) {
           pos = res.pos;
         } else {
-          href = '';
+          href = "";
         }
       }
 
@@ -158,7 +158,7 @@ function image_with_size(md, options) {
           if (code !== 0x20 && code !== 0x0A) { break; }
         }
       } else {
-        title = '';
+        title = "";
       }
 
       // [link](  <href>  "title" =WxH  )
@@ -195,7 +195,7 @@ function image_with_size(md, options) {
       //
       // Link reference
       //
-      if (typeof state.env.references === 'undefined') { return false; }
+      if (typeof state.env.references === "undefined") { return false; }
 
       // [foo]  [bar]
       //      ^^ optional whitespace (can include newlines)
@@ -250,20 +250,20 @@ function image_with_size(md, options) {
       // they are filled automatically
       // Option is disabled TheFive Sept 23
 
-      token          = state.push('image', 'img', 0);
-      token.attrs    = attrs = [ [ 'src', href ],
-                                 [ 'alt', '' ] ];
+      token = state.push("image", "img", 0);
+      token.attrs = attrs = [ [ "src", href ],
+                                 [ "alt", "" ] ];
       token.children = tokens;
       if (title) {
-        attrs.push([ 'title', title ]);
+        attrs.push([ "title", title ]);
       }
 
-      if (width !== '') {
-        attrs.push([ 'width', width ]);
+      if (width !== "") {
+        attrs.push([ "width", width ]);
       }
 
-      if (height !== '') {
-        attrs.push([ 'height', height ]);
+      if (height !== "") {
+        attrs.push([ "height", height ]);
       }
     }
 
@@ -273,7 +273,7 @@ function image_with_size(md, options) {
   };
 }
 function imsize_plugin(md, options) {
-  md.inline.ruler.before('emphasis', 'image', image_with_size(md, options));
+  md.inline.ruler.before("emphasis", "image", image_with_size(md, options));
 };
 
 export default imsize_plugin;

@@ -4,7 +4,6 @@ import path, { join } from "path";
 import express from "express";
 import favicon from "serve-favicon";
 import morgan, { token } from "morgan";
-import bodyParser from "body-parser";
 
 import session from "express-session";
 import compression from "compression";
@@ -91,7 +90,7 @@ app.use((req, res, next) => {
       scriptSrcAttr: ["'self'", "'unsafe-inline'"] //, `'nonce-${res.locals.cspNonce}'`
     }
   });
-  cspMiddleware(res, res, next);
+  cspMiddleware(req, res, next);
 });
 app.use(referrerPolicy({ policy: "same-origin" }));
 app.use(crossOriginEmbedderPolicy({ policy: "credentialless" }));
@@ -152,8 +151,8 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 app.use(htmlRoot, express.static(join(config.getDirName(), "public")));
 
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 
 app.use(htmlRoot + "/api", publicApiRouter);

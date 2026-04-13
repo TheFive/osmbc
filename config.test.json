@@ -43,7 +43,7 @@
   },
   "logInfoTemplate":":OSMUser [:date[clf]] ':method :url HTTP/:http-version' :status :res[content-length] ':referrer' ':user-agent'",
   "SessionSecret":"keyboard cat",
-  "SessionName":"session name",
+  "SessionName":"session_name",
   "AppName":"TESTBC",
   "MaxDiffLength": 1500,
   "languages":[
@@ -77,6 +77,11 @@
   "WelcomeRefreshInSeconds":0,
   "createGuestUsersAutomatic":true,
   "scripts":{
+    "user": ["TestUser"],
+    "logFilePath": "script_logs",
+    "scriptFilePath": "scripts",
+    "logFileFilter": "*.log",
+    "scriptFileFilter": "*.yaml"
   },
   "User-Agent": "Hello i am Kitty",
   "DeeplProConfig": {

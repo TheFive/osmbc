@@ -1,9 +1,0 @@
-env:
-  jquery: true
-  browser: true
-  node: false
-  es6: false
-
-
-parserOptions:
-  sourceType: script

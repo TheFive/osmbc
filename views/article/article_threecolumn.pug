@@ -28,7 +28,8 @@ block markdownArea
         src=languageFlags[lang],
         class="img-thumbnail" ,
         width = 40,
-        data-toggle="tooltip" data-placement="bottom" title=lang
+        style="max-width: 40px; height: auto;",
+        data-bs-toggle="tooltip" data-bs-placement="bottom" title=lang
         onclick="javascript:myclick(this.id)"
         ondragstart = "ondragstartflag(event,this.id);")
     p.osmbc-help-text="Click to copy to clipboard, or use drag and drop."

@@ -45,12 +45,36 @@ function initialise(app) {
       res.render("login-wpwd", { layout: layoutRouter.layoutConst });
     }
     app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
-    app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
+    /* app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
       {
         successReturnToOrRedirect: htmlRoot + "/",
         failureRedirect: htmlRoot + "/login_failure",
         keepSessionInfo: true
-      }));
+      })); */
+    app.post(htmlRoot + "/login",
+      // wrap passport.authenticate call in a middleware function
+      function (req, res, next) {
+        // call passport authentication passing the "local" strategy name and a callback function
+        passport.authenticate("local-htpasswd", function (error, user, info) {
+          // this will execute in any case, even if a passport strategy will find an error
+          // log everything to console
+          if (error) {
+            res.status(401).send(error);
+          } else if (!user) {
+            res.status(401).send(info);
+          } else {
+            req.logIn(user, function (err) {
+              if (err) return next(err);
+              return next();
+            });
+          }
+        })(req, res);
+      },
+
+      // function to call once successfully authenticated
+      function (req, res) {
+        res.redirect(htmlRoot + "/");
+      });
   }
 
   if (authConfig.openstreetmap_oauth20.enabled) {

@@ -13,49 +13,50 @@
   </head>
 
   <body><!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar"><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
-      <ul class="navbar-nav mr-auto"></ul>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
-          <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge badge-pill badge-pill osmbcbadge-lang">2</span></a></li>
-          <li class="navbar-item active"></li>
-          <li class="navbar-item active d-xs-block"><a class="nav-link" href="/blog/WN290">WN290<span class="badge badge-pill osmbcbadge-lang">0</span><span class="badge badge-pill osmbcbadge-lang2">0</span></a></li>
-          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
-            <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
-            <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
-              <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
-            </div>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
-              <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
-              <div class="dropdown-divider"> </div>
-            </div>
-          </li>
-          <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
-              <div class="dropdown-divider"></div>
-              <form class="p-1">
-                <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
-                  <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
-                </div>
-              </form>
-            </div>
-          </li>
-          <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
-        </ul>
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
+      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="bg-success navbar-brand" href="/changelog">What's New?</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
+            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbcbadge-lang">0</span><span class="badge rounded-pill osmbcbadge-lang2">0</span></a></li>
+            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
+              <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+              <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown">
+                <div class="dropdown-divider"></div><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+                <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
+                <div class="dropdown-divider"> </div>
+              </div>
+            </li>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
+                <div class="dropdown-divider"></div>
+                <form class="p-1">
+                  <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
+                    <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
+                  </div>
+                </form>
+              </div>
+            </li>
+            <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
+          </ul>
+        </div>
       </div>
     </nav>
     <div class="container-fluid">
@@ -69,7 +70,7 @@
           <h2>WN290</h2>
         </div>
         <div class="col-sm-3"></div>
-        <div class="col-sm-5 text-right"><a class="btn btn-primary" id="edit" href="/blog/edit/WN290?edit=true" role="button">Edit</a><a class="btn btn-secondary" href="/article/list?blog=WN290">List of all articles</a></div>
+        <div class="col-sm-5 text-end"><a class="btn btn-primary" id="edit" href="/blog/edit/WN290?edit=true" role="button">Edit</a><a class="btn btn-secondary" href="/article/list?blog=WN290">List of all articles</a></div>
       </div>
       <div class="row">
         <div class="col-sm-1">
@@ -107,9 +108,9 @@
               <th>Special</th>
             </tr>
             <tr>
-              <td><span class="badge badge-secondary">DE</span></td>
+              <td><span class="badge text-bg-secondary">DE</span></td>
               <td>
-                <div class="badge badge-pill osmbclabel-reviewblog">5</div>
+                <div class="badge rounded-pill osmbclabel-reviewblog">5</div>
               </td>
               <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span></td>
               <td>
@@ -118,14 +119,14 @@
               <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">Peda</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span><span class="badge small-margin osmbclabel-reviewblog">TheFive</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i></td>
               <td>
-                <div class="div"><button class="btn btn-large btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
               </td>
               <td><button class="btn btn-warning" id="deletereviewbutton" onclick="window.setLangStatus(&quot;DE&quot;,&quot;deleteallreviews&quot;,this);">Delete Review</button></td>
             </tr>
             <tr>
-              <td><span class="badge badge-secondary">EN</span></td>
+              <td><span class="badge text-bg-secondary">EN</span></td>
               <td>
-                <div class="badge badge-pill osmbclabel-reviewblog">4</div>
+                <div class="badge rounded-pill osmbclabel-reviewblog">4</div>
               </td>
               <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span></td>
               <td>
@@ -134,14 +135,14 @@
               <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span><span class="badge small-margin osmbclabel-reviewblog">elpbatista</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">jinalfoflia</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i></td>
               <td>
-                <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
               </td>
               <td><button class="btn btn-warning" id="deletereviewbutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;deleteallreviews&quot;,this);">Delete Review</button></td>
             </tr>
             <tr>
-              <td><span class="badge badge-secondary">ES</span></td>
+              <td><span class="badge text-bg-secondary">ES</span></td>
               <td>
-                <div class="badge badge-pill osmbclabel-reviewblog">2</div>
+                <div class="badge rounded-pill osmbclabel-reviewblog">2</div>
               </td>
               <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span></td>
               <td>
@@ -150,7 +151,7 @@
               <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i></td>
               <td>
-                <div class="div"><button class="btn btn-large btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button></div>
               </td>
               <td><button class="btn btn-warning" id="deletereviewbutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;deleteallreviews&quot;,this);">Delete Review</button></td>
             </tr>

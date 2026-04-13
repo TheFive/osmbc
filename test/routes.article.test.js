@@ -4,6 +4,8 @@
 
 import should from "should";
 import nock from "nock";
+import sinon from "sinon";
+import axios from "axios";
 import config from "../config.js";
 import mockdate from "mockdate";
 import HttpStatus from "http-status-codes";
@@ -21,7 +23,7 @@ const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot(
 const articleRouterForTestOnly = articleRouter.fortestonly;
 
 
-describe("routes/article", function() {
+describe("router/article", function() {
   this.timeout(this.timeout() * 10);
   const id = 2;
 
@@ -65,6 +67,7 @@ describe("routes/article", function() {
       }, bddone);
   });
   afterEach(function(bddone) {
+    sinon.restore();
     return bddone();
   });
   describe("routes/articleInternal", function() {
@@ -1029,9 +1032,7 @@ describe("routes/article", function() {
 
     it("should handle content_length and transfer encoding", async function () {
       const form = { urls: ["https://www.site.ort2/apage"] };
-      const sitecall = nock("https://www.site.ort2")
-        .head("/apage")
-        .replyWithError({ message: "Content and transfer encoding together", code: "HPE_UNEXPECTED_CONTENT_LENGTH" });
+      const sitecall = sinon.stub(axios, "head").rejects({ message: "Content and transfer encoding together", code: "HPE_UNEXPECTED_CONTENT_LENGTH" });
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
@@ -1039,7 +1040,7 @@ describe("routes/article", function() {
 
       body.data.should.deepEqual({ "https://www.site.ort2/apage": "OK" });
       should(body.status).eql(HttpStatus.OK);
-      should(sitecall.isDone()).be.true();
+      should(sitecall.calledOnce).be.true();
     });
 
     it("should run with guest access user", async function () {

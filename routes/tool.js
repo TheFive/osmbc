@@ -1,6 +1,6 @@
 import { Router } from "express";
 import config from "../config.js";
-import { glob } from "glob";
+import globApi from "../util/globApi.js";
 import { readFile, unlink, appendFile, rename } from "fs";
 import { join, basename } from "path";
 import moment from "moment";
@@ -41,19 +41,18 @@ const scriptFilePath = config.getValue("scripts").scriptFilePath;
 const logFileFilter = config.getValue("scripts").logFileFilter;
 const scriptFileFilter = config.getValue("scripts").scriptFileFilter;
 
-function renderScriptLogs(req, res) {
-  glob(logFilePath + "/" + logFileFilter, function(error, data) {
+async function renderScriptLogs(req, res) {
+  try {
+    const data = await globApi.match(logFilePath + "/" + logFileFilter);
     if (data) data.sort();
-    if (error) {
-      res.status(500).send(error);
-      return;
-    }
     res.render("script_logs",
       {
         files: data,
         layout: res.rendervar.layout
       });
-  });
+  } catch (error) {
+    res.status(500).send(error);
+  }
 }
 
 const fileTypeRunning = " (running).log";
@@ -133,36 +132,37 @@ function renderScriptLog(req, res) {
 }
 
 
-function renderScripts(req, res) {
+async function renderScripts(req, res) {
   debug("renderScripts");
-  glob(scriptFilePath + "/" + scriptFileFilter, function(error, data) {
+  let data;
+  try {
+    data = await globApi.match(scriptFilePath + "/" + scriptFileFilter);
     if (data) data.sort();
-    if (error) {
-      res.status(500).send(error);
-      return;
-    }
-    if (!data) data = [];
-    for (let i = 0; i < data.length; i++) { data[i] = basename(data[i]); }
-    const configTable = {};
-    eachLimit(data, 3,
-      function(item, callback) {
-        readScriptConfig(item, function(err, config) {
-          if (err) return callback(err);
-          configTable[item] = config;
-          return callback();
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+
+  if (!data) data = [];
+  for (let i = 0; i < data.length; i++) { data[i] = basename(data[i]); }
+  const configTable = {};
+  eachLimit(data, 3,
+    function(item, callback) {
+      readScriptConfig(item, function(err, config) {
+        if (err) return callback(err);
+        configTable[item] = config;
+        return callback();
+      });
+    },
+    function(err) {
+      if (err) return res.status(500).send(err.message);
+      res.render("script_execute",
+        {
+          layout: res.rendervar.layout,
+          files: data,
+          configTable: configTable
         });
-      },
-      function(err) {
-        if (err) return res.status(500).send(err.message);
-        res.render("script_execute",
-          {
-            layout: res.rendervar.layout,
-            files: data,
-            configTable: configTable
-          });
-      }
-    );
-  });
+    }
+  );
 }
 
 function renderScript(req, res) {

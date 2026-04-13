@@ -31,30 +31,30 @@ block blogcontent
 
   if disableOwnCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOwnCollection',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableOwnCollection',value:'false'});`)
       i.fa.fa-filter
       span=" Collections of " + layout.user.OSMUser + " are disabled"
 
   if disableOtherCollection
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableOtherCollection',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableOtherCollection',value:'false'});`)
       i.fa.fa-filter
       span=" Collections not done by " + layout.user.OSMUser + " are disabled"
   if disableWritten
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableWritten',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableWritten',value:'false'});`)
       i.fa.fa-filter
       span=" Written markdown is disabled"
 
   if disableNewerMarkdown
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableNewerMarkdown',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableNewerMarkdown',value:'false'});`)
       i.fa.fa-filter
       span=" Disable, if left lang article is newer than right lang article"
 
   if disableSolvedComments
     div.alert.alert-warning
-      a( class="close" data-dismiss="alert" aria-label="close" onclick=`window.setUserConfig({view:'full',option:'disableSolvedComments',value:'false'});`) &times
+      button.btn-close(type="button" data-bs-dismiss="alert" aria-label="Close" onclick=`window.setUserConfig({view:'full',option:'disableSolvedComments',value:'false'});`)
       i.fa.fa-filter
       span=" No & Solved Comments are disabled"
   .row
@@ -114,7 +114,7 @@ block blogcontent
                     form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
                       textarea.d-none.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
-                    form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
+                    form(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
                       if a.isTranslatedAutomated(left_lang)
                           textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
                           button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
@@ -143,7 +143,7 @@ block blogcontent
                       form(name="rEditArticle",id="rEditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + right_lang, method="post")
                         textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
                         textarea.d-none.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
-                      form.form-inline(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
+                      form(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
                         if a.isTranslatedAutomated(right_lang)
                             textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
                             button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")

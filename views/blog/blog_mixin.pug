@@ -6,9 +6,9 @@ mixin blogReviewButtons(lang)
     if (_rc)
       .div
         if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-          button.btn.btn-large.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
+          button.btn.btn-lg.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
         else
-          button.btn.btn-large.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
+          button.btn.btn-lg.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
 
       if (blog["exported"+lang])
         .div
@@ -17,7 +17,7 @@ mixin blogReviewButtons(lang)
 
     else
       if blog.status != "open"
-        button.btn.btn-large.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
+        button.btn.btn-lg.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
 
 
 block append scripts_to_load

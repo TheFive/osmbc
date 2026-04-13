@@ -1,5 +1,5 @@
 
-import { init } from "license-checker-rseidelsohn";
+import { init } from "../util/license-checker-internal.js";
 import should from "should";
 import path from "path";
 import config from "../config.js";
@@ -12,7 +12,8 @@ const licenses = {
   "vow-fs@0.3.1": "MIT",
   "vow@0.4.3": "MIT",
   "tweetnacl@0.14.3": "Unlicense",
-  "colors@0.6.2": "MIT"
+  "colors@0.6.2": "MIT",
+  "streamsearch@1.1.0": "MIT"
 
 };
 
@@ -24,7 +25,7 @@ function buildLicenseObject(object, cb) {
     should.not.exist(err);
     for (const k in json) {
       if (k === "osmbc@0.0.0") continue;
-      if ((k === "caniuse-lite@1.0.30001507") || (k === "caniuse-lite@1.0.30001676") || (k === "caniuse-lite@1.0.30001747") ) {
+      if ((k === "caniuse-lite@1.0.30001507") || (k === "caniuse-lite@1.0.30001676") || (k === "caniuse-lite@1.0.30001747")) {
         // currently (jul 23) caniuse is only used in DEV for ladjs, which should be allowed to use
         json[k] = "only-used-in-dev-branch-ladjs";
         continue;
