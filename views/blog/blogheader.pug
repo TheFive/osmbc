@@ -40,10 +40,10 @@ mixin reviewBlog(reviewComments,lang)
           if (reviewComments.length>0 && reviewComments[0].text=="startreview")
             - var reviewStarter= reviewComments[0].user
             - var reviewStartTime = reviewComments[0].timestamp
-            span.text-muted.small=" (enabled by "+reviewStarter
-            span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
-            span.text-muted.small=") "
-            a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
+            span.text-body-secondary.small=" (enabled by "+reviewStarter
+            span.text-body-secondary.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
+            span.text-body-secondary.small=") "
+            a.text-body-secondary.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
       .card-body
         - personalReviewStarted=false
         each comment,i in reviewComments
@@ -51,20 +51,20 @@ mixin reviewBlog(reviewComments,lang)
             p
               b.span=comment.user
               span=" "
-              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+              span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
               if comment.editstamp
                 span=" "
-                i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
+                i.text-body-secondary.small="Edit: "+layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && (!blog["close"+lang])
                 span=" "
                 a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('d-none');document.getElementById('reviewLeftText${lang}${i}').classList.add('d-none');`)
                   i.fa.fa-pencil
               if reviewStartTime
                 span=" "
-                a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
+                a.text-body-secondary.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
             p(id="reviewLeftText"+lang+i)=comment.text
             if (!comment.text)
-              p.text-muted.small="Empty Comment"
+              p.text-body-secondary.small="Empty Comment"
             div.d-none(id="editReview"+lang+i)
               if (!blog["close"+lang])
                 form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
