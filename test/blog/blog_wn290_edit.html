@@ -18,9 +18,9 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav">
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
-            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbcbadge-lang">0</span><span class="badge rounded-pill osmbcbadge-lang2">0</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbc-badge-lang">1</span><span class="badge rounded-pill osmbc-badge-lang2">1</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -39,12 +39,12 @@
                 <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
                 <div class="dropdown-divider"> </div>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
                 <div class="dropdown-divider"></div>
                 <form class="p-1">
@@ -110,14 +110,14 @@
             <tr>
               <td><span class="badge text-bg-secondary">DE</span></td>
               <td>
-                <div class="badge rounded-pill osmbclabel-reviewblog">5</div>
+                <div class="badge rounded-pill osmbc-label-reviewblog">5</div>
               </td>
-              <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span></td>
+              <td><span class="badge small-margin osmbc-label-reviewblog">wambacher</span></td>
               <td>
                 <div>02/10/2016</div>
               </td>
-              <td><span class="badge small-margin osmbclabel-reviewblog">wambacher</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">Peda</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span><span class="badge small-margin osmbclabel-reviewblog">TheFive</span><span class="badge small-margin osmbclabel-reviewblog">Nakaner</span></td>
-              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i></td>
+              <td><span class="badge small-margin osmbc-label-reviewblog">wambacher</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span><span class="badge small-margin osmbc-label-reviewblog">Peda</span><span class="badge small-margin osmbc-label-reviewblog">Nakaner</span><span class="badge small-margin osmbc-label-reviewblog">TheFive</span><span class="badge small-margin osmbc-label-reviewblog">Nakaner</span></td>
+              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i><span> </span><i class="fa fa-exclamation-triangle"></i></td>
               <td>
                 <div class="div"><button class="btn btn-lg btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
               </td>
@@ -126,14 +126,14 @@
             <tr>
               <td><span class="badge text-bg-secondary">EN</span></td>
               <td>
-                <div class="badge rounded-pill osmbclabel-reviewblog">4</div>
+                <div class="badge rounded-pill osmbc-label-reviewblog">4</div>
               </td>
-              <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span></td>
+              <td><span class="badge small-margin osmbc-label-reviewblog">bogzab</span></td>
               <td>
                 <div>02/10/2016</div>
               </td>
-              <td><span class="badge small-margin osmbclabel-reviewblog">bogzab</span><span class="badge small-margin osmbclabel-reviewblog">elpbatista</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span><span class="badge small-margin osmbclabel-reviewblog">jinalfoflia</span></td>
-              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i></td>
+              <td><span class="badge small-margin osmbc-label-reviewblog">bogzab</span><span class="badge small-margin osmbc-label-reviewblog">elpbatista</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span><span class="badge small-margin osmbc-label-reviewblog">jinalfoflia</span></td>
+              <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i><span> </span><i class="fa fa-exclamation-triangle"></i></td>
               <td>
                 <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
               </td>
@@ -142,13 +142,13 @@
             <tr>
               <td><span class="badge text-bg-secondary">ES</span></td>
               <td>
-                <div class="badge rounded-pill osmbclabel-reviewblog">2</div>
+                <div class="badge rounded-pill osmbc-label-reviewblog">2</div>
               </td>
-              <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span></td>
+              <td><span class="badge small-margin osmbc-label-reviewblog">aalih</span></td>
               <td>
                 <div>02/10/2016</div>
               </td>
-              <td><span class="badge small-margin osmbclabel-reviewblog">aalih</span><span class="badge small-margin osmbclabel-reviewblog">derFred</span></td>
+              <td><span class="badge small-margin osmbc-label-reviewblog">aalih</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i></td>
               <td>
                 <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button></div>

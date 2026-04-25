@@ -5,11 +5,11 @@ block markdownArea
 
   .row
     - var lbg;
-    - if (params.left_lang===layout.user.getLang(0)) lbg = "osmbclabel-lang";
-    - if (params.left_lang===layout.user.getLang(1)) lbg = "osmbclabel-lang2";
+    - if (params.left_lang===layout.user.getLang(0)) lbg = "osmbc-label-lang";
+    - if (params.left_lang===layout.user.getLang(1)) lbg = "osmbc-label-lang2";
     - var rbg;
-    - if (params.right_lang===layout.user.getLang(0)) rbg = "osmbclabel-lang";
-    - if (params.right_lang===layout.user.getLang(1)) rbg = "osmbclabel-lang2";
+    - if (params.right_lang===layout.user.getLang(0)) rbg = "osmbc-label-lang";
+    - if (params.right_lang===layout.user.getLang(1)) rbg = "osmbc-label-lang2";
 
 
 
@@ -31,7 +31,7 @@ block markdownArea
 
             for l in layout.activeLanguages
               if l === params.right_lang
-                span.badge.osmbclabel-lang2.RL(
+                span.badge.osmbc-label-lang2.RL(
                   class="RL-" + l
                   draggable="true"
                   data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"

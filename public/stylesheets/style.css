@@ -12,7 +12,8 @@ a {
   color: #00B7FF;
 }
 
-a.nonexist {
+/* OSMBC Link warning for tested and not found links in article texts. */
+a.osmbc-nonexist {
   color: white ;
   background-color: #d9534f ;
   padding-top: 2px;
@@ -21,12 +22,16 @@ a.nonexist {
   padding-left: 7px
 }
 
-.not-formulated {
+/* OSMBC Marker for not formulated article texts */
+.osmbc-not-formulated {
+  color: #000 !important;
   background-color: #FFF8C6;  /* Salmon Chiffon */
 }
 
-.automated-translation {
-  background-color: #e4dbd6;  /* Salmon Chiffon */
+/* OSMBC Marker for texts, that are automated translated, but not reviewed */
+.osmbc-automated-translation {
+  color: #000 !important;
+  background-color: RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
 }
 
 .hide-text {
@@ -87,15 +92,18 @@ table {
 
 
 
-.osmbcbadge-lang {
+/* OSMBC Language badges: Primary color for chosen language. */
+.osmbc-badge-lang {
   background-color: #d7d711;
   color:white;
 }
-.osmbclabel-lang {
+/* OSMBC Color for the first (left) language */
+.osmbc-label-lang {
   background-color: #d7d711;
   color:white;
 }
 
+/* OSMBC Vote buttons: Active/inactive vote status. */
 .osmbc-btn-voted {
   background-color: white;
   color:black;
@@ -104,108 +112,109 @@ table {
   background-color: white;
   color:lightgrey;
 }
-.osmbccolor-lang {
+
+/* OSMBC Text colors only (without badge background). */
+.osmbc-color-lang {
   color: #d7d711;
 }
 
-.osmbcbadge-lang2 {
+.osmbc-badge-lang2 {
   background-color:  #5a5af2;
   color:white;
 }
-.osmbclabel-lang2 {
+.osmbc-label-lang2 {
   background-color:  #5a5af2;
   color:white;
 }
 
-.osmbcbadge-user {
+/* OSMBC User indicator badge with red accent color. */
+.osmbc-badge-user {
   background-color:  red;
   color:white;
 }
 
-.osmbccolor-lang2 {
+.osmbc-color-lang2 {
   color:  #5a5af2;
 }
 
 .osmbc-deleted-inverted {
-  background-color: #ff0000;
+  background-color: var(--bs-danger, #dc3545);
   color: white;
 }
 
 .osmbc-inserted-inverted {
-  background-color:  #3366ff;
+  background-color: var(--bs-primary, #0d6efd);
   color: white;
 }
 .osmbc-deleted {
-  color: #ff0000;
+  color: var(--bs-danger, #dc3545);
 }
 
 .osmbc-inserted {
-  color:  #3366ff;
+  color: var(--bs-primary, #0d6efd);
 }
 
-.osmbclabel-no-markdown {
-  color: white;
-  background-color: lightgrey;
-}
-.osmbclabel-markdown {
+.osmbc-label-markdown {
   color: white;
   background-color: #5cb85c;
 }
-.osmbclabel-collect {
+.osmbc-label-collect {
   color: white;
   background-color: lightblue;
 }
-.osmbclabel-no-translation {
+.osmbc-label-no-translation {
   color: white;
   background-color: grey;
 }
-.osmbclabel-user-full {
+.osmbc-label-user-full {
   color:white;
   background-color:grey;
 }
-.osmbclabel-user-guest {
+.osmbc-label-user-guest {
   color:black;
   border-style:solid;
   border-width:1px;
   background-color:lightgrey;
 }
-.osmbclabel-user-denied {
+.osmbc-label-user-denied {
   color:black;
   border-style:solid;
   background-color:darkgrey;
 }
-.osmbclabel-user-self {
+.osmbc-label-user-self {
   color:white;
   background-color:red;
 }
 
-.osmbclabel-guest-indicator {
+/* OSMBC Role/permission markers for user/guest status. */
+.osmbc-label-guest-indicator {
   color:white;
   background-color:#e5720d;
 }
 
-.osmbclabel-openblog {
+/* OSMBC Blog-Statuslabels (open/edit/review/closed). */
+.osmbc-label-openblog {
   color:white;
   background-color:#D0D0D0  ;
 }
 
-.osmbclabel-editblog {
+.osmbc-label-editblog {
   color:white;
   background-color:#B8B8B8;
 }
 
-.osmbclabel-reviewblog {
+.osmbc-label-reviewblog {
   color:white;
   background-color:#1a75ff;
 }
 
-.osmbclabel-closedblog {
+.osmbc-label-closedblog {
   color:white;
   background-color:#39e600;
 }
 
 
-.osmbccolor-user {
+.osmbc-color-user {
   color:red;
 }
 
@@ -225,7 +234,7 @@ table {
 
 .osmbc-help-text {
   font-style: italic;
-  color: lightblue;
+  color: var(--bs-secondary-color, #6c757d);
   margin-top: 4px;
   margin-bottom: 4px;
 }

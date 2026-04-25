@@ -117,14 +117,14 @@ mixin languageDisplay(article,options)
       - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
       if (article && article["markdown" + lang])
           if (article["markdown" + lang] !== "no translation")
-              span.badge.osmbclabel-markdown(onclick=onClick style=style)=lang
+              span.badge.osmbc-label-markdown(onclick=onClick style=style)=lang
           else
-              span.badge.osmbclabel-no-translation(onclick=onClick style=style)=lang
+              span.badge.osmbc-label-no-translation(onclick=onClick style=style)=lang
       else
         if (article && article.collection)
-          span.badge.osmbclabel-collect(onclick=onClick style=style)=lang
+          span.badge.osmbc-label-collect(onclick=onClick style=style)=lang
         else
-          span.badge.osmbclabel-no-markdown(onclick=onClick style=style)=lang
+          span.badge.osmbc-not-formulated(onclick=onClick style=style)=lang
 
 mixin voteDisplay(article,options)
   div.d-flex.flex-nowrap
@@ -140,19 +140,19 @@ mixin articleIcons(a,options)
     - numEd = 0;
     - if (a.author && a.author["markdown"+lang]) numEd = a.author["markdown"+lang].split(",").length;
     if (a.author && options.showNumbers)
-      span.d-none.d-sm-inline.badge.osmbclabel-collect.small-margin=numCol
-      span.d-none.d-sm-inline.badge.osmbclabel-markdown.small-margin=numEd
+      span.d-none.d-sm-inline.badge.osmbc-label-collect.small-margin=numCol
+      span.d-none.d-sm-inline.badge.osmbc-label-markdown.small-margin=numEd
     if options.showMail
       if a.getCommentMention()
         - shown = false
         if a.isMentioned(layout.user.OSMUser)
-            i.fa.fa-comment.small-margin.osmbccolor-user
+            i.fa.fa-comment.small-margin.osmbc-color-user
             - shown=true
         if a.isMentioned(layout.user.getMainLang())
-            i.fa.fa-comment.small-margin.osmbccolor-lang
+            i.fa.fa-comment.small-margin.osmbc-color-lang
             - shown=true
         if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
-            i.fa.fa-comment.small-margin.osmbccolor-lang2
+            i.fa.fa-comment.small-margin.osmbc-color-lang2
             - shown=true
         if !shown
           i.fa.fa-comment.small-margin(style="color:grey")
@@ -179,16 +179,16 @@ mixin navbutton(tab,activetab,addClass)
 mixin articleIconLegend(view)
   h2="Symbol Legend"
   p
-    span.badge.osmbclabel-collect.small-margin="X"
+    span.badge.osmbc-label-collect.small-margin="X"
     span=" = number of collectors "
   p
-    span.badge.osmbclabel-collect.small-margin="username"
+    span.badge.osmbc-label-collect.small-margin="username"
     span=" = collector of article "
   p
-    span.badge.osmbclabel-markdown.small-margin="X"
+    span.badge.osmbc-label-markdown.small-margin="X"
     span=" = number of editors in shown language"
   p
-    span.badge.osmbclabel-markdown.small-margin="username"
+    span.badge.osmbc-label-markdown.small-margin="username"
     span=" = Editor of article"
   p
     i.fa.fa-comment.small-margin(style="color:blue")
@@ -300,26 +300,26 @@ mixin blogStatusTable(blogWithLink, compactView)
           td.text-center.blog-status-lang-head=l
           for openBlog in openBlogs
             td.text-center.blog-status-value
-              div.badge.osmbclabel-openblog=openBlog.getUnEdited(l)
+              div.badge.osmbc-label-openblog=openBlog.getUnEdited(l)
               - autoTranslate = openBlog.getAutoTranslate(l)
               if (autoTranslate > 0)
-                div.badge.automated-translation=autoTranslate
+                div.badge.osmbc-automated-translation=autoTranslate
           for editBlog in editBlogs
             td.text-center.blog-status-value
               if (editBlog["close" + l])
-                div.badge.osmbclabel-closedblog
+                div.badge.osmbc-label-closedblog
                   i.fa.fa-check
               else 
                 - showUneditedFrom = 0
                 if (editBlog.isReviewStarted(l))
-                  div.badge.osmbclabel-reviewblog=(editBlog.getClosedReviewCount(l))
+                  div.badge.osmbc-label-reviewblog=(editBlog.getClosedReviewCount(l))
                   - showUneditedFrom = 1
                 - unedited = editBlog.getUnEdited(l)
                 if (unedited >= showUneditedFrom )
-                  div.badge.osmbclabel-editblog=unedited
+                  div.badge.osmbc-label-editblog=unedited
                 - autoTranslate = editBlog.getAutoTranslate(l)
                 if (autoTranslate > 0)
-                  div.badge.automated-translation=autoTranslate
+                  div.badge.osmbc-automated-translation=autoTranslate
               
 mixin helpMenu(configarray)
   li.dropdown.nav-item
@@ -385,9 +385,9 @@ mixin langMenu(size)
   if (u.languageSet)
     li.dropdown.nav-item
       a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
-        span.badge.rounded-pill.osmbcbadge-lang=u.getLang(0)
+        span.badge.rounded-pill.osmbc-badge-lang=u.getLang(0)
         if (u.getLang(1))
-          span.badge.rounded-pill.osmbcbadge-lang2=u.getLang(1)
+          span.badge.rounded-pill.osmbc-badge-lang2=u.getLang(1)
         span.p-1=layout.user.languageSet
       div.dropdown-menu(aria-labelledby="languageSetMenu")
         +langSetDropdownList(layout.user.getLanguageSets())
@@ -401,19 +401,19 @@ mixin langMenu(size)
     - let i = 0
     - let choosenLangs = []
     - choosenLangs.push(u.getLang(0))
-    +langChooser((u.getLang(0)) ? u.getLang(0):"--","osmbcbadge-lang","lang",languages,choosenLangs)
+    +langChooser((u.getLang(0)) ? u.getLang(0):"--","osmbc-badge-lang","lang",languages,choosenLangs)
       .dropdown-divider 
       +langSetDropdownList(layout.user.getLanguageSets())
       
     - languages.unshift("none")       
     - for (i = 1;  u.getLang(i) && i < size ; i++)
       - choosenLangs.push(u.getLang(i))
-      +langChooser((u.getLang(i)),(i == 1) ? "osmbcbadge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
+      +langChooser((u.getLang(i)),(i == 1) ? "osmbc-badge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
         if (size === 2)
             + saveLangSet
       
     if (i < size)  
-      +langChooser( "--",(i == 1) ? "osmbcbadge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
+      +langChooser( "--",(i == 1) ? "osmbc-badge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
         + saveLangSet
 
 

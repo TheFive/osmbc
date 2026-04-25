@@ -100,16 +100,16 @@ block content
               //- Status Column
               td
                 if (blog["close" + lang])
-                  div.badge.rounded-pill.osmbclabel-closedblog
+                  div.badge.rounded-pill.osmbc-label-closedblog
                     i.fa.fa-check
                 else if (blog.isReviewStarted(lang))
-                  div.badge.rounded-pill.osmbclabel-reviewblog=(blog.getClosedReviewCount(lang))
+                  div.badge.rounded-pill.osmbc-label-reviewblog=(blog.getClosedReviewCount(lang))
                 else
-                  div.badge.rounded-pill.osmbclabel-editblog=blog.getUnEdited(lang)
+                  div.badge.rounded-pill.osmbc-label-editblog=blog.getUnEdited(lang)
               //- Review Start Column
               td
                 if (!blog["close" + lang] && blog.isReviewStarted(lang) && blog["reviewComment"+lang].length>0)
-                  span.badge.small-margin(class="osmbclabel-reviewblog")= blog["reviewComment"+lang][0].user
+                  span.badge.small-margin(class="osmbc-label-reviewblog")= blog["reviewComment"+lang][0].user
                 
               //- Review Start time
               td
@@ -127,7 +127,7 @@ block content
                 if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
                   each val in blog["reviewComment"+lang]
                     if ((val.text != "startreview") && (val.text != "reviewing..."))
-                      span.badge.small-margin(class="osmbclabel-reviewblog")=val.user
+                      span.badge.small-margin(class="osmbc-label-reviewblog")=val.user
               //- Download Column
               td
                 i.fa.fa-download(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`)

@@ -36,7 +36,7 @@ function highlightWrongLinks() {
     for (const l in mapping) {
       if (window.cacheLink[l] !== "OK") {
         mapping[l].forEach(function(k) {
-          k.addClass("nonexist");
+          k.addClass("osmbc-nonexist");
           k.text(k.text() + " #" + window.cacheLink[l]);
         });
       }

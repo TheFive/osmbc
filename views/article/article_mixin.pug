@@ -95,8 +95,8 @@ mixin noTranslationButton
 
 mixin markdownWithPreview(lang)
   - labelClass = ""
-  - if (params.left_lang === lang) labelClass = "osmbclabel-lang";
-  - if (params.right_lang === lang) labelClass = "osmbclabel-lang2";
+  - if (params.left_lang === lang) labelClass = "osmbc-label-lang";
+  - if (params.right_lang === lang) labelClass = "osmbc-label-lang2";
   span.badge.text-bg-secondary(
       class=labelClass
       draggable="true"

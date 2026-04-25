@@ -17,8 +17,18 @@ import configModule from "../model/config.js";
 
 import nock from "nock";
 
-
-
+function waitForMocksToComplete(scopes, callback, timeoutMs = 5000) {
+  const startTime = Date.now();
+  function verifyPending() {
+    const allMocksDone = scopes.every((scope) => scope.isDone());
+    if (allMocksDone) return callback();
+    if (Date.now() - startTime >= timeoutMs) {
+      return callback(new Error("Timeout while waiting for Slack notifications: " + nock.pendingMocks().join(", ")));
+    }
+    setTimeout(verifyPending, 25);
+  }
+  verifyPending();
+}
 
 
 describe("notification/slackReceiver", function() {
@@ -159,10 +169,12 @@ describe("notification/slackReceiver", function() {
         .reply(200, "ok");
       blogModule.createNewBlog({ OSMUser: "testuser" }, function(err) {
         should.not.exist(err);
-        should(slack1.isDone()).is.True();
-        should(slack2.isDone()).is.True();
-
-        bddone();
+        waitForMocksToComplete([slack1, slack2], function(waitErr) {
+          should.not.exist(waitErr);
+          should(slack1.isDone()).is.True();
+          should(slack2.isDone()).is.True();
+          bddone();
+        });
       });
     });
     it("should slack message, when change blog status", function (bddone) {
@@ -206,13 +218,14 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         blog.setAndSave({ OSMUser: "testuser" }, { status: "edit" }, function(err) {
           should.not.exist(err);
-          should(slack1a.isDone()).is.True();
-          should(slack1b.isDone()).is.True();
-          should(slack2a.isDone()).is.True();
-          should(slack2b.isDone()).is.True();
-
-
-          bddone();
+          waitForMocksToComplete([slack1a, slack1b, slack2a, slack2b], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack1a.isDone()).is.True();
+            should(slack1b.isDone()).is.True();
+            should(slack2a.isDone()).is.True();
+            should(slack2b.isDone()).is.True();
+            bddone();
+          });
         });
       });
     });

@@ -13,7 +13,7 @@ a {
   color: #00B7FF;
 }
 
-a.nonexist {
+.osmbc-nonexist {
   color: white ;
   background-color: #d9534f ;
   padding-top: 2px;
@@ -78,11 +78,11 @@ table {
 }
 
 
-.osmbcbadge-lang {
+.osmbc-badge-lang {
   background-color: #ff66ff;
   color:white;
 }
-.osmbclabel-lang {
+.osmbc-label-lang {
   background-color: #ff66ff;
   color:white;
 }
@@ -96,15 +96,15 @@ background-color: white;
 color:lightgrey;
 }
 
-.osmbccolor-lang {
+.osmbc-color-lang {
   color: #ff66ff;
 }
 
-.osmbcbadge-lang2 {
+.osmbc-badge-lang2 {
   background-color:  #00ffff;
   color:white;
 }
-.osmbclabel-lang2 {
+.osmbc-label-lang2 {
   background-color:  #00ffff;
   color:white;
 }
@@ -114,86 +114,86 @@ color:lightgrey;
   color:white;
 }
 
-.osmbccolor-lang2 {
+.osmbc-color-lang2 {
   color:  #00ffff;
 }
 
 .osmbc-deleted-inverted {
-  background-color: #ff0000;
+  background-color: var(--bs-danger, #dc3545);
   color: white;
 }
 
 .osmbc-inserted-inverted {
-  background-color:  #3366ff;
+  background-color: var(--bs-primary, #0d6efd);
   color: white;
 }
 .osmbc-deleted {
-  color: #ff0000;
+  color: var(--bs-danger, #dc3545);
 }
 
 .osmbc-inserted {
-  color:  #3366ff;
+  color: var(--bs-primary, #0d6efd);
 }
 
-.osmbclabel-no-markdown {
+.osmbc-not-formulated {
   color: white;
   background-color: lightgrey;
 }
-.osmbclabel-markdown {
+.osmbc-label-markdown {
   color: white;
   background-color: #5cb85c;
 }
-.osmbclabel-collect {
+.osmbc-label-collect {
   color: white;
   background-color: lightblue;
 }
-.osmbclabel-no-translation {
+.osmbc-label-no-translation {
   color: white;
   background-color: grey;
 }
 
 
-.osmbclabel-user-full {
+.osmbc-label-user-full {
   color:white;
   background-color:grey;
 }
-.osmbclabel-user-guest {
+.osmbc-label-user-guest {
   color:black;
   border-style:solid;
   border-width:1px;
   background-color:lightgrey;
 }
-.osmbclabel-user-denied {
+.osmbc-label-user-denied {
   color:black;
   border-style:solid;
   background-color:darkgrey;
 }
-.osmbclabel-user-self {
+.osmbc-label-user-self {
   color:white;
   background-color:red;
 }
 
-.osmbclabel-guest-indicator {
+.osmbc-label-guest-indicator {
   color:white;
   background-color:#e5720d;
 }
 
-.osmbclabel-openblog {
+.osmbc-label-openblog {
   color:white;
   background-color:#D0D0D0  ;
 }
 
-.osmbclabel-editblog {
+.osmbc-label-editblog {
   color:white;
   background-color:#B8B8B8;
 }
 
-.osmbclabel-reviewblog {
+.osmbc-label-reviewblog {
   color:white;
   background-color:#1a75ff;
 }
 
-.osmbclabel-closedblog {
+.osmbc-label-closedblog {
   color:white;
   background-color:#39e600;
 }
@@ -219,7 +219,7 @@ color:lightgrey;
 
 .osmbc-help-text {
   font-style: italic;
-  color: lightblue;
+  color: var(--bs-secondary-color, #6c757d);
   margin-top: 4px;
   margin-bottom: 4px;
 }

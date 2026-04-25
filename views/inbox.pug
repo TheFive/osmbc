@@ -30,10 +30,10 @@ mixin displayArticle(article,lang)
                             span=" "
                           span=comment.user
                         span=" "
-                        span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+                        span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
                         if (comment.editstamp)
                           span=" "
-                          i.text-muted.small="edit: " + layout.moment(comment.editstamp).fromNow()
+                          i.text-body-secondary.small="edit: " + layout.moment(comment.editstamp).fromNow()
                         p
                           |!{layout.md_renderInline(comment.text)}
 

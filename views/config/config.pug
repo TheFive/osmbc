@@ -19,11 +19,11 @@ block content
         if config.type == "yaml"
             div.col-11
               textarea.form-control(name="yaml",id="yaml", rows=14, wrap="off" style="font-family:monospace")=config.yaml
-            div.col-1.text-muted(class="col-sm-" +sizeExplanation ) Use YAML Markup Language and formatting.
+            div.col-1.text-body-secondary(class="col-sm-" +sizeExplanation ) Use YAML Markup Language and formatting.
         if config.type == "text"
             div.col-11
               textarea.form-control(name="text",id="text", rows=14, wrap="off" style="font-family:monospace")=config.text
-            div.col-1.text-muted(class="col-sm-" + sizeExplanation) This is plain text.
+            div.col-1.text-body-secondary(class="col-sm-" + sizeExplanation) This is plain text.
     div.row
         div.col-sm-offset-11.col-sm-1
           input(name="OK" type="submit", class="btn btn-primary",value="OK")

@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">1</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">1</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -42,12 +42,12 @@
                 <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a>
                 <div class="dropdown-divider"> </div>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a>
                 <div class="dropdown-divider"></div>
                 <form class="p-1">
@@ -67,14 +67,14 @@
       <div class="row"></div>
       <div class="row">
         <div class="col-md-1">
-          <div class="badge osmbclabel-lang">DE</div><span class="badge osmbclabel-markdown">0(*)</span>
+          <div class="badge osmbc-label-lang">DE</div><span class="badge osmbc-label-markdown">0(*)</span>
         </div>
         <div class="col-md-11">
           <div class="progress" style="margin-bottom:2px">
-            <div class="progress-bar osmbclabel-markdown" style="width:50%">1</div>
-            <div class="progress-bar progress-bar automated-translation" style="width:0%">0</div>
-            <div class="progress-bar osmbclabel-no-markdown" style="width:50%">1</div>
-            <div class="progress-bar osmbclabel-no-translation" style="width:0%">0</div>
+            <div class="progress-bar osmbc-label-markdown" style="width:50%">1</div>
+            <div class="progress-bar progress-bar osmbc-automated-translation" style="width:0%">0</div>
+            <div class="progress-bar osmbc-not-formulated" style="width:50%">1</div>
+            <div class="progress-bar osmbc-label-no-translation" style="width:0%">0</div>
           </div>
         </div>
       </div>
@@ -92,15 +92,15 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-              <div class="card-title"><span>Review DE</span><span class="text-muted small"> (enabled by TheFive</span><span class="text-muted small"> a few seconds ago</span><span class="text-muted small">) </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-05-25T19:00:00.000Z">[changes]</a></div>
+              <div class="card-title"><span>Review DE</span><span class="text-body-secondary small"> (enabled by TheFive</span><span class="text-body-secondary small"> a few seconds ago</span><span class="text-body-secondary small">) </span><a class="text-body-secondary small" href="/changes/log?blog=WN251&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-05-25T19:00:00.000Z">[changes]</a></div>
             </div>
             <div class="card-body">
-              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE1').classList.remove('d-none');document.getElementById('reviewLeftTextDE1').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-05-25T19:00:00.000Z">[changes]</a></p>
+              <p><b class="span">TheFive</b><span> </span><span class="text-body-secondary small">a few seconds ago</span><span> </span><i class="text-body-secondary small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE1').classList.remove('d-none');document.getElementById('reviewLeftTextDE1').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-body-secondary small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-05-25T19:00:00.000Z">[changes]</a></p>
               <p id="reviewLeftTextDE1">1rst Review Text for DE</p>
               <div class="d-none" id="editReviewDE1">
                 <form id="editreviewDE1" name="reviewDE1" action="/blog/WN251/editReviewComment/1" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE1">1rst Review Text for DE</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE1" type="submit">Change</button></form>
               </div>
-              <p><b class="span">TheFive</b><span> </span><span class="text-muted small">a few seconds ago</span><span> </span><i class="text-muted small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE2').classList.remove('d-none');document.getElementById('reviewLeftTextDE2').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-muted small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-05-25T19:00:00.000Z">[changes]</a></p>
+              <p><b class="span">TheFive</b><span> </span><span class="text-body-secondary small">a few seconds ago</span><span> </span><i class="text-body-secondary small">Edit: a few seconds ago</i><span> </span><a onclick="document.getElementById('editReviewDE2').classList.remove('d-none');document.getElementById('reviewLeftTextDE2').classList.add('d-none');"><i class="fa fa-pencil"></i></a><span> </span><a class="text-body-secondary small" href="/changes/log?blog=WN251&amp;user=TheFive&amp;table=article&amp;property=markdownDE&amp;date=&gt;=2016-05-25T19:00:00.000Z">[changes]</a></p>
               <p id="reviewLeftTextDE2">2nd Review Text for DE</p>
               <div class="d-none" id="editReviewDE2">
                 <form id="editreviewDE2" name="reviewDE2" action="/blog/WN251/editReviewComment/2" method="post"><textarea class="form-control" rows="5" name="text" id="reviewCommentDE2">2nd Review Text for DE</textarea><input class="d-none" type="text" name="lang" value="DE"><button class="btn btn-lg btn-primary" id="reviewButtonDE2" type="submit">Change</button></form>
@@ -161,7 +161,7 @@ while layout.user["blogSetting"+v]
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div2');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
-                <div class="not-formulated">
+                <div class="osmbc-not-formulated">
                   <ul class="no-margin">
                     <li>WN251 Picture</li>
                   </ul>
@@ -226,7 +226,7 @@ while layout.user["blogSetting"+v]
                   <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea></form>
-                  <p><span> Edited: </span><span class="badge small-margin osmbclabel-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
+                  <p><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
                 </div>
               </div>
             </td>
@@ -273,10 +273,10 @@ while layout.user["blogSetting"+v]
       <p></p>
       <p class="row"></p>
       <h2>Symbol Legend</h2>
-      <p><span class="badge osmbclabel-collect small-margin">X</span><span> = number of collectors </span></p>
-      <p><span class="badge osmbclabel-collect small-margin">username</span><span> = collector of article </span></p>
-      <p><span class="badge osmbclabel-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
-      <p><span class="badge osmbclabel-markdown small-margin">username</span><span> = Editor of article</span></p>
+      <p><span class="badge osmbc-label-collect small-margin">X</span><span> = number of collectors </span></p>
+      <p><span class="badge osmbc-label-collect small-margin">username</span><span> = collector of article </span></p>
+      <p><span class="badge osmbc-label-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
+      <p><span class="badge osmbc-label-markdown small-margin">username</span><span> = Editor of article</span></p>
       <p><i class="fa fa-comment small-margin" style="color:blue"></i><span> = there is a comment in the article</span></p>
       <p><i class="fa fa-comment small-margin" style="color:red"></i><span> = there is a comment with personal mention in the article</span></p>
       <p><i class="fa fa-comment small-margin" style="color:orange"></i><span> = there is a comment with language mention in the article</span></p>

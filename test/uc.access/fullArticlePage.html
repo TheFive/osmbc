@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -44,12 +44,12 @@
                 <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">EN</a>
                 <div class="dropdown-divider"> </div>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">EN</a>
                 <div class="dropdown-divider"></div>
                 <form class="p-1">
@@ -126,7 +126,7 @@
             </div>
             <div class="form-group row">
               <div class="col-md-4">
-                <div class="d-flex flex-nowrap"><span class="badge osmbclabel-markdown" onclick="showRL('EN')">EN</span></div>
+                <div class="d-flex flex-nowrap"><span class="badge osmbc-label-markdown" onclick="showRL('EN')">EN</span></div>
                 <p class="osmbc-help-text">green: Article is ready</p>
                 <p class="osmbc-help-text">light blue: Article is empty</p>
                 <p class="osmbc-help-text">grey: No Translation</p>
@@ -182,7 +182,7 @@
         </div><!-- display Markdown Blog--><!-- Markdown Area All Column-->
         <div class="row">
           <div class="col">
-            <div style="min-width:400px;max-width:900px"><span class="badge text-bg-secondary osmbclabel-lang" draggable="true" data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge text-bg-danger" style="display:none" id="markdownEN_unsaved">unsaved</span><textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea><textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
+            <div style="min-width:400px;max-width:900px"><span class="badge text-bg-secondary osmbc-label-lang" draggable="true" data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge text-bg-danger" style="display:none" id="markdownEN_unsaved">unsaved</span><textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea><textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with a person or a company!
 3. Decomplify your sentences.

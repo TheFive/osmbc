@@ -65,7 +65,7 @@
                 <li><a href="http://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a></li>
               </ul>
             </li>
-            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbcbadge-lang">EN<span class="caret"></span></a>
+            <li class="dropdown"><a href="#" style="color:white" data-toggle="dropdown" class="btn dropdown-toggle osmbc-badge-lang">EN<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
                 <li><a href="/language?lang=DE">DE</a></li>
                 <li><a href="/language?lang=EN">EN</a></li>
@@ -89,21 +89,21 @@
               <div class="col-sm-4">
                 <input name="OSMUser" id="OSMUser" value="TheFive" readonly="readonly" class="form-control">
               </div>
-              <div class="text-muted col-sm-6">User already logged in, namechange not possible.</div>
+              <div class="text-body-secondary col-sm-6">User already logged in, namechange not possible.</div>
             </div>
             <div class="form-group">
               <label for="email" class="control-label col-sm-2">EMail</label>
               <div class="col-sm-4">
                 <input name="email" id="email" value="" class="form-control">
               </div>
-              <div class="text-muted col-sm-6">This mail is used for information about changes. To delete the email just submit a space for this field.</div>
+              <div class="text-body-secondary col-sm-6">This mail is used for information about changes. To delete the email just submit a space for this field.</div>
             </div>
             <div class="form-group">
               <label for="WNAuthor" class="control-label col-sm-2">WNAuthor</label>
               <div class="col-sm-4">
                 <input name="WNAuthor" id="WNAuthor" value="" class="form-control">
               </div>
-              <div class="text-muted col-sm-6">WP user for the Wochennotiz Blog blog.openstreetmap.de</div>
+              <div class="text-body-secondary col-sm-6">WP user for the Wochennotiz Blog blog.openstreetmap.de</div>
             </div>
             <div class="form-group">
               <label for="language" class="control-label col-sm-2">Language</label>
@@ -114,7 +114,7 @@
                   <option value="ES">ES</option>
                 </select>
               </div>
-              <div class="text-muted col-sm-6">Main Language for the user, used for default values.</div>
+              <div class="text-body-secondary col-sm-6">Main Language for the user, used for default values.</div>
             </div>
             <div class="form-group">
               <label for="access" class="control-label col-sm-2">Access</label>
@@ -125,7 +125,7 @@
                   <option value="denied">denied</option>
                 </select>
               </div>
-              <div class="text-muted col-sm-6">Define Users Access to OSMBC</div>
+              <div class="text-body-secondary col-sm-6">Define Users Access to OSMBC</div>
             </div>
             <div class="form-group">
               <label for="mailNewCollection" class="control-label col-sm-2">Mail a new Collection</label>
@@ -135,7 +135,7 @@
                   <option value="false">off</option>
                 </select>
               </div>
-              <div class="text-muted col-sm-6">Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.</div>
+              <div class="text-body-secondary col-sm-6">Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.</div>
             </div>
             <div class="form-group">
               <label for="mailAllComment" class="control-label col-sm-2">Mail All Comments</label>
@@ -145,7 +145,7 @@
                   <option value="false">off</option>
                 </select>
               </div>
-              <div class="text-muted col-sm-6">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</div>
+              <div class="text-body-secondary col-sm-6">Send a mail for every change of a comment. I recommend to use OFF, but sometimes you may be interested in anything written in comments, than - and only then - you should use ON</div>
             </div>
             <div class="form-group">
               <label for="mailComment" class="control-label col-sm-2">Mail defined comments</label>
@@ -163,7 +163,7 @@
                   <input type="checkbox" name="mailComment" value="TheFive">TheFive
                 </label>
               </div>
-              <div class="text-muted col-sm-6">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</div>
+              <div class="text-body-secondary col-sm-6">Please check comments you are interested in. Recommendation is as minimum to enable your user, so that you receive via mail that someone is mentioning you in a comment.</div>
             </div>
             <div class="form-group">
               <label for="mailBlogLanguageStatusChange" class="control-label col-sm-2">Mail Status Change</label>
@@ -178,14 +178,14 @@
                   <input type="checkbox" name="mailBlogLanguageStatusChange" value="ES">ES
                 </label>
               </div>
-              <div class="text-muted col-sm-6">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</div>
+              <div class="text-body-secondary col-sm-6">Please choose your languagues of your interest for status information. This is sending out any review comment, or the start of the review for a specific blog language.</div>
             </div>
             <div class="form-group">
               <label for="SlackUser" class="control-label col-sm-2">SlackUser</label>
               <div class="col-sm-4">
                 <input name="SlackUser" id="SlackUser" value="" class="form-control">
               </div>
-              <div class="text-muted col-sm-6">Username in the slack for using the collect feature.</div>
+              <div class="text-body-secondary col-sm-6">Username in the slack for using the collect feature.</div>
             </div>
             <div class="form-group">
               <label for="Color" class="control-label col-sm-2">Color</label>
@@ -194,7 +194,7 @@
                   <input name="color" id="color}" value="undefined" class="form-control"><span style="background-color:undefined;width: 50px;" class="input-group-addon"></span>
                 </div>
               </div>
-              <div class="text-muted col-sm-6">
+              <div class="text-body-secondary col-sm-6">
                 <p><span>Color for colored lists in OSMBC. Use a html colorpicker to define. (</span><a href="http://www.w3schools.com/colors/colors_picker.asp">Color Picker</a><span>,</span><a href="http://www.w3schools.com/colors/colors_names.asp">Color Names</a><span>)</span></p>
               </div>
             </div>

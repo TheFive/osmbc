@@ -4,13 +4,13 @@ extends blog_mixin
 mixin userLabel(user,style)
   - bgColor = ""
   if (user == layout.user.OSMUser)
-    - style = "osmbclabel-user-self"
+    - style = "osmbc-label-user-self"
   if (showColoredUser)
-    - style = "osmbclabel-user-guest"
+    - style = "osmbc-label-user-guest"
     if (userMap[user] && userMap[user])
-      - style = "osmbclabel-user-"+userMap[user].access
+      - style = "osmbc-label-user-"+userMap[user].access
     if (user === layout.user.OSMUser)
-      - style = "osmbclabel-user-self"
+      - style = "osmbc-label-user-self"
     if (userMap[user] && userMap[user].access === "full" && typeof userMap[user].color === "string")
       - bgColor =  "background-color:"+ userMap[user].color
   if (bgColor !== "")
@@ -21,9 +21,9 @@ mixin userLabel(user,style)
 
 mixin previewDiv(article, lang)
   - previewClass = ""
-  - if (!article.isFormulated(lang)) previewClass = "not-formulated";
+  - if (!article.isFormulated(lang)) previewClass = "osmbc-not-formulated";
   - if (article.isNoTranslation(lang)) previewClass = "hide-text";
-  - if (article.isTranslatedAutomated(lang)) previewClass = "automated-translation"
+  - if (article.isTranslatedAutomated(lang)) previewClass = "osmbc-automated-translation"
   div(class=previewClass )
     if block
       block
@@ -40,10 +40,10 @@ mixin reviewBlog(reviewComments,lang)
           if (reviewComments.length>0 && reviewComments[0].text=="startreview")
             - var reviewStarter= reviewComments[0].user
             - var reviewStartTime = reviewComments[0].timestamp
-            span.text-muted.small=" (enabled by "+reviewStarter
-            span.text-muted.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
-            span.text-muted.small=") "
-            a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
+            span.text-body-secondary.small=" (enabled by "+reviewStarter
+            span.text-body-secondary.small=" "+layout.moment(reviewComments[0].timestamp).fromNow()
+            span.text-body-secondary.small=") "
+            a.text-body-secondary.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&table=article&property=markdown"+lang+"&date=>="+reviewComments[0].timestamp) [changes]
       .card-body
         - personalReviewStarted=false
         each comment,i in reviewComments
@@ -51,20 +51,20 @@ mixin reviewBlog(reviewComments,lang)
             p
               b.span=comment.user
               span=" "
-              span.text-muted.small=layout.moment(comment.timestamp).fromNow()
+              span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
               if comment.editstamp
                 span=" "
-                i.text-muted.small="Edit: "+layout.moment(comment.editstamp).fromNow()
+                i.text-body-secondary.small="Edit: "+layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && (!blog["close"+lang])
                 span=" "
                 a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('d-none');document.getElementById('reviewLeftText${lang}${i}').classList.add('d-none');`)
                   i.fa.fa-pencil
               if reviewStartTime
                 span=" "
-                a.text-muted.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
+                a.text-body-secondary.small(href=layout.htmlroot+"/changes/log?blog=" + blog.name + "&user="+comment.user+"&table=article&property=markdown"+lang+"&date=>="+reviewStartTime) [changes]
             p(id="reviewLeftText"+lang+i)=comment.text
             if (!comment.text)
-              p.text-muted.small="Empty Comment"
+              p.text-body-secondary.small="Empty Comment"
             div.d-none(id="editReview"+lang+i)
               if (!blog["close"+lang])
                 form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
@@ -156,17 +156,17 @@ block content
     - if (total == 0) total = 1
   .row
     .col-md-1
-      div.badge.osmbclabel-lang=left_lang
+      div.badge.osmbc-label-lang=left_lang
       if blog._unsolvedComments[left_lang] > 0
-        span.badge.osmbclabel-no-markdown=blog._unsolvedComments[left_lang]+"(*)"
+        span.badge.osmbc-not-formulated=blog._unsolvedComments[left_lang]+"(*)"
       else
-        span.badge.osmbclabel-markdown="0(*)"
+        span.badge.osmbc-label-markdown="0(*)"
     .col-md-11
      div.progress(style="margin-bottom:2px")
-      div.progress-bar.osmbclabel-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
-      div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
-      div.progress-bar.osmbclabel-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
-      div.progress-bar.osmbclabel-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
+      div.progress-bar.osmbc-label-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
+      div.progress-bar.progress-bar.osmbc-automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
+      div.progress-bar.osmbc-not-formulated(style="width:" + parseInt(100*unedited/total) + "%")=unedited
+      div.progress-bar.osmbc-label-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
   div.d-none.d-md-block
     if (right_lang!= "--" && right_lang != null)
       .row
@@ -177,17 +177,17 @@ block content
         - ready = (total-unedited - notranslate - autoTranslate)
         - if (total == 0) total = 1
         .col-md-1
-          div.badge.text-bg-info.osmbclabel-lang2=right_lang
+          div.badge.text-bg-info.osmbc-label-lang2=right_lang
           if blog._unsolvedComments[right_lang] > 0
-            span.badge.osmbclabel-no-markdown=blog._unsolvedComments[right_lang] + "(*)"
+            span.badge.osmbc-not-formulated=blog._unsolvedComments[right_lang] + "(*)"
           else
-            span.badge.osmbclabel-markdown="0(*)"
+            span.badge.osmbc-label-markdown="0(*)"
         .col-md-11
          div.progress(style="margin-bottom:10px")
-          div.progress-bar.osmbclabel-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
-          div.progress-bar.progress-bar.automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
-          div.progress-bar.osmbclabel-no-markdown(style="width:" +parseInt(100*unedited/total)+"%")=unedited
-          div.progress-bar.osmbclabel-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
+          div.progress-bar.osmbc-label-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
+          div.progress-bar.progress-bar.osmbc-automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
+          div.progress-bar.osmbc-not-formulated(style="width:" +parseInt(100*unedited/total)+"%")=unedited
+          div.progress-bar.osmbc-label-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
 
 
   .row

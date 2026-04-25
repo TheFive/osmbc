@@ -1388,7 +1388,7 @@
     "version": 47,
     "blog": "WN290",
     "collection": "http://openweathermap.org",
-    "categoryEN": "--unpublished--",
+    "categoryEN": "Software",
     "title": "openweathermap",
     "comment": "Test\r\n@derFred testtest\r\n@Ziltoidium - alle Tests bestanden",
     "commentStatus": "solved",
@@ -11929,6 +11929,17 @@
     "to": "Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.",
     "timestamp": "2016-02-10T08:56:27.408Z",
     "id": "53057"
+  },
+  {
+    "oid": "11065",
+    "blog": "WN290",
+    "user": "deeplPro API Call",
+    "table": "article",
+    "property": "markdownDE",
+    "from": "Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.",
+    "to": "Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.",
+    "timestamp": "2016-02-12T23:59:59.000Z",
+    "id": "59999"
   },
   {
     "oid": "11102",
