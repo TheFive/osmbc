@@ -101,10 +101,11 @@ class Blog {
     debug("setAndSave");
     util.requireTypes([user, data, callback], ["object", "object", "function"]);
     const self = this;
+    const previousBlogState = Object.assign(Object.create(Object.getPrototypeOf(self)), self);
     delete self.lock;
     assert.notEqual(typeof self.id, "undefined");
     series([
-      messageCenter.global.updateBlog.bind(messageCenter.global, user, self, data),
+      messageCenter.global.updateBlog.bind(messageCenter.global, user, previousBlogState, data),
       function copyDataToBlog(cb) {
         assert.notEqual(self.id, 0);
         for (const key in data) {
