@@ -135,7 +135,7 @@ color:lightgrey;
   color: var(--bs-primary, #0d6efd);
 }
 
-.osmbc-label-no-markdown {
+.osmbc-not-formulated {
   color: white;
   background-color: lightgrey;
 }

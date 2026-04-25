@@ -24,6 +24,7 @@ a.osmbc-nonexist {
 
 /* OSMBC Marker for not formulated article texts */
 .osmbc-not-formulated {
+  color: #000 !important;
   background-color: #FFF8C6;  /* Salmon Chiffon */
 }
 
@@ -153,11 +154,6 @@ table {
   color: var(--bs-primary, #0d6efd);
 }
 
-/* OSMBC Content/workflow labels for article status. */
-.osmbc-label-no-markdown {
-  color: white;
-  background-color: lightgrey;
-}
 .osmbc-label-markdown {
   color: white;
   background-color: #5cb85c;

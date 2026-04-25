@@ -124,7 +124,7 @@ mixin languageDisplay(article,options)
         if (article && article.collection)
           span.badge.osmbc-label-collect(onclick=onClick style=style)=lang
         else
-          span.badge.osmbc-label-no-markdown(onclick=onClick style=style)=lang
+          span.badge.osmbc-not-formulated(onclick=onClick style=style)=lang
 
 mixin voteDisplay(article,options)
   div.d-flex.flex-nowrap

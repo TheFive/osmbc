@@ -259,10 +259,14 @@ describe("uc/blog", function() {
         should(errors).eql([]);
       });
       it("should show Review View", async function() {
+        const errors = [];
         const osmbcApp = new OsmbcApp(driver);
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.cickMode("Review");
+        await blogPage.waitForPageReload();
+
+        await testutil.expectHtml(driver, errors, "blog", "blog_wn290_review");
 
 
 
@@ -274,6 +278,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle("Im Forum wird darüber");
 
         should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in Review review");
+        should(errors).eql([]);
       });
       it("should show Statistic View", async function() {
         const osmbcApp = new OsmbcApp(driver);

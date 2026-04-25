@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbc-badge-lang">0</span><span class="badge rounded-pill osmbc-badge-lang2">0</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbc-badge-lang">1</span><span class="badge rounded-pill osmbc-badge-lang2">1</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -67,13 +67,13 @@
       <div class="row"></div>
       <div class="row">
         <div class="col-md-1">
-          <div class="badge osmbc-label-lang">DE</div><span class="badge osmbc-label-no-markdown">3(*)</span>
+          <div class="badge osmbc-label-lang">DE</div><span class="badge osmbc-not-formulated">3(*)</span>
         </div>
         <div class="col-md-11">
           <div class="progress" style="margin-bottom:2px">
-            <div class="progress-bar osmbc-label-markdown" style="width:95%">60</div>
-            <div class="progress-bar progress-bar osmbc-automated-translation" style="width:0%">0</div>
-            <div class="progress-bar osmbc-label-no-markdown" style="width:0%">0</div>
+            <div class="progress-bar osmbc-label-markdown" style="width:92%">59</div>
+            <div class="progress-bar progress-bar osmbc-automated-translation" style="width:1%">1</div>
+            <div class="progress-bar osmbc-not-formulated" style="width:1%">1</div>
             <div class="progress-bar osmbc-label-no-translation" style="width:4%">3</div>
           </div>
         </div>
@@ -81,13 +81,13 @@
       <div class="d-none d-md-block">
         <div class="row">
           <div class="col-md-1">
-            <div class="badge text-bg-info osmbc-label-lang2">EN</div><span class="badge osmbc-label-no-markdown">1(*)</span>
+            <div class="badge text-bg-info osmbc-label-lang2">EN</div><span class="badge osmbc-not-formulated">1(*)</span>
           </div>
           <div class="col-md-11">
             <div class="progress" style="margin-bottom:10px">
-              <div class="progress-bar osmbc-label-markdown" style="width:79%">50</div>
+              <div class="progress-bar osmbc-label-markdown" style="width:78%">50</div>
               <div class="progress-bar progress-bar osmbc-automated-translation" style="width:0%">0</div>
-              <div class="progress-bar osmbc-label-no-markdown" style="width:0%">0</div>
+              <div class="progress-bar osmbc-not-formulated" style="width:1%">1</div>
               <div class="progress-bar osmbc-label-no-translation" style="width:20%">13</div>
             </div>
           </div>
@@ -198,10 +198,10 @@ while layout.user["blogSetting"+v]
     - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
     +navbutton(style0,style)
   - v++-->
-            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=DE"><i class="fa fa-download"></i>DE</a></li>
-            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=EN"><i class="fa fa-download"></i>EN</a></li>
+            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
+            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=EN"><i class="fa fa-download"></i>EN<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
             <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
-              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN290/preview?lang=DE"><span>Export DE</span></a><a class="dropdown-item" href="/blog/WN290/preview?lang=EN"><span>Export EN</span></a><a class="dropdown-item" href="/blog/WN290/preview?lang=ES"><span>Export ES</span></a></div>
+              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN290/preview?lang=DE"><span>Export DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN290/preview?lang=EN"><span>Export EN</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN290/preview?lang=ES"><span>Export ES</span></a></div>
             </li>
           </ul>
         </div>
@@ -320,7 +320,7 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div12');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
-                <div>
+                <div class="osmbc-automated-translation">
                   <ul class="no-margin">
                     <li>Eigene Edits ändern = Mechanical edit?</li>
                   </ul>
@@ -340,7 +340,7 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
                 </div>
                 <div class="card-body">
                   <form name="EditArticle" id="EditArticle12" action="/article/12/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown12" rows="7" onchange="onLeaveText(12);" onkeyup="onchangeMarkdown(12)" spellcheck="true" lang="DE">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown12" rows="7">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea></form>
-                  <p><span>Collected: </span><span class="badge small-margin osmbc-label-collect">Nakaner</span><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">wambacher</span><span class="badge small-margin osmbc-label-markdown">Peda</span><span class="badge small-margin osmbc-label-markdown">Nakaner</span><span> Time: 4 months ago</span></p>
+                  <p><span>Collected: </span><span class="badge small-margin osmbc-label-collect">Nakaner</span><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">deeplPro API Call</span><span class="badge small-margin osmbc-label-markdown">wambacher</span><span class="badge small-margin osmbc-label-markdown">Peda</span><span class="badge small-margin osmbc-label-markdown">Nakaner</span><span> Time: 3 months ago</span></p>
                 </div>
               </div>
             </td>
@@ -1727,6 +1727,40 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
           </tr>
           <tr>
             <td>
+              <div class="d-flex flex-nowrap"><a href="/article/55"><i class="fa fa-edit small-margin"></i></a></div>
+            </td>
+            <td class="d-none d-md-block">
+              <div class="d-flex flex-nowrap"><span id="voteLabels55"><div class="d-flex flex-nowrap"></div></span></div>
+            </td>
+            <td>
+              <div onclick="if (!openEditor) {openEditor = document.getElementById('div55');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+                <div class="osmbc-not-formulated">
+                  <ul class="no-margin">
+                    <li>openweathermap</li>
+                  </ul>
+                </div>
+              </div>
+            </td>
+            <td class="d-none d-md-block"></td>
+            <td class="d-none d-md-block"></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="d-none d-md-block"></td>
+            <td>
+              <div class="card d-none" id="div55">
+                <div class="card-header">
+                  <ul class="preview" id="preview55"></ul>
+                </div>
+                <div class="card-body">
+                  <form name="EditArticle" id="EditArticle55" action="/article/55/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown55" rows="7" onchange="onLeaveText(55);" onkeyup="onchangeMarkdown(55)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown55" rows="7"></textarea></form>
+                  <p><span>Collected: </span><span class="badge small-margin osmbc-label-collect">Ziltoidium</span></p>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <div class="d-flex flex-nowrap"><a href="/article/1"><i class="fa fa-edit small-margin"></i></a></div>
             </td>
             <td class="d-none d-md-block">
@@ -2540,40 +2574,6 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
             </td>
             <td class="d-none d-md-block"></td>
             <td class="d-none d-md-block"></td>
-          </tr>
-          <tr>
-            <td>
-              <div class="d-flex flex-nowrap"><a href="/article/55"><i class="fa fa-edit small-margin"></i></a></div>
-            </td>
-            <td class="d-none d-md-block">
-              <div class="d-flex flex-nowrap"><span id="voteLabels55"><div class="d-flex flex-nowrap"></div></span></div>
-            </td>
-            <td>
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('div55');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
-                <div class="osmbc-not-formulated">
-                  <ul class="no-margin">
-                    <li>openweathermap<br>No Reason given</li>
-                  </ul>
-                </div>
-              </div>
-            </td>
-            <td class="d-none d-md-block"></td>
-            <td class="d-none d-md-block"></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td class="d-none d-md-block"></td>
-            <td>
-              <div class="card d-none" id="div55">
-                <div class="card-header">
-                  <ul class="preview" id="preview55"></ul>
-                </div>
-                <div class="card-body">
-                  <form name="EditArticle" id="EditArticle55" action="/article/55/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown55" rows="7" onchange="onLeaveText(55);" onkeyup="onchangeMarkdown(55)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown55" rows="7"></textarea></form>
-                  <p><span>Collected: </span><span class="badge small-margin osmbc-label-collect">Ziltoidium</span></p>
-                </div>
-              </div>
-            </td>
           </tr>
           <tr>
             <td>

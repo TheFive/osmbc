@@ -158,14 +158,14 @@ block content
     .col-md-1
       div.badge.osmbc-label-lang=left_lang
       if blog._unsolvedComments[left_lang] > 0
-        span.badge.osmbc-label-no-markdown=blog._unsolvedComments[left_lang]+"(*)"
+        span.badge.osmbc-not-formulated=blog._unsolvedComments[left_lang]+"(*)"
       else
         span.badge.osmbc-label-markdown="0(*)"
     .col-md-11
      div.progress(style="margin-bottom:2px")
       div.progress-bar.osmbc-label-markdown(style="width:" +parseInt(100*ready/total)+"%")=ready
       div.progress-bar.progress-bar.osmbc-automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
-      div.progress-bar.osmbc-label-no-markdown(style="width:" + parseInt(100*unedited/total) + "%")=unedited
+      div.progress-bar.osmbc-not-formulated(style="width:" + parseInt(100*unedited/total) + "%")=unedited
       div.progress-bar.osmbc-label-no-translation(style="width:" + parseInt(100*notranslate/total)+"%")=notranslate
   div.d-none.d-md-block
     if (right_lang!= "--" && right_lang != null)
@@ -179,14 +179,14 @@ block content
         .col-md-1
           div.badge.text-bg-info.osmbc-label-lang2=right_lang
           if blog._unsolvedComments[right_lang] > 0
-            span.badge.osmbc-label-no-markdown=blog._unsolvedComments[right_lang] + "(*)"
+            span.badge.osmbc-not-formulated=blog._unsolvedComments[right_lang] + "(*)"
           else
             span.badge.osmbc-label-markdown="0(*)"
         .col-md-11
          div.progress(style="margin-bottom:10px")
           div.progress-bar.osmbc-label-markdown(style="width:" + parseInt(100*ready/total)+"%")=ready
           div.progress-bar.progress-bar.osmbc-automated-translation(style=`width:${parseInt(100*autoTranslate/total)}%`)=autoTranslate
-          div.progress-bar.osmbc-label-no-markdown(style="width:" +parseInt(100*unedited/total)+"%")=unedited
+          div.progress-bar.osmbc-not-formulated(style="width:" +parseInt(100*unedited/total)+"%")=unedited
           div.progress-bar.osmbc-label-no-translation(style="width:" +parseInt(100*notranslate/total)+"%")=notranslate
 
 
