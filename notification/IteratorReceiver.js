@@ -1,6 +1,6 @@
 
 
-import { eachOf } from "async";
+import { eachOfSeries } from "async";
 import _debug from "debug";
 import logger from "../config.js";
 const debug = _debug("OSMBC:notification:iteratorReceiver");
@@ -17,7 +17,7 @@ class IteratorReceiver {
     // first return callback then execute notification
     callback();
 
-    eachOf(this.receiverMap, function (value, key, cb) {
+    eachOfSeries(this.receiverMap, function (value, key, cb) {
       value.sendReviewStatus(user, blog, lang, status, cb);
     }, function (err) {
       // in case of error log it
@@ -29,7 +29,7 @@ class IteratorReceiver {
     debug("IteratorReceiver.prototype.sendCloseStatus");
     // first return callback then execute notification
     callback();
-    eachOf(this.receiverMap, function (value, key, cb) {
+    eachOfSeries(this.receiverMap, function (value, key, cb) {
       value.sendCloseStatus(user, blog, lang, status, cb);
     }, function (err) {
       // in case of error log it
@@ -41,7 +41,7 @@ class IteratorReceiver {
     debug("IteratorReceiver.prototype.updateArticle");
     // first return callback then execute notification
     callback();
-    eachOf(this.receiverMap, function (value, key, cb) {
+    eachOfSeries(this.receiverMap, function (value, key, cb) {
       debug("forEachOf Item: " + key);
       value.updateArticle(user, article, change, cb);
     }, function (err) {
@@ -54,7 +54,7 @@ class IteratorReceiver {
     debug("IteratorReceiver.prototype.addComment");
     // first return callback then execute notification
     callback();
-    eachOf(this.receiverMap, function (value, key, cb) {
+    eachOfSeries(this.receiverMap, function (value, key, cb) {
       debug("forEachOf Item: " + key);
       value.addComment(user, article, comment, cb);
     }, function (err) {
@@ -67,7 +67,7 @@ class IteratorReceiver {
     debug("IteratorReceiver.prototype.editComment");
     // first return callback then execute notification
     callback();
-    eachOf(this.receiverMap, function (value, key, cb) {
+    eachOfSeries(this.receiverMap, function (value, key, cb) {
       debug("forEachOf Item: " + key);
       value.editComment(user, article, index, comment, cb);
     }, function (err) {
@@ -80,7 +80,7 @@ class IteratorReceiver {
     debug("IteratorReceiver.prototype.updateBlog");
     // first return callback then execute notification
     callback();
-    eachOf(this.receiverMap, function (value, key, cb) {
+    eachOfSeries(this.receiverMap, function (value, key, cb) {
       debug("forEachOf Item: " + key);
       value.updateBlog(user, blog, change, cb);
     }, function (err) {
