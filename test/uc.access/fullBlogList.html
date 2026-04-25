@@ -20,7 +20,7 @@
             <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
             <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
             <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbcbadge-lang">2</span></a></li>
+            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
             <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
               <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                 <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -39,12 +39,12 @@
                 <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">EN</a>
                 <div class="dropdown-divider"> </div>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">EN</a>
                 <div class="dropdown-divider"></div>
                 <form class="p-1">
@@ -76,7 +76,7 @@
               <tr>
                 <td><a href="/blog/WN251">WN251</a></td>
                 <td>open</td>
-                <td><a href="/article/list?markdownEN=&amp;category=!=--unpublished--&amp;blog=WN251"><span class="badge text-bg-secondary">2</span></a><a href="/article/list?markdownEN=&amp;category=!=--unpublished--&amp;blog=WN251"><span class="badge osmbclabel-openblog">2</span></a></td>
+                <td><a href="/article/list?markdownEN=&amp;category=!=--unpublished--&amp;blog=WN251"><span class="badge text-bg-secondary">2</span></a><a href="/article/list?markdownEN=&amp;category=!=--unpublished--&amp;blog=WN251"><span class="badge osmbc-label-openblog">2</span></a></td>
                 <td><a href="/blog/WN251?setStatus=closed">Close Blog</a></td>
               </tr>
             </tbody>
@@ -85,10 +85,10 @@
       </div>
       <div class="row">
         <p>Click on any label to edit the articles or view the blog.</p>
-        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbclabel-closedblog">total</span> Closed Blog</p>
-        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbclabel-reviewblog">total</span> Reviewed Blog</p>
-        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbclabel-editblog">total</span> Edit Blog</p>
-        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbclabel-openblog">total</span> Open Blog</p>
+        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbc-label-closedblog">total</span> Closed Blog</p>
+        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbc-label-reviewblog">total</span> Reviewed Blog</p>
+        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbc-label-editblog">total</span> Edit Blog</p>
+        <p><span class="badge text-bg-secondary">missing</span><span class="badge osmbc-label-openblog">total</span> Open Blog</p>
       </div>
       <p> (+3d): The number in brackets shows the blog closing for that language in days</p>
       <p>More bloglists</p>

@@ -29,10 +29,10 @@ mixin displayOverviewRow(a)
       td.d-none.d-md-block
         if (showCollector && a.author && a.author.collection)
           each b in a.author.collection.split(",")
-            +userLabel(b,"osmbclabel-collect")
+            +userLabel(b,"osmbc-label-collect")
         if (showEditor && a.author && a.author["markdown" + lang])
           each b in a.author["markdown"+lang].split(",")
-            +userLabel(b,"osmbclabel-markdown")
+            +userLabel(b,"osmbc-label-markdown")
 
       td.d-none.d-md-block
         if (showLanguages)
@@ -55,11 +55,11 @@ mixin displayOverviewRow(a)
               if a.author && a.author.collection
                 span="Collected: "
                 each collector in a.author.collection.split(",")
-                  +userLabel(collector,"osmbclabel-collect")
+                  +userLabel(collector,"osmbc-label-collect")
               if a.author && a.author["markdown" + lang]
                 span=" Edited: "
                 each author in a.author["markdown"+lang].split(",")
-                  +userLabel(author,"osmbclabel-markdown")
+                  +userLabel(author,"osmbc-label-markdown")
               if a._lastChange && a._lastChange["markdown" + lang]
                 span=" Time: " + layout.moment(a._lastChange["markdown" + lang]).fromNow()
 

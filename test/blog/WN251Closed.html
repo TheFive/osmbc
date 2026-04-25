@@ -41,12 +41,12 @@
                 <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a>
                 <div class="dropdown-divider"> </div>
               </div>
             </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbcbadge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
+            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a>
                 <div class="dropdown-divider"></div>
                 <form class="p-1">
@@ -66,14 +66,14 @@
       <div class="row"></div>
       <div class="row">
         <div class="col-md-1">
-          <div class="badge osmbclabel-lang">DE</div><span class="badge osmbclabel-markdown">0(*)</span>
+          <div class="badge osmbc-label-lang">DE</div><span class="badge osmbc-label-markdown">0(*)</span>
         </div>
         <div class="col-md-11">
           <div class="progress" style="margin-bottom:2px">
-            <div class="progress-bar osmbclabel-markdown" style="width:50%">1</div>
-            <div class="progress-bar progress-bar automated-translation" style="width:0%">0</div>
-            <div class="progress-bar osmbclabel-no-markdown" style="width:50%">1</div>
-            <div class="progress-bar osmbclabel-no-translation" style="width:0%">0</div>
+            <div class="progress-bar osmbc-label-markdown" style="width:50%">1</div>
+            <div class="progress-bar progress-bar osmbc-automated-translation" style="width:0%">0</div>
+            <div class="progress-bar osmbc-label-no-markdown" style="width:50%">1</div>
+            <div class="progress-bar osmbc-label-no-translation" style="width:0%">0</div>
           </div>
         </div>
       </div>
@@ -149,7 +149,7 @@ while layout.user["blogSetting"+v]
             </td>
             <td>
               <div onclick="if (!openEditor) {openEditor = document.getElementById('div2');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
-                <div class="not-formulated">
+                <div class="osmbc-not-formulated">
                   <ul class="no-margin">
                     <li>WN251 Picture</li>
                   </ul>
@@ -214,7 +214,7 @@ while layout.user["blogSetting"+v]
                   <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea></form>
-                  <p><span> Edited: </span><span class="badge small-margin osmbclabel-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
+                  <p><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
                 </div>
               </div>
             </td>
@@ -261,10 +261,10 @@ while layout.user["blogSetting"+v]
       <p></p>
       <p class="row"></p>
       <h2>Symbol Legend</h2>
-      <p><span class="badge osmbclabel-collect small-margin">X</span><span> = number of collectors </span></p>
-      <p><span class="badge osmbclabel-collect small-margin">username</span><span> = collector of article </span></p>
-      <p><span class="badge osmbclabel-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
-      <p><span class="badge osmbclabel-markdown small-margin">username</span><span> = Editor of article</span></p>
+      <p><span class="badge osmbc-label-collect small-margin">X</span><span> = number of collectors </span></p>
+      <p><span class="badge osmbc-label-collect small-margin">username</span><span> = collector of article </span></p>
+      <p><span class="badge osmbc-label-markdown small-margin">X</span><span> = number of editors in shown language</span></p>
+      <p><span class="badge osmbc-label-markdown small-margin">username</span><span> = Editor of article</span></p>
       <p><i class="fa fa-comment small-margin" style="color:blue"></i><span> = there is a comment in the article</span></p>
       <p><i class="fa fa-comment small-margin" style="color:red"></i><span> = there is a comment with personal mention in the article</span></p>
       <p><i class="fa fa-comment small-margin" style="color:orange"></i><span> = there is a comment with language mention in the article</span></p>

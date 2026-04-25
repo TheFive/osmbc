@@ -35,19 +35,19 @@ block content
                 for lang in layout.activeLanguages
                   td
                     if blog["close"+lang]
-                      - labeltype = "osmbclabel-closedblog"
+                      - labeltype = "osmbc-label-closedblog"
                       - urlblog = layout.htmlroot+"/blog/"+blog.name
 
                     else
                       if blog.isReviewStarted(lang)
-                        - labeltype = "osmbclabel-reviewblog"
+                        - labeltype = "osmbc-label-reviewblog"
                         - urlblog =  layout.htmlroot+"/blog/"+blog.name
 
                       else
                         if (blog.status === "edit")
-                          - labeltype = "osmbclabel-editblog"
+                          - labeltype = "osmbc-label-editblog"
                         else
-                          - labeltype = "osmbclabel-openblog"
+                          - labeltype = "osmbc-label-openblog"
                         - urlblog = layout.htmlroot+"/article/list?markdown"+lang+"=&category=!=--unpublished--&blog="+blog.name
 
                     a(href=urlblog)
@@ -70,26 +70,26 @@ block content
     p
       span.badge.text-bg-secondary
         | missing
-      span.badge.osmbclabel-closedblog
+      span.badge.osmbc-label-closedblog
         | total
       |  Closed Blog
 
     p
       span.badge.text-bg-secondary
         | missing
-      span.badge.osmbclabel-reviewblog
+      span.badge.osmbc-label-reviewblog
         | total
       |  Reviewed Blog
     p
       span.badge.text-bg-secondary
         | missing
-      span.badge.osmbclabel-editblog
+      span.badge.osmbc-label-editblog
         | total
       |  Edit Blog
     p
       span.badge.text-bg-secondary
         | missing
-      span.badge.osmbclabel-openblog
+      span.badge.osmbc-label-openblog
         | total
       |  Open Blog
 

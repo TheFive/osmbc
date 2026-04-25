@@ -91,10 +91,10 @@ block blogcontent
               span
                 if (showCollector && a.author && a.author.collection)
                   each b in a.author.collection.split(",")
-                    +userLabel(b,"osmbclabel-collect")
+                    +userLabel(b,"osmbc-label-collect")
                 if (showEditor && a.author && a.author["markdown" + lang])
                   each b in a.author["markdown"+lang].split(",")
-                    +userLabel(b,"osmbclabel-markdown")
+                    +userLabel(b,"osmbc-label-markdown")
 
               span
                 if (showLanguages)
@@ -124,12 +124,12 @@ block blogcontent
                       if a.author && a.author.collection
                         span="Collected: "
                         each collector in a.author.collection.split(",")
-                          +userLabel(collector,"osmbclabel-collect")
+                          +userLabel(collector,"osmbc-label-collect")
 
                       if a.author && a.author["markdown" + left_lang]
                         span=" Edited: "
                         each author in a.author["markdown"+left_lang].split(",")
-                          +userLabel(author,"osmbclabel-markdown")
+                          +userLabel(author,"osmbc-label-markdown")
                       if a._lastChange && a._lastChange["markdown" + left_lang]
                         span=" Time: " + layout.moment(a._lastChange["markdown" + left_lang]).fromNow()
 
@@ -152,12 +152,12 @@ block blogcontent
                         if a.author && a.author.collection
                           span="Collected: "
                           each collector in a.author.collection.split(",")
-                            +userLabel(collector,"osmbclabel-collect")
+                            +userLabel(collector,"osmbc-label-collect")
 
                         if a.author && a.author["markdown" + right_lang]
                           span=" Edited: "
                           each author in a.author["markdown"+right_lang].split(",")
-                            +userLabel(author,"osmbclabel-markdown")
+                            +userLabel(author,"osmbc-label-markdown")
                         if a._lastChange && a._lastChange["markdown" + right_lang]
                           span=" Time: " + layout.moment(a._lastChange["markdown" + right_lang]).fromNow()
 
@@ -186,10 +186,10 @@ block blogcontent
             div
               if (showCollector && a.author && a.author.collection)
                 each b in a.author.collection.split(",")
-                  +userLabel(b,"osmbclabel-collect")
+                  +userLabel(b,"osmbc-label-collect")
               if (showEditor && a.author && a.author["markdown" + lang])
                 each b in a.author["markdown"+lang].split(",")
-                  +userLabel(collector,"osmbclabel-markdown")
+                  +userLabel(collector,"osmbc-label-markdown")
 
             div
               if (showLanguages)
