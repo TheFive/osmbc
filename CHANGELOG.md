@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.2.1](https://github.com/TheFive/osmbc/tree/4.2.1) (2026-04-25)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.0...4.2.1)
+
 ## [4.2.0](https://github.com/TheFive/osmbc/tree/4.2.0) (2026-04-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.11...4.2.0)
@@ -336,13 +340,13 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.1...4.0.2)
 
-**Implemented enhancements:**
-
-- Export all Headers for the WP export [\#955](https://github.com/TheFive/osmbc/issues/955)
-
 ## [4.0.1](https://github.com/TheFive/osmbc/tree/4.0.1) (2022-10-08)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.0...4.0.1)
+
+**Implemented enhancements:**
+
+- Export all Headers for the WP export [\#955](https://github.com/TheFive/osmbc/issues/955)
 
 **Security fixes:**
 
