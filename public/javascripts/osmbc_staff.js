@@ -89,6 +89,7 @@ function chooseLanguageSet(set, action) {
     data.action = action;
     data.set = set;
   }
+
   jQuery.post(window.htmlroot + "/languageset", data, function () {
     location.reload();
   }).fail(function (err) {

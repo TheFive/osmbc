@@ -240,6 +240,10 @@ class User {
     return this.notification[channel][type];
   }
 
+  getLanguageSet() {
+    return this.languageSet;
+  }
+
   getLanguageConfig() {
     debug("User.prototype.getLanguageConfig");
     if (this.languageSet && this.languageSet !== "") {
