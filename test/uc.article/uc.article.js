@@ -297,6 +297,16 @@ describe("uc.article", function() {
       const warning = await osmbcApp.getArticlePage().getWarningMessage("DE");
       should(warning).equal("Link https://a.link is used twice in markdown");
     });
+    it("should warn if no link is used", async function() {
+      await osmbcApp.getArticlePage().fillMarkdownInput("DE", "[](https://notincollection.link) text with no link");
+      const warning = await osmbcApp.getArticlePage().getWarningMessage("DE");
+      should(warning).equal("Please use a link from collection in article.");
+    });
+    it("should handle issue '#1063'", async function() {
+      await osmbcApp.getArticlePage().fillMarkdownInput("DE", "bevor er die Ergebnisse über JOSM (mit dem [PicLayer](https://www.test.de/holla)-Plugin) auf");
+      const warning = await osmbcApp.getArticlePage().getWarningMessage("DE");
+      should(warning).equal("Please use a link from collection in article.");
+    });
   });
 
   describe("Comments", function() {
