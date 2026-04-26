@@ -31,27 +31,38 @@ block content
     .col-md-4
       .row
         h3="Current Production Status"
-        +blogStatusTable(false)
-        row
-          p
-            | Click on any label to edit the articles or view the blog.
-          p
-            span.badge.osmbc-label-closedblog
-              | total
-            |  Blog is closed for a language
-
-          p
-            span.badge.osmbc-label-reviewblog
-              | total
-            |  Blog is undergoing review
-          p
-            span.badge.osmbc-label-editblog
-              | total
-            |  Blog is open for editing
-          p
-            span.badge.osmbc-label-openblog
-              | total
-            |  Blog is used for submissions
+      div
+        +blogStatusTable(true, true)
+      .mt-1.mb-2
+        small.osmbc-help-text Badge legend
+        table.table.table-sm.w-auto.mb-0
+          tbody
+            tr
+              td.text-center.align-middle
+                span.badge.osmbc-label-openblog open
+              td.text-start.align-middle 
+                span.osmbc-help-text number of pending articles in open blogs
+            tr
+              td.text-center.align-middle
+                span.badge.osmbc-not-formulated edit
+              td.text-start.align-middle.osmbc-help-text 
+                span.osmbc-help-text number of pending articles in edit blogs
+            tr
+              td.text-center.align-middle
+                span.badge.osmbc-automated-translation auto
+              td.text-start.align-middle.osmbc-help-text 
+                span.osmbc-help-text number of automated translations
+            tr
+              td.text-center.align-middle
+                span.badge.osmbc-label-reviewblog review
+              td.text-start.align-middle.osmbc-help-text 
+                span.osmbc-help-text number of reviews
+            tr
+              td.text-center.align-middle
+                span.badge.osmbc-label-closedblog
+                  i.fa.fa-check
+              td.text-start.align-middle.osmbc-help-text 
+                span.osmbc-help-text language is closed
 
 
 

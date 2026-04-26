@@ -9,9 +9,9 @@ mixin firstBlogOfList(list,count,c)
         if i<count
           li.navbar-item.active
             a.nav-link(href=`${layout.htmlroot}/blog/${blog.name}`)=blog.name
-              span.badge.rounded-pill.osmbc-badge-lang=blogNumber(blog, layout.user.getLang(0))
+              span.badge.rounded-pill.osmbc-badge-lang=blogNumberNotFormulated(blog, layout.user.getLang(0))
               if layout.user.getLang(1)
-                span.badge.rounded-pill.osmbc-badge-lang2=blogNumber(blog, layout.user.getLang(1))
+                span.badge.rounded-pill.osmbc-badge-lang2=blogNumberNotFormulated(blog, layout.user.getLang(1))
 
 
 
@@ -35,7 +35,7 @@ mixin myGuestArticleMenu
 mixin tbcMenu
   if (layout && layout.user && layout.user.hasFullAccess())
     li.navbar-item.active
-      if blogNumber(layout.tbc, layout.user.getLang(0)) > 0
+      if blogNumberNotFormulated(layout.tbc, layout.user.getLang(0)) > 0
         - dynamicHide = ""
         if (layout.tbc._tbcOwnArticleNumber == 0)
           - dynamicHide = "d-none d-sm-flex"
@@ -109,7 +109,8 @@ block all
       link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css" rel='stylesheet')
 
     body
-      - function blogNumber(blog,language) {return ((blog)?blog.getUnEdited(language):"?") }
+      - function blogNumberNotFormulated(blog,language) {return ((blog)?blog.getUnEdited(language):"?") }
+      - function blogNumberAutoTranslate(blog,language) {return ((blog)?blog.getAutoTranslate(language):"?") }
       - function blogCount(blog,language) {return ((blog)?blog.getExpected(language):"?") }
 
 
