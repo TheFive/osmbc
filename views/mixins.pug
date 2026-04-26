@@ -316,7 +316,7 @@ mixin blogStatusTable(blogWithLink, compactView)
                   - showUneditedFrom = 1
                 - unedited = editBlog.getUnEdited(l)
                 if (unedited >= showUneditedFrom )
-                  div.badge.osmbc-label-editblog=unedited
+                  div.badge.osmbc-not-formulated=unedited
                 - autoTranslate = editBlog.getAutoTranslate(l)
                 if (autoTranslate > 0)
                   div.badge.osmbc-automated-translation=autoTranslate

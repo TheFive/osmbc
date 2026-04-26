@@ -60,12 +60,14 @@
         <div class="col-md-4">
           <div class="row">
             <h3>Current Production Status</h3>
+          </div>
+          <div>
             <div class="table-responsive">
-              <table class="table table-sm blog-status-table">
+              <table class="table table-sm blog-status-table blog-status-table-compact">
                 <tbody>
                   <tr class="blog-status-header">
                     <td class="blog-status-lang-head"></td>
-                    <td class="blog-status-blog-head">WN251</td>
+                    <td class="blog-status-blog-head"><a href="/blog/WN251">WN251</a></td>
                   </tr>
                   <tr class="blog-status-row">
                     <td class="text-center blog-status-lang-head">EN</td>
@@ -76,13 +78,32 @@
                 </tbody>
               </table>
             </div>
-            <row>
-              <p>Click on any label to edit the articles or view the blog.</p>
-              <p><span class="badge osmbc-label-closedblog">total</span> Blog is closed for a language</p>
-              <p><span class="badge osmbc-label-reviewblog">total</span> Blog is undergoing review</p>
-              <p><span class="badge osmbc-label-editblog">total</span> Blog is open for editing</p>
-              <p><span class="badge osmbc-label-openblog">total</span> Blog is used for submissions</p>
-            </row>
+          </div>
+          <div class="mt-1 mb-2"><small class="osmbc-help-text">Badge legend</small>
+            <table class="table table-sm w-auto mb-0">
+              <tbody>
+                <tr>
+                  <td class="text-center align-middle"><span class="badge osmbc-label-openblog">open</span></td>
+                  <td class="text-start align-middle"> <span class="osmbc-help-text">number of pending articles in open blogs</span></td>
+                </tr>
+                <tr>
+                  <td class="text-center align-middle"><span class="badge osmbc-not-formulated">edit</span></td>
+                  <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">number of pending articles in edit blogs</span></td>
+                </tr>
+                <tr>
+                  <td class="text-center align-middle"><span class="badge osmbc-automated-translation">auto</span></td>
+                  <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">number of automated translations</span></td>
+                </tr>
+                <tr>
+                  <td class="text-center align-middle"><span class="badge osmbc-label-reviewblog">review</span></td>
+                  <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">number of reviews</span></td>
+                </tr>
+                <tr>
+                  <td class="text-center align-middle"><span class="badge osmbc-label-closedblog"><i class="fa fa-check"></i></span></td>
+                  <td class="text-start align-middle osmbc-help-text"> <span class="osmbc-help-text">language is closed</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
