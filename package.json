@@ -8,6 +8,7 @@
     "lint": "eslint --no-error-on-unmatched-pattern app.js staticFileServer.js config.js postinstall.js bin/**/*.js export/**/*.js genstaticpage/**/*.js import/**/*.js model/**/*.js notification/**/*.js render/**/*.js routes/**/*.js scripts/**/*.js test/**/*.js util/**/*.js",
     "start": "NODE_ENV=development node ./bin/www.js",
     "test": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx nyc mocha; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status'",
+    "test:fast": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx mocha; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Fast-Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status'",
     "test:model": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/model.*.test.js\" \"test/notification.*.test.js\" \"test/render.*.test.js\" \"test/util.test.js\"",
     "test:router": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/routes.*.test.js\"",
     "test:ui": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/**/uc.*.test.js\"",

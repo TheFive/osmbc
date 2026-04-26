@@ -58,8 +58,11 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         article.setAndSave({ OSMUser: "testuser" }, { version: 1, blog: "WN789", collection: "newtext", title: "Test with Pipe | Title" }, function(err) {
           should.not.exist(err);
-          should(slack.isDone()).is.True();
-          bddone();
+          waitForMocksToComplete([slack], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack.isDone()).is.True();
+            bddone();
+          });
         });
       });
     });
@@ -77,20 +80,26 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         article.setAndSave({ OSMUser: "testuser" }, { version: 1, blog: "WN789", collection: "newtext", title: "Test <..> <..> Title" }, function(err) {
           should.not.exist(err);
-          should(slack.isDone()).is.True();
-          slack = nock("https://missingmattermost.example.com")
-            .post("/services/osmde",
-              {
-                text: "<https://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
-                username: "testbc(testuser)",
-                icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
-                channel: "#osmbcarticle"
-              })
-            .reply(200, "ok");
-          article.setAndSave({ OSMUser: "testuser" }, { version: 2, collection: "New Text was to short" }, function(err) {
-            should.not.exist(err);
+          waitForMocksToComplete([slack], function(waitErr) {
+            should.not.exist(waitErr);
             should(slack.isDone()).is.True();
-            bddone();
+            slack = nock("https://missingmattermost.example.com")
+              .post("/services/osmde",
+                {
+                  text: "<https://localhost:35043/article/1|Test «..» «..» Title> changed collection\n",
+                  username: "testbc(testuser)",
+                  icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
+                  channel: "#osmbcarticle"
+                })
+              .reply(200, "ok");
+            article.setAndSave({ OSMUser: "testuser" }, { version: 2, collection: "New Text was to short" }, function(err) {
+              should.not.exist(err);
+              waitForMocksToComplete([slack], function(waitErr2) {
+                should.not.exist(waitErr2);
+                should(slack.isDone()).is.True();
+                bddone();
+              });
+            });
           });
         });
       });
@@ -109,8 +118,11 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         article.addCommentFunction({ OSMUser: "testuser" }, "Information for @User3", function(err) {
           should.not.exist(err);
-          should(slack.isDone()).is.True();
-          bddone();
+          waitForMocksToComplete([slack], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack.isDone()).is.True();
+            bddone();
+          });
         });
       });
     });
@@ -139,9 +151,12 @@ describe("notification/slackReceiver", function() {
             .reply(200, "ok");
           article.editComment({ OSMUser: "testuser" }, 0, "Information for all", function(err) {
             should.not.exist(err);
-            should(slack.isDone()).is.True();
-            should(slack2.isDone()).is.True();
-            bddone();
+            waitForMocksToComplete([slack, slack2], function(waitErr) {
+              should.not.exist(waitErr);
+              should(slack.isDone()).is.True();
+              should(slack2.isDone()).is.True();
+              bddone();
+            });
           });
         });
       });
@@ -270,14 +285,15 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         blog.setReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
-          should(slack1a.isDone()).is.True();
-          should(slack1b.isDone()).is.True();
-          should(slack2a.isDone()).is.True();
-          should(slack2b.isDone()).is.False();
-          nock.cleanAll();
-
-
-          bddone();
+          waitForMocksToComplete([slack1a, slack1b, slack2a], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack1a.isDone()).is.True();
+            should(slack1b.isDone()).is.True();
+            should(slack2a.isDone()).is.True();
+            should(slack2b.isDone()).is.False();
+            nock.cleanAll();
+            bddone();
+          });
         });
       });
     });
@@ -322,14 +338,15 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         blog.setReviewComment("PT-PT", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
-          should(slack1a.isDone()).is.True();
-          should(slack1b.isDone()).is.True();
-          should(slack2a.isDone()).is.True();
-          should(slack2b.isDone()).is.False();
-          nock.cleanAll();
-
-
-          bddone();
+          waitForMocksToComplete([slack1a, slack1b, slack2a], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack1a.isDone()).is.True();
+            should(slack1b.isDone()).is.True();
+            should(slack2a.isDone()).is.True();
+            should(slack2b.isDone()).is.False();
+            nock.cleanAll();
+            bddone();
+          });
         });
       });
     });
@@ -374,14 +391,15 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         blog.setReviewComment("DE", { OSMUser: "testuser" }, "markexported", function(err) {
           should.not.exist(err);
-          should(slack1a.isDone()).is.True();
-          should(slack1b.isDone()).is.True();
-          should(slack2a.isDone()).is.True();
-          should(slack2b.isDone()).is.False();
-          nock.cleanAll();
-
-
-          bddone();
+          waitForMocksToComplete([slack1a, slack1b, slack2a], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack1a.isDone()).is.True();
+            should(slack1b.isDone()).is.True();
+            should(slack2a.isDone()).is.True();
+            should(slack2b.isDone()).is.False();
+            nock.cleanAll();
+            bddone();
+          });
         });
       });
     });
@@ -426,13 +444,15 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
           should.not.exist(err);
-          should(slack1a.isDone()).is.True();
-          should(slack1b.isDone()).is.True();
-          should(slack2a.isDone()).is.False();
-          should(slack2b.isDone()).is.True();
-          nock.cleanAll();
-
-          bddone();
+          waitForMocksToComplete([slack1a, slack1b, slack2b], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack1a.isDone()).is.True();
+            should(slack1b.isDone()).is.True();
+            should(slack2a.isDone()).is.False();
+            should(slack2b.isDone()).is.True();
+            nock.cleanAll();
+            bddone();
+          });
         });
       });
     });
@@ -477,24 +497,29 @@ describe("notification/slackReceiver", function() {
         should.not.exist(err);
         blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
           should.not.exist(err);
-          should(slack1a.isDone()).is.True();
-          should(slack1b.isDone()).is.True();
-          should(slack2a.isDone()).is.False();
-          should(slack2b.isDone()).is.True();
-          slack2b = nock("https://missingmattermost.example.com")
-            .post("/services/theweeklyosm",
-              {
-                text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",
-                username: "testbc(testuser)",
-                icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
-                channel: "#osmbcblog"
-              })
-            .reply(200, "ok");
-          blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: false }, function(err) {
-            should.not.exist(err);
-
+          waitForMocksToComplete([slack1a, slack1b, slack2b], function(waitErr) {
+            should.not.exist(waitErr);
+            should(slack1a.isDone()).is.True();
+            should(slack1b.isDone()).is.True();
+            should(slack2a.isDone()).is.False();
             should(slack2b.isDone()).is.True();
-            bddone();
+            slack2b = nock("https://missingmattermost.example.com")
+              .post("/services/theweeklyosm",
+                {
+                  text: "<https://localhost:35043/blog/blog|blog>(PT-PT) has been reopened",
+                  username: "testbc(testuser)",
+                  icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
+                  channel: "#osmbcblog"
+                })
+              .reply(200, "ok");
+            blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: false }, function(err) {
+              should.not.exist(err);
+              waitForMocksToComplete([slack2b], function(waitErr2) {
+                should.not.exist(waitErr2);
+                should(slack2b.isDone()).is.True();
+                bddone();
+              });
+            });
           });
         });
       });
