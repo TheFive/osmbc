@@ -7,6 +7,8 @@ block markdownArea
   // Markdown Area All Column
   .row
     - languages = layout.user.getLanguages()
+    if layout.user.getLanguageSet() === "Active"
+      - languages = layout.activeLanguages
     for lang of languages
       if (lang)
         div.col

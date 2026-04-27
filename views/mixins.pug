@@ -350,8 +350,13 @@ mixin langDropdownList(langNamedPosition,langlist,choosenLangs)
       a.dropdown-item.disabled()=litem 
 
 mixin langSetDropdownList(setList)
-  each litem in setList
-    a.dropdown-item(id="langset_"+litem onclick = "chooseLanguageSet('" + litem +"' ,'set')")=litem 
+  if typeof(setList) === "string"
+    a.dropdown-item(id="langset_"+setList onclick = "chooseLanguageSet('" + setList +"' ,'set')")=setList
+  else 
+    each litem in setList
+      a.dropdown-item(id="langset_"+litem onclick = "chooseLanguageSet('" + litem +"' ,'set')")=litem 
+    a.dropdown-item(id="langset_Active" onclick = "chooseLanguageSet('Active' ,'set')")="Active" 
+  
 
 
 mixin langChooser(choosenLang,cssClass,langString,languages,choosenLangs)
@@ -392,7 +397,7 @@ mixin langMenu(size)
       div.dropdown-menu(aria-labelledby="languageSetMenu")
         +langSetDropdownList(layout.user.getLanguageSets())
         div.dropdown-divider
-        +langSetDropdownList(["Individual"])
+        +langSetDropdownList("Individual")
         +deleteLangSet
 
 

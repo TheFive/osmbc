@@ -9,7 +9,7 @@
 // Init This Window with jQuery ready Callback
 $(document).ready(init);
 
-const regexUrlFromCollection = /\b(https?:\/\/[^\[\] \n\r]*)\b/g;
+const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
 
 
 
