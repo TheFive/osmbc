@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.2.2](https://github.com/TheFive/osmbc/tree/4.2.2) (2026-04-26)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.1...4.2.2)
+
+**Merged pull requests:**
+
+- Bump postcss from 8.5.6 to 8.5.10 [\#1067](https://github.com/TheFive/osmbc/pull/1067) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump follow-redirects from 1.15.11 to 1.16.0 [\#1066](https://github.com/TheFive/osmbc/pull/1066) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [4.2.1](https://github.com/TheFive/osmbc/tree/4.2.1) (2026-04-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.0...4.2.1)
