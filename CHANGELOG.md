@@ -1,13 +1,12 @@
 # Changelog
 
+## [4.2.3](https://github.com/TheFive/osmbc/tree/4.2.3) (2026-04-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.2...4.2.3)
+
 ## [4.2.2](https://github.com/TheFive/osmbc/tree/4.2.2) (2026-04-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.1...4.2.2)
-
-**Merged pull requests:**
-
-- Bump postcss from 8.5.6 to 8.5.10 [\#1067](https://github.com/TheFive/osmbc/pull/1067) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump follow-redirects from 1.15.11 to 1.16.0 [\#1066](https://github.com/TheFive/osmbc/pull/1066) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.2.1](https://github.com/TheFive/osmbc/tree/4.2.1) (2026-04-25)
 
@@ -25,71 +24,33 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.09...4.1.10)
 
-**Fixed bugs:**
-
-- TBC \(To Be Collected\) concept for API seems broken [\#1065](https://github.com/TheFive/osmbc/issues/1065)
-
 ## [4.1.09](https://github.com/TheFive/osmbc/tree/4.1.09) (2026-01-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.08...4.1.09)
-
-**Closed issues:**
-
-- Translate deeplPro - Legacy authentication method 'JSON body' is no longer supported [\#1062](https://github.com/TheFive/osmbc/issues/1062)
 
 ## [4.1.08](https://github.com/TheFive/osmbc/tree/4.1.08) (2025-10-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.07...4.1.08)
 
-**Closed issues:**
-
-- OSMCal Events are mapped to timezone of server [\#1059](https://github.com/TheFive/osmbc/issues/1059)
-
 ## [4.1.07](https://github.com/TheFive/osmbc/tree/4.1.07) (2025-07-19)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.06...4.1.07)
-
-**Merged pull requests:**
-
-- Remove space from start of link, and fix spelling \("Goto" → "Go to"\) [\#1056](https://github.com/TheFive/osmbc/pull/1056) ([waldyrious](https://github.com/waldyrious))
 
 ## [4.1.06](https://github.com/TheFive/osmbc/tree/4.1.06) (2025-06-08)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.05...4.1.06)
 
-**Closed issues:**
-
-- Add Venue / Location from OSMCAL to automated generated calendar [\#1055](https://github.com/TheFive/osmbc/issues/1055)
-
 ## [4.1.05](https://github.com/TheFive/osmbc/tree/4.1.05) (2025-04-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.04...4.1.05)
-
-**Closed issues:**
-
-- flip the columns of the Calendar ? [\#1042](https://github.com/TheFive/osmbc/issues/1042)
-
-**Merged pull requests:**
-
-- move country flag to front for osmcal [\#1045](https://github.com/TheFive/osmbc/pull/1045) ([call-me-matt](https://github.com/call-me-matt))
 
 ## [4.1.04](https://github.com/TheFive/osmbc/tree/4.1.04) (2025-03-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.03...4.1.04)
 
-**Closed issues:**
-
-- Pipe | breaks the Mattermost links [\#1052](https://github.com/TheFive/osmbc/issues/1052)
-- use emoticons in OSMcal table [\#1049](https://github.com/TheFive/osmbc/issues/1049)
-- Don't translate calendar [\#1047](https://github.com/TheFive/osmbc/issues/1047)
-
 ## [4.1.03](https://github.com/TheFive/osmbc/tree/4.1.03) (2025-03-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.02...4.1.03)
-
-**Closed issues:**
-
-- Cannot rad properties of null \(reading '0'\) [\#1043](https://github.com/TheFive/osmbc/issues/1043)
 
 ## [4.1.02](https://github.com/TheFive/osmbc/tree/4.1.02) (2024-09-01)
 
@@ -103,44 +64,13 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.27...4.0.28)
 
-**Closed issues:**
-
-- error: bind message supplies 3 parameters, but prepared statement "" requires 0 [\#1040](https://github.com/TheFive/osmbc/issues/1040)
-
-**Merged pull requests:**
-
-- update libraries of importdb script [\#1036](https://github.com/TheFive/osmbc/pull/1036) ([call-me-matt](https://github.com/call-me-matt))
-- Bugfix/title image dimensions [\#1035](https://github.com/TheFive/osmbc/pull/1035) ([call-me-matt](https://github.com/call-me-matt))
-
 ## [4.0.27](https://github.com/TheFive/osmbc/tree/4.0.27) (2024-03-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.24...4.0.27)
 
-**Implemented enhancements:**
-
-- Improve Diff Behavior [\#1028](https://github.com/TheFive/osmbc/issues/1028)
-
-**Fixed bugs:**
-
-- markdown-it-imsize is not complete translated with deepl [\#841](https://github.com/TheFive/osmbc/issues/841)
-
-**Closed issues:**
-
-- Fix Security Issue [\#1034](https://github.com/TheFive/osmbc/issues/1034)
-- Fix Security Issue [\#1033](https://github.com/TheFive/osmbc/issues/1033)
-- Fix Security Issue [\#1032](https://github.com/TheFive/osmbc/issues/1032)
-- Deepl Cost control on Admin Page [\#1030](https://github.com/TheFive/osmbc/issues/1030)
-- Disable link Control Feature for Guests [\#1029](https://github.com/TheFive/osmbc/issues/1029)
-- Add Spinner to Collect Save button, to inform about "in progress" [\#1021](https://github.com/TheFive/osmbc/issues/1021)
-
 ## [4.0.24](https://github.com/TheFive/osmbc/tree/4.0.24) (2024-03-10)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.23...4.0.24)
-
-**Closed issues:**
-
-- Make Hostname vor Server configurable [\#1026](https://github.com/TheFive/osmbc/issues/1026)
-- Replace request module by axios [\#833](https://github.com/TheFive/osmbc/issues/833)
 
 ## [4.0.23](https://github.com/TheFive/osmbc/tree/4.0.23) (2024-03-09)
 
@@ -150,58 +80,25 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.21...4.0.22)
 
-**Fixed bugs:**
-
-- remove pt-pt-t [\#1022](https://github.com/TheFive/osmbc/issues/1022)
-
-**Closed issues:**
-
-- remove PT-PT-t [\#1023](https://github.com/TheFive/osmbc/issues/1023)
-- untouched articles in a second row - if possible [\#1017](https://github.com/TheFive/osmbc/issues/1017)
-
 ## [4.0.21](https://github.com/TheFive/osmbc/tree/4.0.21) (2023-12-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.20...4.0.21)
-
-**Closed issues:**
-
-- Feature: Hide the warning of "Please enter your email to receive comments..." [\#993](https://github.com/TheFive/osmbc/issues/993)
 
 ## [4.0.20](https://github.com/TheFive/osmbc/tree/4.0.20) (2023-12-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.19...4.0.20)
 
-**Closed issues:**
-
-- Show number of auto translated articles in blog progress bars [\#1016](https://github.com/TheFive/osmbc/issues/1016)
-
 ## [4.0.19](https://github.com/TheFive/osmbc/tree/4.0.19) (2023-12-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.18...4.0.19)
-
-**Merged pull requests:**
-
-- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.0.18](https://github.com/TheFive/osmbc/tree/4.0.18) (2023-09-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.17...4.0.18)
 
-**Merged pull requests:**
-
-- Bugfix/heatmap typo [\#1010](https://github.com/TheFive/osmbc/pull/1010) ([call-me-matt](https://github.com/call-me-matt))
-
 ## [4.0.17](https://github.com/TheFive/osmbc/tree/4.0.17) (2023-09-23)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.15...4.0.17)
-
-**Fixed bugs:**
-
-- Readability display does not handle non utf-8 pages [\#1005](https://github.com/TheFive/osmbc/issues/1005)
-
-**Merged pull requests:**
-
-- fixed typo "e person" to "a person" [\#1004](https://github.com/TheFive/osmbc/pull/1004) ([thibaultmol](https://github.com/thibaultmol))
 
 ## [4.0.15](https://github.com/TheFive/osmbc/tree/4.0.15) (2023-07-23)
 
@@ -211,43 +108,17 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.13...4.0.14)
 
-**Closed issues:**
-
-- Blog Status page showing wrong number of Reviews [\#1002](https://github.com/TheFive/osmbc/issues/1002)
-
 ## [4.0.13](https://github.com/TheFive/osmbc/tree/4.0.13) (2023-07-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.12...4.0.13)
-
-**Closed issues:**
-
-- deconstruction of bingPRO implementation [\#999](https://github.com/TheFive/osmbc/issues/999)
-- Keep Lead picture width and height parameters during translation [\#991](https://github.com/TheFive/osmbc/issues/991)
-- Remove | from OSMCal Texts, alternative ust HTML for Table description [\#988](https://github.com/TheFive/osmbc/issues/988)
 
 ## [4.0.12](https://github.com/TheFive/osmbc/tree/4.0.12) (2023-07-02)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.11...4.0.12)
 
-**Implemented enhancements:**
-
-- deconstuction of twitter preview feature [\#997](https://github.com/TheFive/osmbc/issues/997)
-
-**Closed issues:**
-
-- Increase review counter only for completed individual reviews [\#995](https://github.com/TheFive/osmbc/issues/995)
-
 ## [4.0.11](https://github.com/TheFive/osmbc/tree/4.0.11) (2023-07-02)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.9a...4.0.11)
-
-**Implemented enhancements:**
-
-- Improve Url Check by using Head instead of get for check [\#998](https://github.com/TheFive/osmbc/issues/998)
-
-**Closed issues:**
-
-- Parse Error: Content-Length can't be present with Transfer-Encoding [\#996](https://github.com/TheFive/osmbc/issues/996)
 
 ## [4.0.9a](https://github.com/TheFive/osmbc/tree/4.0.9a) (2023-06-25)
 
@@ -257,21 +128,9 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.9...4.0.10)
 
-**Fixed bugs:**
-
-- Not able to use verivication link / login process breaks accessing links [\#992](https://github.com/TheFive/osmbc/issues/992)
-
 ## [4.0.9](https://github.com/TheFive/osmbc/tree/4.0.9) (2023-04-30)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.8a...4.0.9)
-
-**Fixed bugs:**
-
-- Automatically generate OSMCal doesn't work [\#939](https://github.com/TheFive/osmbc/issues/939)
-
-**Closed issues:**
-
-- Linking in comments to other articles is broken [\#985](https://github.com/TheFive/osmbc/issues/985)
 
 ## [4.0.8a](https://github.com/TheFive/osmbc/tree/4.0.8a) (2023-04-10)
 
@@ -281,69 +140,25 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.7...4.0.8)
 
-**Implemented enhancements:**
-
-- Better titles for collected toots [\#981](https://github.com/TheFive/osmbc/issues/981)
-- Links to twitter show a red \#404 [\#946](https://github.com/TheFive/osmbc/issues/946)
-- Reveiw OSMCAL generation for faster generation. [\#945](https://github.com/TheFive/osmbc/issues/945)
-
-**Closed issues:**
-
-- Consider publish date to identify relevant calendar items [\#980](https://github.com/TheFive/osmbc/issues/980)
-- Broken preview image - NaN in wp-caption if not set [\#976](https://github.com/TheFive/osmbc/issues/976)
-- Unicode issue with title extraction [\#973](https://github.com/TheFive/osmbc/issues/973)
-- Open external links in a new tab [\#971](https://github.com/TheFive/osmbc/issues/971)
-
-**Merged pull requests:**
-
-- repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
-- do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
-- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
-
 ## [4.0.7](https://github.com/TheFive/osmbc/tree/4.0.7) (2022-12-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.6...4.0.7)
-
-**Closed issues:**
-
-- Move Version Number to Package.json [\#968](https://github.com/TheFive/osmbc/issues/968)
 
 ## [4.0.6](https://github.com/TheFive/osmbc/tree/4.0.6) (2022-11-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.5...4.0.6)
 
-**Fixed bugs:**
-
-- Typos on login page [\#967](https://github.com/TheFive/osmbc/issues/967)
-
 ## [4.0.5](https://github.com/TheFive/osmbc/tree/4.0.5) (2022-11-12)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.4...4.0.5)
-
-**Fixed bugs:**
-
-- Delete Review and Close Blog Status Functions returning OK [\#965](https://github.com/TheFive/osmbc/issues/965)
-
-**Security fixes:**
-
-- Allow Letsencypt certificate for Mattermost [\#964](https://github.com/TheFive/osmbc/issues/964)
 
 ## [4.0.4](https://github.com/TheFive/osmbc/tree/4.0.4) (2022-11-01)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.3...4.0.4)
 
-**Fixed bugs:**
-
-- Check, why MD is not completly interpreted in preview page of automatictranslatetext config. [\#963](https://github.com/TheFive/osmbc/issues/963)
-- Nominatim Cache File is not generated if not exist [\#958](https://github.com/TheFive/osmbc/issues/958)
-
 ## [4.0.3](https://github.com/TheFive/osmbc/tree/4.0.3) (2022-10-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.2...4.0.3)
-
-**Fixed bugs:**
-
-- Error Handling is not giving enough information in production mode [\#962](https://github.com/TheFive/osmbc/issues/962)
 
 ## [4.0.2](https://github.com/TheFive/osmbc/tree/4.0.2) (2022-10-08)
 
@@ -352,19 +167,6 @@
 ## [4.0.1](https://github.com/TheFive/osmbc/tree/4.0.1) (2022-10-08)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.0...4.0.1)
-
-**Implemented enhancements:**
-
-- Export all Headers for the WP export [\#955](https://github.com/TheFive/osmbc/issues/955)
-
-**Security fixes:**
-
-- Review usage of jstransformer \(may be skip it\) [\#957](https://github.com/TheFive/osmbc/issues/957)
-- Fix redirection to node\_module files. [\#956](https://github.com/TheFive/osmbc/issues/956)
-
-**Merged pull requests:**
-
-- remove typo in KO header [\#951](https://github.com/TheFive/osmbc/pull/951) ([call-me-matt](https://github.com/call-me-matt))
 
 
 
