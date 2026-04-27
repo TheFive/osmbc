@@ -1,19 +1,25 @@
 
 import fs from "fs";
 import path from "path";
-import config from "./config.js";
+import { fileURLToPath } from "url";
 
+
+const projectDir = path.dirname(fileURLToPath(import.meta.url));
 
 
 function copy(srcpath, destpath) {
-  const src = path.join(config.getDirName(), "node_modules", srcpath);
-  const dest = path.join(config.getDirName(), "public", destpath);
-  fs.copyFileSync(src, dest);
+  const src = path.join(projectDir, "node_modules", srcpath);
+  const dest = path.join(projectDir, "public", destpath);
+  try {
+    fs.copyFileSync(src, dest);
+  } catch (err) {
+    throw new Error(`postinstall copy failed: ${src} -> ${dest}: ${err.message}`);
+  }
 }
 
 function createDir(dir) {
-  const d = path.join(config.getDirName(), "public", dir);
-  if (!fs.existsSync(d)) fs.mkdirSync(d);
+  const d = path.join(projectDir, "public", dir);
+  if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 }
 
 createDir("fonts");
