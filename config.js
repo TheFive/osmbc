@@ -6,6 +6,7 @@ import { strict as assert } from "assert";
 import winston from "winston";
 import _debug from "debug";
 import { execSync } from "child_process";
+import packageJson from "./package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -233,6 +234,7 @@ const config = {
   getValue: getValue,
   env: env,
   logger: logger,
+  version: packageJson.version,
   getConfiguration: getConfiguration,
   getPGString: () => { return pgstring; },
   getLanguages: getLanguages,

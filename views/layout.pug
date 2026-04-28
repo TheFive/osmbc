@@ -104,9 +104,9 @@ block all
       link(rel='icon', href='/favicon.ico')
       title=(layout)?layout.title:appName
       // Bootstrap core CSS
-      link(href=layout.htmlroot + "/stylesheets/bootstrap.min.css", rel='stylesheet')
-      link(href=layout.htmlroot + "/stylesheets/bootstrap-select.min.css", rel='stylesheet')
-      link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css" rel='stylesheet')
+      link(href=layout.htmlroot + "/stylesheets/bootstrap.min.css?v=" + layout.osmbc_version, rel='stylesheet')
+      link(href=layout.htmlroot + "/stylesheets/bootstrap-select.min.css?v=" + layout.osmbc_version, rel='stylesheet')
+      link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css?v=" + layout.osmbc_version, rel='stylesheet')
 
     body
       - function blogNumberNotFormulated(blog,language) {return ((blog)?blog.getUnEdited(language):"?") }
@@ -168,17 +168,17 @@ block all
       // Bootstrap core JavaScript
       // ==================================================
       // Placed at the end of the document so the pages load faster
-      script(src=layout.htmlroot + "/javascripts/jquery.min.js")
-      script(src=layout.htmlroot + "/javascripts/bootstrap.bundle.min.js")
-      script(src=layout.htmlroot + "/javascripts/bootstrap-select.min.js")
-      script(src=layout.htmlroot + "/javascripts/osmbc_staff.js")
+      script(src=layout.htmlroot + "/javascripts/jquery.min.js?v=" + layout.osmbc_version)
+      script(src=layout.htmlroot + "/javascripts/bootstrap.bundle.min.js?v=" + layout.osmbc_version)
+      script(src=layout.htmlroot + "/javascripts/bootstrap-select.min.js?v=" + layout.osmbc_version)
+      script(src=layout.htmlroot + "/javascripts/osmbc_staff.js?v=" + layout.osmbc_version)
   
 
   doctype html
   html
     head
       title= title
-      link(rel='stylesheet', href=`${htmlroot}${stylesheet}`)
+      link(rel='stylesheet', href=`${htmlroot}${stylesheet}?v=${layout.osmbc_version}`)
     body
   script(nonce=cspNonce).
 

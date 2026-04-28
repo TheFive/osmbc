@@ -82,7 +82,7 @@ block content
 
 
 block append scripts_to_load
-  script(src=layout.htmlroot + "/javascripts/markdown-it.min.js")
+  script(src=layout.htmlroot + "/javascripts/markdown-it.min.js?v=" + layout.osmbc_version)
 
 block append scripts_to_execute
   script(nonce=cspNonce).

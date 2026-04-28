@@ -1,5 +1,18 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.3...HEAD)
+
+**Closed issues:**
+
+- Nested parenthesis detect unknown URL [\#1063](https://github.com/TheFive/osmbc/issues/1063)
+- Set for all active languages [\#1060](https://github.com/TheFive/osmbc/issues/1060)
+
+## [4.2.3](https://github.com/TheFive/osmbc/tree/4.2.3) (2026-04-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.2...4.2.3)
+
 ## [4.2.2](https://github.com/TheFive/osmbc/tree/4.2.2) (2026-04-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.1...4.2.2)
@@ -69,10 +82,6 @@
 
 - flip the columns of the Calendar ? [\#1042](https://github.com/TheFive/osmbc/issues/1042)
 
-**Merged pull requests:**
-
-- move country flag to front for osmcal [\#1045](https://github.com/TheFive/osmbc/pull/1045) ([call-me-matt](https://github.com/call-me-matt))
-
 ## [4.1.04](https://github.com/TheFive/osmbc/tree/4.1.04) (2025-03-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.1.03...4.1.04)
@@ -110,7 +119,6 @@
 **Merged pull requests:**
 
 - update libraries of importdb script [\#1036](https://github.com/TheFive/osmbc/pull/1036) ([call-me-matt](https://github.com/call-me-matt))
-- Bugfix/title image dimensions [\#1035](https://github.com/TheFive/osmbc/pull/1035) ([call-me-matt](https://github.com/call-me-matt))
 
 ## [4.0.27](https://github.com/TheFive/osmbc/tree/4.0.27) (2024-03-27)
 
@@ -119,10 +127,6 @@
 **Implemented enhancements:**
 
 - Improve Diff Behavior [\#1028](https://github.com/TheFive/osmbc/issues/1028)
-
-**Fixed bugs:**
-
-- markdown-it-imsize is not complete translated with deepl [\#841](https://github.com/TheFive/osmbc/issues/841)
 
 **Closed issues:**
 
@@ -140,7 +144,6 @@
 **Closed issues:**
 
 - Make Hostname vor Server configurable [\#1026](https://github.com/TheFive/osmbc/issues/1026)
-- Replace request module by axios [\#833](https://github.com/TheFive/osmbc/issues/833)
 
 ## [4.0.23](https://github.com/TheFive/osmbc/tree/4.0.23) (2024-03-09)
 
@@ -179,17 +182,9 @@
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.18...4.0.19)
 
-**Merged pull requests:**
-
-- Bump semver from 5.7.1 to 5.7.2 [\#1001](https://github.com/TheFive/osmbc/pull/1001) ([dependabot[bot]](https://github.com/apps/dependabot))
-
 ## [4.0.18](https://github.com/TheFive/osmbc/tree/4.0.18) (2023-09-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.17...4.0.18)
-
-**Merged pull requests:**
-
-- Bugfix/heatmap typo [\#1010](https://github.com/TheFive/osmbc/pull/1010) ([call-me-matt](https://github.com/call-me-matt))
 
 ## [4.0.17](https://github.com/TheFive/osmbc/tree/4.0.17) (2023-09-23)
 
@@ -198,10 +193,6 @@
 **Fixed bugs:**
 
 - Readability display does not handle non utf-8 pages [\#1005](https://github.com/TheFive/osmbc/issues/1005)
-
-**Merged pull requests:**
-
-- fixed typo "e person" to "a person" [\#1004](https://github.com/TheFive/osmbc/pull/1004) ([thibaultmol](https://github.com/thibaultmol))
 
 ## [4.0.15](https://github.com/TheFive/osmbc/tree/4.0.15) (2023-07-23)
 
@@ -293,12 +284,6 @@
 - Broken preview image - NaN in wp-caption if not set [\#976](https://github.com/TheFive/osmbc/issues/976)
 - Unicode issue with title extraction [\#973](https://github.com/TheFive/osmbc/issues/973)
 - Open external links in a new tab [\#971](https://github.com/TheFive/osmbc/issues/971)
-
-**Merged pull requests:**
-
-- repair database setup [\#979](https://github.com/TheFive/osmbc/pull/979) ([call-me-matt](https://github.com/call-me-matt))
-- do not add width to wp-caption if not in markdown [\#977](https://github.com/TheFive/osmbc/pull/977) ([call-me-matt](https://github.com/call-me-matt))
-- Bump luxon from 1.28.0 to 1.28.1 [\#975](https://github.com/TheFive/osmbc/pull/975) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [4.0.7](https://github.com/TheFive/osmbc/tree/4.0.7) (2022-12-04)
 
