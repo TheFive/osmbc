@@ -402,8 +402,14 @@ function nockHtmlPagesClear() {
 };
 
 
+function normalizeVersionedStaticAssets(html) {
+  return html.replace(/((?:href|src)="[^"]+\.(?:js|css))\?v=[^"]*(")/g, "$1$2");
+}
+
+
 async function expectHtml(driver, errorList, givenPath, name) {
-  const source = pretty(await driver.getPageSource());
+  const sourcePretty = pretty(await driver.getPageSource());
+  const sourceForCompare = normalizeVersionedStaticAssets(sourcePretty);
   let stopOnError = false;
   if (!Array.isArray(errorList)) {
     stopOnError = true;
@@ -412,15 +418,19 @@ async function expectHtml(driver, errorList, givenPath, name) {
     errorList = undefined;
   }
   let expected = "not read yet";
+  let expectedPretty = "";
+  let expectedForCompare = "";
   const expectedFile = path.join(config.getDirName(), "test", givenPath, name + ".html");
   const actualFile   = path.join(config.getDirName(), "test", givenPath, name + "_actual.html");
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
-    const expectedPretty = pretty(expected);
+    expectedPretty = pretty(expected);
+    expectedForCompare = normalizeVersionedStaticAssets(expectedPretty);
     if (expectedPretty !== expected) {
       if (process.env.TEST_HTML_PRETTY === "TRUE") {
         fs.writeFileSync(expectedFile, expectedPretty, "UTF8");
         expected = expectedPretty;
+        expectedForCompare = normalizeVersionedStaticAssets(expectedPretty);
       } else {
         console.info(expectedFile + " in not pretty. Use TEST_HTML_PRETTY=TRUE to change while testing");
       }
@@ -428,7 +438,7 @@ async function expectHtml(driver, errorList, givenPath, name) {
   } catch (err) {
     console.error(err);
   }
-  if (source === expected) {
+  if (sourceForCompare === expectedForCompare) {
     // everything is fine, delete any existing actual file
     try {
       fs.unlinkSync(actualFile);
@@ -439,11 +449,11 @@ async function expectHtml(driver, errorList, givenPath, name) {
 
   // there is a difference, so create the actual data as file
   // do easier fix the test.
-  fs.writeFileSync(actualFile, source, "UTF8");
+  fs.writeFileSync(actualFile, sourcePretty, "UTF8");
   if (stopOnError) {
     should(false).eql(true, "HTML File " + name + " is different.");
   } else {
-    if (source !== expected) {
+    if (sourceForCompare !== expectedForCompare) {
       errorList.push("HTML File " + name + " is different.");
     }
   }
