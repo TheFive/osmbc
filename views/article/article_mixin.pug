@@ -32,7 +32,10 @@ mixin rightcolumn
 mixin articleMarkdown(lang,disabled)
   - var d = disabled
   - var p=""
-  if placeholder.markdown[lang]
+  - var isLangActive = layout.activeLanguages && layout.activeLanguages.includes(lang);
+  if !isLangActive
+    - p = "Language is currently inactive, to activate it just edit this text"
+  else if placeholder.markdown[lang]
     - p = placeholder.markdown[lang];
   if (article.categoryEN === "Upcoming Events")
     - p = "Calendar will be generated from OSMCAL when starting review."  
