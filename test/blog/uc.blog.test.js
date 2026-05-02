@@ -145,6 +145,8 @@ describe("uc/blog", function() {
 
 
       await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Closed");
+      should(errors).eql([]);
+
 
 
 
@@ -182,7 +184,6 @@ describe("uc/blog", function() {
 
       // in difference to DE language, here no export should appear.
       await blogPageUser1.clickClose("WN251", "EN");
-      should(errors).eql([]);
       await driverTheFive.quit();
       await driverUser1.quit();
     });

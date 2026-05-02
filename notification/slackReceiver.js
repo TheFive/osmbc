@@ -89,8 +89,14 @@ export class SlackReceiver {
         channel: this.channel,
         username: username,
         icon_url: iconUrl
-      }, callback);
-    } else return callback();
+      }, function (_unused, sendErr) {
+        if (sendErr) {
+          config.logger.error("sendReviewStatus notification failed");
+          config.logger.error(sendErr);
+        }
+      });
+    }
+    return callback();
   }
 
   sendCloseStatus(user, blog, lang, status, callback) {
