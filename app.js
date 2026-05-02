@@ -83,7 +83,7 @@ app.use((req, res, next) => {
     directives: {
       defaultSrc: ["'self'"],
       objectSrc: ["'none'"],
-      imgSrc: ["*"],
+      imgSrc: ["*", "data:"],
       styleSrc: ["'self' 'unsafe-inline'"],
       upgradeInsecureRequests: [],
       scriptSrc: ["'self'", "'unsafe-inline'"], //, `'nonce-${res.locals.cspNonce}'`
