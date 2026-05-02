@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WN290 Block Options</title>
+  <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
+  <link href="stylesheets/bootstrap-select.min.css" rel="stylesheet">
+  <link href="stylesheets/font-awesome.min.css" rel="stylesheet">
+  <link href="stylesheets/style.css" rel="stylesheet">
+  <style>
+    .option-wrapper {
+      margin-bottom: 30px;
+    }
+
+    /* Farbvarianten für osmbc-automated-translation in jeder Option */
+    .option-1 .osmbc-automated-translation {
+      color: #000 !important;
+      background-color: #ffc107 !important;
+    }
+
+    .option-1 .osmbc-not-formulated {
+      background-color: #FFF8C6;  /* Salmon Chiffon */
+    }
+
+
+
+    .option-2 .osmbc-automated-translation {
+      color: #000 !important;
+      background-color: #deaa87 !important;
+    }
+
+    .option-2 .osmbc-not-formulated {
+      background-color: #FFF8C6;  /* Salmon Chiffon */
+    }
+
+    .option-3 .osmbc-automated-translation {
+      color: #000 !important;
+      background-color: #e4dbd6 !important;
+    }
+
+    .option-3 .osmbc-not-formulated {
+      background-color: #FFF8C6;  /* Salmon Chiffon */
+    }
+
+    .option-4 .osmbc-automated-translation {
+      color: #000 !important;
+      background-color: #FFF8C6 !important;
+    }
+    .option-4 .osmbc-not-formulated {
+      background-color: #ffc107;  /* Salmon Chiffon */
+    }
+
+    .option-5 .osmbc-automated-translation {
+      color: #000 !important;
+      background-color: #FFF8C6 !important;
+    }
+    .option-5 .osmbc-automated-translation a{
+      color: #000 !important;
+      background-color: #FFF8C6 !important;
+    }
+    .option-5 .osmbc-not-formulated {
+      background-color: #ffc107;  /* Salmon Chiffon */
+    }
+
+
+
+    .option-title {
+      margin: 0 0 10px 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .preview-shell {
+      border: 1px solid #e7e7e7;
+      padding: 8px 8px 14px 8px;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div id="options-root"></div>
+  </div>
+
+  <template id="content-block-template">
+    <div class="preview-shell">
+      <div class="row">
+        <div class="col-md-1">
+          <div class="badge osmbc-label-lang">DE</div>
+          <span class="badge osmbc-not-formulated">3(*)</span>
+        </div>
+        <div class="col-md-11">
+          <div class="progress" style="margin-bottom:2px">
+            <div class="progress-bar osmbc-label-markdown" style="width:92%">59</div>
+            <div class="progress-bar osmbc-automated-translation" style="width:1%">1</div>
+            <div class="progress-bar osmbc-not-formulated" style="width:1%">1</div>
+            <div class="progress-bar osmbc-label-no-translation" style="width:4%">3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-none d-md-block">
+        <div class="row">
+          <div class="col-md-1">
+            <div class="badge text-bg-info osmbc-label-lang2">EN</div><span class="badge osmbc-not-formulated">1(*)</span>
+          </div>
+          <div class="col-md-11">
+            <div class="progress" style="margin-bottom:10px">
+              <div class="progress-bar osmbc-label-markdown" style="width:78%">50</div>
+              <div class="progress-bar progress-bar osmbc-automated-translation" style="width:0%">0</div>
+              <div class="progress-bar osmbc-not-formulated" style="width:1%">1</div>
+              <div class="progress-bar osmbc-label-no-translation" style="width:20%">13</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col-md-6">
+              <h2 id="wn290_mapping">Mapping</h2>
+            </div>
+            <div class="d-none d-md-block col-md-6">
+              <h2 id="wn290_mapping">Mapping</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1 d-flex flex-nowrap"><span><div class="d-flex flex-nowrap"><a href="/article/12"><i class="fa fa-edit small-margin"></i></a></div></span><span></span><span></span><span id="voteLabels12"><div class="d-flex flex-nowrap"></div></span></div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="osmbc-automated-translation">
+                <ul>
+                  <div class="preview" id="lpreview12">
+                    <li id="wn290_12">
+                      Im Forum wird darueber <a href="http://forum.openstreetmap.org/viewtopic.php?id=53524" target="_blank" rel="noopener">diskutiert</a>, ob das massenhafte Aendern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als <a href="https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct" target="_blank" rel="noopener">diskussionspflichtiger</a> mechanischer Edit gilt oder nicht.
+                    </li>
+                  </div>
+                </ul>
+              </div>
+            </div>
+            <div class="d-none d-md-block col-md-6">
+              <div class="hide-text">
+                <ul class="preview" id="rpreview12">
+                  <li id="wn290_12">
+                    no translation
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1 d-flex flex-nowrap"><span><div class="d-flex flex-nowrap"><a href="/article/24"><i class="fa fa-edit small-margin"></i></a></div></span><span></span><span></span><span id="voteLabels24"><div class="d-flex flex-nowrap"></div></span></div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col-md-6">
+              <div>
+                <ul>
+                  <div class="preview" id="lpreview24">
+                    <li id="wn290_24">
+                      Ben Spaulding <a href="http://www.gisdoctor.com/site/2016/02/04/openstreetmap-me-mapping-everyday-january-almost/" target="_blank" rel="noopener">resuemiert</a> ueber seinen Mappingvorsatz fuer Januar 2016. Der Plan, jeden Tag im Januar mindestens 15 Minuten an seiner Heimatstadt Littleton zu mappen war zwar nicht ganz erfolgreich, aber seine Erfahrungen und Erkenntnisse sind trotzdem interessant.
+                    </li>
+                  </div>
+                </ul>
+              </div>
+            </div>
+            <div class="d-none d-md-block col-md-6">
+              <div>
+                <ul class="preview" id="rpreview24">
+                  <li id="wn290_24">
+                    Ben Spaulding <a href="http://www.gisdoctor.com/site/2016/02/04/openstreetmap-me-mapping-everyday-january-almost/" target="_blank" rel="noopener">summarises</a> the goals he had set for mapping for the month of January 2016.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col-md-6">
+              <h2 id="wn290_programme">Programme</h2>
+            </div>
+            <div class="d-none d-md-block col-md-6">
+              <h2 id="wn290_software">Software</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1 d-flex flex-nowrap"><span><div class="d-flex flex-nowrap"><a href="/article/50"><i class="fa fa-edit small-margin"></i></a></div></span><span></span><span></span><span id="voteLabels50"><div class="d-flex flex-nowrap"></div></span></div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col-md-6">
+              <div>
+                <ul>
+                  <div class="preview" id="lpreview50">
+                    <li id="wn290_50">
+                      CycleStreets hat eine neue App <a href="http://www.cyclestreets.net/blog/2016/02/06/cycle-north-staffs-app/" target="_blank" rel="noopener">veroeffentlicht</a>, mit vielen hilfreichen Features speziell fuer Fahrradfahrer.
+                    </li>
+                  </div>
+                </ul>
+              </div>
+            </div>
+            <div class="d-none d-md-block col-md-6">
+              <div>
+                <ul class="preview" id="rpreview50">
+                  <li id="wn290_50">
+                    CycleStreets <a href="http://www.cyclestreets.net/blog/2016/02/06/cycle-north-staffs-app/" target="_blank" rel="noopener">published</a> a new app with a wide range of features dedicated to cyclists.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-1 d-flex flex-nowrap"><span><div class="d-flex flex-nowrap"><a href="/article/55"><i class="fa fa-edit small-margin"></i></a></div></span><span></span><span></span><span id="voteLabels55"><div class="d-flex flex-nowrap"></div></span></div>
+        <div class="col-md-11">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="osmbc-not-formulated">
+                <ul>
+                  <div class="preview" id="lpreview55">
+                    <li id="wn290_55">openweathermap</li>
+                  </div>
+                </ul>
+              </div>
+            </div>
+            <div class="d-none d-md-block col-md-6">
+              <div class="osmbc-not-formulated">
+                <ul class="preview" id="rpreview55">
+                  <li id="wn290_55">openweathermap</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    var openEditor = null;
+
+    (function renderOptions() {
+      var root = document.getElementById('options-root');
+      var template = document.getElementById('content-block-template');
+      var headings = ['Current Version', 'Option 1', 'Option 2', 'Option 3',"Option 4"];
+      var optionClasses = ['option-1', 'option-2', 'option-3', 'option-4','option-5'];
+
+      headings.forEach(function (title, index) {
+        var wrapper = document.createElement('section');
+        wrapper.className = 'option-wrapper ' + optionClasses[index];
+
+        var heading = document.createElement('h1');
+        heading.className = 'option-title';
+        heading.textContent = title;
+        wrapper.appendChild(heading);
+
+        wrapper.appendChild(template.content.cloneNode(true));
+        root.appendChild(wrapper);
+      });
+    })();
+  </script>
+</body>
+</html>
