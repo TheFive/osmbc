@@ -194,19 +194,35 @@ function getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin) {
     const refererUrl = new URL(refererHeader);
     let allowedOrigin = null;
 
+    // Try to use requestOrigin first
     if (typeof requestOrigin === "string" && /^https?:\/\//i.test(requestOrigin)) {
-      allowedOrigin = new URL(requestOrigin).origin;
+      try {
+        allowedOrigin = new URL(requestOrigin).origin;
+      } catch (err) {
+        debug(`Invalid requestOrigin URL: ${requestOrigin}`);
+      }
     }
 
+    // Fallback to defaultUrl if requestOrigin didn't work
     if (!allowedOrigin && typeof defaultUrl === "string" && /^https?:\/\//i.test(defaultUrl)) {
-      allowedOrigin = new URL(defaultUrl).origin;
-    } else if (!allowedOrigin && url && /^https?:\/\//i.test(url)) {
-      allowedOrigin = new URL(url).origin;
+      try {
+        allowedOrigin = new URL(defaultUrl).origin;
+      } catch (err) {
+        debug(`Invalid defaultUrl URL: ${defaultUrl}`);
+      }
     }
-
-    // Only allow redirects to same origin.
+    // Allow redirects to same origin.
     if (allowedOrigin && refererUrl.origin === allowedOrigin) {
       return refererHeader;
+    }
+
+    // Production setups behind proxies may report requestOrigin as http while referer is https.
+    // In that case allow redirect if hostname matches exactly.
+    if (allowedOrigin) {
+      const allowedUrl = new URL(allowedOrigin);
+      if (refererUrl.hostname === allowedUrl.hostname) {
+        return refererHeader;
+      }
     }
   } catch (err) {
     debug(`Invalid Referer URL: ${refererHeader}`);
