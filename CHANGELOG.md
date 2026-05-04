@@ -1,5 +1,15 @@
 # Changelog
 
+## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.4...HEAD)
+
+**Closed issues:**
+
+- CSP blocks data URI images \(SVG icons\) [\#1073](https://github.com/TheFive/osmbc/issues/1073)
+- After inline edit of an article, redirect to the startpage instead of back to the blog [\#1070](https://github.com/TheFive/osmbc/issues/1070)
+- Placeholder for inactive Languages in Editor [\#1041](https://github.com/TheFive/osmbc/issues/1041)
+
 ## [4.2.4](https://github.com/TheFive/osmbc/tree/4.2.4) (2026-05-04)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.3a...4.2.4)
