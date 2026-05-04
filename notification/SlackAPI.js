@@ -46,7 +46,14 @@ class SlackAPI {
       })
       .catch(error => {
         err = error;
-        config.logger.error(JSON.stringify(err));
+        const compactError = {
+          name: error.name,
+          message: error.message,
+          code: error.code,
+          status: error.status,
+          hook: command
+        };
+        config.logger.error(JSON.stringify(compactError));
         config.logger.error("While sending");
         config.logger.error(JSON.stringify(message));
         config.logger.error("To Hook: " + command);

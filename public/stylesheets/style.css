@@ -34,6 +34,22 @@ a.osmbc-nonexist {
   background-color: RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
 }
 
+/* OSMBC Content marker style: white background + left color bar (10px). */
+.osmbc-automated-translation:not(.progress-bar):not(.badge),
+.osmbc-not-formulated:not(.progress-bar):not(.badge) {
+  background-color: #fff !important;
+  border-left: 10px solid transparent;
+  padding: 0.25rem 0.5rem;
+}
+
+.osmbc-automated-translation:not(.progress-bar):not(.badge) {
+  border-left-color: RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1));
+}
+
+.osmbc-not-formulated:not(.progress-bar):not(.badge) {
+  border-left-color: #FFF8C6;
+}
+
 .hide-text {
   font-size: 0;
 }

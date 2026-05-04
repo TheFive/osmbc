@@ -83,7 +83,7 @@ app.use((req, res, next) => {
     directives: {
       defaultSrc: ["'self'"],
       objectSrc: ["'none'"],
-      imgSrc: ["*"],
+      imgSrc: ["*", "data:"],
       styleSrc: ["'self' 'unsafe-inline'"],
       upgradeInsecureRequests: [],
       scriptSrc: ["'self'", "'unsafe-inline'"], //, `'nonce-${res.locals.cspNonce}'`
@@ -110,7 +110,12 @@ app.use(favicon(join(config.getDirName(), "public", "images", "favicon.ico")));
 const mediaFolder = config.getValue("media folder", { mustExist: true });
 
 if (mediaFolder["externally mirrored"] === false) {
-  app.use(mediaFolder.local, createProxyMiddleware({ target: mediaFolder.remote, changeOrigin: true }));
+  const mediaProxyPrefix = mediaFolder.local;
+  app.use(mediaProxyPrefix, createProxyMiddleware({
+    target: mediaFolder.remote,
+    changeOrigin: true,
+    pathRewrite: (proxyPath) => proxyPath.startsWith(mediaProxyPrefix) ? proxyPath : mediaProxyPrefix + proxyPath
+  }));
 }
 
 

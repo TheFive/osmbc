@@ -160,8 +160,6 @@ class Blog {
       function logInformation(cb) {
         debug("setReviewComment->logInformation");
         messageCenter.global.sendReviewStatus(user, self, lang, data, cb);
-        // This is the old log and has to be moved to the messageCenter (logReceiver)
-        // messageCenter.global.sendInfo({oid:self.id,blog:self.name,user:user,table:"blog",property:rc,from:"Add",to:data},callback);
       },
       function checkSpecialCommands(cb) {
         debug("setReviewComment->checkSpecialCommands");

@@ -403,7 +403,7 @@ function nockHtmlPagesClear() {
 
 
 function normalizeVersionedStaticAssets(html) {
-  return html.replace(/((?:href|src)="[^"]+\.(?:js|css))\?v=[^"]*(")/g, "$1$2");
+  return html.replace(/((?:href|src)="[^"]+\.(?:js|css))\?osmbc_v=[^"]*(")/g, "$1$2");
 }
 
 
@@ -426,11 +426,10 @@ async function expectHtml(driver, errorList, givenPath, name) {
     expected = fs.readFileSync(expectedFile, "UTF8");
     expectedPretty = pretty(expected);
     expectedForCompare = normalizeVersionedStaticAssets(expectedPretty);
-    if (expectedPretty !== expected) {
+    if (expectedForCompare !== expected) {
       if (process.env.TEST_HTML_PRETTY === "TRUE") {
-        fs.writeFileSync(expectedFile, expectedPretty, "UTF8");
-        expected = expectedPretty;
-        expectedForCompare = normalizeVersionedStaticAssets(expectedPretty);
+        fs.writeFileSync(expectedFile, expectedForCompare, "UTF8");
+        expected = expectedForCompare;
       } else {
         console.info(expectedFile + " in not pretty. Use TEST_HTML_PRETTY=TRUE to change while testing");
       }
