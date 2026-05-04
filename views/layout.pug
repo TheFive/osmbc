@@ -26,11 +26,7 @@ mixin collectMenu
 mixin myGuestArticleMenu
   if (layout && layout.user && layout.user.access === "guest")
     li.navbar-item.active
-      a.nav-link#myArticles(href=htmlroot + '/osmbc.html') My Articles
-
-// This should be removed, when bootstrap4 is running
-// To Be Collected (the insterims stage) is not needed any longer 
-// TheFive Jan 2020 
+      a.nav-link#myArticles(href=htmlroot + '/osmbc.html') My Articles 
 
 mixin tbcMenu
   if (layout && layout.user && layout.user.hasFullAccess())
