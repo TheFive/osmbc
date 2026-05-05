@@ -337,10 +337,7 @@ mixin helpMenu(configarray)
               a.dropdown-item(href=item[1])=item[0]
 
 mixin homeButton(addclass)
-  if !layout || !layout.user || layout.osmbc_version === layout.user.lastChangeLogView
-    a(href=htmlroot+'/osmbc.html' class=addclass)=appName
-  else
-    a.bg-success(href=layout.htmlroot+'/changelog' class=addclass) What's New?
+  a(href=htmlroot+'/osmbc.html' class=addclass)=appName
 
 mixin langDropdownList(langNamedPosition,langlist,choosenLangs)
   each litem in langlist
