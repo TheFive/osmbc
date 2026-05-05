@@ -283,14 +283,16 @@ describe("uc/blog", function() {
       });
       it("should show Statistic View", async function() {
         const osmbcApp = new OsmbcApp(driver);
+        const errors = [];
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.clickStatisticView();
 
-        await testutil.expectHtml(driver, "blog", "blog_wn290_stat");
+        await testutil.expectHtml(driver, errors, "blog", "blog_wn290_stat");
         const statisticViewPage = osmbcApp.getStatisticPage();
         await statisticViewPage.clickStatisticItem("WN290", "Katja Ulbert", "collection");
-        await testutil.expectHtml(driver, "blog", "blog_wn290_stat_detail");
+        await testutil.expectHtml(driver, errors, "blog", "blog_wn290_stat_detail");
+        should(errors).eql([]);
       });
       it("should show edit View", async function() {
         const osmbcApp = new OsmbcApp(driver);

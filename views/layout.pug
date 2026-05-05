@@ -103,6 +103,8 @@ block all
       link(href=layout.htmlroot + "/stylesheets/bootstrap.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
       link(href=layout.htmlroot + "/stylesheets/bootstrap-select.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
       link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
+      if (typeof stylesheet !== 'undefined' && stylesheet)
+        link(rel='stylesheet', href=`${htmlroot}${stylesheet}?osmbc_v=${layout.osmbc_version}`)
 
     body
       - function blogNumberNotFormulated(blog,language) {return ((blog)?blog.getUnEdited(language):"?") }
@@ -168,22 +170,12 @@ block all
       script(src=layout.htmlroot + "/javascripts/bootstrap.bundle.min.js?osmbc_v=" + layout.osmbc_version)
       script(src=layout.htmlroot + "/javascripts/bootstrap-select.min.js?osmbc_v=" + layout.osmbc_version)
       script(src=layout.htmlroot + "/javascripts/osmbc_staff.js?osmbc_v=" + layout.osmbc_version)
-  
 
-  doctype html
-  html
-    head
-      title= title
-      link(rel='stylesheet', href=`${htmlroot}${stylesheet}?osmbc_v=${layout.osmbc_version}`)
-    body
-  script(nonce=cspNonce).
+      script(nonce=cspNonce).
 
-    // Init This Window with jQuery ready Callback
-    window.htmlroot = "!{layout.htmlroot}";
-    
-    
-    
+        // Init This Window with jQuery ready Callback
+        window.htmlroot = "!{layout.htmlroot}";
 
-  block scripts_to_load 
+      block scripts_to_load 
 
-  block scripts_to_execute
+      block scripts_to_execute
