@@ -448,7 +448,7 @@ async function expectHtml(driver, errorList, givenPath, name) {
 
   // there is a difference, so create the actual data as file
   // do easier fix the test.
-  fs.writeFileSync(actualFile, sourcePretty, "UTF8");
+  fs.writeFileSync(actualFile, sourceForCompare, "UTF8");
   if (stopOnError) {
     should(false).eql(true, "HTML File " + name + " is different.");
   } else {
