@@ -10,6 +10,14 @@ import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 
+function toDateKey(value) {
+  const d = new Date(value);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 
 describe("model/blog", function() {
   before(function (bddone) {
@@ -44,8 +52,8 @@ describe("model/blog", function() {
           end.setDate(end.getDate() + 7);
 
 
-          should(new Date(result.startDate).toLocaleDateString()).equal(start.toLocaleDateString());
-          should(new Date(result.endDate).toLocaleDateString()).equal(end.toLocaleDateString());
+          should(toDateKey(result.startDate)).equal(toDateKey(start));
+          should(toDateKey(result.endDate)).equal(toDateKey(end));
           bddone();
         });
       });
@@ -77,8 +85,8 @@ describe("model/blog", function() {
                 should.not.exist(err);
                 should.exist(result);
                 should(result.name).equal("WN101");
-                should(new Date(result.startDate).toLocaleDateString()).eql(new Date("2000-01-02").toLocaleDateString());
-                should(new Date(result.endDate).toLocaleDateString()).eql(new Date("2000-01-08").toLocaleDateString());
+                should(toDateKey(result.startDate)).eql("2000-01-02");
+                should(toDateKey(result.endDate)).eql("2000-01-08");
                 bddone();
               });
             });
@@ -447,8 +455,8 @@ describe("model/blog", function() {
           should(result.name).eql("WN1");
           should(result.status).eql("open");
           should(result.version).eql(1);
-          should(new Date(result.startDate).toLocaleDateString()).equal(new Date("2015-01-01").toLocaleDateString());
-          should(new Date(result.endDate).toLocaleDateString()).equal(new Date("2016-01-01").toLocaleDateString());
+          should(toDateKey(result.startDate)).equal("2015-01-01");
+          should(toDateKey(result.endDate)).equal("2016-01-01");
 
           bddone();
         });
