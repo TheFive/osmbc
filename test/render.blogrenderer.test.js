@@ -233,7 +233,7 @@ describe("render/blogrenderer", function() {
     it("should generate markdown for standard article", function (bddone) {
       const article = articleModule.create({ markdownDE: "Test article with content" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal("* Test article with content");
+      should(result).equal('{{ < anchor "undefined_0" > }} * Test article with content');
       bddone();
     });
 
@@ -260,17 +260,19 @@ describe("render/blogrenderer", function() {
 
     it("should generate markdown without leading asterisk if present", function (bddone) {
       const article = articleModule.create({
-        markdownEN: "* Already has asterisk"
+        markdownEN: "* Already has asterisk",
+        id: 3,
+        blog: "BLOG"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal("* * Already has asterisk");
+      should(result).equal('{{ < anchor "blog_3" > }} * * Already has asterisk');
       bddone();
     });
 
     it("should fallback to title for markdown article with no markdown", function (bddone) {
-      const article = articleModule.create({ collection: "Collection Title" });
+      const article = articleModule.create({ collection: "Collection Title" ,id: 4, blog: "BLOG" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal("* Collection Title\n");
+      should(result).equal('{{ < anchor "blog_4" > }} * Collection Title\n');
       bddone();
     });
 
@@ -283,7 +285,7 @@ describe("render/blogrenderer", function() {
       const result = markdownRenderer.renderArticle("DE", article);
       // Unpublished renders via renderArticleStandard (not recognized as special category)
       // which adds "* ", then renderArticleUnpublished returns it unchanged
-      should(result).equal("* Content");
+      should(result).equal('{{ < anchor "undefined_0" > }} * Content');
       bddone();
     });
   });

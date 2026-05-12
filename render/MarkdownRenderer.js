@@ -2,6 +2,8 @@ import moment from "moment-timezone";
 import _debug from "debug";
 const debug = _debug("OSMBC:render:MarkdownRenderer");
 
+import util from "../util/util.js";
+
 import language from "../model/language.js";
 import Renderer from "./Renderer.js";
 
@@ -29,7 +31,10 @@ class MarkdownRenderer extends Renderer {
   }
 
   renderArticleStandard(lang, article) {
-    return "* " +this.renderMarkdownListItem(lang, article);
+    let blogRef = article.blog;
+    if (!blogRef) blogRef = "undefined";
+    const pageLink = util.linkify(blogRef + "_" + article.id);
+    return `{{ < anchor "${pageLink}" > }} * ${this.renderMarkdownListItem(lang, article)}`;
   }
 
   renderArticlePicture(lang, article) {
