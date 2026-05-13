@@ -1,10 +1,12 @@
 import moment from "moment-timezone";
 import _debug from "debug";
+import config from "../config.js";
 const debug = _debug("OSMBC:render:MarkdownRenderer");
 
 import util from "../util/util.js";
 
 import language from "../model/language.js";
+import configModule from "../model/config.js";
 import Renderer from "./Renderer.js";
 
 class MarkdownRenderer extends Renderer {
@@ -71,8 +73,26 @@ class MarkdownRenderer extends Renderer {
     return "";
   }
 
-  charSetString() {
-    return "";
+  generateFrontText(lang) {
+
+    const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
+    const categoryTranslation = configModule.getConfig("categorytranslation");
+
+    const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
+
+
+    const date = moment(this.blog.startDate).tz("Europe/Berlin").format("YYYY-MM-DD");
+    const text = [
+      "+++",
+      "date = " + date,
+      "draft = " + (this.blog["close" + lang] ? "false" : "true"),
+      "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
+      // "featureImage = 'https://weeklyosm.eu/wp-content/uploads/2026/03/815.jpg'",
+      // "featureImageCap = '[[^1^](#wn815_34170)] | [Podoma](https://wiki.openstreetmap.org/wiki/Podoma) in action in Italy  |   map data  &copy;  [OpenStreetMap Contributors](https://osmfoundation.org/wiki/Licence/Licence_and_Legal_FAQ).'",
+      "+++"
+    ].join("\n");
+
+    return text + "\n\n";
   }
 }
 

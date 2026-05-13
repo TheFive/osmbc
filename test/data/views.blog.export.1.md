@@ -1,3 +1,9 @@
++++
+date = 2015-02-02
+draft = true
+title = 'Wochennotiz OG'
++++
+
 02.02.2015-05.02.2015
 
 ## OpenStreetMap Foundation

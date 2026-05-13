@@ -72,20 +72,27 @@ class Renderer {
     throw new Error("formatTeamString() must be implemented by subclass");
   }
 
-  charSetString() {
-    throw new Error("charSetString() must be implemented by subclass");
+  generateFrontText(lang) {
+    throw new Error("generateFrontText() must be implemented by subclass");
   }
 
-  renderBlog(lang, articleData) {
+  renderBlog(lang, articleData, onlyClosed = false) {
     debug("renderBlog");
+
 
     const articles = articleData.articles;
     const teamString = articleData.teamString;
-    let preview = this.charSetString();
+    let preview = this.generateFrontText(lang);
+
+    if (onlyClosed && !this.blog["close" + lang]) {
+        return preview;
+    }
     const blog = this.blog;
     let i, j;
     preview += this.subtitle(lang);
     const clist = blog.getCategories();
+
+
 
     if (articleData.containsEmptyArticlesWarning) {
       preview += this.containsEmptyArticlesWarning(lang);

@@ -222,11 +222,16 @@ function renderBlogPreview(req, res, next) {
     return result + "-" + value;
   }
   const asMarkdown = (req.query.markdown === "true");
+  const exportAllLanguagesInMarkdown = (asMarkdown && lang === "ALL");
   if (typeof (lang) === "undefined") lang = "EN";
   if ((lang !== "ALL" && !language.getLanguages()[lang])) lang = "EN";
 
   if (lang === "ALL") {
-    lang = language.getLid().filter(isClosed);
+    if (exportAllLanguagesInMarkdown) {
+      lang = language.getLid();
+    } else {
+      lang = language.getLid().filter(isClosed);
+    }
   } else {
     lang = [lang];
   }
@@ -259,10 +264,13 @@ function renderBlogPreview(req, res, next) {
     return function _mergeMdResultFunction(exportLang, callback) {
       blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
         if (err) return callback(err);
+        let result = "";
+        const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && blog["close" + exportLang] !== true;
+
         const renderer = new blogRenderer.MarkdownRenderer(blog);
-        const result = renderer.renderBlog(exportLang, data);
+        result = renderer.renderBlog(exportLang, data,createEmptyForOpenLanguage);
         if (multiExport) {
-          overallResult.append(result, { name: `${blog.name} ${moment().locale(language.momentLocale(lang)).format()}.${exportLang}.md` });
+          overallResult.append(result, { name: `${exportLang}/${blog.name}.md` });
         } else {
           overallResult = result;
         }
@@ -286,11 +294,11 @@ function renderBlogPreview(req, res, next) {
       const languageFlags = configModule.getConfig("languageflags");
       if (err) return next(err);
       if (req.query.download === "true") {
-        let fileName = `${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.html`;
+        let fileName = `${lang.reduce(listify)} ${blog.name}.html`;
         if (asMarkdown) {
-          fileName = `${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.md`;
+          fileName = `${lang.reduce(listify)} ${blog.name}.md`;
           if (multiExport) {
-            fileName = `${blog.name} ${lang.reduce(listify)} ${moment().locale(language.momentLocale(lang)).format()}.zip`;
+            fileName = `${lang.reduce(listify)} ${blog.name}.zip`;
           }
         }
         if (typeof overallResult === "string") {

@@ -129,7 +129,7 @@ class HtmlRenderer extends Renderer {
     return teamString;
   }
 
-  charSetString() {
+  generateFrontText(lang) {
     return "<meta charset=\"utf-8\"/>\n";
   }
 }
