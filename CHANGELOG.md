@@ -1,11 +1,12 @@
 # Changelog
 
-## [unreleased](https://github.com/TheFive/osmbc/tree/HEAD)
+## [4.2.5](https://github.com/TheFive/osmbc/tree/4.2.5) (2026-05-06)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.4...HEAD)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.4...4.2.5)
 
 **Closed issues:**
 
+- Duplicate HTML document [\#1075](https://github.com/TheFive/osmbc/issues/1075)
 - CSP blocks data URI images \(SVG icons\) [\#1073](https://github.com/TheFive/osmbc/issues/1073)
 - After inline edit of an article, redirect to the startpage instead of back to the blog [\#1070](https://github.com/TheFive/osmbc/issues/1070)
 - Placeholder for inactive Languages in Editor [\#1041](https://github.com/TheFive/osmbc/issues/1041)
