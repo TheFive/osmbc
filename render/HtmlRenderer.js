@@ -53,7 +53,7 @@ class HtmlRenderer extends Renderer {
    */
   categoryTitle(lang, category) {
     debug("HtmlRenderer.prototype.categoryTitle");
-    if (category.EN === "Picture") return "<!--         place picture here              -->\n";
+    if (category.EN === "Picture") return "<!--         Picture Cateogry              -->\n";
     return '<h2 id="' + util.linkify(this.blog.name + "_" + category[lang]) + '">' + category[lang] + "</h2>\n";
   }
 

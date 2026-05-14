@@ -243,7 +243,7 @@ describe("render/blogrenderer", function() {
         categoryEN: "Picture"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal("![Alt Text](https://example.com/img.jpg =300x200)\n\nCaption text");
+      should(result).equal("");
       bddone();
     });
 

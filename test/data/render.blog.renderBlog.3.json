@@ -4,5 +4,5 @@
   "change":[{"blog":"BLOG","user":"TESTER","_oid":"1","property":"collection","to":"testvalue"}],
   "testBlogName":"BLOG",
   "lang":"DE",
-  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01.02.2015-08.02.2015</p>\n<!--         place picture here              -->\n<ul>\n<div style=\"width: 310px\" class=\"wp-caption alignnone\"> \n<p class=\"wp-caption-text\"><img src=\"https://example.com/img.jpg\" alt=\"Alt Text\" width=\"300\" height=\"200\"></p>\n<p class=\"wp-caption-text\">Ein Bild</p>\n</div>\n\n\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n"
+  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01.02.2015-08.02.2015</p>\n<!--         Picture Cateogry              -->\n<ul>\n<div style=\"width: 310px\" class=\"wp-caption alignnone\"> \n<p class=\"wp-caption-text\"><img src=\"https://example.com/img.jpg\" alt=\"Alt Text\" width=\"300\" height=\"200\"></p>\n<p class=\"wp-caption-text\">Ein Bild</p>\n</div>\n\n\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n"
 }

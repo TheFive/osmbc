@@ -149,6 +149,7 @@ class Renderer {
    * Returns the front matter / preamble text prepended before the blog content.
    * Must be implemented by subclasses.
    * @param {string} lang - The language code.
+   * @param {Array<object>} pictureArticles - The articles belonging to the "Picture" category.
    * @returns {string} The front text markup.
    */
   _generateFrontText(lang) {
@@ -186,8 +187,9 @@ class Renderer {
     debug("renderBlog");
 
     const articles = articleData.articles;
+    const pictureArticles = articles.Picture || [];
     const teamString = articleData.teamString;
-    let preview = this._generateFrontText(lang);
+    let preview = this._generateFrontText(lang, pictureArticles);
 
     if (onlyClosed && !this.blog["close" + lang]) {
         return preview;

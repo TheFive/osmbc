@@ -50,6 +50,7 @@ class MarkdownRenderer extends Renderer {
    */
   categoryTitle(lang, category) {
     debug("MarkdownRenderer.prototype.categoryTitle");
+    if (category.EN === "Picture") return "";
     return "## " + category[lang];
   }
 
@@ -68,12 +69,13 @@ class MarkdownRenderer extends Renderer {
 
   /**
    * Renders a picture article as a plain Markdown list item.
+   * In Hugo Markdown Style (currently implemented here) picture is put in toml header as featureImage and featureImageCaption. So the picture article is not rendered in the body of the blog post.
    * @param {string} lang - The language code.
    * @param {object} article - The article object to render.
    * @returns {string} A Markdown list item string.
    */
   _renderArticlePicture(lang, article) {
-    return this._renderMarkdownListItem(lang, article);
+    return "";
   }
 
   /**
@@ -151,22 +153,35 @@ class MarkdownRenderer extends Renderer {
    * @param {string} lang - The language code used to check the blog's close status.
    * @returns {string} A TOML front matter block followed by two newlines.
    */
-  _generateFrontText(lang) {
+  _generateFrontText(lang,pictureArticles) {
 
     const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
     const categoryTranslation = configModule.getConfig("categorytranslation");
 
     const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
-
-
     const date = moment(this.blog.startDate).tz("Europe/Berlin").format("YYYY-MM-DD");
+    let pictureLink = null;
+    let pictureMd = null;
+    if (pictureArticles && pictureArticles.length > 0) {
+      const pictureArticle = pictureArticles[0];
+      const md = pictureArticle["markdown" + lang];
+      const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
+      pictureMd = (md) ? md.replaceAll("^1^",'{{< sup "1" >}}') : null;
+      if (pictureMd) {
+        pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
+        const link = regexUrlFromCollection.exec(pictureMd);
+        if (link && link.length > 0) {
+          pictureLink = link[0];
+        }
+      }
+    }
     const text = [
       "+++",
       "date = " + date,
       "draft = " + (this.blog["close" + lang] ? "false" : "true"),
       "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
-      // "featureImage = 'https://weeklyosm.eu/wp-content/uploads/2026/03/815.jpg'",
-      // "featureImageCap = '[[^1^](#wn815_34170)] | [Podoma](https://wiki.openstreetmap.org/wiki/Podoma) in action in Italy  |   map data  &copy;  [OpenStreetMap Contributors](https://osmfoundation.org/wiki/Licence/Licence_and_Legal_FAQ).'",
+      (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
+      (pictureMd) ? "featureImageCaption = '" + pictureMd + "'" : "",
       "+++"
     ].join("\n");
 
