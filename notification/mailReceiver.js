@@ -460,6 +460,8 @@ function initialise(userList) {
   debug("initialise");
   messageCenter.initialise();
   userReceiverMap = {};
+  // Ensure old receiver references are dropped immediately.
+  iteratorReceiver.receiverMap = userReceiverMap;
   for (let i = 0; i < userList.length; i++) {
     const u = userList[i];
     mailReceiverUpdateUser(u);

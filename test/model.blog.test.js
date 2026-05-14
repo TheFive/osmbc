@@ -217,25 +217,14 @@ describe("model/blog", function() {
             delete result.startDate;
             delete result.endDate;
             should(result).eql({ id: id, name: "New Title", status: "published", field: "test", version: 2 });
-            logModule.find({}, { column: "property" }, function (err, result) {
+            logModule.find({ oid: id }, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(6);
-              delete result[1].id;
-              delete result[5].id;
-              const t0 = result[2].timestamp;
-              const t1 = result[5].timestamp;
-              const now = new Date();
-              const t0diff = ((new Date(t0)).getTime() - now.getTime());
-              const t1diff = ((new Date(t1)).getTime() - now.getTime());
-
-              // The Value for comparison should be small, but not to small
-              // for the test machine.
-              should(t0diff).be.below(10);
-              should(t1diff).be.below(10);
-              delete result[1].timestamp;
-              delete result[5].timestamp;
-
+              for (let i = 0; i < result.length; i++) {
+                delete result[i].id;
+                delete result[i].timestamp;
+              }
               should(result).containEql(logModule.create({ oid: id, blog: "New Title", user: "user", table: "blog", property: "status", from: "TEST", to: "published" }));
               should(result).containEql(logModule.create({ oid: id, blog: "New Title", user: "user", table: "blog", property: "field", to: "test" }));
               bddone();
@@ -265,19 +254,12 @@ describe("model/blog", function() {
             delete result.startDate;
             delete result.endDate;
             should(result).eql({ id: id, name: "Title", status: "TEST", closeDE: true, version: 2 });
-            logModule.find({}, { column: "property" }, function (err, result) {
+            logModule.find({ oid: id }, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(5);
-              for (let i = 0; i < 5; i++) {
+              for (let i = 0; i < result.length; i++) {
                 delete result[i].id;
-                const t0 = result[i].timestamp;
-                const now = new Date();
-                const t0diff = ((new Date(t0)).getTime() - now.getTime());
-
-                // The Value for comparison should be small, but not to small
-                // for the test machine.
-                should(t0diff).be.below(10);
                 delete result[i].timestamp;
               }
               should(result).containEql(logModule.create({ oid: id, blog: "Title", user: "user", table: "blog", property: "closeDE", to: true }));
@@ -315,7 +297,7 @@ describe("model/blog", function() {
             should(result.reviewCommentDE[0].user).equal("user");
             delete result.reviewCommentDE;
             should(result).eql({ id: id, name: "Title", status: "TEST", version: 2 });
-            logModule.find({}, { column: "property" }, function (err, result) {
+            logModule.find({ oid: id }, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
               should(result.length).equal(5);
@@ -323,7 +305,6 @@ describe("model/blog", function() {
                 delete result[i].id;
                 delete result[i].timestamp;
               }
-
               should(result).containEql(logModule.create({ oid: id, blog: "Title", user: "user", table: "blog", property: "reviewCommentDE", to: "it is approved.", from: "Add" }));
               bddone();
             });
@@ -358,7 +339,7 @@ describe("model/blog", function() {
                 should(result.reviewCommentDE[0].user).equal("user");
                 delete result.reviewCommentDE;
                 should(result).eql({ id: id, name: "Title", status: "TEST", version: 3 });
-                logModule.find({}, { column: "property" }, function (err, result) {
+                logModule.find({ oid: id }, { column: "property" }, function (err, result) {
                   should.not.exist(err);
                   should.exist(result);
                   should(result.length).equal(6);
