@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.3.0](https://github.com/TheFive/osmbc/tree/4.3.0) (2026-05-14)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.5...4.3.0)
+
+**Closed issues:**
+
+- TOML header for each Markdown File [\#1085](https://github.com/TheFive/osmbc/issues/1085)
+- Markdown: File Structure for ZIP Download [\#1084](https://github.com/TheFive/osmbc/issues/1084)
+- Markdown Export Include Author Footer in Markdown [\#1083](https://github.com/TheFive/osmbc/issues/1083)
+- Markdown include "non translated" languages [\#1082](https://github.com/TheFive/osmbc/issues/1082)
+- Markdown Export Upcoming Events without List item [\#1081](https://github.com/TheFive/osmbc/issues/1081)
+- Change Footnote Style in Markdown to Hugo Template Style [\#1080](https://github.com/TheFive/osmbc/issues/1080)
+- Add Reference Shortcodes in Hugo Template Style [\#1079](https://github.com/TheFive/osmbc/issues/1079)
+- Remove Size Attribute for Pictures in Markdown Export [\#1078](https://github.com/TheFive/osmbc/issues/1078)
+
 ## [4.2.5](https://github.com/TheFive/osmbc/tree/4.2.5) (2026-05-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.4...4.2.5)
