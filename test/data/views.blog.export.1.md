@@ -22,3 +22,4 @@ title = 'Wochennotiz OG'
 
 This should be a markdown table
 
+_Diese Wochennotiz wurde erstellt von user\_1, USER2._

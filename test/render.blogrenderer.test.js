@@ -331,18 +331,21 @@ describe("render/blogrenderer", function() {
           should.not.exist(err);
 
           let htmlResult = data.testBlogResultHtml;
+          let htmlFile = "";
           let markdown = false;
 
           try {
             // try to read file content,
             // if it fails, use the already defined value
             const file =  path.resolve(config.getDirName(), "test/data", htmlResult);
+            htmlFile =htmlResult;
+
             htmlResult = fs.readFileSync(file, "utf-8");
             if (file.indexOf(".md") >= 0) markdown = true;
           } catch (err) { /* ignore the error */ }
 
           if (markdown) {
-            should(html).eql(htmlResult);
+            testutil.expectTextFile(html,"data",htmlFile);
           } else {
             should(html).eql(htmlResult);
           }

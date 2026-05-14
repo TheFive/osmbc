@@ -4,6 +4,7 @@ import config from "../config.js";
 const debug = _debug("OSMBC:render:MarkdownRenderer");
 
 import util from "../util/util.js";
+import mdUtil from "../util/md_util.js";
 
 import language from "../model/language.js";
 import configModule from "../model/config.js";
@@ -135,10 +136,13 @@ class MarkdownRenderer extends Renderer {
 
   /**
    * Returns an empty string — the team string is omitted in Markdown exports.
+   * As currently HTML is used for templating team strings it must be
+   * tuneddown into markdown.
    * @returns {string} An empty string.
    */
-  _formatTeamString() {
-    return "";
+  _formatTeamString(teamstring) {
+    const turndownService = mdUtil.turndownService();
+    return turndownService.turndown(teamstring);
   }
 
   /**

@@ -562,11 +562,7 @@ describe("routes/blog", function() {
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
       const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&markdown=true&download=true");
 
-
-      const file = path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.md");
-      const expectation = fs.readFileSync(file, "UTF8");
-
-      should(body.data).eql(expectation);
+      testutil.expectTextFile(body.data, "data", "views.blog.export.1", "md");
     });
   });
 
