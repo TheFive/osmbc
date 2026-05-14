@@ -4,14 +4,7 @@ import axios from "axios";
 import language from "../model/language.js";
 
 
-
-
-
-import TurndownService from "turndown";
-import turndownItSup from "../util/turndown-it-sup.js";
-import turndownItEmoji from "../util/turndown-it-emoji.js";
-import turndownItImsize from "../util/turndown-it-imsize.js";
-import { osmbcMarkdown } from "../util/md_util.js";
+import { osmbcMarkdown, turndownService } from "../util/md_util.js";
 
 import config from "../config.js";
 import _debug from "debug";
@@ -119,11 +112,8 @@ function translateDeeplPro(options, callback) {
       if (result && result.message) return callback(null, result.message);
       if (!result || !result.translations) return callback(null, "Something went wrong with translation in this article.");
       const htmlresult = result.translations[0].text;
-      const turndownService = new TurndownService();
-      turndownService.use(turndownItSup);
-      turndownService.use(turndownItEmoji);
-      turndownService.use(turndownItImsize);
-      let mdresult = turndownService.turndown(htmlresult);
+      const td = turndownService();
+      let mdresult = td.turndown(htmlresult);
       mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLangOsmbc.toLowerCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLangOsmbc.toLowerCase());
       mdresult = mdresult.replaceAll("_x_tr_sl=auto&_x_tr_tl=" + fromLangOsmbc.toUpperCase(), "_x_tr_sl=auto&_x_tr_tl=" + toLangOsmbc.toUpperCase());
       mdresult = mdresult.replaceAll(":" + fromLangOsmbc.toUpperCase() + "-t:", ":" + toLangOsmbc.toUpperCase() + "-t:");

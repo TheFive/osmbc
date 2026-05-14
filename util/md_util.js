@@ -5,6 +5,14 @@ import { full as markdownItEmoji } from "markdown-it-emoji";
 import markdownItSup from "./markdown-it-sup.js";
 import markdownItImsize from "./markdown-it-imsize.js";
 import mila from "markdown-it-link-attributes";
+
+import TurndownService from "turndown";
+import turndownItSup from "../util/turndown-it-sup.js";
+import turndownItEmoji from "../util/turndown-it-emoji.js";
+import turndownItImsize from "../util/turndown-it-imsize.js";
+
+
+
 import config from "../config.js";
 import { regex } from "list-matcher";
 
@@ -188,11 +196,20 @@ function mdTable(json, columns) {
 }
 
 
+export function turndownService() {
+    const turndownService = new TurndownService();
+    turndownService.use(turndownItSup);
+    turndownService.use(turndownItEmoji);
+    turndownService.use(turndownItImsize);
+    return turndownService;
+}
+
 
 
 const mdUtil = {
   mdTable: mdTable,
-  osmbcMarkdown: osmbcMarkdown
+  osmbcMarkdown: osmbcMarkdown,
+  turndownService: turndownService
 };
 
 export default mdUtil;

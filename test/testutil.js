@@ -407,6 +407,11 @@ function normalizeVersionedStaticAssets(html) {
 }
 
 
+function normalizeTextLineEndings(text) {
+  return text.replace(/\r\n/g, "\n");
+}
+
+
 async function expectHtml(driver, errorList, givenPath, name) {
   const sourcePretty = pretty(await driver.getPageSource());
   const sourceForCompare = normalizeVersionedStaticAssets(sourcePretty);
@@ -457,6 +462,57 @@ async function expectHtml(driver, errorList, givenPath, name) {
     }
   }
 };
+
+
+function expectTextFile(source, errorList, givenPath, name, extension) {
+  let stopOnError = false;
+  if (!Array.isArray(errorList)) {
+    stopOnError = true;
+    extension = name;
+    name = givenPath;
+    givenPath = errorList;
+    errorList = undefined;
+  }
+  if (!extension) extension = "md";
+  extension = extension.replace(/^\./, "");
+
+  const endsWithExtension = name.toLowerCase().endsWith("." + extension.toLowerCase());
+  const baseName = endsWithExtension ? name.slice(0, -1 * (extension.length + 1)) : name;
+
+  const sourceForCompare = normalizeTextLineEndings(source);
+  let expectedForCompare = "";
+  const expectedFile = path.join(config.getDirName(), "test", givenPath, baseName + "." + extension);
+  const actualFile = path.join(config.getDirName(), "test", givenPath, baseName + "_actual." + extension);
+  const legacyActualFile = path.join(config.getDirName(), "test", givenPath, name + "_actual." + extension);
+  try {
+    expectedForCompare = normalizeTextLineEndings(fs.readFileSync(expectedFile, "UTF8"));
+  } catch (err) {
+    console.error(err);
+  }
+
+  if (sourceForCompare === expectedForCompare) {
+    // everything is fine, delete any existing actual file
+    try {
+      fs.unlinkSync(actualFile);
+    } catch (err) {}
+    if (legacyActualFile !== actualFile) {
+      try {
+        fs.unlinkSync(legacyActualFile);
+      } catch (err) {}
+    }
+
+    return;
+  }
+
+  // there is a difference, so create the actual data as file
+  // to do easier fix the test.
+  fs.writeFileSync(actualFile, sourceForCompare, "UTF8");
+  if (stopOnError) {
+    should(false).eql(true, extension.toUpperCase() + " File " + name + " is different.");
+  } else if (sourceForCompare !== expectedForCompare) {
+    errorList.push(extension.toUpperCase() + " File " + name + " is different.");
+  }
+}
 
 
 
@@ -636,7 +692,8 @@ const testutil = {
   doATest: doATest,
   nockHtmlPages: nockHtmlPages,
   nockHtmlPagesClear: nockHtmlPagesClear,
-  expectHtml: expectHtml
+  expectHtml: expectHtml,
+  expectTextFile: expectTextFile
 };
 
 export default testutil;

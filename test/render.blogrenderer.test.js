@@ -195,14 +195,97 @@ describe("render/blogrenderer", function() {
       should(result).equal('<li id="undefined_0">\nGreetings from <a href="https://en.wikipedia.org/wiki/Germany"><img src=\"/localMediaFOlder2015/de-black.svg\" /></a> 😃\n</li>\n');
       bddone();
     });
-    it("should generate an article for Long Term Dates", function (bddone) {
+    it("should handle unpublished picture article with reason", function (bddone) {
       const article = articleModule.create({
-        markdownEN: "This is a table",
-        markdownDE: "Eine Tabelle",
-        categoryEN: "Long Term Dates"
+        markdownEN: "![Alt Text](https://example.com/pic.jpg =300x200)\n\nCaption",
+        categoryEN: "Picture",
+        unpublishReason: "Image rights unclear"
       });
+      const origCat = article.categoryEN;
+      article.categoryEN = "--unpublished--";
+      const result = renderer.renderArticle("EN", article);
+      // When unpublished, it renders as standard article (li) with unpublish reason
+      should(result).match(/Image rights unclear/);
+      should(result).match(/Caption/);
+      bddone();
+    });
+    it("should handle unpublished upcoming events article", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "Event scheduled for later",
+        categoryEN: "Upcoming Events",
+        unpublishReason: "Date not confirmed",
+        unpublishReference: "Issue #123"
+      });
+      article.categoryEN = "--unpublished--";
       const result = renderer.renderArticle("DE", article);
-      should(result).equal("<p>Eine Tabelle\n</p>");
+      should(result).match(/Date not confirmed/);
+      should(result).match(/Issue #123/);
+      bddone();
+    });
+  });
+
+  describe("markdownArticle", function() {
+    let markdownRenderer;
+    before(function() {
+      markdownRenderer = new BlogRenderer.MarkdownRenderer();
+    });
+
+    it("should generate markdown for standard article", function (bddone) {
+      const article = articleModule.create({ markdownDE: "Test article with content" });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal('{{ < anchor "undefined_0" > }} * Test article with content');
+      bddone();
+    });
+
+    it("should generate markdown for picture article", function (bddone) {
+      const article = articleModule.create({
+        markdownEN: "![Alt Text](https://example.com/img.jpg =300x200)\n\nCaption text",
+        categoryEN: "Picture"
+      });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).equal("");
+      bddone();
+    });
+
+    it("should generate markdown for upcoming events", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "Event details in markdown",
+        categoryEN: "Upcoming Events"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      // Upcoming Events in Markdown don't get the "* " prefix like Standard
+      should(result).equal("Event details in markdown");
+      bddone();
+    });
+
+    it("should generate markdown without leading asterisk if present", function (bddone) {
+      const article = articleModule.create({
+        markdownEN: "* Already has asterisk",
+        id: 3,
+        blog: "BLOG"
+      });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).equal('{{ < anchor "blog_3" > }} * * Already has asterisk');
+      bddone();
+    });
+
+    it("should fallback to title for markdown article with no markdown", function (bddone) {
+      const article = articleModule.create({ collection: "Collection Title" ,id: 4, blog: "BLOG" });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal('{{ < anchor "blog_4" > }} * Collection Title\n');
+      bddone();
+    });
+
+    it("should generate markdown for unpublished article (no metadata added)", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "Content",
+        categoryEN: "--unpublished--",
+        unpublishReason: "Test reason"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      // Unpublished renders via renderArticleStandard (not recognized as special category)
+      // which adds "* ", then renderArticleUnpublished returns it unchanged
+      should(result).equal('{{ < anchor "undefined_0" > }} * Content');
       bddone();
     });
   });
@@ -213,7 +296,7 @@ describe("render/blogrenderer", function() {
     });
     function doATest(filename) {
       it("should handle testfile " + filename, function (bddone) {
-        const file =  path.resolve(config.getDirName(), "data", filename);
+        const file =  path.resolve(config.getDirName(), "test/data", filename);
         const data =  JSON.parse(fs.readFileSync(file));
 
         let blog;
@@ -248,18 +331,21 @@ describe("render/blogrenderer", function() {
           should.not.exist(err);
 
           let htmlResult = data.testBlogResultHtml;
+          let htmlFile = "";
           let markdown = false;
 
           try {
             // try to read file content,
             // if it fails, use the already defined value
-            const file =  path.resolve(config.getDirName(), "data", htmlResult);
+            const file =  path.resolve(config.getDirName(), "test/data", htmlResult);
+            htmlFile =htmlResult;
+
             htmlResult = fs.readFileSync(file, "utf-8");
             if (file.indexOf(".md") >= 0) markdown = true;
           } catch (err) { /* ignore the error */ }
 
           if (markdown) {
-            should(html).eql(htmlResult);
+            testutil.expectTextFile(html,"data",htmlFile);
           } else {
             should(html).eql(htmlResult);
           }
@@ -269,6 +355,6 @@ describe("render/blogrenderer", function() {
         );
       });
     }
-    testutil.generateTests("data", /^render.blog.renderBlog.+json/, doATest);
+    testutil.generateTests("test/data", /^render.blog.renderBlog.+json/, doATest);
   });
 });

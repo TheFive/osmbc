@@ -1,0 +1,8 @@
+{
+  "blog":[{"name":"BLOG","startDate":"2015-02-01","endDate":"2015-02-08"}],
+  "article":[{"blog":"BLOG","markdownDE":"* Event Details im Kalender","categoryEN":"Upcoming Events"}],
+  "change":[{"blog":"BLOG","user":"TESTER","_oid":"1","property":"collection","to":"testvalue"}],
+  "testBlogName":"BLOG",
+  "lang":"DE",
+  "testBlogResultHtml":"<meta charset=\"utf-8\"/>\n<p>01.02.2015-08.02.2015</p>\n<h2 id=\"blog_wochenvorschau\">Wochenvorschau</h2>\n<ul>\n<p>Event Details im Kalender\n</p>\n<p>Hinweis:<br />Wer seinen Termin hier in der Liste sehen möchte, <a href=\"https://wiki.openstreetmap.org/wiki/Template:Calendar\">trage</a> ihn in den <a href=\"https://wiki.openstreetmap.org/wiki/Current_events\">Kalender</a> ein. Nur Termine, die dort stehen, werden in die Wochennotiz übernommen.</p>\n\n\n</ul>\n<p align=\"right\"><i>Diese Wochennotiz wurde erstellt von .</i></p>\n"
+}

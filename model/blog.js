@@ -961,7 +961,6 @@ function convertLogsToTeamString(logs, lang, users) {
           j = 9999;
           continue;
         }
-        // check on Markdown started with [
         if (users[j].mdWeeklyAuthor) {
           // Simle Markdown It without and plugin is enough for this case
           editors[i] = markdown.renderInline(users[j].mdWeeklyAuthor);
