@@ -62,8 +62,6 @@
   "cookieMaxAge": 10000,
   "url":"https://localhost:35043",
   "SMTP":{},
-  "apiKey":"testapikey",
-  "apiKey.TBC":"testapikey.TBC",
   "apiKeys":{
     "testapikey":"monitor",
     "testapikey.TBC":"TBC Collections"
