@@ -23,7 +23,7 @@ data.json
 !package-lock.json
 profile_logs
 .nyc_output
-*_actual.html
+*_actual.md
 
 coverage/
 bootstrap-select.min.js.map

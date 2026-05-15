@@ -1,6 +1,6 @@
 +++
 date = 2015-02-02
-draft = true
+draft = false
 title = 'Wochennotiz OG'
 
 

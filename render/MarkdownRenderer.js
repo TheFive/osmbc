@@ -182,10 +182,10 @@ class MarkdownRenderer extends Renderer {
     const text = [
       "+++",
       "date = " + date,
-      "draft = " + (this.blog["close" + lang] ? "false" : "true"),
+      "draft = false",
       "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
       (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
-      (pictureMd) ? "featureImageCaption = '" + pictureMd + "'" : "",
+      (pictureMd) ? "featureImageCapt = '" + pictureMd + "'" : "",
       "+++"
     ].join("\n");
 
