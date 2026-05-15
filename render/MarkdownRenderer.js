@@ -64,7 +64,7 @@ class MarkdownRenderer extends Renderer {
     let blogRef = article.blog;
     if (!blogRef) blogRef = "undefined";
     const pageLink = util.linkify(blogRef + "_" + article.id);
-    return `{{ < anchor "${pageLink}" > }} * ${this._renderMarkdownListItem(lang, article)}`;
+    return `* {{< anchor "${pageLink}" >}} ${this._renderMarkdownListItem(lang, article)}`;
   }
 
   /**
