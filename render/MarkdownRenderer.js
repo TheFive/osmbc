@@ -172,13 +172,28 @@ class MarkdownRenderer extends Renderer {
     if (pictureArticles && pictureArticles.length > 0) {
       const pictureArticle = pictureArticles[0];
       const md = pictureArticle["markdown" + lang];
+      const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
       const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
       pictureMd = (md) ? md.replaceAll("^1^",'{{< sup "1" >}}') : null;
       if (pictureMd) {
         pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
-        const link = regexUrlFromCollection.exec(pictureMd);
-        if (link && link.length > 0) {
-          pictureLink = link[0];
+        // Extract Markdown image syntax if available
+        const imageMatch = regexMarkdownImage.exec(pictureMd);
+        if (imageMatch && imageMatch.length >= 3) {
+          pictureLink = imageMatch[2]; // Store only the URL from the Markdown image syntax
+          pictureMd = pictureMd.replace(regexMarkdownImage, "").trim(); // Remove image from pictureMd
+        } else {
+          // Fallback: extract URL if no Markdown image syntax found
+          const link = regexUrlFromCollection.exec(pictureMd);
+          if (link && link.length > 0) {
+            pictureLink = link[0];
+            // Try to remove the complete Markdown image syntax containing this URL
+            pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
+            // If no Markdown syntax found, just remove the URL itself
+            if (pictureMd.includes(link[0])) {
+              pictureMd = pictureMd.replace(link[0], "").trim();
+            }
+          }
         }
       }
     }
@@ -188,7 +203,7 @@ class MarkdownRenderer extends Renderer {
       "draft = false",
       "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
       (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
-      (pictureMd) ? "featureImageCapt = '" + pictureMd + "'" : "",
+      (pictureMd) ? "featureImageCap = '" + pictureMd + "'" : "",
       "+++"
     ].join("\n");
 
