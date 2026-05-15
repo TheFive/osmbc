@@ -563,6 +563,26 @@ describe("routes/blog", function() {
 
       testutil.expectTextFile(body.data, "data", "views.blog.export.1", "md");
     });
+    it("should download markdown multi export as zip for lang=ALL", async function () {
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=ALL&markdown=true&download=true", { responseType: "arraybuffer" });
+
+      should(body.status).eql(200);
+      should(body.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+      if (body.headers["content-disposition"]) {
+        should(body.headers["content-disposition"]).containEql(".zip");
+      }
+
+      const zipBuffer = Buffer.from(body.data);
+      zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+
+      const zipText = zipBuffer.toString("latin1");
+      zipText.should.containEql("de/archives/0000.md");
+      zipText.should.containEql("en/archives/0000.md");
+    });
   });
 
 

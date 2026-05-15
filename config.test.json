@@ -118,5 +118,8 @@
       "target": "_blank",
       "rel": "noopener"},
     "production": { "class": "production"}
+  },
+  "HugoExport": {
+    "Pathname-for-Export": "##lang##/archives/##blogNumber-4-digits##"
   }
 }

@@ -27,6 +27,8 @@ const router   = express.Router();
 const debug = _debug("OSMBC:routes:blog");
 
 const htmlroot = config.htmlRoot();
+const pathForMarkdownExport = config.getValue("HugoExport", "Pathname-for-Export", { mustExist: true });
+
 
 const reviewInWP = config.getValue("ReviewInWP", { default: [] });
 
@@ -270,7 +272,14 @@ function renderBlogPreview(req, res, next) {
         const renderer = new blogRenderer.MarkdownRenderer(blog);
         result = renderer.renderBlog(exportLang, data,createEmptyForOpenLanguage);
         if (multiExport) {
-          overallResult.append(result, { name: `${exportLang}/${blog.name}.md` });
+          const wn_4_digit = String(blog.name).replace(/\D/g, "").padStart(4, "0");
+
+
+          const exportPath = util.replaceTemplateVariables(pathForMarkdownExport,
+            { lang: language.wpExportName(exportLang).toLowerCase(),
+              "blogNumber-4-digits": wn_4_digit });
+
+          overallResult.append(result, { name: `${exportPath}.md` });
         } else {
           overallResult = result;
         }
