@@ -89,7 +89,10 @@ class MarkdownRenderer extends Renderer {
    * @returns {string} A Markdown list item string.
    */
   _renderArticleUpcomingEvents(lang, article) {
-    return this._renderMarkdownListItem(lang, article);
+    let md = this._renderMarkdownListItem(lang, article);
+    // fix flag icons in upcoming events by removing the alt text (which is currently set to "flag") since Hugo's Markdown parser doesn't support custom image syntax and the alt text is not needed for the export
+    md = md.replaceAll("![flag](","![](");
+    return md;
   }
 
   /**

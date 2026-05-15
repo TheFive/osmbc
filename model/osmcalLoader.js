@@ -160,7 +160,7 @@ function enrichData(json, lang) {
     if (cf[event.country_code]) {
       const mdFlag = cf[event.country_code];
       if (mdFlag.substr(0, 8) === "https://") {
-        event.country_flag = `![flag](${mdFlag})`;
+        event.country_flag = `![](${mdFlag})`;
       } else {
         event.country_flag = mdFlag;
       }
