@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.3.1](https://github.com/TheFive/osmbc/tree/4.3.1) (2026-05-15)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.3.0...4.3.1)
+
+**Closed issues:**
+
+- Add API Call to download a blog [\#1096](https://github.com/TheFive/osmbc/issues/1096)
+- Improve \#\#xxx\#\# Template Replacer [\#1094](https://github.com/TheFive/osmbc/issues/1094)
+- Hugo Markdown: Fix Footnodes [\#1093](https://github.com/TheFive/osmbc/issues/1093)
+- Hugo Export. Sublist [\#1092](https://github.com/TheFive/osmbc/issues/1092)
+- Hugo Markdown: Remove alt Text Flag from OSM Calendar [\#1091](https://github.com/TheFive/osmbc/issues/1091)
+- Hugo Markdown: TOML Header Draft always false [\#1090](https://github.com/TheFive/osmbc/issues/1090)
+- Hugo Markdown: Fix Anchor Links [\#1089](https://github.com/TheFive/osmbc/issues/1089)
+- Hugo Markdown Fix FeatureImageCap [\#1088](https://github.com/TheFive/osmbc/issues/1088)
+- Hugo Markdown: Export MD Files Names  [\#1087](https://github.com/TheFive/osmbc/issues/1087)
+
 ## [4.3.0](https://github.com/TheFive/osmbc/tree/4.3.0) (2026-05-14)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.2.5...4.3.0)
