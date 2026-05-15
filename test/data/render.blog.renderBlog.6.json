@@ -1,7 +1,7 @@
 {
   "blog":[{"name":"WN823","startDate":"2015-02-02","endDate":"2015-02-05","closeDE":true,"closeEN":false}],
   "article":[{"blog":"WN823",
-              "markdownDE":"[^1^](#wn815_34170) verweist auf das bild [bild](https://bild.irgendwo/foto.png)",
+              "markdownDE":"[^1^](#wn815_34170) verweist auf das bild ![bild](https://bild.irgendwo/foto.png)",
               "categoryEN":"Picture",
               "title":"picture title"},
               {"blog":"WN823",

@@ -16,8 +16,6 @@ async function doTest(option) {
   const inputFile = path.resolve(config.getDirName(), "test", "data", `osmcal_api_v2.${option.file}.json`);
   const input = JSON.parse(fs.readFileSync(inputFile));
 
-  const outputFile = path.resolve(config.getDirName(), "test", "data", `osmcal_result.${option.file}.txt`);
-  const expectedResult = fs.readFileSync(outputFile, { encoding: "utf8" });
 
   nock("https://osmcal.org")
     .get("/api/v2/events/")
@@ -32,7 +30,7 @@ async function doTest(option) {
   mockdate.set(new Date(option.date));
 
   const result = await osmcalLoader.getEventMd(option.lang);
-  should(result).eql(expectedResult);
+  testutil.expectTextFile(result, "data", `osmcal_result.${option.file}`,".txt");
 }
 
 describe("model/osmcalLoader", function () {

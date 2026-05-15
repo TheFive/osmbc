@@ -231,6 +231,47 @@ function getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin) {
   return defaultUrl;
 };
 
+/**
+ * Replaces all ##key## placeholders in a template string with values from a variables object.
+ * The key lookup is case-insensitive. The case of the placeholder determines value conversion:
+ * - ##KEY## (UPPERCASE) converts value to UPPERCASE
+ * - ##key## (lowercase) converts value to lowercase
+ * - ##Key## (Mixed case) keeps value as-is
+ * Integers and other non-strings are converted to string automatically.
+ * @param {string} template - The template string containing ##key## placeholders
+ * @param {object} variables - Object with key-value pairs to replace
+ * @returns {string} - The template string with all placeholders replaced
+ */
+function replaceTemplateVariables(template, variables = {}) {
+  if (typeof template !== "string") {
+    debug(`replaceTemplateVariables: template is not a string, got ${typeof template}`);
+    return String(template);
+  }
+
+  // Build a case-insensitive lookup map: lowercase key -> original value
+  const lookup = {};
+  for (const [key, value] of Object.entries(variables)) {
+    lookup[key.toLowerCase()] = value;
+  }
+
+  return template.replace(/##([^#]+)##/g, (match, placeholderKey) => {
+    const normalizedKey = placeholderKey.toLowerCase();
+    if (!(normalizedKey in lookup)) return match;
+
+    const stringValue = String(lookup[normalizedKey]);
+
+    if (placeholderKey === placeholderKey.toUpperCase() && placeholderKey !== placeholderKey.toLowerCase()) {
+      // Placeholder key is UPPERCASE -> convert value to UPPERCASE
+      return stringValue.toUpperCase();
+    } else if (placeholderKey === placeholderKey.toLowerCase()) {
+      // Placeholder key is lowercase -> convert value to lowercase
+      return stringValue.toLowerCase();
+    }
+    // Mixed case -> keep value as-is
+    return stringValue;
+  });
+};
+
 
 
 
@@ -249,7 +290,8 @@ const util = {
   sleep: sleep,
   osmbcLink: osmbcLink,
   md_render: mdRender,
-  getSafeRedirectUrl: getSafeRedirectUrl
+  getSafeRedirectUrl: getSafeRedirectUrl,
+  replaceTemplateVariables: replaceTemplateVariables
 };
 
 export default util;

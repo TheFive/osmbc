@@ -56,6 +56,10 @@ class MarkdownRenderer extends Renderer {
 
   /**
    * Renders a standard article as a Markdown anchor shortcode + list item.
+   * Implemented Featuses: Add Anchor Link for Hugo
+   * Respect sublists in Article by replacing leading `*` with two spaces and a `*` for proper Markdown nesting.
+   * Unpublished articles are not marked as such in Markdown exports.
+   * @see Renderer.renderArticle for the main entry point for rendering articles.
    * @param {string} lang - The language code.
    * @param {object} article - The article object to render.
    * @returns {string} A Markdown list item with an anchor shortcode prefix.
@@ -64,7 +68,7 @@ class MarkdownRenderer extends Renderer {
     let blogRef = article.blog;
     if (!blogRef) blogRef = "undefined";
     const pageLink = util.linkify(blogRef + "_" + article.id);
-    return `{{ < anchor "${pageLink}" > }} * ${this._renderMarkdownListItem(lang, article)}`;
+    return `* {{< anchor "${pageLink}" >}} ${this._renderMarkdownListItem(lang, article)}`;
   }
 
   /**
@@ -85,7 +89,10 @@ class MarkdownRenderer extends Renderer {
    * @returns {string} A Markdown list item string.
    */
   _renderArticleUpcomingEvents(lang, article) {
-    return this._renderMarkdownListItem(lang, article);
+    let md = this._renderMarkdownListItem(lang, article);
+    // fix flag icons in upcoming events by removing the alt text (which is currently set to "flag") since Hugo's Markdown parser doesn't support custom image syntax and the alt text is not needed for the export
+    md = md.replaceAll("![flag](","![](");
+    return md;
   }
 
   /**
@@ -96,9 +103,14 @@ class MarkdownRenderer extends Renderer {
    * @returns {string} The markdown text or display title.
    */
   _renderMarkdownListItem(lang, article) {
-    const md = article["markdown" + lang];
+    let md = article["markdown" + lang];
     if (typeof (md) !== "undefined" && md !== "") {
-      return md;
+        // replace custom syntax for superscript (currently ^1^) with Hugo's shortcode syntax {{< sup "1" >}}
+        // since Hugo's Markdown parser doesn't support custom syntax and the shortcode is needed for the export
+        md = md.replaceAll("^1^",'{{< sup "1" >}}');
+        // fix sublists in Article by replacing leading `*` with two spaces and a `*` for proper
+        // Markdown nesting
+        return md.replace(/^\*/gm, "  *");
     }
     return article.displayTitle(90) + "\n";
   }
@@ -165,23 +177,38 @@ class MarkdownRenderer extends Renderer {
     if (pictureArticles && pictureArticles.length > 0) {
       const pictureArticle = pictureArticles[0];
       const md = pictureArticle["markdown" + lang];
+      const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
       const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
-      pictureMd = (md) ? md.replaceAll("^1^",'{{< sup "1" >}}') : null;
+      pictureMd = (md) ? md.replaceAll("^1^","1)") : null;
       if (pictureMd) {
         pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
-        const link = regexUrlFromCollection.exec(pictureMd);
-        if (link && link.length > 0) {
-          pictureLink = link[0];
+        // Extract Markdown image syntax if available
+        const imageMatch = regexMarkdownImage.exec(pictureMd);
+        if (imageMatch && imageMatch.length >= 3) {
+          pictureLink = imageMatch[2]; // Store only the URL from the Markdown image syntax
+          pictureMd = pictureMd.replace(regexMarkdownImage, "").trim(); // Remove image from pictureMd
+        } else {
+          // Fallback: extract URL if no Markdown image syntax found
+          const link = regexUrlFromCollection.exec(pictureMd);
+          if (link && link.length > 0) {
+            pictureLink = link[0];
+            // Try to remove the complete Markdown image syntax containing this URL
+            pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
+            // If no Markdown syntax found, just remove the URL itself
+            if (pictureMd.includes(link[0])) {
+              pictureMd = pictureMd.replace(link[0], "").trim();
+            }
+          }
         }
       }
     }
     const text = [
       "+++",
       "date = " + date,
-      "draft = " + (this.blog["close" + lang] ? "false" : "true"),
+      "draft = false",
       "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
       (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
-      (pictureMd) ? "featureImageCaption = '" + pictureMd + "'" : "",
+      (pictureMd) ? "featureImageCap = '" + pictureMd + "'" : "",
       "+++"
     ].join("\n");
 

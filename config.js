@@ -141,9 +141,13 @@ function getConfiguration() {
   return configuration;
 };
 
-function getValue(key, options) {
+function getValue(key, subkey, options) {
   debug("getValue %s", key);
   initialise();
+  if (typeof subkey === "object") {
+    options = subkey;
+    subkey = null;
+  } 
   if (options) assert.equal(typeof (options), "object");
   let result;
   if (options) {
@@ -152,8 +156,11 @@ function getValue(key, options) {
   if (typeof (configuration[key]) !== "undefined") {
     result = configuration[key];
   }
+  if (result && subkey) {
+    result = result[subkey];
+  }
   if (options && options.mustExist && typeof result === "undefined") {
-    logger.error("Missing Value in config.*.json. Name: '" + key + "'");
+    logger.error("Missing Value in config.*.json. Name: '" + key + (subkey ? "." + subkey : "") + "'");
     process.exit(1);
   }
   if (options && options.checkFunction && options.checkFunction(result) === false) {

@@ -9,6 +9,8 @@ import util from "../util/util.js";
 import articleModule from "../model/article.js";
 import config from "../config.js";
 import language from "../model/language.js";
+import blogModule from "../model/blog.js";
+
 const debug = _debug("OSMBC:routes:api");
 const publicApiRouter  = express.Router();
 
@@ -199,12 +201,63 @@ function collectArticleLink(req, res, next) {
   });
 }
 
+function findBlogByRouteId(id, callback) {
+  debug("findBlogByRouteId(%s)", id);
+  blogModule.findById(id, function(err, blog) {
+    if (err) return callback(err);
+    if (blog) return callback(null, blog);
+
+    blogModule.find({ name: id }, function(err, result) {
+      if (err) return callback(err);
+      if (result.length === 0) return callback(null, null);
+      if (result.length > 1) return callback(new Error("Blog >" + id + "< exists twice, internal id of first: " + result[0].id));
+      return callback(null, result[0]);
+    });
+  });
+}
+
+function checkBlogId(req, res, next, id) {
+  debug("checkBlogId");
+  findBlogByRouteId(id, function(err, blog) {
+    if (err) return next(err);
+    if (!blog) {
+      const notFound = new Error("Blog not found");
+      notFound.status = 404;
+      notFound.type = "API";
+      return next(notFound);
+    }
+    req.blog = blog;
+    return next();
+  });
+}
+
+function getBlogPreviewDownload(req, res, next) {
+  debug("getBlogPreviewDownload");
+  const asMarkdown = (req.query.markdown === "true");
+
+  req.blog.buildPreviewExport({
+      lang: req.query.lang,
+      markdown: asMarkdown,
+      forceDownload: true },
+    function(err, result) {
+    if (err) return next(err);
+    res.set("content-type", result.mimeType);
+    if (result.bodyType === "string") {
+      return res.attachment(result.fileName).end(result.body);
+    }
+    res.attachment(result.fileName);
+    result.body.pipe(res);
+  });
+}
+
 publicApiRouter.param("apiKey", checkApiKey);
+publicApiRouter.param("blog_id", checkBlogId);
 
 publicApiRouter.get("/monitor/:apiKey", isServerUp);
 publicApiRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
 
 publicApiRouter.post("/collectArticle/:apiKey", collectArticle);
 publicApiRouter.get("/collect/:apiKey", collectArticleLink);
+publicApiRouter.get("/blogPreviewDownload/:apiKey/:blog_id", getBlogPreviewDownload);
 
 export default publicApiRouter;
