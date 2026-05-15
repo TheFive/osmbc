@@ -103,8 +103,13 @@ class MarkdownRenderer extends Renderer {
    * @returns {string} The markdown text or display title.
    */
   _renderMarkdownListItem(lang, article) {
-    const md = article["markdown" + lang];
+    let md = article["markdown" + lang];
     if (typeof (md) !== "undefined" && md !== "") {
+        // replace custom syntax for superscript (currently ^1^) with Hugo's shortcode syntax {{< sup "1" >}}
+        // since Hugo's Markdown parser doesn't support custom syntax and the shortcode is needed for the export
+        md = md.replaceAll("^1^",'{{< sup "1" >}}');
+        // fix sublists in Article by replacing leading `*` with two spaces and a `*` for proper
+        // Markdown nesting
         return md.replace(/^\*/gm, "  *");
     }
     return article.displayTitle(90) + "\n";
@@ -174,7 +179,7 @@ class MarkdownRenderer extends Renderer {
       const md = pictureArticle["markdown" + lang];
       const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
       const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
-      pictureMd = (md) ? md.replaceAll("^1^",'{{< sup "1" >}}') : null;
+      pictureMd = (md) ? md.replaceAll("^1^","1)") : null;
       if (pictureMd) {
         pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
         // Extract Markdown image syntax if available
