@@ -86,7 +86,7 @@ class HtmlRenderer extends Renderer {
     if (text.indexOf('width="') >= 0) {
       const width = parseInt(text.substring(text.indexOf('width="') + 7)) + 10;
       if (width > 0) {
-        openTag = openTag.replace("##width##", width);
+        openTag = util.replaceTemplateVariables(openTag, { width: width });
       } else {
         openTag = '<div style="width: 810px" class="wp-caption alignnone"> \n';
         text = text.replace("></p>", ' width="800" height="500"></p>');

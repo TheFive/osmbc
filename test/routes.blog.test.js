@@ -543,8 +543,7 @@ describe("routes/blog", function() {
 
       const file = path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.html");
       const expectation = fs.readFileSync(file, "UTF8");
-
-      should(body.data).eql(expectation);
+      testutil.expectTextFile(body.data, "data", "views.blog.export.1", "html");
     });
     it("should get a header preview", async function () {
       await testutil.importData("data/views.blog.export.1.json");

@@ -979,7 +979,7 @@ function convertLogsToTeamString(logs, lang, users) {
   }
 
   const editorStrings = configModule.getConfig("editorstrings");
-  if (editorStrings[lang]) return editorStrings[lang].replace("##team##", editorsString);
+  if (editorStrings[lang]) return util.replaceTemplateVariables(editorStrings[lang], { team: editorsString });
   return "";
 }
 
