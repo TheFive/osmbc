@@ -233,7 +233,7 @@ describe("render/blogrenderer", function() {
     it("should generate markdown for standard article", function (bddone) {
       const article = articleModule.create({ markdownDE: "Test article with content" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('{{ < anchor "undefined_0" > }} * Test article with content');
+      should(result).equal('* {{< anchor "undefined_0" >}} Test article with content');
       bddone();
     });
 
@@ -258,7 +258,7 @@ describe("render/blogrenderer", function() {
       bddone();
     });
 
-    it("should generate markdown without leading asterisk if present", function (bddone) {
+    it("should indent leading asterisk in article content", function (bddone) {
       const article = articleModule.create({
         markdownEN: "* Already has asterisk",
         id: 3,
@@ -266,6 +266,28 @@ describe("render/blogrenderer", function() {
       });
       const result = markdownRenderer.renderArticle("EN", article);
       should(result).equal('* {{< anchor "blog_3" >}}   * Already has asterisk');
+      bddone();
+    });
+
+    it("should indent all leading asterisks in multiline article content", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "* line one\n* line two\n* line three",
+        id: 5,
+        blog: "TEST"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal('* {{< anchor "test_5" >}}   * line one\n  * line two\n  * line three');
+      bddone();
+    });
+
+    it("should only indent asterisks at start of line, not mid-line", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "normal line\n* sub item\nnormal again",
+        id: 6,
+        blog: "TEST"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal('* {{< anchor "test_6" >}} normal line\n  * sub item\nnormal again');
       bddone();
     });
 

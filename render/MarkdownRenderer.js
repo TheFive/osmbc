@@ -56,6 +56,10 @@ class MarkdownRenderer extends Renderer {
 
   /**
    * Renders a standard article as a Markdown anchor shortcode + list item.
+   * Implemented Featuses: Add Anchor Link for Hugo
+   * Respect sublists in Article by replacing leading `*` with two spaces and a `*` for proper Markdown nesting.
+   * Unpublished articles are not marked as such in Markdown exports.
+   * @see Renderer.renderArticle for the main entry point for rendering articles.
    * @param {string} lang - The language code.
    * @param {object} article - The article object to render.
    * @returns {string} A Markdown list item with an anchor shortcode prefix.
@@ -98,7 +102,7 @@ class MarkdownRenderer extends Renderer {
   _renderMarkdownListItem(lang, article) {
     const md = article["markdown" + lang];
     if (typeof (md) !== "undefined" && md !== "") {
-      return md;
+        return md.replace(/^\*/gm, "  *");
     }
     return article.displayTitle(90) + "\n";
   }

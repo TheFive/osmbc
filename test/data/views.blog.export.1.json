@@ -14,7 +14,7 @@
               "categoryEN":"OpenStreetMap Foundation",
               "title":"2. Paul Norman macht auch was"},
             {"blog":"BLOG",
-              "markdownDE":"Mehr text, mit Vorgänger",
+              "markdownDE":"Mehr text, mit Vorgänger und aufzählung:\n\n* Punkt 1\n* Punkt 2\n\nEnde des Textes.",
               "categoryEN":"OpenStreetMap Foundation",
               "title":"2. Story between 1 and 3",
               "predecessorId":1},
