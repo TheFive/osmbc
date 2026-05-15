@@ -13,7 +13,6 @@ import util from "../util/util.js";
 import moment from "moment";
 import yaml from "js-yaml";
 import configModule from "../model/config.js";
-import archiver from "archiver";
 
 
 import blogModule from "../model/blog.js";
@@ -27,7 +26,6 @@ const router   = express.Router();
 const debug = _debug("OSMBC:routes:blog");
 
 const htmlroot = config.htmlRoot();
-const pathForMarkdownExport = config.getValue("HugoExport", "Pathname-for-Export", { mustExist: true });
 
 
 const reviewInWP = config.getValue("ReviewInWP", { default: [] });
@@ -209,129 +207,42 @@ function renderBlogList(req, res, next) {
 
 function renderBlogPreview(req, res, next) {
   debug("renderBlogPreview");
-  req.session.articleReturnTo = req.originalUrl;
+  if (req.session) req.session.articleReturnTo = req.originalUrl;
   const blog = req.blog;
   if (!blog) return next();
 
-
-  let lang = req.query.lang;
-
-  function isClosed(lang) {
-    if (blog["close" + lang] === true) return true;
-  }
-  function listify(result, value, index) {
-    if (index === 0) return value;
-    return result + "-" + value;
-  }
+  const returnToUrl = req.session ? req.session.articleReturnTo : req.originalUrl;
   const asMarkdown = (req.query.markdown === "true");
-  const exportAllLanguagesInMarkdown = (asMarkdown && lang === "ALL");
-  if (typeof (lang) === "undefined") lang = "EN";
-  if ((lang !== "ALL" && !language.getLanguages()[lang])) lang = "EN";
 
-  if (lang === "ALL") {
-    if (exportAllLanguagesInMarkdown) {
-      lang = language.getLid();
-    } else {
-      lang = language.getLid().filter(isClosed);
-    }
-  } else {
-    lang = [lang];
-  }
+  blog.buildPreviewExport({ lang: req.query.lang, markdown: asMarkdown }, function(err, result) {
+    debug("renderBlogPreview->final function");
+    if (err) return next(err);
 
-
-  const returnToUrl = req.session.articleReturnTo;
-
-  const multiExport = (lang.length > 1);
-  let overallResult = "";
-  if (multiExport) req.query.download = "true";
-
-  function mergeHtmlResultFunction() {
-    return function _mergeHtmlResultFunction(exportLang, callback) {
-      blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
-        if (err) return callback(err);
-        const renderer = new blogRenderer.HtmlRenderer(blog, { target: "production" });
-        const result = renderer.renderBlog(exportLang, data);
-        if (multiExport) {
-          overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
-        } else {
-          overallResult = result;
-        }
-        return callback(null);
-      });
-    };
-  }
-  function mergeMdResultFunction() {
-    const archiv = archiver("zip", { zlib: { level: 9 } });
-    if (multiExport) { overallResult = archiv; }
-    return function _mergeMdResultFunction(exportLang, callback) {
-      blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
-        if (err) return callback(err);
-        let result = "";
-        const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && blog["close" + exportLang] !== true;
-
-        const renderer = new blogRenderer.MarkdownRenderer(blog);
-        result = renderer.renderBlog(exportLang, data,createEmptyForOpenLanguage);
-        if (multiExport) {
-          const wn_4_digit = String(blog.name).replace(/\D/g, "").padStart(4, "0");
-
-
-          const exportPath = util.replaceTemplateVariables(pathForMarkdownExport,
-            { lang: language.wpExportName(exportLang).toLowerCase(),
-              "blogNumber-4-digits": wn_4_digit });
-
-          overallResult.append(result, { name: `${exportPath}.md` });
-        } else {
-          overallResult = result;
-        }
-        return callback(null);
-      });
-    };
-  }
-
-
-
-
-
-
-
-
-  async.eachSeries(lang, (asMarkdown) ? mergeMdResultFunction() : mergeHtmlResultFunction(),
-    function(err) {
-      debug("renderBlogPreview->final function");
-      if (asMarkdown && multiExport) overallResult.finalize();
-      if (!asMarkdown && multiExport) overallResult = overallResult + "[:]";
-      const languageFlags = configModule.getConfig("languageflags");
-      if (err) return next(err);
-      if (req.query.download === "true") {
-        let fileName = `${lang.reduce(listify)} ${blog.name}.html`;
-        if (asMarkdown) {
-          fileName = `${lang.reduce(listify)} ${blog.name}.md`;
-          if (multiExport) {
-            fileName = `${lang.reduce(listify)} ${blog.name}.zip`;
-          }
-        }
-        if (typeof overallResult === "string") {
-          res.attachment(fileName).end(overallResult);
-        } else {
-          res.attachment(fileName);
-          overallResult.pipe(res);
-        }
-      } else {
-        assert(res.rendervar);
-        res.rendervar.layout.title = blog.name + "/preview";
-        res.render("blogpreview", {
-          layout: res.rendervar.layout,
-          languageFlags: languageFlags,
-          blog: blog,
-          asMarkdown: asMarkdown,
-          preview: overallResult,
-          lang: lang,
-          returnToUrl: returnToUrl,
-          categories: blog.getCategories()
-        });
+    const languageFlags = configModule.getConfig("languageflags");
+    const doDownload = (req.query.download === "true") || result.forceDownload;
+    if (doDownload) {
+      res.set("content-type", result.mimeType);
+      if (result.bodyType === "string") {
+        return res.attachment(result.fileName).end(result.body);
       }
+      res.attachment(result.fileName);
+      result.body.pipe(res);
+      return;
     }
-  );
+
+    assert(res.rendervar);
+    res.rendervar.layout.title = blog.name + "/preview";
+    res.render("blogpreview", {
+      layout: res.rendervar.layout,
+      languageFlags: languageFlags,
+      blog: blog,
+      asMarkdown: result.asMarkdown,
+      preview: result.preview,
+      lang: result.lang,
+      returnToUrl: returnToUrl,
+      categories: blog.getCategories()
+    });
+  });
 }
 
 const blogTitleForExport = config.getValue("Blog Title For Export", { mustExist: true });
@@ -339,7 +250,7 @@ const blogTitleForExport = config.getValue("Blog Title For Export", { mustExist:
 function renderBlogPreviewHeader(req, res, next) {
   debug("renderBlogPreviewHeader");
   try {
-    req.session.articleReturnTo = req.originalUrl;
+    if (req.session) req.session.articleReturnTo = req.originalUrl;
     const blog = req.blog;
     if (!blog) return next();
 

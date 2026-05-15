@@ -1,7 +1,7 @@
 
 // Exported Functions and prototypes are defined at end of file
 
-import { series, eachOfSeries, each, eachLimit } from "async";
+import { series, eachOfSeries, each, eachLimit, eachSeries } from "async";
 import language from "../model/language.js";
 import util from "../util/util.js";
 import { FORBIDDEN } from "http-status-codes";
@@ -24,6 +24,8 @@ import osmcalLoader from "../model/osmcalLoader.js";
 import pgMap from "./pgMap.js";
 import _debug from "debug";
 import _markdownIt from "markdown-it";
+import archiver from "archiver";
+import blogRenderer from "../render/BlogRenderer.js";
 const markdown = _markdownIt();
 const debug = _debug("OSMBC:model:blog");
 
@@ -31,6 +33,7 @@ const debug = _debug("OSMBC:model:blog");
 
 
 const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
+const pathForMarkdownExport = config.getValue("HugoExport", "Pathname-for-Export", { mustExist: true });
 function getGlobalCategories() {
   const categoryTranslation = configModule.getConfig("categorytranslation");
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
@@ -558,6 +561,167 @@ class Blog {
 
       if (containsEmptyArticlesWarning) result.containsEmptyArticlesWarning = true;
       callback(null, result);
+    });
+  }
+
+  /**
+   * Build a preview/export payload independent from the HTTP layer.
+   *
+   * Main purpose:
+   * - keep business logic (language resolution, rendering, packaging) in model code
+   * - let routers (web/api) only handle transport details (headers, piping, rendering)
+   *
+   * @param {object} options Input options for export rendering.
+   * @param {string|string[]} [options.lang="EN"]
+   * Language selection:
+   * - single language code (e.g. "EN")
+   * - "ALL" to resolve dynamically
+   * - array of language codes (invalid values are filtered)
+   *
+   * Resolution rules:
+   * - undefined or invalid single value -> "EN"
+   * - "ALL" with markdown=true -> all configured languages
+   * - "ALL" with markdown=false -> only closed languages
+   *
+   * @param {boolean} [options.markdown=false]
+   * Rendering mode:
+   * - false => html output
+   * - true  => markdown output (zip if multi-language)
+   *
+   * @param {boolean} [options.forceDownload=false]
+   * Forces download semantics in the result contract.
+   * Note: multi-language export implies download automatically.
+   *
+   * @param {function(Error|null, object=):void} callback Node-style callback.
+   *
+   * Callback result object:
+   * - lang {string[]} resolved language list
+   * - asMarkdown {boolean} effective rendering mode
+   * - multiExport {boolean} true if lang has more than one entry
+   * - forceDownload {boolean} effective download flag
+   * - fileName {string} suggested download filename
+   * - mimeType {string} content type for HTTP response
+   * - bodyType {"string"|"stream"} payload type
+   * - body {string|stream.Readable} payload content
+   * - preview {string} html/markdown text for view rendering (empty for stream payload)
+   * - containsEmptyArticlesWarning {boolean} optional warning indicator
+   */
+  buildPreviewExport(options, callback) {
+    debug("buildPreviewExport");
+    assert(typeof (options) === "object");
+    assert(typeof (callback) === "function");
+    const self = this;
+    const blogName = this.name;
+
+    let lang = options.lang;
+    const asMarkdown = (options.markdown === true);
+    const exportAllLanguagesInMarkdown = (asMarkdown && lang === "ALL");
+    let containsEmptyArticlesWarning = false;
+
+    function isClosed(l) {
+      if (self["close" + l] === true) return true;
+      return false;
+    }
+
+    if (Array.isArray(lang)) {
+      lang = lang.filter((l) => language.getLanguages()[l]);
+      if (lang.length === 0) lang = ["EN"];
+    } else {
+      if (typeof (lang) === "undefined") lang = "EN";
+      if ((lang !== "ALL" && !language.getLanguages()[lang])) lang = "EN";
+
+      if (lang === "ALL") {
+        if (exportAllLanguagesInMarkdown) {
+          lang = language.getLid();
+        } else {
+          lang = language.getLid().filter(isClosed);
+        }
+      } else {
+        lang = [lang];
+      }
+    }
+
+    const multiExport = (lang.length > 1);
+    const forceDownload = (options.forceDownload === true) || multiExport;
+    let overallResult = "";
+
+    function listify(result, value, index) {
+      if (index === 0) return value;
+      return result + "-" + value;
+    }
+
+    function mergeHtmlResultFunction() {
+      return function _mergeHtmlResultFunction(exportLang, callback) {
+        self.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
+          if (err) return callback(err);
+          if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
+          const renderer = new blogRenderer.HtmlRenderer(self, { target: "production" });
+          const result = renderer.renderBlog(exportLang, data);
+          if (multiExport) {
+            overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
+          } else {
+            overallResult = result;
+          }
+          return callback(null);
+        });
+      };
+    }
+
+    function mergeMdResultFunction() {
+      const archiv = archiver("zip", { zlib: { level: 9 } });
+      if (multiExport) { overallResult = archiv; }
+      return function _mergeMdResultFunction(exportLang, callback) {
+        self.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
+          if (err) return callback(err);
+          if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
+          const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && self["close" + exportLang] !== true;
+
+          const renderer = new blogRenderer.MarkdownRenderer(self);
+          const result = renderer.renderBlog(exportLang, data, createEmptyForOpenLanguage);
+          if (multiExport) {
+            const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");
+            const exportPath = util.replaceTemplateVariables(pathForMarkdownExport,
+              { lang: language.wpExportName(exportLang).toLowerCase(),
+                "blogNumber-4-digits": wn_4_digit });
+            overallResult.append(result, { name: `${exportPath}.md` });
+          } else {
+            overallResult = result;
+          }
+          return callback(null);
+        });
+      };
+    }
+
+    eachSeries(lang, (asMarkdown) ? mergeMdResultFunction() : mergeHtmlResultFunction(), function(err) {
+      if (err) return callback(err);
+      if (asMarkdown && multiExport) overallResult.finalize();
+      if (!asMarkdown && multiExport) overallResult = overallResult + "[:]";
+
+      let fileName = `${blogName}_${lang.reduce(listify)} ${self.name}.html`;
+      let mimeType = "text/html";
+      if (asMarkdown) {
+        fileName = `${blogName}_${lang.reduce(listify)} ${self.name}.md`;
+        mimeType = "text/markdown";
+        if (multiExport) {
+          fileName = `${blogName}.zip`;
+          mimeType = "application/zip";
+        }
+      }
+
+      const result = {
+        lang: lang,
+        asMarkdown: asMarkdown,
+        multiExport: multiExport,
+        forceDownload: forceDownload,
+        fileName: fileName,
+        mimeType: mimeType,
+        bodyType: (typeof overallResult === "string") ? "string" : "stream",
+        body: overallResult,
+        preview: (typeof overallResult === "string") ? overallResult : ""
+      };
+
+      if (containsEmptyArticlesWarning) result.containsEmptyArticlesWarning = true;
+      return callback(null, result);
     });
   }
 
