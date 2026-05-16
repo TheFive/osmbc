@@ -119,5 +119,8 @@
   },
   "HugoExport": {
     "Pathname-for-Export": "##lang##/archives/##blogNumber-4-digits##"
+  },
+  "MarkdownExport": {
+    "Pathname-for-Export": "##lang##-##blogNumber-4-digits##"
   }
 }

@@ -233,11 +233,11 @@ function checkBlogId(req, res, next, id) {
 
 function getBlogPreviewDownload(req, res, next) {
   debug("getBlogPreviewDownload");
-  const asMarkdown = (req.query.markdown === "true");
+  const rendererType = (typeof req.query.renderer === "string") ? req.query.renderer : "HTML";
 
   req.blog.buildPreviewExport({
       lang: req.query.lang,
-      markdown: asMarkdown,
+      renderer: rendererType,
       forceDownload: true },
     function(err, result) {
     if (err) return next(err);

@@ -212,9 +212,9 @@ function renderBlogPreview(req, res, next) {
   if (!blog) return next();
 
   const returnToUrl = req.session ? req.session.articleReturnTo : req.originalUrl;
-  const asMarkdown = (req.query.markdown === "true");
+  const rendererType = (typeof req.query.renderer === "string") ? req.query.renderer : "HTML";
 
-  blog.buildPreviewExport({ lang: req.query.lang, markdown: asMarkdown }, function(err, result) {
+  blog.buildPreviewExport({ lang: req.query.lang, renderer: rendererType }, function(err, result) {
     debug("renderBlogPreview->final function");
     if (err) return next(err);
 

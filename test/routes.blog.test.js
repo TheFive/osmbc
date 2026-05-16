@@ -521,7 +521,7 @@ describe("routes/blog", function() {
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
-      const body = await client.get(baseLink + "/blog/WN334/preview?lang=DE&markdown=true&download=true");
+      const body = await client.get(baseLink + "/blog/WN334/preview?lang=DE&renderer=hugo&download=true");
 
       should(body.data).containEql("12.12.2015-13.12.2015");
       should(body.data).containEql("Warning: This export contains empty Articles");
@@ -559,16 +559,53 @@ describe("routes/blog", function() {
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
-      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&markdown=true&download=true");
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&renderer=hugo&download=true");
 
       testutil.expectTextFile(body.data, "data", "views.blog.export.1", "md");
     });
+
+    it("should get a markdown preview when renderer=markdown is provided", async function () {
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&renderer=markdown&download=true");
+
+      should(body.data).containEql("## OpenStreetMap Foundation");
+      should(body.data).containEql("* Paul Norman veröffentlicht das");
+      should(body.data).not.containEql("+++");
+    });
+
+    it("should use renderer=html for html export", async function () {
+      await testutil.importData("data/views.blog.export.1.json");
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&renderer=html&download=true");
+
+      testutil.expectTextFile(body.data, "data", "views.blog.export.1", "html");
+    });
+
+    it("should return an error for unsupported renderer type", async function () {
+      await testutil.importData("data/views.blog.export.1.json");
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&renderer=pdf", {
+        validateStatus: () => true
+      });
+
+      should(body.status).eql(500);
+      should(body.data).containEql("Unknown renderer type");
+    });
+
     it("should download markdown multi export as zip for lang=ALL", async function () {
       await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
       await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
-      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=ALL&markdown=true&download=true", { responseType: "arraybuffer" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=ALL&renderer=hugo&download=true", { responseType: "arraybuffer" });
 
       should(body.status).eql(200);
       should(body.headers["content-type"]).match(/application\/(zip|octet-stream)/);
@@ -582,6 +619,24 @@ describe("routes/blog", function() {
       const zipText = zipBuffer.toString("latin1");
       zipText.should.containEql("de/archives/0000.md");
       zipText.should.containEql("en/archives/0000.md");
+    });
+
+    it("should download plain markdown multi export as zip for lang=ALL", async function () {
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=ALL&renderer=markdown&download=true", { responseType: "arraybuffer" });
+
+      should(body.status).eql(200);
+      should(body.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+
+      const zipBuffer = Buffer.from(body.data);
+      zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+
+      const zipText = zipBuffer.toString("latin1");
+      zipText.should.containEql("de-0000.md");
+      zipText.should.containEql("en-0000.md");
     });
   });
 
