@@ -655,7 +655,7 @@ class Blog {
         self.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
           if (err) return callback(err);
           if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
-          const renderer = new blogRenderer.HtmlRenderer(self, { target: "production" });
+          const renderer = blogRenderer.createRenderer("HTML", self, { target: "production" });
           const result = renderer.renderBlog(exportLang, data);
           if (multiExport) {
             overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
@@ -676,7 +676,7 @@ class Blog {
           if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
           const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && self["close" + exportLang] !== true;
 
-          const renderer = new blogRenderer.MarkdownRenderer(self);
+          const renderer = blogRenderer.createRenderer("HUGO", self);
           const result = renderer.renderBlog(exportLang, data, createEmptyForOpenLanguage);
           if (multiExport) {
             const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");

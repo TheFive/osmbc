@@ -284,7 +284,7 @@ function postUserId(req, res, next) {
 
 function inbox (req, res) {
   debug("inbox");
-  const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
+  const renderer = blogRenderer.createRenderer("HTML", null, { target: "editor" });
   req.session.articleReturnTo = req.originalUrl;
   res.set("content-type", "text/html");
   res.render("inbox", { layout: res.rendervar.layout, renderer: renderer });

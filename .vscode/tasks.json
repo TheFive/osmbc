@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "coverage: render detail",
+			"type": "shell",
+			"command": "npm run test:coverage:render:detail",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "coverage: render uncovered functions",
+			"type": "shell",
+			"command": "npm run test:coverage:render:functions",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "coverage: render strict gate",
+			"type": "shell",
+			"command": "npm run test:coverage:render:strict",
+			"group": "test",
+			"problemMatcher": []
+		}
+	]
+}

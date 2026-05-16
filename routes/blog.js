@@ -443,7 +443,7 @@ function renderBlogTab(req, res, next) {
     const languageFlags = configModule.getConfig("languageflags");
 
 
-    const renderer = new blogRenderer.HtmlRenderer(blog, { target: "editor" });
+    const renderer = blogRenderer.createRenderer("HTML", blog, { target: "editor" });
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
     res.render("blog/blog_" + tab.toLowerCase(), {
       layout: res.rendervar.layout,

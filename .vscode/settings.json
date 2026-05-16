@@ -8,5 +8,8 @@
     "eslint.run": "onType",
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
-    }
+    },
+    "coverage-gutters.coverageReportFileName": "coverage/lcov.info",
+    "coverage-gutters.coverageBaseDir": "${workspaceFolder}",
+    "coverage-gutters.showLineCoverage": true
 }

@@ -1,5 +1,9 @@
 import _debug from "debug";
+import moment from "moment-timezone";
 import MarkdownRenderer from "./MarkdownRenderer.js";
+import util from "../util/util.js";
+import config from "../config.js";
+import configModule from "../model/config.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
@@ -8,9 +12,12 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
    * Creates a new HugoMarkdownRenderer instance.
    * Current implementation delegates all behavior to MarkdownRenderer.
    * @param {object} blog - The blog object to render.
+  * @param {object} [options] - Optional renderer options.
+  * Currently accepted for API consistency and forwarded to MarkdownRenderer,
+  * but not used by HugoMarkdownRenderer-specific behavior.
    */
-  constructor(blog) {
-    super(blog);
+  constructor(blog, options) {
+    super(blog, options);
   }
 
   subtitle(lang) {
@@ -29,19 +36,24 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
   }
 
   _renderArticleStandard(lang, article) {
-    return super._renderArticleStandard(lang, article);
+    let blogRef = article.blog;
+    if (!blogRef) blogRef = "undefined";
+    const pageLink = util.linkify(blogRef + "_" + article.id);
+    return `* {{< anchor "${pageLink}" >}} ${this._renderMarkdownListItem(lang, article)}`;
   }
 
   _renderArticlePicture(lang, article) {
-    return super._renderArticlePicture(lang, article);
+    return "";
   }
 
   _renderArticleUpcomingEvents(lang, article) {
-    return super._renderArticleUpcomingEvents(lang, article);
+    let md = super._renderArticleUpcomingEvents(lang, article);
+    md = md.replaceAll("![flag](", "![](");
+    return md;
   }
 
   _renderMarkdownListItem(lang, article) {
-    return super._renderMarkdownListItem(lang, article);
+    return super._renderMarkdownListItem(lang, article).replaceAll("^1^", '{{< sup "1" >}}');
   }
 
   _renderArticleUnpublished(text, article) {
@@ -62,7 +74,48 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
   }
 
   _generateFrontText(lang, pictureArticles) {
-    return super._generateFrontText(lang, pictureArticles);
+    const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
+    const categoryTranslation = configModule.getConfig("categorytranslation");
+
+    const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
+    const date = moment(this.blog.startDate).tz("Europe/Berlin").format("YYYY-MM-DD");
+    let pictureLink = null;
+    let pictureMd = null;
+    if (pictureArticles && pictureArticles.length > 0) {
+      const pictureArticle = pictureArticles[0];
+      const md = pictureArticle["markdown" + lang];
+      const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
+      const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
+      pictureMd = (md) ? md.replaceAll("^1^", "1)") : null;
+      if (pictureMd) {
+        pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
+        const imageMatch = regexMarkdownImage.exec(pictureMd);
+        if (imageMatch && imageMatch.length >= 3) {
+          pictureLink = imageMatch[2];
+          pictureMd = pictureMd.replace(regexMarkdownImage, "").trim();
+        } else {
+          const link = regexUrlFromCollection.exec(pictureMd);
+          if (link && link.length > 0) {
+            pictureLink = link[0];
+            pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
+            if (pictureMd.includes(link[0])) {
+              pictureMd = pictureMd.replace(link[0], "").trim();
+            }
+          }
+        }
+      }
+    }
+    const text = [
+      "+++",
+      "date = " + date,
+      "draft = false",
+      "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
+      (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
+      (pictureMd) ? "featureImageCap = '" + pictureMd + "'" : "",
+      "+++"
+    ].join("\n");
+
+    return text + "\n\n";
   }
 
   _renderMissingCategory(name, articles) {

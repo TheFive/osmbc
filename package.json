@@ -7,8 +7,14 @@
   "scripts": {
     "lint": "eslint --no-error-on-unmatched-pattern app.js staticFileServer.js config.js postinstall.js bin/**/*.js export/**/*.js genstaticpage/**/*.js import/**/*.js model/**/*.js notification/**/*.js render/**/*.js routes/**/*.js scripts/**/*.js test/**/*.js util/**/*.js",
     "start": "NODE_ENV=development node ./bin/www.js",
-    "test": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx nyc mocha; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status'",
-    "test:fast": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx mocha; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Fast-Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status'",
+    "test": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx nyc mocha \"$@\"; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status' --",
+    "test:fast": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx mocha \"$@\"; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Fast-Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status' --",
+    "test:coverage": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'npx c8 --all --reporter=text-summary --reporter=lcov --reporter=html mocha \"$@\"' --",
+    "test:coverage:render": "NODE_ENV=test TEST_HEADLESS=TRUE npx c8 --all --include='render/**/*.js' --reporter=text-summary --reporter=text --reporter=html mocha test/render.blogrenderer.test.js",
+    "test:coverage:render:detail": "NODE_ENV=test TEST_HEADLESS=TRUE npx c8 --all --include='render/**/*.js' --reporter=text-summary --reporter=text --reporter=html --reporter=lcov mocha test/render.blogrenderer.test.js",
+    "test:coverage:render:functions": "npm run -s test:coverage:render:detail && node scripts/coverage-uncovered-functions.js coverage/lcov.info render/",
+    "test:coverage:render:check": "NODE_ENV=test TEST_HEADLESS=TRUE npx c8 --all --include='render/**/*.js' --check-coverage --lines 90 --statements 90 --branches 85 --functions 60 --reporter=text-summary --reporter=text mocha test/render.blogrenderer.test.js",
+    "test:coverage:render:strict": "NODE_ENV=test TEST_HEADLESS=TRUE npx c8 --all --include='render/**/*.js' --exclude='render/Renderer.js' --check-coverage --lines 90 --statements 90 --branches 85 --functions 75 --reporter=text-summary --reporter=text mocha test/render.blogrenderer.test.js",
     "test:model": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/model.*.test.js\" \"test/notification.*.test.js\" \"test/render.*.test.js\" \"test/util.test.js\"",
     "test:router": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/routes.*.test.js\"",
     "test:ui": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/**/uc.*.test.js\"",
@@ -78,20 +84,21 @@
     "xml2js": "0.6.x"
   },
   "devDependencies": {
+    "c8": "^11.0.0",
     "eslint": "10.2.1",
     "eslint-plugin-mocha": "^11.2.0",
-    "mocha": "11.7.x",
     "globals": "17.5.0",
+    "mocha": "11.7.x",
     "mockdate": "3.0.x",
     "nock": "14.0.13",
+    "npm-check-updates": "22.0.1",
     "nyc": "^18.0.0",
     "pretty": "^2.0.0",
     "selenium-webdriver": "4.43.0",
     "serve-index": "1.9.2",
     "should": "^13.2.3",
-    "npm-check-updates": "22.0.1",
-    "timemachine": "0.3.x",
-    "sinon": "21.1.2"
+    "sinon": "21.1.2",
+    "timemachine": "0.3.x"
   },
   "overrides": {
     "mocha": {
