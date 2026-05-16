@@ -33,10 +33,6 @@ const debug = _debug("OSMBC:model:blog");
 
 
 const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
-const ExportPath = {
-  Hugo: config.getValue("HugoExport", "Pathname-for-Export", { mustExist: true }),
-  Markdown: config.getValue("MarkdownExport", "Pathname-for-Export", { mustExist: true })
-};
 function getGlobalCategories() {
   const categoryTranslation = configModule.getConfig("categorytranslation");
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
@@ -582,17 +578,40 @@ class Blog {
     * - "ALL" with markdown-mode renderer -> all configured languages
     * - "ALL" with html-mode renderer -> only closed languages
    *
-    * @param {string} [options.renderer="HTML"]
+    * @param {string} [options.exportProfile]
+    * Name of an entry in config key `ExportProfiles`.
+    * Preferred mode for all new integrations.
+    *
+     * @param {string} [options.renderer="HTML"]
     * Explicit renderer selection (case-insensitive):
     * - "HTML"
     * - "HUGO" / "HUGOMARKDOWN"
     * - "MARKDOWN"
+     * Legacy mode when no exportProfile is provided.
    *
    * @param {boolean} [options.forceDownload=false]
    * Forces download semantics in the result contract.
    * Note: multi-language export implies download automatically.
    *
    * @param {function(Error|null, object=):void} callback Node-style callback.
+  *
+  * Export profile fields (config `ExportProfiles.<name>`):
+  * - renderer {"HTML"|"HUGO"|"MARKDOWN"}
+  * - rendererOptions {object} optional renderer constructor options
+  * - pathTemplate {string} required for zip markdown/hugo entry names
+  *   supported placeholders:
+  *   - ##lang##
+  *   - ##blogNumber-4-digits##
+  * - fileNameTemplate {string} optional external download file name template
+  *   supported placeholders:
+  *   - ##blogName##
+  *   - ##renderer##
+  *   - ##langList##
+  *   - ##blogNumber-4-digits##
+  *
+  * Note:
+  * - Extension is appended automatically (.html/.md/.zip) unless already present.
+  * - zip output is currently produced for markdown/hugo multi-language exports.
    *
    * Callback result object:
    * - lang {string[]} resolved language list
@@ -614,19 +633,29 @@ class Blog {
     const self = this;
     const blogName = this.name;
 
-    let lang = options.lang;
-    const requestedRenderer = (typeof options.renderer === "string")
-      ? options.renderer.trim().toUpperCase()
-      : "";
-    const allowedRenderers = ["HTML", "HUGO", "HUGOMARKDOWN", "MARKDOWN"];
-    if (requestedRenderer && allowedRenderers.indexOf(requestedRenderer) < 0) {
-      return callback(new Error(`Unknown renderer type: ${options.renderer}`));
+    // Resolve export profile or fall back to renderer parameter
+    let rendererType = "HTML";
+    let profileConfig = null;
+    let rendererOptions = undefined;
+
+    if (options.exportProfile && typeof options.exportProfile === "string") {
+      profileConfig = config.getValue("ExportProfiles", options.exportProfile);
+      if (!profileConfig) {
+        return callback(new Error(`Unknown export profile: ${options.exportProfile}`));
+      }
+      rendererType = profileConfig.renderer || "HTML";
+      rendererOptions = profileConfig.rendererOptions;
+    } else if (options.renderer && typeof options.renderer === "string") {
+      // Legacy: direct renderer parameter
+      const requestedRenderer = options.renderer.trim().toUpperCase();
+      const allowedRenderers = ["HTML", "HUGO", "HUGOMARKDOWN", "MARKDOWN"];
+      if (allowedRenderers.indexOf(requestedRenderer) < 0) {
+        return callback(new Error(`Unknown renderer type: ${options.renderer}`));
+      }
+      rendererType = (requestedRenderer === "HUGOMARKDOWN") ? "HUGO" : requestedRenderer;
     }
 
-    const rendererType = requestedRenderer
-      ? ((requestedRenderer === "HUGOMARKDOWN") ? "HUGO" : requestedRenderer)
-      : "HTML";
-
+    let lang = options.lang;
     const asMarkdown = (rendererType !== "HTML");
     const exportAllLanguagesInMarkdown = (asMarkdown && lang === "ALL");
     let containsEmptyArticlesWarning = false;
@@ -698,11 +727,42 @@ class Blog {
 
     function markdownExportFileName(exportLang) {
       const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");
-      const pathTemplate = (rendererType === "MARKDOWN") ? ExportPath.Markdown : ExportPath.Hugo;
+      let pathTemplate = profileConfig && profileConfig.pathTemplate;
+
+      // Legacy renderer mode without explicit exportProfile: resolve from profile config dynamically
+      if (!pathTemplate && !options.exportProfile) {
+        const exportProfiles = config.getValue("ExportProfiles", { mustExist: true });
+        const fallbackProfileName = (rendererType === "MARKDOWN") ? "MarkdownDownload" : "HugoDownload";
+        if (exportProfiles[fallbackProfileName]) {
+          pathTemplate = exportProfiles[fallbackProfileName].pathTemplate;
+        }
+      }
+
+      if (!pathTemplate) {
+        const requestedProfile = options.exportProfile || "<legacy-renderer>";
+        throw new Error(`Missing pathTemplate for export profile: ${requestedProfile}`);
+      }
+
       const exportPath = util.replaceTemplateVariables(pathTemplate,
         { lang: language.wpExportName(exportLang).toLowerCase(),
           "blogNumber-4-digits": wn_4_digit });
       return `${exportPath}.md`;
+    }
+
+    function resolveDownloadFileName(defaultFileName, extension) {
+      if (!profileConfig || !profileConfig.fileNameTemplate) return defaultFileName;
+
+      const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");
+      const templatedName = util.replaceTemplateVariables(profileConfig.fileNameTemplate, {
+        blogName: blogName,
+        renderer: rendererType.toLowerCase(),
+        langList: lang.reduce(listify),
+        "blogNumber-4-digits": wn_4_digit
+      });
+
+      if (!templatedName || templatedName.trim() === "") return defaultFileName;
+      if (templatedName.toLowerCase().endsWith(`.${extension}`)) return templatedName;
+      return `${templatedName}.${extension}`;
     }
 
     const bundleWriter = (asMarkdown && multiExport)
@@ -715,8 +775,9 @@ class Blog {
           if (err) return callback(err);
           if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
 
-          const rendererOptions = (rendererType === "HTML") ? { target: "production" } : undefined;
-          const renderer = blogRenderer.createRenderer(rendererType, self, rendererOptions);
+          // Use profile-specified options or default to production for HTML
+          const resolvedOptions = rendererOptions || ((rendererType === "HTML") ? { target: "production" } : undefined);
+          const renderer = blogRenderer.createRenderer(rendererType, self, resolvedOptions);
           const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && self["close" + exportLang] !== true;
           const result = renderer.renderBlog(exportLang, data, createEmptyForOpenLanguage);
 
@@ -746,6 +807,14 @@ class Blog {
           fileName = `${blogName}.zip`;
           mimeType = "application/zip";
         }
+      }
+
+      if (mimeType === "application/zip") {
+        fileName = resolveDownloadFileName(fileName, "zip");
+      } else if (mimeType === "text/markdown") {
+        fileName = resolveDownloadFileName(fileName, "md");
+      } else {
+        fileName = resolveDownloadFileName(fileName, "html");
       }
 
       const result = {

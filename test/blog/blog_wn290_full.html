@@ -201,8 +201,10 @@ while layout.user["blogSetting"+v]
   - v++-->
             <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
             <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN290/preview?lang=EN"><i class="fa fa-download"></i>EN<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
-            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
-              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN290/preview?lang=DE"><span>Export DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN290/preview?lang=EN"><span>Export EN</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN290/preview?lang=ES"><span>Export ES</span></a></div>
+            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages">
+                <h6 class="dropdown-header">Export by language</h6><a class="dropdown-item" href="/blog/WN290/preview?lang=DE&amp;download=true&amp;exportProfile=OsmbcDownload"><span>Export HTML: DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN290/preview?lang=EN&amp;download=true&amp;exportProfile=OsmbcDownload"><span>Export HTML: EN</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN290/preview?lang=ES&amp;download=true&amp;exportProfile=OsmbcDownload"><span>Export HTML: ES</span></a>
+              </div>
             </li>
           </ul>
         </div>

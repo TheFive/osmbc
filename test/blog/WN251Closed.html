@@ -118,8 +118,13 @@ while layout.user["blogSetting"+v]
     +navbutton(style0,style)
   - v++-->
             <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN251/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
-            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
-              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"><a class="dropdown-item" href="/blog/WN251/preview?lang=DE"><span>Export DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a></div>
+            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages">
+                <h6 class="dropdown-header">Export by language</h6><a class="dropdown-item" href="/blog/WN251/preview?lang=DE&amp;download=true&amp;exportProfile=OsmbcDownload"><span>Export HTML: DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Export all languages</h6><a class="dropdown-item" href="/blog/WN251/preview?lang=ALL&amp;download=true&amp;exportProfile=OsmbcDownloadAll"><span>Export All HTML (inline): DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN251/preview?lang=ALL&amp;download=true&amp;exportProfile=HugoDownload"><span>Export All as Hugo (*.zip): DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a><a class="dropdown-item" href="/blog/WN251/preview?lang=ALL&amp;download=true&amp;exportProfile=MarkdownDownload"><span>Export All as Markdown (*.zip): DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a>
+                <div class="dropdown-divider"></div><a class="dropdown-item" href="/blog/WN251/previewHeader"><span>Download corresponding Headers.</span></a>
+              </div>
             </li>
           </ul>
         </div>

@@ -212,9 +212,19 @@ function renderBlogPreview(req, res, next) {
   if (!blog) return next();
 
   const returnToUrl = req.session ? req.session.articleReturnTo : req.originalUrl;
-  const rendererType = (typeof req.query.renderer === "string") ? req.query.renderer : "HTML";
+  const selectedExportProfile = (typeof req.query.exportProfile === "string") ? req.query.exportProfile : "";
 
-  blog.buildPreviewExport({ lang: req.query.lang, renderer: rendererType }, function(err, result) {
+  // Support both exportProfile (new) and renderer (legacy) parameters
+  const exportOptions = { lang: req.query.lang };
+  if (req.query.exportProfile) {
+    exportOptions.exportProfile = req.query.exportProfile;
+  } else if (req.query.renderer) {
+    exportOptions.renderer = req.query.renderer;
+  } else {
+    exportOptions.renderer = "HTML";
+  }
+
+  blog.buildPreviewExport(exportOptions, function(err, result) {
     debug("renderBlogPreview->final function");
     if (err) return next(err);
 
@@ -239,6 +249,7 @@ function renderBlogPreview(req, res, next) {
       asMarkdown: result.asMarkdown,
       preview: result.preview,
       lang: result.lang,
+      selectedExportProfile: selectedExportProfile,
       returnToUrl: returnToUrl,
       categories: blog.getCategories()
     });

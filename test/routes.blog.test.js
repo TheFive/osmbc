@@ -638,6 +638,64 @@ describe("routes/blog", function() {
       zipText.should.containEql("de-0000.md");
       zipText.should.containEql("en-0000.md");
     });
+
+    it("should support exportProfile=HugoDownload for Hugo export", async function () {
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=ALL&exportProfile=HugoDownload&download=true", { responseType: "arraybuffer" });
+
+      should(body.status).eql(200);
+      should(body.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+
+      const zipBuffer = Buffer.from(body.data);
+      zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+
+      const zipText = zipBuffer.toString("latin1");
+      zipText.should.containEql("de/archives/0000.md");
+    });
+
+    it("should support exportProfile=MarkdownDownload for markdown export", async function () {
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=ALL&exportProfile=MarkdownDownload&download=true", { responseType: "arraybuffer" });
+
+      should(body.status).eql(200);
+      should(body.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+
+      const zipBuffer = Buffer.from(body.data);
+      zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+
+      const zipText = zipBuffer.toString("latin1");
+      zipText.should.containEql("de-0000.md");
+    });
+
+    it("should support exportProfile=OsmbcDownload for inline HTML", async function () {
+      await testutil.importData(path.resolve(config.getDirName(), "test", "data", "views.blog.export.1.json"));
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&exportProfile=OsmbcDownload&download=true");
+
+      testutil.expectTextFile(body.data, "data", "views.blog.export.1", "html");
+    });
+
+    it("should return an error for unknown exportProfile", async function () {
+      await testutil.importData("data/views.blog.export.1.json");
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "USER1", password: "USER1" });
+
+      const body = await client.get(baseLink + "/blog/BLOG/preview?lang=DE&exportProfile=UnknownProfile", {
+        validateStatus: () => true
+      });
+
+      should(body.status).eql(500);
+      should(body.data).containEql("Unknown export profile");
+    });
   });
 
 

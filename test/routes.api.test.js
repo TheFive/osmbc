@@ -6,6 +6,7 @@ import config from "../config.js";
 import articleModule from "../model/article.js";
 import nock from "nock";
 import axios from "axios";
+import initialiseModules from "../util/initialise.js";
 
 
 import testutil from "../test/testutil.js";
@@ -17,6 +18,9 @@ import testutil from "../test/testutil.js";
 
 describe("router/api", function() {
   let baseLink;
+  before(async function() {
+    await initialiseModules();
+  });
   beforeEach(function(bddone) {
     baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
     testutil.startServerSync();
@@ -203,6 +207,63 @@ describe("router/api", function() {
           }
         ]);
       });
+    });
+  });
+
+  describe("Blog preview download API", function() {
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: false,
+        blog: [{
+          name: "BLOG",
+          status: "edit",
+          categories: [{ EN: "Mapping", DE: "Mapping" }],
+          closeDE: true,
+          closeEN: true
+        }],
+        article: [{
+          blog: "BLOG",
+          title: "API Test Article",
+          markdownDE: "* API Testinhalt",
+          markdownEN: "* API Test Content",
+          category: "Mapping"
+        }]
+      }, bddone);
+    });
+
+    it("should reject missing exportProfile", async function() {
+      const response = await axios.get(
+        baseLink + "/api/blogPreviewDownload/testapikey/BLOG?lang=DE",
+        { validateStatus: (status) => true }
+      );
+
+      should(response.status).eql(422);
+      should(response.data).eql("Missing exportProfile");
+    });
+
+    it("should download HTML with exportProfile=OsmbcDownload", async function() {
+      const response = await axios.get(
+        baseLink + "/api/blogPreviewDownload/testapikey/BLOG?lang=DE&exportProfile=OsmbcDownload",
+        { validateStatus: (status) => true }
+      );
+
+      should(response.status).eql(200);
+      should(response.headers["content-type"]).match(/text\/html/);
+      should(response.data).containEql("<meta charset=\"utf-8\"/>");
+    });
+
+    it("should download zip with exportProfile=HugoDownload for lang=ALL", async function() {
+      const response = await axios.get(
+        baseLink + "/api/blogPreviewDownload/testapikey/BLOG?lang=ALL&exportProfile=HugoDownload",
+        { validateStatus: (status) => true, responseType: "arraybuffer" }
+      );
+
+      should(response.status).eql(200);
+      should(response.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+      const zipBuffer = Buffer.from(response.data);
+      zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+      const zipText = zipBuffer.toString("latin1");
+      zipText.should.containEql("de/archives/0000.md");
     });
   });
 });

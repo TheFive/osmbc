@@ -231,15 +231,39 @@ function checkBlogId(req, res, next, id) {
   });
 }
 
+/**
+ * Download a rendered blog preview using a configured export profile.
+ *
+ * Route params:
+ * - apiKey {string} API key used by middleware `checkApiKey`
+ * - blog_id {string} blog identifier (internal id or name), resolved by `checkBlogId`
+ *
+ * Query params:
+ * - exportProfile {string} required profile name from config key `ExportProfiles`
+ * - lang {string} optional language code or `ALL` (defaults are handled in model layer)
+ *
+ * Behavior:
+ * - Always forces download semantics (`forceDownload: true`)
+ * - Returns stream or string payload from `buildPreviewExport`
+ * - Sets `content-type` according to renderer result
+ * - On missing `exportProfile` returns API error 422
+ */
 function getBlogPreviewDownload(req, res, next) {
   debug("getBlogPreviewDownload");
-  const rendererType = (typeof req.query.renderer === "string") ? req.query.renderer : "HTML";
+
+  const exportProfile = (typeof req.query.exportProfile === "string") ? req.query.exportProfile.trim() : "";
+  if (!exportProfile) {
+    const error = new Error("Missing exportProfile");
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
 
   req.blog.buildPreviewExport({
-      lang: req.query.lang,
-      renderer: rendererType,
-      forceDownload: true },
-    function(err, result) {
+    lang: req.query.lang,
+    exportProfile: exportProfile,
+    forceDownload: true
+  }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", result.mimeType);
     if (result.bodyType === "string") {

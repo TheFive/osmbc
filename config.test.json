@@ -117,10 +117,59 @@
       "rel": "noopener"},
     "production": { "class": "production"}
   },
-  "HugoExport": {
-    "Pathname-for-Export": "##lang##/archives/##blogNumber-4-digits##"
-  },
-  "MarkdownExport": {
-    "Pathname-for-Export": "##lang##-##blogNumber-4-digits##"
+  "ExportProfiles": {
+    "OsmbcApp": {
+      "renderer": "HTML",
+      "bundleMode": "inline",
+      "includeLanguageMarkers": true,
+      "rendererOptions": {"target": "editor"},
+      "guiEnabled": false
+    },
+    "OsmbcDownload": {
+      "renderer": "HTML",
+      "bundleMode": "inline",
+      "includeLanguageMarkers": true,
+      "rendererOptions": {"target": "production"},
+      "fileNameTemplate": "##blogName##",
+      "download": true,
+      "guiEnabled": true,
+      "guiLabel": "Export HTML",
+      "guiLangMode": "single",
+      "guiOrder": 10
+    },
+    "OsmbcDownloadAll": {
+      "renderer": "HTML",
+      "bundleMode": "inline",
+      "includeLanguageMarkers": true,
+      "rendererOptions": {"target": "production"},
+      "fileNameTemplate": "##blogName##-all",
+      "download": true,
+      "guiEnabled": true,
+      "guiLabel": "Export All HTML (inline)",
+      "guiLangMode": "all",
+      "guiOrder": 15
+    },
+    "HugoDownload": {
+      "renderer": "HUGO",
+      "bundleMode": "zip",
+      "pathTemplate": "##lang##/archives/##blogNumber-4-digits##",
+      "fileNameTemplate": "##blogName##",
+      "download": true,
+      "guiEnabled": true,
+      "guiLabel": "Export All as Hugo (*.zip)",
+      "guiLangMode": "all",
+      "guiOrder": 20
+    },
+    "MarkdownDownload": {
+      "renderer": "MARKDOWN",
+      "bundleMode": "zip",
+      "pathTemplate": "##lang##-##blogNumber-4-digits##",
+      "fileNameTemplate": "##blogName##",
+      "download": true,
+      "guiEnabled": true,
+      "guiLabel": "Export All as Markdown (*.zip)",
+      "guiLangMode": "all",
+      "guiOrder": 30
+    }
   }
 }
