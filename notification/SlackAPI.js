@@ -2,6 +2,7 @@ import axios from "axios";
 
 
 import config from "../config.js";
+import util from "../util/util.js";
 
 
 
@@ -11,6 +12,15 @@ class SlackAPI {
   constructor(hookUrl, httpProxyOptions) {
     this.hook_url = hookUrl;
     this.http_proxy_options = httpProxyOptions;
+  }
+
+  static compactMessageContext(message, hookUrl) {
+    return {
+      text: message?.text,
+      channel: message?.channel,
+      username: message?.username,
+      hook: hookUrl
+    };
   }
 
   send(message, cb) {
@@ -37,26 +47,15 @@ class SlackAPI {
       .then(response => {
         if (response.data !== "ok") {
           err = { message: response.data };
-          config.logger.error(JSON.stringify(err));
-          config.logger.error("While sending");
-          config.logger.error(JSON.stringify(message));
-          config.logger.error("To Hook: " + command);
+          config.logger.error(JSON.stringify(util.summarizeError(err, { hook: command })));
+          config.logger.error(JSON.stringify(SlackAPI.compactMessageContext(message, command)));
         }
         if (cb) return cb(null, err, body);
       })
       .catch(error => {
         err = error;
-        const compactError = {
-          name: error.name,
-          message: error.message,
-          code: error.code,
-          status: error.status,
-          hook: command
-        };
-        config.logger.error(JSON.stringify(compactError));
-        config.logger.error("While sending");
-        config.logger.error(JSON.stringify(message));
-        config.logger.error("To Hook: " + command);
+        config.logger.error(JSON.stringify(util.summarizeError(error, { hook: command })));
+        config.logger.error(JSON.stringify(SlackAPI.compactMessageContext(message, command)));
         if (cb) return cb(null, err, body);
       });
   }

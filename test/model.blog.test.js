@@ -6,6 +6,7 @@ import nock from "nock";
 
 import testutil from "./testutil.js";
 
+import config from "../config.js";
 import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
@@ -98,6 +99,28 @@ describe("model/blog", function() {
         should.exist(err);
         should(err.message).eql("Should not exist proto id");
         bddone();
+      });
+    });
+    it("should use configured BlogDurationDays", function(bddone) {
+      const originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "BlogDurationDays") return 10;
+        return originalGetValue.call(config, key, subkey, options);
+      };
+
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN100", endDate: new Date("1.1.2000") }, function(err, result) {
+        should.not.exist(err);
+        should.exist(result);
+        result.save(function(err2) {
+          should.not.exist(err2);
+          blogModule.createNewBlog({ OSMUser: "test" }, function(err3, result2) {
+            config.getValue = originalGetValue;
+            should.not.exist(err3);
+            should(toDateKey(result2.startDate)).eql("2000-01-02");
+            should(toDateKey(result2.endDate)).eql("2000-01-11");
+            bddone();
+          });
+        });
       });
     });
   });

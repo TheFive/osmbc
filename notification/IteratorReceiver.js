@@ -3,6 +3,7 @@
 import { eachOfSeries } from "async";
 import _debug from "debug";
 import logger from "../config.js";
+import util from "../util/util.js";
 const debug = _debug("OSMBC:notification:iteratorReceiver");
 
 
@@ -21,7 +22,7 @@ class IteratorReceiver {
       value.sendReviewStatus(user, blog, lang, status, cb);
     }, function (err) {
       // in case of error log it
-      if (err) logger.error("Error in sendReviewStatus " + err.message());
+      if (err) logger.error(JSON.stringify(util.summarizeError(err, { operation: "sendReviewStatus" })));
     });
   }
 
@@ -33,7 +34,7 @@ class IteratorReceiver {
       value.sendCloseStatus(user, blog, lang, status, cb);
     }, function (err) {
       // in case of error log it
-      if (err) logger.error("Error in sendReviewStatus " + err.message());
+      if (err) logger.error(JSON.stringify(util.summarizeError(err, { operation: "sendCloseStatus" })));
     });
   }
 
@@ -46,7 +47,7 @@ class IteratorReceiver {
       value.updateArticle(user, article, change, cb);
     }, function (err) {
       // in case of error log it
-      if (err) logger.error("Error in sendReviewStatus " + err.message());
+      if (err) logger.error(JSON.stringify(util.summarizeError(err, { operation: "updateArticle" })));
     });
   }
 
@@ -59,7 +60,7 @@ class IteratorReceiver {
       value.addComment(user, article, comment, cb);
     }, function (err) {
       // in case of error log it
-      if (err) logger.error("Error in sendReviewStatus " + err.message());
+      if (err) logger.error(JSON.stringify(util.summarizeError(err, { operation: "addComment" })));
     });
   }
 
@@ -72,7 +73,7 @@ class IteratorReceiver {
       value.editComment(user, article, index, comment, cb);
     }, function (err) {
       // in case of error log it
-      if (err) logger.error("Error in sendReviewStatus " + err.message());
+      if (err) logger.error(JSON.stringify(util.summarizeError(err, { operation: "editComment" })));
     });
   }
 
@@ -85,7 +86,7 @@ class IteratorReceiver {
       value.updateBlog(user, blog, change, cb);
     }, function (err) {
       // in case of error log it
-      if (err) logger.error("Error in sendReviewStatus " + err.message());
+      if (err) logger.error(JSON.stringify(util.summarizeError(err, { operation: "updateBlog" })));
     });
   }
 

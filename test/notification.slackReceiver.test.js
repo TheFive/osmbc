@@ -4,13 +4,15 @@
 
 import should from "should";
 import async from "async";
+import sinon from "sinon";
 
 
 import testutil from "./testutil.js";
 
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
-import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
+import { initialiseSlackReceiver, SlackReceiver } from "../notification/slackReceiver.js";
+import config from "../config.js";
 import configModule from "../model/config.js";
 
 
@@ -40,6 +42,7 @@ describe("notification/slackReceiver", function() {
     ], bddone);
   });
   afterEach(function(bddone) {
+    sinon.restore();
     nock.cleanAll();
     bddone();
   });
@@ -163,6 +166,43 @@ describe("notification/slackReceiver", function() {
     });
   });
   describe("blogs", function() {
+    it("should log compact slack errors", function() {
+      const logger = sinon.stub(config.logger, "error");
+      const receiver = new SlackReceiver("test", "osmde", "#osmbcblog");
+      receiver.hook = "https://missingmattermost.example.com/services/blogKeyWeekly";
+      receiver.slack = {
+        send(_message, cb) {
+          cb(null, {
+            name: "AxiosError",
+            message: "Request failed with status code 404",
+            status: 404,
+            response: { status: 404, statusText: "Not Found" },
+            request: {
+              nativeProtocols: { http: { STATUS_CODES: { 404: "Not Found" } } },
+              _redirectable: {},
+              _headerSent: true
+            }
+          });
+        }
+      };
+
+      receiver.sendReviewStatus(
+        { OSMUser: "testuser" },
+        { name: "blog" },
+        "ES",
+        "I have reviewed",
+        function(err) {
+          should.not.exist(err);
+        });
+
+      logger.called.should.be.True();
+      const logLines = logger.getCalls().map((call) => String(call.args[0]));
+      const compactErrorLine = logLines.find((line) => line.includes('"status":404'));
+
+      should.exist(compactErrorLine);
+      compactErrorLine.should.not.match(/nativeProtocols|_redirectable|_headerSent|\[Circular\]/);
+    });
+
     it("should slack message when creating a blog", function (bddone) {
       const slack1 = nock("https://missingmattermost.example.com")
         .post("/services/osmde",

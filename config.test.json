@@ -90,6 +90,10 @@
  
   "blogTranslationVisibleFor":["TheFive","TheOther"],
   "urlWoErrorWhileEdit": [],
+  "AutoClose": false,
+  "AutoTransitions": {
+    "enabled": false
+  },
   "limitValues": { "limitWindowsMs": 1000,"limitMaxCount":2000},
   "auth": {
     "htaccess": {

@@ -147,7 +147,7 @@ function getValue(key, subkey, options) {
   if (typeof subkey === "object") {
     options = subkey;
     subkey = null;
-  } 
+  }
   if (options) assert.equal(typeof (options), "object");
   let result;
   if (options) {

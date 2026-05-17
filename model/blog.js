@@ -18,7 +18,6 @@ import logModule from "../model/logModule.js";
 import messageCenter from "../notification/messageCenter.js";
 import userModule from "../model/user.js";
 import translator from "../model/translator.js";
-import { scheduleJob } from "node-schedule";
 import osmcalLoader from "../model/osmcalLoader.js";
 
 import pgMap from "./pgMap.js";
@@ -979,19 +978,7 @@ class Blog {
 
   startCloseTimer() {
     debug("startCloseTimer");
-
-    // if there is a timer, stop it frist, than decide a new start
-    if (_allTimer[this.id]) {
-      _allTimer[this.id].cancel();
-      _allTimer[this.id] = null;
-    }
-    if (this.status !== "open") return;
-    if (this.endDate) {
-      const date = new Date(this.endDate);
-      _allTimer[this.id] = scheduleJob(date, function () {
-        autoCloseBlog(function () { });
-      });
-    }
+    // Legacy no-op: timer orchestration is handled centrally in blogTransitionScheduler.
   }
 
   getBlogName(lang) {
@@ -1108,9 +1095,12 @@ function createNewBlog(user, proto, noArticle, callback) {
       const wnId = name.substring(2, 99);
       const newWnId = parseInt(wnId) + 1;
       const newName = "WN" + newWnId;
+      let blogDurationDays = Number(config.getValue("BlogDurationDays", { default: 7 }));
+      if (!Number.isFinite(blogDurationDays) || blogDurationDays <= 0) blogDurationDays = 7;
+      blogDurationDays = Math.round(blogDurationDays);
       const startDate = new Date(endDate);
       startDate.setDate(startDate.getDate() + 1);
-      endDate.setDate(endDate.getDate() + 7);
+      endDate.setDate(endDate.getDate() + blogDurationDays);
       blog.name = newName;
       blog.status = "open";
       blog.startDate = startDate.toISOString();
@@ -1373,20 +1363,9 @@ const pg = pgObject;
 
 
 
-const _allTimer = {};
-
-
 export function startAllTimers(callback) {
   debug("startAllTimers");
-  find({ status: "open" }, function(err, result) {
-    if (err && err.message === "relation \"blog\" does not exist") return callback();
-    if (err) return callback(err);
-    if (!result) return callback();
-    for (let i = 0; i < result.length; i++) {
-      result[i].startCloseTimer();
-    }
-    autoCloseBlog(callback);
-  });
+  autoCloseBlog(callback);
 }
 
 

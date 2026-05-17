@@ -2,6 +2,7 @@
 
 
 import config from "../config.js";
+import util from "../util/util.js";
 import assert from "assert";
 
 import configModule from "../model/config.js";
@@ -92,9 +93,9 @@ export class SlackReceiver {
       }, function (_unused, sendErr) {
         if (sendErr) {
           config.logger.error("sendReviewStatus notification failed");
-          config.logger.error(sendErr);
+          config.logger.error(JSON.stringify(util.summarizeError(sendErr, { hook: this.hook })));
         }
-      });
+      }.bind(this));
     }
     return callback();
   }
