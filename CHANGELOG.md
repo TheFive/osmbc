@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.4.0](https://github.com/TheFive/osmbc/tree/4.4.0) (2026-05-17)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.3.1...4.4.0)
+
+**Closed issues:**
+
+- Add "Current" as selector for Curl or Html Blog Requests [\#1100](https://github.com/TheFive/osmbc/issues/1100)
+- Create Scheduled process for close reviewed languages [\#1099](https://github.com/TheFive/osmbc/issues/1099)
+- Implement Configurable Export Types \(WP, Hugo, Markdown\) [\#1098](https://github.com/TheFive/osmbc/issues/1098)
+- Implement Automation to close all Languages / blogs with 2 finalised reviews [\#1097](https://github.com/TheFive/osmbc/issues/1097)
+
 ## [4.3.1](https://github.com/TheFive/osmbc/tree/4.3.1) (2026-05-15)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.3.0...4.3.1)
@@ -399,10 +410,6 @@
 ## [4.0.3](https://github.com/TheFive/osmbc/tree/4.0.3) (2022-10-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.2...4.0.3)
-
-**Fixed bugs:**
-
-- Error Handling is not giving enough information in production mode [\#962](https://github.com/TheFive/osmbc/issues/962)
 
 ## [4.0.2](https://github.com/TheFive/osmbc/tree/4.0.2) (2022-10-08)
 
