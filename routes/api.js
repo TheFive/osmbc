@@ -201,24 +201,9 @@ function collectArticleLink(req, res, next) {
   });
 }
 
-function findBlogByRouteId(id, callback) {
-  debug("findBlogByRouteId(%s)", id);
-  blogModule.findById(id, function(err, blog) {
-    if (err) return callback(err);
-    if (blog) return callback(null, blog);
-
-    blogModule.find({ name: id }, function(err, result) {
-      if (err) return callback(err);
-      if (result.length === 0) return callback(null, null);
-      if (result.length > 1) return callback(new Error("Blog >" + id + "< exists twice, internal id of first: " + result[0].id));
-      return callback(null, result[0]);
-    });
-  });
-}
-
 function checkBlogId(req, res, next, id) {
   debug("checkBlogId");
-  findBlogByRouteId(id, function(err, blog) {
+  blogModule.findBlogByRouteId(id, function(err, blog) {
     if (err) return next(err);
     if (!blog) {
       const notFound = new Error("Blog not found");

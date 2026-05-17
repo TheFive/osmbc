@@ -104,6 +104,29 @@ describe("routes/blog", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
+  describe("route GET /blog/edit/:blog_id with current alias", function () {
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: false,
+        blog: [
+          { name: "BLOG", status: "edit", startDate: "2025-01-20T00:00:00.000Z", endDate: "2025-01-26T23:59:59.000Z" },
+          { name: "WN999", status: "edit", startDate: "2024-12-23T00:00:00.000Z", endDate: "2024-12-29T23:59:59.000Z" },
+          { name: "WN1000", status: "edit", startDate: "2024-12-30T00:00:00.000Z", endDate: "2025-01-05T23:59:59.000Z" },
+          { name: "WN1001", status: "open", startDate: "2025-01-06T00:00:00.000Z", endDate: "2025-01-12T23:59:59.000Z" }
+        ]
+      }, bddone);
+    });
+
+    it("should resolve mixed-case current to the latest edit blog by startDate", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/edit/CuRrEnT");
+
+      body.data.should.containEql("<h2>WN1000</h2>");
+      body.data.should.not.containEql("<h2>BLOG</h2>");
+      body.data.should.not.containEql("<h2>WN1001</h2>");
+    });
+  });
   describe("route POST /blog/edit/:blog_id", function () {
     const url = baseLink + "/blog/edit/WN333";
     const form = { name: "WNNew", status: "undefinedstate" };

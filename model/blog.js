@@ -1001,6 +1001,114 @@ function create (proto) {
   return new Blog(proto);
 }
 
+function getComparableBlogStartDate(blog) {
+  const parsedStartDate = Date.parse(blog.startDate);
+  if (Number.isNaN(parsedStartDate)) return null;
+  return parsedStartDate;
+}
+
+function getComparableBlogNumber(blog) {
+  if (typeof blog.name !== "string") return null;
+  const match = blog.name.match(/^WN(\d+)$/i);
+  if (!match) return null;
+  return Number.parseInt(match[1], 10);
+}
+
+function isWeeklyNoteBlog(blog) {
+  return getComparableBlogNumber(blog) !== null;
+}
+
+function compareCurrentEditBlogCandidate(leftBlog, rightBlog) {
+  const leftStartDate = getComparableBlogStartDate(leftBlog);
+  const rightStartDate = getComparableBlogStartDate(rightBlog);
+
+  if (leftStartDate !== rightStartDate) {
+    if (leftStartDate === null) return -1;
+    if (rightStartDate === null) return 1;
+    return leftStartDate - rightStartDate;
+  }
+
+  const leftNumber = getComparableBlogNumber(leftBlog);
+  const rightNumber = getComparableBlogNumber(rightBlog);
+
+  if (leftNumber !== rightNumber) {
+    if (leftNumber === null) return -1;
+    if (rightNumber === null) return 1;
+    return leftNumber - rightNumber;
+  }
+
+  const leftName = (typeof leftBlog.name === "string") ? leftBlog.name : "";
+  const rightName = (typeof rightBlog.name === "string") ? rightBlog.name : "";
+  if (leftName !== rightName) return leftName.localeCompare(rightName);
+
+  return Number(leftBlog.id || 0) - Number(rightBlog.id || 0);
+}
+
+function isCurrentBlogRouteId(id) {
+  return typeof id === "string" && id.toLowerCase() === "current";
+}
+
+function resolveBlogRouteAlias(id, callback) {
+  if (id === "TBC") return callback(null, getTBC());
+  if (isCurrentBlogRouteId(id)) return findCurrentEditBlog(callback);
+  return callback(null, null);
+}
+
+function findBlogByRouteId(id, callback) {
+  function _findBlogByRouteId(id, callback) {
+    debug("findBlogByRouteId(%s)", id);
+    resolveBlogRouteAlias(id, function(err, aliasBlog) {
+      if (err) return callback(err);
+      if (aliasBlog) return callback(null, aliasBlog);
+
+      findById(id, function(err, blog) {
+        if (err) return callback(err);
+        if (blog) return callback(null, blog);
+
+        find({ name: id }, function(err, result) {
+          if (err) return callback(err);
+          if (result.length === 0) return callback(null, null);
+          if (result.length > 1) return callback(new Error("Blog >" + id + "< exists twice, internal id of first: " + result[0].id));
+          return callback(null, result[0]);
+        });
+      });
+    });
+  }
+
+  if (callback) {
+    return _findBlogByRouteId(id, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findBlogByRouteId(id, (err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+export function findBlogByRouteIdForUser(id, user, callback) {
+  if (typeof user === "function") {
+    callback = user;
+    user = null;
+  }
+
+  function _findBlogByRouteIdForUser(id, user, callback) {
+    debug("findBlogByRouteIdForUser(%s)", id);
+    findBlogByRouteId(id, function(err, blog) {
+      if (err) return callback(err);
+      if (!blog || !user) return callback(null, blog);
+      return blog.calculateDerived(user, function(derivedErr) {
+        if (derivedErr) return callback(derivedErr);
+        return callback(null, blog);
+      });
+    });
+  }
+
+  if (callback) {
+    return _findBlogByRouteIdForUser(id, user, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findBlogByRouteIdForUser(id, user, (err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
 
 
 
@@ -1053,6 +1161,34 @@ export function findOne(obj1, obj2, callback) {
   }
   return new Promise((resolve, reject) => {
     _findOne(obj1, obj2, (err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+export function findCurrentEditBlog(callback) {
+  function _findCurrentEditBlog(callback) {
+    debug("findCurrentEditBlog");
+    find({ status: "edit" }, function(err, blogs) {
+      if (err) return callback(err);
+      if (!blogs || blogs.length === 0) return callback(null, null);
+
+      const weeklyNoteBlogs = blogs.filter(isWeeklyNoteBlog);
+      if (weeklyNoteBlogs.length === 0) return callback(null, null);
+
+      const currentEditBlog = weeklyNoteBlogs.reduce(function(bestBlog, candidateBlog) {
+        if (!bestBlog) return candidateBlog;
+        if (compareCurrentEditBlogCandidate(candidateBlog, bestBlog) > 0) return candidateBlog;
+        return bestBlog;
+      }, null);
+
+      return callback(null, currentEditBlog);
+    });
+  }
+
+  if (callback) {
+    return _findCurrentEditBlog(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findCurrentEditBlog((err, result) => err ? reject(err) : resolve(result));
   });
 }
 
@@ -1389,6 +1525,9 @@ const blogModule = {
   findOne: findOne,
   findById: findById,
   find: find,
+  findBlogByRouteId: findBlogByRouteId,
+  findBlogByRouteIdForUser: findBlogByRouteIdForUser,
+  findCurrentEditBlog: findCurrentEditBlog,
   getTBC: getTBC,
   create: create,
   sortArticles: sortArticles,

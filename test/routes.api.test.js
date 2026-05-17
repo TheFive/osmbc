@@ -266,4 +266,91 @@ describe("router/api", function() {
       zipText.should.containEql("de/archives/0000.md");
     });
   });
+
+  describe("Blog preview download API with current alias", function() {
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: false,
+        blog: [
+          {
+            name: "BLOG",
+            status: "edit",
+            startDate: "2025-01-20T00:00:00.000Z",
+            endDate: "2025-01-26T23:59:59.000Z",
+            categories: [{ EN: "Mapping", DE: "Mapping" }],
+            closeDE: true,
+            closeEN: true
+          },
+          {
+            name: "WN999",
+            status: "edit",
+            startDate: "2024-12-23T00:00:00.000Z",
+            endDate: "2024-12-29T23:59:59.000Z",
+            categories: [{ EN: "Mapping", DE: "Mapping" }],
+            closeDE: true,
+            closeEN: true
+          },
+          {
+            name: "WN1000",
+            status: "edit",
+            startDate: "2024-12-30T00:00:00.000Z",
+            endDate: "2025-01-05T23:59:59.000Z",
+            categories: [{ EN: "Mapping", DE: "Mapping" }],
+            closeDE: true,
+            closeEN: true
+          },
+          {
+            name: "WN1001",
+            status: "open",
+            startDate: "2025-01-06T00:00:00.000Z",
+            endDate: "2025-01-12T23:59:59.000Z",
+            categories: [{ EN: "Mapping", DE: "Mapping" }],
+            closeDE: true,
+            closeEN: true
+          }
+        ],
+        article: [
+          {
+            blog: "BLOG",
+            title: "Technical blog article",
+            markdownDE: "* Technical blog article",
+            markdownEN: "* Technical blog article",
+            category: "Mapping"
+          },
+          {
+            blog: "WN999",
+            title: "Older edit article",
+            markdownDE: "* Older edit article",
+            markdownEN: "* Older edit article",
+            category: "Mapping"
+          },
+          {
+            blog: "WN1000",
+            title: "Latest edit article",
+            markdownDE: "* Latest edit article",
+            markdownEN: "* Latest edit article",
+            category: "Mapping"
+          },
+          {
+            blog: "WN1001",
+            title: "Open article",
+            markdownDE: "* Open article",
+            markdownEN: "* Open article",
+            category: "Mapping"
+          }
+        ]
+      }, bddone);
+    });
+
+    it("should resolve current to the latest edit blog by startDate", async function() {
+      const response = await axios.get(
+        baseLink + "/api/blogPreviewDownload/testapikey/current?lang=DE&exportProfile=OsmbcDownload",
+        { validateStatus: (status) => true }
+      );
+
+      should(response.status).eql(200);
+      should(response.data).containEql("30.12.2024-06.01.2025");
+      should(response.data).not.containEql("06.01.2025-13.01.2025");
+    });
+  });
 });

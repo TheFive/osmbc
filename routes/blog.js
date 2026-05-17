@@ -30,61 +30,9 @@ const htmlroot = config.htmlRoot();
 
 const reviewInWP = config.getValue("ReviewInWP", { default: [] });
 
-// Internal Function to find a blog by an ID
-// it accepts an internal Blog ID of OSMBC and a blog name
-// Additional the fix blog name TBC is recognised.
-function findBlogByRouteId(id, user, callback) {
-  debug("findBlogByRouteId(%s)", id);
-  let blog;
-  assert(typeof (user) === "object");
-  assert(typeof (callback) === "function");
-
-  async.series([
-    function CheckTBC(cb) {
-      // check and return TBC Blog.
-      debug("findBlogByRouteId->CheckTBC");
-      if (id === "TBC") {
-        blog = blogModule.getTBC();
-      }
-      return cb();
-    },
-    function findID(cb) {
-      debug("findBlogByRouteId->findID");
-      // Check and return blog by ID
-      blogModule.findById(id, function(err, r) {
-        if (err) return cb(err);
-        if (r) blog = r;
-        return cb();
-      });
-    },
-    function findByName(cb) {
-      debug("findBlogByRouteId->findByName");
-      // Check and return blog by name
-      if (blog) return cb();
-      blogModule.find({ name: id }, function(err, r) {
-        if (err) return cb(err);
-        if (r.length === 0) return cb();
-        if (r.length > 1) return cb(new Error("Blog >" + id + "< exists twice, internal id of first: " + r[0].id));
-        if (r) blog = r[0];
-        return cb();
-      });
-    },
-    function countItems(cb) {
-      debug("findBlogByRouteId->countItems");
-      // start calculation of derived fields for the current user.
-      // these fields are stored in an temporary _xxx field in the blog object
-      if (blog) return blog.calculateDerived(user, cb);
-      return cb();
-    }], function(err) {
-    debug("findBlogByRouteId->final function");
-    if (err) return callback(err);
-    callback(null, blog);
-  });
-}
-
 function findBlogId(req, res, next, id) {
   debug("findBlogId");
-  findBlogByRouteId(id, req.user, function(err, result) {
+  blogModule.findBlogByRouteIdForUser(id, req.user, function(err, result) {
     if (err) return next(err);
     req.blog = result;
     return next();
