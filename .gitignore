@@ -56,3 +56,5 @@ public/profile
 github-changelog-http-cache
 check-chromedriver.sh
 CoPi_Temp/
+config.development.yaml
+config.production.yaml

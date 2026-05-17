@@ -1289,13 +1289,24 @@ function createNewBlog(user, proto, noArticle, callback) {
 
 let _autoCloseRunning = 0;
 
+function isAutoEditModeEnabled() {
+  const transitionConfig = config.getValue("Transition", { default: {} }) || {};
+
+  if (transitionConfig && typeof transitionConfig === "object") {
+    const autoEditMode = transitionConfig.AutoEditMode || {};
+    if (autoEditMode.enabled === true || autoEditMode.enabled === "true") return true;
+    if (autoEditMode.enabled === false || autoEditMode.enabled === "false") return false;
+  }
+  return true;
+}
+
 
 
 function autoCloseBlog(callback) {
   debug("autoCloseBlog");
   // Do not run this function twice !
   if (_autoCloseRunning > 0) return callback();
-  if (config.getValue("AutoCreate") === "false") return callback();
+  if (!isAutoEditModeEnabled()) return callback();
   _autoCloseRunning = _autoCloseRunning + 1;
 
 
@@ -1499,10 +1510,11 @@ const pg = pgObject;
 
 
 
+/* commented as it should be replaced by a central scheduler, that calls the autoCloseBlog function of the blog model and the autoCreateBlog function of the blog model
 export function startAllTimers(callback) {
   debug("startAllTimers");
   autoCloseBlog(callback);
-}
+}*/
 
 
 export function getTBC() {

@@ -1,0 +1,211 @@
+# OSMBC test configuration (YAML).
+#
+# Object documentation + cleanup hints:
+# - This file replaces config.test.json and is loaded first by config.js.
+# - Keys marked as POTENTIALLY_UNUSED were not found in static getValue(...) lookups.
+#   They may still be consumed indirectly. Verify before removing.
+
+serverport: 35043
+serverkey: /Users/TheFive.osm/.localhost-ssl/localhost.key
+servercert: /Users/TheFive.osm/.localhost-ssl/localhost.crt
+
+# DB connection options for test runtime.
+postgres:
+  initialise: true
+  database: postgres
+  username: postgres
+  password: postgres
+  server: localhost
+  port: "5432"
+
+twitter:
+  consumer_key: dummy
+  consumer_secret: dummy
+  access_token: dummy
+  access_token_secret: dummy
+
+# Outbound webhook endpoints.
+slacktool:
+  osmde: https://missingmattermost.example.com/services/osmde
+  theweeklyosm: https://missingmattermost.example.com/services/theweeklyosm
+
+slack:
+  blog:
+    DE:
+      hook: https://missingmattermost.example.com/services/blogKey
+      channel: "#osmbcblog"
+    default:
+      hook: https://missingmattermost.example.com/services/blogKeyWeekly
+      channel: "#osmbcblog"
+  article:
+    wn:
+      hook: https://missingmattermost.example.com/services/articleKey
+      channel: "#osmbcarticle"
+      token: testtoken
+
+logInfoTemplate: ":OSMUser [:date[clf]] ':method :url HTTP/:http-version' :status :res[content-length] ':referrer' ':user-agent'"
+SessionSecret: keyboard cat
+SessionName: session_name
+AppName: TESTBC
+MaxDiffLength: 1500
+
+    # UI/translation language definitions.
+languages:
+  - lid: DE
+    displayLong: German
+    displayShort: DED
+    deeplProFormality: less
+  - lid: EN
+    momentLocale: en-gb
+  - lid: FR
+    deeplProTarget: fr-paris
+  - lid: ES
+    displayLong: Spain
+    displayShort: ES
+  - lid: PT-PT
+    deeplProSource: PT
+    deeplProTarget: PT-PT
+
+htmlroot: ""
+style: /stylesheets/style.css
+
+# POTENTIALLY_UNUSED: likely old style/bootstrap mode
+bootstrap: ""
+
+# POTENTIALLY_UNUSED: no direct getValue usage found
+jquery: ""
+
+ReviewInWP:
+  - DE
+EmailSender: noreply@gmail.com
+cookieMaxAge: 10000
+url: https://localhost:35043
+SMTP: {}
+
+# API key map: key => description/use-case
+apiKeys:
+  testapikey: monitor
+  testapikey.TBC: TBC Collections
+
+# Mail log writer settings.
+maillog_directory: .
+maillog_prefix: maillogTest%DATE%.log
+maillog_dateformat: "[]"
+CalendarDateFormat: L
+WelcomeInterval: 1 month
+userIsOldInDays: 60
+WelcomeRefreshInSeconds: 0
+createGuestUsersAutomatic: true
+
+# Script execution and review tooling paths.
+scripts:
+  user:
+    - TestUser
+  logFilePath: script_logs
+  scriptFilePath: scripts
+  logFileFilter: "*.log"
+  scriptFileFilter: "*.yaml"
+
+User-Agent: Hello i am Kitty
+
+# DeepL API options.
+DeeplProConfig:
+  authKey: Test Key Fake
+  url: https://api.deepl.com/v2/translate
+  usageUrl: https://api.deepl.com/v2/usage
+
+blogTranslationVisibleFor:
+  - TheFive
+  - TheOther
+urlWoErrorWhileEdit: []
+
+# Automatic workflow transitions.
+Transition:
+  enabled: false
+
+limitValues:
+  limitWindowsMs: 1000
+  limitMaxCount: 2000
+
+# Authentication provider settings.
+auth:
+  htaccess:
+    enabled: true
+  openstreetmap_oauth20:
+    enabled: true
+    authorizationURL: https://www.openstreetmap.org/oauth2/authorize
+    tokenURL: https://www.openstreetmap.org/oauth2/token
+    clientID: "#####"
+    clientSecret: "#####"
+    callbackUrl: http://127.0.0.1:35043/auth/openstreetmap_oautb20/callback
+    scope: read_prefs
+
+  # Media URL mapping used by markdown/export sanitizing.
+"media folder":
+  local: /localMediaFOlder
+  remote: https://extern.site
+  externally mirrored: true
+
+"Blog Title For Export": weeklyOSM
+
+# markdown-it link attributes by output target.
+"link-attributes":
+  editor:
+    target: _blank
+    rel: noopener
+  production:
+    class: production
+
+# Export profile definitions used by blog/render routes.
+ExportProfiles:
+  OsmbcApp:
+    renderer: HTML
+    bundleMode: inline
+    includeLanguageMarkers: true
+    rendererOptions:
+      target: editor
+    guiEnabled: false
+  OsmbcDownload:
+    renderer: HTML
+    bundleMode: inline
+    includeLanguageMarkers: true
+    rendererOptions:
+      target: production
+    fileNameTemplate: "##blogName##"
+    download: true
+    guiEnabled: true
+    guiLabel: Export HTML
+    guiLangMode: single
+    guiOrder: 10
+  OsmbcDownloadAll:
+    renderer: HTML
+    bundleMode: inline
+    includeLanguageMarkers: true
+    rendererOptions:
+      target: production
+    fileNameTemplate: "##blogName##-all"
+    download: true
+    guiEnabled: true
+    guiLabel: Export All HTML (inline)
+    guiLangMode: all
+    guiOrder: 15
+  HugoDownload:
+    renderer: HUGO
+    bundleMode: zip
+    pathTemplate: "##lang##/archives/##blogNumber-4-digits##"
+    fileNameTemplate: "##blogName##"
+    download: true
+    guiEnabled: true
+    guiLabel: Export All as Hugo (*.zip)
+    guiLangMode: all
+    guiOrder: 20
+  MarkdownDownload:
+    renderer: MARKDOWN
+    bundleMode: zip
+    pathTemplate: "##lang##-##blogNumber-4-digits##"
+    fileNameTemplate: "##blogName##"
+    download: true
+    guiEnabled: true
+    guiLabel: Export All as Markdown (*.zip)
+    guiLangMode: all
+    guiOrder: 30

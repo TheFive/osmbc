@@ -6,6 +6,7 @@ import { strict as assert } from "assert";
 import winston from "winston";
 import _debug from "debug";
 import { execSync } from "child_process";
+import { load as parseYaml } from "js-yaml";
 import packageJson from "./package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
@@ -53,8 +54,39 @@ logger.stream = {
 
 
 // the configurationfile should be in the "running" directory
-const configurationFile = path.resolve(__dirname, "config." + env + ".json");
+const configurationBaseName = "config." + env;
+const configurationCandidates = [
+  path.resolve(__dirname, configurationBaseName + ".yaml"),
+  path.resolve(__dirname, configurationBaseName + ".yml"),
+  path.resolve(__dirname, configurationBaseName + ".json")
+];
 let configuration;
+
+function parseConfigFile(fileName, fileContent) {
+  if (fileName.endsWith(".json")) return JSON.parse(fileContent);
+  if (fileName.endsWith(".yaml") || fileName.endsWith(".yml")) {
+    const parsed = parseYaml(fileContent);
+    return parsed || {};
+  }
+  throw new Error("Unsupported config file type: " + fileName);
+}
+
+function readConfigByBaseName(baseName, dirName = __dirname) {
+  const candidates = [
+    path.resolve(dirName, baseName + ".yaml"),
+    path.resolve(dirName, baseName + ".yml"),
+    path.resolve(dirName, baseName + ".json")
+  ];
+  for (const fileName of candidates) {
+    if (!fs.existsSync(fileName)) continue;
+    const fileContent = fs.readFileSync(fileName, "UTF8");
+    return {
+      fileName,
+      data: parseConfigFile(fileName, fileContent)
+    };
+  }
+  return null;
+}
 
 
 
@@ -96,8 +128,13 @@ function initialise(callback) {
     return;
   }
   debug("initialise");
-  logger.info("Reading Config from: " + configurationFile);
-  configuration = JSON.parse(fs.readFileSync(configurationFile));
+  const baseConfig = readConfigByBaseName(configurationBaseName, __dirname);
+  if (!baseConfig) {
+    logger.error("No config file found for " + configurationBaseName + " (yaml/yml/json)");
+    process.exit(1);
+  }
+  logger.info("Reading Config from: " + baseConfig.fileName);
+  configuration = baseConfig.data;
 
   // add or exchange some branch dependent configs
   if (env === "development") {
@@ -106,12 +143,14 @@ function initialise(callback) {
     gitBranch = gitBranch.replace("/", "_");
     if (typeof gitBranch === "string") {
       try {
-        const configBranch = JSON.parse(fs.readFileSync("config." + gitBranch + ".json"));
+        const configBranchData = readConfigByBaseName("config." + gitBranch, process.cwd());
+        if (!configBranchData) throw new Error("Branch config not found");
+        const configBranch = configBranchData.data;
         for (const k in configBranch) {
           configuration[k] = configBranch[k];
         }
       } catch (err) {
-        logger.info("No additional file config." + gitBranch + ".json");
+        logger.info("No additional file config." + gitBranch + ".{yaml,yml,json}");
       }
     }
   }
@@ -160,15 +199,15 @@ function getValue(key, subkey, options) {
     result = result[subkey];
   }
   if (options && options.mustExist && typeof result === "undefined") {
-    logger.error("Missing Value in config.*.json. Name: '" + key + (subkey ? "." + subkey : "") + "'");
+    logger.error("Missing Value in config.*.(yaml|yml|json). Name: '" + key + (subkey ? "." + subkey : "") + "'");
     process.exit(1);
   }
   if (options && options.checkFunction && options.checkFunction(result) === false) {
-    logger.error("Check Function Fail in config.*.json. Name: '" + key + "'");
+    logger.error("Check Function Fail in config.*.(yaml|yml|json). Name: '" + key + "'");
     process.exit(1);
   }
   if (options && options.deprecated && typeof result !== "undefined") {
-    logger.error("Deprecated Value in config.*.json. Name: '" + key + "'");
+    logger.error("Deprecated Value in config.*.(yaml|yml|json). Name: '" + key + "'");
     process.exit(1);
   }
   // eslint-disable-next-line valid-typeof
@@ -178,7 +217,7 @@ function getValue(key, subkey, options) {
   }
 
   if (options && options.deprecated && typeof result !== "undefined") {
-    logger.error("Unnecessary Value in config.*.json. Name: '" + key + "'");
+    logger.error("Unnecessary Value in config.*.(yaml|yml|json). Name: '" + key + "'");
   }
   debug("getValue %s %s", key, result);
   return result;

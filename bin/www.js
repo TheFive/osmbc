@@ -139,8 +139,8 @@ function startSlackReceiver(param, callback) {
 function startBlogTimer(param, callback) {
   debug("startBlogTimer");
 
-  // do not autoclose if this is switched of in config.
-  if (config.getValue("AutoClose") === false) return callback();
+  const transitionConfig = config.getValue("Transition", { default: {} }) || {};
+  if (transitionConfig.enabled === false || transitionConfig.enabled === "false") return callback();
 
   startTransitionScheduler(function (err) {
     if (err) {

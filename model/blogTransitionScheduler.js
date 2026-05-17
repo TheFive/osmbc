@@ -11,6 +11,12 @@ const debug = _debug("OSMBC:model:blogTransitionScheduler");
 let _transitionJob = null;
 let _transitionSweepRunning = 0;
 
+function parseBoolean(value, fallback) {
+  if (value === true || value === "true") return true;
+  if (value === false || value === "false") return false;
+  return fallback;
+}
+
 function parseNumber(value, fallback) {
   const parsed = Number(value);
   if (Number.isFinite(parsed)) return parsed;
@@ -80,28 +86,32 @@ function normaliseLanguageList(languagesConfig) {
 }
 
 function getTransitionConfig() {
-  const raw = config.getValue("AutoTransitions", { default: {} }) || {};
-  const rawLanguageAutoClose = raw.languageAutoClose || {};
+  const raw = config.getValue("Transition", { default: {} }) || {};
+  const rawAutoLanguageClose = raw.AutoLanguageClose || {};
+  const rawAutoEditMode = raw.AutoEditMode || {};
 
-  let blogStatusFilter = rawLanguageAutoClose.blogStatusFilter;
+  let blogStatusFilter = rawAutoLanguageClose.blogStatusFilter;
   if (!Array.isArray(blogStatusFilter) || blogStatusFilter.length === 0) {
     blogStatusFilter = ["edit"];
   }
 
   return {
-    enabled: raw.enabled !== false,
+    enabled: parseBoolean(raw.enabled, true),
     scheduleCron: raw.scheduleCron || "*/1 * * * *",
-    runOnStart: raw.runOnStart !== false,
-    languageAutoClose: {
-      enabled: rawLanguageAutoClose.enabled === true,
-      delayDays: parseNumber(rawLanguageAutoClose.delayDays, 3),
-      minReviews: parseNumber(rawLanguageAutoClose.minReviews, 2),
+    runOnStart: parseBoolean(raw.runOnStart, true),
+    autoEditMode: {
+      enabled: parseBoolean(rawAutoEditMode.enabled, true)
+    },
+    autoLanguageClose: {
+      enabled: parseBoolean(rawAutoLanguageClose.enabled, false),
+      delayDays: parseNumber(rawAutoLanguageClose.delayDays, 3),
+      minReviews: parseNumber(rawAutoLanguageClose.minReviews, 2),
       blogStatusFilter: blogStatusFilter,
-      onlyIfNotExported: rawLanguageAutoClose.onlyIfNotExported !== false,
-      languages: normaliseLanguageList(rawLanguageAutoClose.languages),
-      closeAt: normaliseCloseAt(rawLanguageAutoClose.closeAt),
-      actorUser: (typeof rawLanguageAutoClose.actorUser === "string" && rawLanguageAutoClose.actorUser.trim() !== "")
-        ? rawLanguageAutoClose.actorUser.trim()
+      onlyIfNotExported: parseBoolean(rawAutoLanguageClose.onlyIfNotExported, true),
+      languages: normaliseLanguageList(rawAutoLanguageClose.languages),
+      closeAt: normaliseCloseAt(rawAutoLanguageClose.closeAt),
+      actorUser: (typeof rawAutoLanguageClose.actorUser === "string" && rawAutoLanguageClose.actorUser.trim() !== "")
+        ? rawAutoLanguageClose.actorUser.trim()
         : "autoclose-review"
     }
   };
@@ -109,7 +119,7 @@ function getTransitionConfig() {
 
 function runLanguageAutoCloseRule(callback) {
   const transitionConfig = getTransitionConfig();
-  const ruleConfig = transitionConfig.languageAutoClose;
+  const ruleConfig = transitionConfig.autoLanguageClose;
 
   if (ruleConfig.enabled !== true) return callback();
 
@@ -154,9 +164,12 @@ export function runTransitionSweep(callback) {
     return;
   }
 
+  const transitionConfig = getTransitionConfig();
+
   _transitionSweepRunning += 1;
   series([
     function runOpenToEditAndCreate(cb) {
+      if (transitionConfig.autoEditMode.enabled !== true) return cb();
       blogModule.autoCloseBlog(cb);
     },
     function runLanguageAutoClose(cb) {

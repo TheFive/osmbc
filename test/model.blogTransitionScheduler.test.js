@@ -40,13 +40,15 @@ describe("model/blogTransitionScheduler", function() {
   it("closes a language after delay if two reviews exist", function(done) {
     originalGetValue = config.getValue;
     config.getValue = function(key, subkey, options) {
-      if (key === "AutoCreate") return "false";
-      if (key === "AutoTransitions") {
+      if (key === "Transition") {
         return {
           enabled: true,
           scheduleCron: "*/1 * * * *",
           runOnStart: true,
-          languageAutoClose: {
+          AutoEditMode: {
+            enabled: false
+          },
+          AutoLanguageClose: {
             enabled: true,
             delayDays: 3,
             minReviews: 2,
@@ -92,13 +94,15 @@ describe("model/blogTransitionScheduler", function() {
   it("does not close a language if only one review exists", function(done) {
     originalGetValue = config.getValue;
     config.getValue = function(key, subkey, options) {
-      if (key === "AutoCreate") return "false";
-      if (key === "AutoTransitions") {
+      if (key === "Transition") {
         return {
           enabled: true,
           scheduleCron: "*/1 * * * *",
           runOnStart: true,
-          languageAutoClose: {
+          AutoEditMode: {
+            enabled: false
+          },
+          AutoLanguageClose: {
             enabled: true,
             delayDays: 3,
             minReviews: 2,
@@ -143,13 +147,15 @@ describe("model/blogTransitionScheduler", function() {
   it("respects delay in minutes and does not close too early", function(done) {
     originalGetValue = config.getValue;
     config.getValue = function(key, subkey, options) {
-      if (key === "AutoCreate") return "false";
-      if (key === "AutoTransitions") {
+      if (key === "Transition") {
         return {
           enabled: true,
           scheduleCron: "*/1 * * * *",
           runOnStart: true,
-          languageAutoClose: {
+          AutoEditMode: {
+            enabled: false
+          },
+          AutoLanguageClose: {
             enabled: true,
             delayDays: 15 / 1440,
             minReviews: 2,
