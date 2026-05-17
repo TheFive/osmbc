@@ -19,7 +19,7 @@ import config from "../config.js";
 
 
 import configModule from "../model/config.js";
-import { startAllTimers } from "../model/blog.js";
+import { startTransitionScheduler, stopTransitionScheduler } from "../model/blogTransitionScheduler.js";
 import userModule from "../model/user.js";
 import messageCenter from "../notification/messageCenter.js";
 import { initialiseMailReceiver } from "../notification/mailReceiver.js";
@@ -108,6 +108,7 @@ function initialiseServer() {
 
 process.on("SIGINT", function() {
   config.logger.info("Received a stoprequest (SIGINT)");
+  stopTransitionScheduler();
   server.stop();
   process.exit();
 });
@@ -138,15 +139,15 @@ function startSlackReceiver(param, callback) {
 function startBlogTimer(param, callback) {
   debug("startBlogTimer");
 
-  // do not autoclose if this is switched of in config.
-  if (config.getValue("AutoClose") === false) return callback();
+  const transitionConfig = config.getValue("Transition", { default: {} }) || {};
+  if (transitionConfig.enabled === false || transitionConfig.enabled === "false") return callback();
 
-  startAllTimers(function (err) {
+  startTransitionScheduler(function (err) {
     if (err) {
       config.logger.error(err);
       return callback(new Error("Error during Blog Timers Start " + err.message));
     }
-    config.logger.info("Timer for Auto Close started");
+    config.logger.info("Blog transition scheduler started");
     return callback();
   });
 }

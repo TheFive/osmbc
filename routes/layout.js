@@ -169,6 +169,22 @@ function prepareRenderLayout(req, res, next) {
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
     const helpMenu = configModule.getConfig("helpmenu");
+    const exportProfilesRaw = config.getValue("ExportProfiles", { mustExist: true });
+    const exportProfiles = Object.keys(exportProfilesRaw)
+      .filter((name) => exportProfilesRaw[name].guiEnabled === true)
+      .map((name) => {
+        const profile = exportProfilesRaw[name];
+        return {
+          name: name,
+          label: profile.guiLabel || name,
+          langMode: profile.guiLangMode || "single",
+          order: profile.guiOrder || 999
+        };
+      })
+      .sort((a, b) => {
+        if (a.order !== b.order) return a.order - b.order;
+        return a.label.localeCompare(b.label);
+      });
 
     if (!(res.rendervar) || typeof (res.rendervar) === "undefined") res.rendervar = {};
 
@@ -192,7 +208,8 @@ function prepareRenderLayout(req, res, next) {
       md_renderInline: (text) => markdown.renderInline(text ?? ""),
       getAvatar: _getAvatar,
       scriptUser: scriptUser,
-      blogTranslationVisibleFor: blogTranslationVisibleFor
+      blogTranslationVisibleFor: blogTranslationVisibleFor,
+      exportProfiles: exportProfiles
     });
     next();
   }

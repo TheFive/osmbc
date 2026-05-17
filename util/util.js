@@ -46,6 +46,26 @@ function shorten(string, maxlength) {
   return newstring.substring(0, maxlength) + "...";
 };
 
+function summarizeError(error, extraFields = {}) {
+  if (!error) {
+    return Object.assign({ message: "Unknown error" }, extraFields);
+  }
+
+  if (typeof error === "string") {
+    return Object.assign({ message: error }, extraFields);
+  }
+
+  return Object.assign({
+    name: error.name,
+    message: error.message || String(error),
+    code: error.code,
+    status: error.status || error.response?.status,
+    statusText: error.response?.statusText,
+    method: error.config?.method,
+    url: error.config?.url
+  }, extraFields);
+};
+
 function toPGString(string, count) {
   if (typeof string !== "string") return "";
   let result = "";
@@ -280,6 +300,7 @@ const util = {
   sanitizeString: sanitizeString,
   isTrue: isTrue,
   shorten: shorten,
+  summarizeError: summarizeError,
   toPGString: toPGString,
   linkify: linkify,
   isURL: isURL,

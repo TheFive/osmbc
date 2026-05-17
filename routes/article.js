@@ -222,7 +222,7 @@ function renderArticleId(req, res, next) {
     const markdown = osmbcMarkdown({ target: "editor" }, result.accessMap);
     res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
 
-    const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
+    const renderer = blogRenderer.createRenderer("HTML", null, { target: "editor" });
 
 
 
@@ -413,7 +413,7 @@ function searchAndCreate(req, res, next) {
     articleModule.fullTextSearch(search, { column: "blog", desc: true }, function (err, result) {
       debug("searchAndCreate->fullTextSearch");
       if (err) return next(err);
-      const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
+      const renderer = blogRenderer.createRenderer("HTML", null, { target: "editor" });
       assert(res.rendervar);
       res.set("content-type", "text/html");
       res.render("collect", {
@@ -879,7 +879,7 @@ function searchArticles(req, res, next) {
     debug("search->finalFunction");
     if (err) return next(err);
     assert(res.rendervar);
-    const renderer = new blogRenderer.HtmlRenderer(null, { target: "editor" });
+    const renderer = blogRenderer.createRenderer("HTML", null, { target: "editor" });
     res.render("collect", {
       layout: res.rendervar.layout,
       search: search,

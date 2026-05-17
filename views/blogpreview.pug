@@ -14,9 +14,9 @@ block content
     .col.text-end
       button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}';`) Edit
       if (asMarkdown)
-        button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&markdown=true';`) Download
+        button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&exportProfile=${selectedExportProfile || "HugoDownload"}';`) Download
       else
-        button.btn.btn-secondary(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}';`) Download
+        button.btn.btn-secondary(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&exportProfile=OsmbcDownload';`) Download
 
   .row
     .col-md-12
@@ -30,10 +30,10 @@ block content
     .col-md-3
       if (asMarkdown)
         p
-          a(href=layout.htmlroot+"/blog/" + blog.name+"/preview?lang=" +lang)=blog.name+" as html"
+          a(href=layout.htmlroot+"/blog/" + blog.name+"/preview?lang=" +lang+"&exportProfile=OsmbcDownload")=blog.name+" as html"
       else
         p
-          a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang +"&markdown=true")=blog.name + " as markdown"
+          a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang +"&exportProfile=HugoDownload")=blog.name + " as markdown"
 
 
 

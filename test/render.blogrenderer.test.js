@@ -14,6 +14,7 @@ import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import configModule from "../model/config.js";
 import BlogRenderer from "../render/BlogRenderer.js";
+import Renderer from "../render/Renderer.js";
 import config from "../config.js";
 
 
@@ -27,7 +28,7 @@ describe("render/blogrenderer", function() {
   let renderer;
   before(async function () {
     await configModule.initialise();
-    renderer = new BlogRenderer.HtmlRenderer();
+    renderer = BlogRenderer.createRenderer("HTML");
     nock("https://missingmattermost.example.com/")
       .post(/\/services\/.*/)
       .times(999)
@@ -62,14 +63,14 @@ describe("render/blogrenderer", function() {
       bddone();
     });
     it("should generate a preview when markdown is specified (Edit Link) (editor mode)", function (bddone) {
-      const renderer = new BlogRenderer.HtmlRenderer(null, { target: "editor" });
+      const renderer = BlogRenderer.createRenderer("HTML", null, { target: "editor" });
       const article = articleModule.create({ markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)." });
       const result = renderer.renderArticle("DE", article);
       should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de" target="_blank" rel="noopener">Paul</a> tells something about <a href="www.nothing.de" target="_blank" rel="noopener">nothing</a>.\n</li>\n');
       bddone();
     });
     it("should generate a preview when markdown is specified (Edit Link) (production mode)", function (bddone) {
-      const renderer = new BlogRenderer.HtmlRenderer(null, { target: "production" });
+      const renderer = BlogRenderer.createRenderer("HTML", null, { target: "production" });
       const article = articleModule.create({ markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)." });
       const result = renderer.renderArticle("DE", article);
       should(result).equal('<li id="undefined_0">\n<a href="https://test.link.de" class="production">Paul</a> tells something about <a href="www.nothing.de" class="production">nothing</a>.\n</li>\n');
@@ -224,10 +225,10 @@ describe("render/blogrenderer", function() {
     });
   });
 
-  describe("markdownArticle", function() {
+  describe("hugoMarkdownArticle", function() {
     let markdownRenderer;
     before(function() {
-      markdownRenderer = new BlogRenderer.MarkdownRenderer();
+      markdownRenderer = BlogRenderer.createRenderer("HUGO");
     });
 
     it("should generate markdown for standard article", function (bddone) {
@@ -312,6 +313,91 @@ describe("render/blogrenderer", function() {
     });
   });
 
+  describe("markdownArticle", function() {
+    let markdownRenderer;
+    before(function() {
+      markdownRenderer = BlogRenderer.createRenderer("MARKDOWN");
+    });
+
+    it("should generate markdown for standard article", function (bddone) {
+      const article = articleModule.create({ markdownDE: "Test article with content" });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal("* Test article with content");
+      bddone();
+    });
+
+    it("should generate markdown for picture article", function (bddone) {
+      const article = articleModule.create({
+        markdownEN: "![Alt Text](https://example.com/img.jpg =300x200)\n\nCaption text",
+        categoryEN: "Picture"
+      });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).equal("* ![Alt Text](https://example.com/img.jpg =300x200)\n\nCaption text");
+      bddone();
+    });
+
+    it("should generate markdown for upcoming events", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "Event details in markdown",
+        categoryEN: "Upcoming Events"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal("Event details in markdown");
+      bddone();
+    });
+
+    it("should indent leading asterisk in article content", function (bddone) {
+      const article = articleModule.create({
+        markdownEN: "* Already has asterisk",
+        id: 3,
+        blog: "BLOG"
+      });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).equal("*   * Already has asterisk");
+      bddone();
+    });
+
+    it("should indent all leading asterisks in multiline article content", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "* line one\n* line two\n* line three",
+        id: 5,
+        blog: "TEST"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal("*   * line one\n  * line two\n  * line three");
+      bddone();
+    });
+
+    it("should only indent asterisks at start of line, not mid-line", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "normal line\n* sub item\nnormal again",
+        id: 6,
+        blog: "TEST"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal("* normal line\n  * sub item\nnormal again");
+      bddone();
+    });
+
+    it("should fallback to title for markdown article with no markdown", function (bddone) {
+      const article = articleModule.create({ collection: "Collection Title" ,id: 4, blog: "BLOG" });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal("* Collection Title\n");
+      bddone();
+    });
+
+    it("should generate markdown for unpublished article (no metadata added)", function (bddone) {
+      const article = articleModule.create({
+        markdownDE: "Content",
+        categoryEN: "--unpublished--",
+        unpublishReason: "Test reason"
+      });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).equal("* Content");
+      bddone();
+    });
+  });
+
   describe("renderBlog", function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);
@@ -337,8 +423,8 @@ describe("render/blogrenderer", function() {
             });
           },
           function(done) {
-            let renderer = new BlogRenderer.HtmlRenderer(blog);
-            if (data.asMarkdown) renderer = new BlogRenderer.MarkdownRenderer(blog);
+            let renderer = BlogRenderer.createRenderer("HTML", blog);
+            if (data.asMarkdown) renderer = BlogRenderer.createRenderer("HUGO", blog);
 
             blog.getPreviewData({ lang: data.lang, createTeam: true, disableNotranslation: true }, function(err, result) {
               should.not.exist(err);
@@ -378,5 +464,239 @@ describe("render/blogrenderer", function() {
       });
     }
     testutil.generateTests("test/data", /^render.blog.renderBlog.+json/, doATest);
+  });
+
+  describe("renderBlog warning integration", function() {
+    function createBlog(closed = true) {
+      return {
+        name: "WN999",
+        startDate: new Date("2024-01-01"),
+        endDate: new Date("2024-01-07"),
+        closeDE: closed,
+        getCategories() {
+          return [{ EN: "News", DE: "News" }];
+        }
+      };
+    }
+
+    it("should include empty-article warning via renderBlog when articleData flag is set", function() {
+      const htmlRenderer = BlogRenderer.createRenderer("HTML", createBlog(true));
+      const article = articleModule.create({
+        id: 1,
+        blog: "WN999",
+        categoryEN: "News",
+        title: "Article without DE markdown",
+        markdownEN: "Only EN text"
+      });
+
+      const articleData = {
+        articles: { News: [article] },
+        teamString: "",
+        containsEmptyArticlesWarning: true
+      };
+
+      const result = htmlRenderer.renderBlog("DE", articleData);
+      should(result).containEql("Warning: This export contains empty Articles");
+      should(result).containEql("Article without DE markdown");
+    });
+
+    it("should not include empty-article warning via renderBlog when flag is false", function() {
+      const htmlRenderer = BlogRenderer.createRenderer("HTML", createBlog(true));
+      const article = articleModule.create({
+        id: 2,
+        blog: "WN999",
+        categoryEN: "News",
+        markdownDE: "Vorhandener deutscher Text"
+      });
+
+      const articleData = {
+        articles: { News: [article] },
+        teamString: "",
+        containsEmptyArticlesWarning: false
+      };
+
+      const result = htmlRenderer.renderBlog("DE", articleData);
+      should(result).not.containEql("Warning: This export contains empty Articles");
+    });
+
+    it("should return only front text for not-closed blog when onlyClosed is true", function() {
+      const htmlRenderer = BlogRenderer.createRenderer("HTML", createBlog(false));
+      const articleData = {
+        articles: { News: [] },
+        teamString: "",
+        containsEmptyArticlesWarning: true
+      };
+
+      const result = htmlRenderer.renderBlog("DE", articleData, true);
+      should(result).equal("<meta charset=\"utf-8\"/>\n");
+    });
+  });
+
+  describe("articleTitle method integration", function() {
+    let htmlRenderer;
+    let markdownRenderer;
+
+    before(async function() {
+      await configModule.initialise();
+      htmlRenderer = BlogRenderer.createRenderer("HTML");
+      markdownRenderer = BlogRenderer.createRenderer("MARKDOWN");
+    });
+
+    it("should render HTML article title from collection when no markdown exists", function() {
+      const article = articleModule.create({
+        collection: "Test Article via Collection",
+        id: 1,
+        blog: "TEST"
+      });
+      const result = htmlRenderer.articleTitle("DE", article);
+      should(result).containEql("Test Article via Collection");
+      should(result).match(/<li>/);
+      should(result).match(/<\/li>/);
+    });
+
+    it("should render Markdown article title correctly", function() {
+      const article = articleModule.create({
+        title: "Markdown Title",
+        id: 2,
+        blog: "TEST"
+      });
+      const result = markdownRenderer.articleTitle("EN", article);
+      should(result).match(/^\* /);
+      should(result).containEql("Markdown Title");
+    });
+
+    it("should handle unpublished article with reason in articleTitle", function() {
+      const article = articleModule.create({
+        title: "Unpublished Article",
+        categoryEN: "--unpublished--",
+        unpublishReason: "Not ready yet",
+        unpublishReference: "PR #123"
+      });
+      const result = htmlRenderer.articleTitle("EN", article);
+      should(result).containEql("Unpublished Article");
+      should(result).containEql("Not ready yet");
+      should(result).containEql("PR #123");
+      should(result).match(/<br>/);
+    });
+
+    it("should render unpublished article title without reason gracefully", function() {
+      const article = articleModule.create({
+        title: "Unpublished No Reason",
+        categoryEN: "--unpublished--"
+      });
+      const result = htmlRenderer.articleTitle("DE", article);
+      should(result).containEql("Unpublished No Reason");
+      should(result).containEql("No Reason given");
+    });
+  });
+
+  describe("Renderer base class abstract methods", function() {
+    let baseRenderer;
+
+    before(function() {
+      const blog = {
+        name: "WN000",
+        closeDE: true,
+        getCategories() {
+          return [];
+        }
+      };
+      baseRenderer = new Renderer(blog);
+    });
+
+    it("should throw on subtitle()", function() {
+      should.throws(() => baseRenderer.subtitle("DE"), /subtitle\(\) must be implemented by subclass/);
+    });
+
+    it("should throw on _containsEmptyArticlesWarning()", function() {
+      should.throws(
+        () => baseRenderer._containsEmptyArticlesWarning("DE"),
+        /_containsEmptyArticlesWarning\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on categoryTitle()", function() {
+      should.throws(
+        () => baseRenderer.categoryTitle("DE", { EN: "News", DE: "News" }),
+        /categoryTitle\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _renderArticleStandard()", function() {
+      should.throws(
+        () => baseRenderer._renderArticleStandard("DE", articleModule.create({ markdownDE: "x" })),
+        /_renderArticleStandard\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _renderArticlePicture()", function() {
+      should.throws(
+        () => baseRenderer._renderArticlePicture("DE", articleModule.create({ markdownDE: "x" })),
+        /_renderArticlePicture\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _renderArticleUpcomingEvents()", function() {
+      should.throws(
+        () => baseRenderer._renderArticleUpcomingEvents("DE", articleModule.create({ markdownDE: "x" })),
+        /_renderArticleUpcomingEvents\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _renderArticleUnpublished()", function() {
+      should.throws(
+        () => baseRenderer._renderArticleUnpublished("text", articleModule.create({ title: "x" })),
+        /_renderArticleUnpublished\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on articleTitle()", function() {
+      should.throws(
+        () => baseRenderer.articleTitle("DE", articleModule.create({ title: "x" })),
+        /articleTitle\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _listAroundArticles()", function() {
+      should.throws(
+        () => baseRenderer._listAroundArticles("content"),
+        /_listAroundArticles\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _formatTeamString()", function() {
+      should.throws(
+        () => baseRenderer._formatTeamString("team"),
+        /_formatTeamString\(\) must be implemented by subclass/
+      );
+    });
+
+    it("should throw on _generateFrontText()", function() {
+      should.throws(
+        () => baseRenderer._generateFrontText("DE"),
+        /_generateFrontText\(\) must be implemented by subclass/
+      );
+    });
+  });
+
+  describe("BlogRenderer factory", function() {
+    it("should map renderer type names case-insensitively", function() {
+      const htmlRenderer = BlogRenderer.createRenderer("hTmL");
+      const mdRenderer = BlogRenderer.createRenderer("markdown");
+      const hugoRenderer = BlogRenderer.createRenderer("HuGo");
+
+      should(htmlRenderer).be.instanceOf(BlogRenderer.HtmlRenderer);
+      should(mdRenderer).be.instanceOf(BlogRenderer.MarkdownRenderer);
+      should(hugoRenderer).be.instanceOf(BlogRenderer.HugoMarkdownRenderer);
+    });
+
+    it("should map HUGOMARKDOWN alias", function() {
+      const hugoRenderer = BlogRenderer.createRenderer("hugomarkdown");
+      should(hugoRenderer).be.instanceOf(BlogRenderer.HugoMarkdownRenderer);
+    });
+
+    it("should throw on unknown renderer type", function() {
+      should.throws(() => BlogRenderer.createRenderer("pdf"), /Unknown renderer type/);
+    });
   });
 });

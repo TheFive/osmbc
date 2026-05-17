@@ -104,8 +104,10 @@ while layout.user["blogSetting"+v]
     +navbutton(style0,style)
   - v++-->
             <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN251/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
-            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
-              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages"></div>
+            <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages">
+                <h6 class="dropdown-header">Export by language</h6>
+              </div>
             </li>
           </ul>
         </div>

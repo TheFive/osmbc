@@ -201,24 +201,9 @@ function collectArticleLink(req, res, next) {
   });
 }
 
-function findBlogByRouteId(id, callback) {
-  debug("findBlogByRouteId(%s)", id);
-  blogModule.findById(id, function(err, blog) {
-    if (err) return callback(err);
-    if (blog) return callback(null, blog);
-
-    blogModule.find({ name: id }, function(err, result) {
-      if (err) return callback(err);
-      if (result.length === 0) return callback(null, null);
-      if (result.length > 1) return callback(new Error("Blog >" + id + "< exists twice, internal id of first: " + result[0].id));
-      return callback(null, result[0]);
-    });
-  });
-}
-
 function checkBlogId(req, res, next, id) {
   debug("checkBlogId");
-  findBlogByRouteId(id, function(err, blog) {
+  blogModule.findBlogByRouteId(id, function(err, blog) {
     if (err) return next(err);
     if (!blog) {
       const notFound = new Error("Blog not found");
@@ -231,15 +216,39 @@ function checkBlogId(req, res, next, id) {
   });
 }
 
+/**
+ * Download a rendered blog preview using a configured export profile.
+ *
+ * Route params:
+ * - apiKey {string} API key used by middleware `checkApiKey`
+ * - blog_id {string} blog identifier (internal id or name), resolved by `checkBlogId`
+ *
+ * Query params:
+ * - exportProfile {string} required profile name from config key `ExportProfiles`
+ * - lang {string} optional language code or `ALL` (defaults are handled in model layer)
+ *
+ * Behavior:
+ * - Always forces download semantics (`forceDownload: true`)
+ * - Returns stream or string payload from `buildPreviewExport`
+ * - Sets `content-type` according to renderer result
+ * - On missing `exportProfile` returns API error 422
+ */
 function getBlogPreviewDownload(req, res, next) {
   debug("getBlogPreviewDownload");
-  const asMarkdown = (req.query.markdown === "true");
+
+  const exportProfile = (typeof req.query.exportProfile === "string") ? req.query.exportProfile.trim() : "";
+  if (!exportProfile) {
+    const error = new Error("Missing exportProfile");
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
 
   req.blog.buildPreviewExport({
-      lang: req.query.lang,
-      markdown: asMarkdown,
-      forceDownload: true },
-    function(err, result) {
+    lang: req.query.lang,
+    exportProfile: exportProfile,
+    forceDownload: true
+  }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", result.mimeType);
     if (result.bodyType === "string") {

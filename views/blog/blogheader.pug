@@ -248,36 +248,55 @@ block content
                 i.fa.fa-exclamation-triangle
 
         li.nav-item.dropdown.show
-          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-bs-toggle='dropdown', data-bs-auto-close='outside', aria-haspopup="true",aria-expanded="false")
             i.fa.fa-download
           div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
             - var closedLangs = []
-            for lang in layout.activeLanguages
+            - var sortedLanguages = layout.activeLanguages.slice().sort()
+            - var singleExportProfiles = []
+            - var allExportProfiles = []
+            - var useLanguageSubmenus = sortedLanguages.length > 3
+            each profile in layout.exportProfiles
+              if profile.langMode === "all"
+                - allExportProfiles.push(profile)
+              else
+                - singleExportProfiles.push(profile)
+            each lang in sortedLanguages
               - if ( blog["close"+lang] === true) closedLangs.push(lang)
-              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang)
-                span="Export "+ lang
-                if !(blog.getUnEdited(lang) == 0)
-                  span=" "
-                  i.fa.fa-exclamation-triangle
-            - if (closedLangs.length>1)
-              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true")
-                span
-                  span="Export All: "
+
+            if (singleExportProfiles.length > 0)
+              h6.dropdown-header Export by language
+              if useLanguageSubmenus
+                each profile, profileIdx in singleExportProfiles
+                  button.dropdown-item(type="button", data-bs-toggle="collapse", data-bs-target="#export-profile-" + profileIdx, aria-expanded="false", aria-controls="export-profile-" + profileIdx)
+                    span=profile.label
+                  div.collapse(id="export-profile-" + profileIdx)
+                    each lang in sortedLanguages
+                      a.dropdown-item.ps-4(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang + "&download=true&exportProfile=" + profile.name)
+                        span=lang
+                        if !(blog.getUnEdited(lang) == 0)
+                          span=" "
+                          i.fa.fa-exclamation-triangle
+              else
+                each profile in singleExportProfiles
+                  each lang in sortedLanguages
+                    a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang + "&download=true&exportProfile=" + profile.name)
+                      span=profile.label + ": " + lang
+                      if !(blog.getUnEdited(lang) == 0)
+                        span=" "
+                        i.fa.fa-exclamation-triangle
+            - if (closedLangs.length > 0)
+              if (singleExportProfiles.length > 0)
+                div.dropdown-divider
+              h6.dropdown-header Export all languages
+              each profile in allExportProfiles
+                a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true&exportProfile=" + profile.name)
+                  span=profile.label + ": " + closedLangs.join(", ")
                   each lang in closedLangs
-                    span=lang+" "
                     if !(blog.getUnEdited(lang) == 0)
                       span=" "
                       i.fa.fa-exclamation-triangle
-                    span=","
-              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true&markdown=true")
-                span
-                  span="Export All as zipped *.md: "
-                  each lang in closedLangs
-                    span=lang+" "
-                    if !(blog.getUnEdited(lang) == 0)
-                      span=" "
-                      i.fa.fa-exclamation-triangle
-                    span=","
+              div.dropdown-divider
               a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/previewHeader")
                 span="Download corresponding Headers."
                 

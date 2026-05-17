@@ -1,22 +1,22 @@
 import moment from "moment-timezone";
 import _debug from "debug";
-import config from "../config.js";
 const debug = _debug("OSMBC:render:MarkdownRenderer");
 
-import util from "../util/util.js";
 import mdUtil from "../util/md_util.js";
 
 import language from "../model/language.js";
-import configModule from "../model/config.js";
 import Renderer from "./Renderer.js";
 
 class MarkdownRenderer extends Renderer {
   /**
    * Creates a new MarkdownRenderer instance.
    * @param {object} blog - The blog object to render.
+  * @param {object} [options] - Optional renderer options for API parity with other renderers.
+  * Currently stored only and not evaluated by MarkdownRenderer behavior.
    */
-  constructor(blog) {
+  constructor(blog, options) {
     super(blog);
+    this.options = options || {};
   }
 
   /**
@@ -55,44 +55,33 @@ class MarkdownRenderer extends Renderer {
   }
 
   /**
-   * Renders a standard article as a Markdown anchor shortcode + list item.
-   * Implemented Featuses: Add Anchor Link for Hugo
-   * Respect sublists in Article by replacing leading `*` with two spaces and a `*` for proper Markdown nesting.
-   * Unpublished articles are not marked as such in Markdown exports.
-   * @see Renderer.renderArticle for the main entry point for rendering articles.
+   * Renders a standard article as a plain Markdown list item.
    * @param {string} lang - The language code.
    * @param {object} article - The article object to render.
-   * @returns {string} A Markdown list item with an anchor shortcode prefix.
+   * @returns {string} A Markdown list item.
    */
   _renderArticleStandard(lang, article) {
-    let blogRef = article.blog;
-    if (!blogRef) blogRef = "undefined";
-    const pageLink = util.linkify(blogRef + "_" + article.id);
-    return `* {{< anchor "${pageLink}" >}} ${this._renderMarkdownListItem(lang, article)}`;
+    return `* ${this._renderMarkdownListItem(lang, article)}`;
   }
 
   /**
    * Renders a picture article as a plain Markdown list item.
-   * In Hugo Markdown Style (currently implemented here) picture is put in toml header as featureImage and featureImageCaption. So the picture article is not rendered in the body of the blog post.
    * @param {string} lang - The language code.
    * @param {object} article - The article object to render.
    * @returns {string} A Markdown list item string.
    */
   _renderArticlePicture(lang, article) {
-    return "";
+    return `* ${this._renderMarkdownListItem(lang, article)}`;
   }
 
   /**
-   * Renders an upcoming-events article as a plain Markdown list item.
+   * Renders an upcoming-events article as plain Markdown.
    * @param {string} lang - The language code.
    * @param {object} article - The article object to render.
-   * @returns {string} A Markdown list item string.
+   * @returns {string} A Markdown string.
    */
   _renderArticleUpcomingEvents(lang, article) {
-    let md = this._renderMarkdownListItem(lang, article);
-    // fix flag icons in upcoming events by removing the alt text (which is currently set to "flag") since Hugo's Markdown parser doesn't support custom image syntax and the alt text is not needed for the export
-    md = md.replaceAll("![flag](","![](");
-    return md;
+    return this._renderMarkdownListItem(lang, article);
   }
 
   /**
@@ -104,12 +93,8 @@ class MarkdownRenderer extends Renderer {
    */
   _renderMarkdownListItem(lang, article) {
     let md = article["markdown" + lang];
-    if (typeof (md) !== "undefined" && md !== "") {
-        // replace custom syntax for superscript (currently ^1^) with Hugo's shortcode syntax {{< sup "1" >}}
-        // since Hugo's Markdown parser doesn't support custom syntax and the shortcode is needed for the export
-        md = md.replaceAll("^1^",'{{< sup "1" >}}');
-        // fix sublists in Article by replacing leading `*` with two spaces and a `*` for proper
-        // Markdown nesting
+      if (typeof (md) !== "undefined" && md !== "") {
+        // Keep nested lists valid by indenting leading bullet points.
         return md.replace(/^\*/gm, "  *");
     }
     return article.displayTitle(90) + "\n";
@@ -160,59 +145,12 @@ class MarkdownRenderer extends Renderer {
   }
 
   /**
-   * Generates the Hugo front matter block (TOML format) for the blog post.
-   * Sets the draft status based on whether the blog is closed for the given language.
-   * @param {string} lang - The language code used to check the blog's close status.
-   * @returns {string} A TOML front matter block followed by two newlines.
+   * Generates front text for plain Markdown output.
+   * @param {string} lang - The language code.
+   * @returns {string} Prefix text before content (empty in plain mode).
    */
   _generateFrontText(lang,pictureArticles) {
-
-    const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
-    const categoryTranslation = configModule.getConfig("categorytranslation");
-
-    const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
-    const date = moment(this.blog.startDate).tz("Europe/Berlin").format("YYYY-MM-DD");
-    let pictureLink = null;
-    let pictureMd = null;
-    if (pictureArticles && pictureArticles.length > 0) {
-      const pictureArticle = pictureArticles[0];
-      const md = pictureArticle["markdown" + lang];
-      const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
-      const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
-      pictureMd = (md) ? md.replaceAll("^1^","1)") : null;
-      if (pictureMd) {
-        pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
-        // Extract Markdown image syntax if available
-        const imageMatch = regexMarkdownImage.exec(pictureMd);
-        if (imageMatch && imageMatch.length >= 3) {
-          pictureLink = imageMatch[2]; // Store only the URL from the Markdown image syntax
-          pictureMd = pictureMd.replace(regexMarkdownImage, "").trim(); // Remove image from pictureMd
-        } else {
-          // Fallback: extract URL if no Markdown image syntax found
-          const link = regexUrlFromCollection.exec(pictureMd);
-          if (link && link.length > 0) {
-            pictureLink = link[0];
-            // Try to remove the complete Markdown image syntax containing this URL
-            pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
-            // If no Markdown syntax found, just remove the URL itself
-            if (pictureMd.includes(link[0])) {
-              pictureMd = pictureMd.replace(link[0], "").trim();
-            }
-          }
-        }
-      }
-    }
-    const text = [
-      "+++",
-      "date = " + date,
-      "draft = false",
-      "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
-      (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
-      (pictureMd) ? "featureImageCap = '" + pictureMd + "'" : "",
-      "+++"
-    ].join("\n");
-
-    return text + "\n\n";
+    return "";
   }
 }
 

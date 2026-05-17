@@ -18,7 +18,6 @@ import logModule from "../model/logModule.js";
 import messageCenter from "../notification/messageCenter.js";
 import userModule from "../model/user.js";
 import translator from "../model/translator.js";
-import { scheduleJob } from "node-schedule";
 import osmcalLoader from "../model/osmcalLoader.js";
 
 import pgMap from "./pgMap.js";
@@ -33,7 +32,6 @@ const debug = _debug("OSMBC:model:blog");
 
 
 const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
-const pathForMarkdownExport = config.getValue("HugoExport", "Pathname-for-Export", { mustExist: true });
 function getGlobalCategories() {
   const categoryTranslation = configModule.getConfig("categorytranslation");
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
@@ -567,10 +565,6 @@ class Blog {
   /**
    * Build a preview/export payload independent from the HTTP layer.
    *
-   * Main purpose:
-   * - keep business logic (language resolution, rendering, packaging) in model code
-   * - let routers (web/api) only handle transport details (headers, piping, rendering)
-   *
    * @param {object} options Input options for export rendering.
    * @param {string|string[]} [options.lang="EN"]
    * Language selection:
@@ -578,24 +572,49 @@ class Blog {
    * - "ALL" to resolve dynamically
    * - array of language codes (invalid values are filtered)
    *
-   * Resolution rules:
-   * - undefined or invalid single value -> "EN"
-   * - "ALL" with markdown=true -> all configured languages
-   * - "ALL" with markdown=false -> only closed languages
+    * Resolution rules:
+    * - undefined or invalid single value -> "EN"
+    * - "ALL" with markdown-mode renderer -> all configured languages
+    * - "ALL" with html-mode renderer -> only closed languages
    *
-   * @param {boolean} [options.markdown=false]
-   * Rendering mode:
-   * - false => html output
-   * - true  => markdown output (zip if multi-language)
+    * @param {string} [options.exportProfile]
+    * Name of an entry in config key `ExportProfiles`.
+    * Preferred mode for all new integrations.
+    *
+     * @param {string} [options.renderer="HTML"]
+    * Explicit renderer selection (case-insensitive):
+    * - "HTML"
+    * - "HUGO" / "HUGOMARKDOWN"
+    * - "MARKDOWN"
+     * Legacy mode when no exportProfile is provided.
    *
    * @param {boolean} [options.forceDownload=false]
    * Forces download semantics in the result contract.
    * Note: multi-language export implies download automatically.
    *
    * @param {function(Error|null, object=):void} callback Node-style callback.
+  *
+  * Export profile fields (config `ExportProfiles.<name>`):
+  * - renderer {"HTML"|"HUGO"|"MARKDOWN"}
+  * - rendererOptions {object} optional renderer constructor options
+  * - pathTemplate {string} required for zip markdown/hugo entry names
+  *   supported placeholders:
+  *   - ##lang##
+  *   - ##blogNumber-4-digits##
+  * - fileNameTemplate {string} optional external download file name template
+  *   supported placeholders:
+  *   - ##blogName##
+  *   - ##renderer##
+  *   - ##langList##
+  *   - ##blogNumber-4-digits##
+  *
+  * Note:
+  * - Extension is appended automatically (.html/.md/.zip) unless already present.
+  * - zip output is currently produced for markdown/hugo multi-language exports.
    *
    * Callback result object:
    * - lang {string[]} resolved language list
+  * - rendererType {"HTML"|"HUGO"|"MARKDOWN"} effective renderer
    * - asMarkdown {boolean} effective rendering mode
    * - multiExport {boolean} true if lang has more than one entry
    * - forceDownload {boolean} effective download flag
@@ -613,8 +632,30 @@ class Blog {
     const self = this;
     const blogName = this.name;
 
+    // Resolve export profile or fall back to renderer parameter
+    let rendererType = "HTML";
+    let profileConfig = null;
+    let rendererOptions = undefined;
+
+    if (options.exportProfile && typeof options.exportProfile === "string") {
+      profileConfig = config.getValue("ExportProfiles", options.exportProfile);
+      if (!profileConfig) {
+        return callback(new Error(`Unknown export profile: ${options.exportProfile}`));
+      }
+      rendererType = profileConfig.renderer || "HTML";
+      rendererOptions = profileConfig.rendererOptions;
+    } else if (options.renderer && typeof options.renderer === "string") {
+      // Legacy: direct renderer parameter
+      const requestedRenderer = options.renderer.trim().toUpperCase();
+      const allowedRenderers = ["HTML", "HUGO", "HUGOMARKDOWN", "MARKDOWN"];
+      if (allowedRenderers.indexOf(requestedRenderer) < 0) {
+        return callback(new Error(`Unknown renderer type: ${options.renderer}`));
+      }
+      rendererType = (requestedRenderer === "HUGOMARKDOWN") ? "HUGO" : requestedRenderer;
+    }
+
     let lang = options.lang;
-    const asMarkdown = (options.markdown === true);
+    const asMarkdown = (rendererType !== "HTML");
     const exportAllLanguagesInMarkdown = (asMarkdown && lang === "ALL");
     let containsEmptyArticlesWarning = false;
 
@@ -643,59 +684,118 @@ class Blog {
 
     const multiExport = (lang.length > 1);
     const forceDownload = (options.forceDownload === true) || multiExport;
-    let overallResult = "";
 
     function listify(result, value, index) {
       if (index === 0) return value;
       return result + "-" + value;
     }
 
-    function mergeHtmlResultFunction() {
-      return function _mergeHtmlResultFunction(exportLang, callback) {
-        self.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
-          if (err) return callback(err);
-          if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
-          const renderer = new blogRenderer.HtmlRenderer(self, { target: "production" });
-          const result = renderer.renderBlog(exportLang, data);
-          if (multiExport) {
-            overallResult = overallResult + `[:${language.wpExportName(exportLang).toLowerCase()}]` + result;
+    function createInlineBundleWriter(withLanguageMarkers) {
+      let result = "";
+      return {
+        append(content, meta) {
+          if (withLanguageMarkers) {
+            result += `[:${meta.langCode}]` + content;
           } else {
-            overallResult = result;
+            result = content;
           }
-          return callback(null);
-        });
+        },
+        finalize() {
+          if (withLanguageMarkers) result += "[:]";
+        },
+        getBody() {
+          return result;
+        }
       };
     }
 
-    function mergeMdResultFunction() {
-      const archiv = archiver("zip", { zlib: { level: 9 } });
-      if (multiExport) { overallResult = archiv; }
-      return function _mergeMdResultFunction(exportLang, callback) {
+    function createZipBundleWriter() {
+      const archive = archiver("zip", { zlib: { level: 9 } });
+      return {
+        append(content, meta) {
+          archive.append(content, { name: meta.fileName });
+        },
+        finalize() {
+          archive.finalize();
+        },
+        getBody() {
+          return archive;
+        }
+      };
+    }
+
+    function markdownExportFileName(exportLang) {
+      const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");
+      let pathTemplate = profileConfig && profileConfig.pathTemplate;
+
+      // Legacy renderer mode without explicit exportProfile: resolve from profile config dynamically
+      if (!pathTemplate && !options.exportProfile) {
+        const exportProfiles = config.getValue("ExportProfiles", { mustExist: true });
+        const fallbackProfileName = (rendererType === "MARKDOWN") ? "MarkdownDownload" : "HugoDownload";
+        if (exportProfiles[fallbackProfileName]) {
+          pathTemplate = exportProfiles[fallbackProfileName].pathTemplate;
+        }
+      }
+
+      if (!pathTemplate) {
+        const requestedProfile = options.exportProfile || "<legacy-renderer>";
+        throw new Error(`Missing pathTemplate for export profile: ${requestedProfile}`);
+      }
+
+      const exportPath = util.replaceTemplateVariables(pathTemplate,
+        { lang: language.wpExportName(exportLang).toLowerCase(),
+          "blogNumber-4-digits": wn_4_digit });
+      return `${exportPath}.md`;
+    }
+
+    function resolveDownloadFileName(defaultFileName, extension) {
+      if (!profileConfig || !profileConfig.fileNameTemplate) return defaultFileName;
+
+      const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");
+      const templatedName = util.replaceTemplateVariables(profileConfig.fileNameTemplate, {
+        blogName: blogName,
+        renderer: rendererType.toLowerCase(),
+        langList: lang.reduce(listify),
+        "blogNumber-4-digits": wn_4_digit
+      });
+
+      if (!templatedName || templatedName.trim() === "") return defaultFileName;
+      if (templatedName.toLowerCase().endsWith(`.${extension}`)) return templatedName;
+      return `${templatedName}.${extension}`;
+    }
+
+    const bundleWriter = (asMarkdown && multiExport)
+      ? createZipBundleWriter()
+      : createInlineBundleWriter(multiExport);
+
+    function mergeRendererResultFunction() {
+      return function _mergeRendererResultFunction(exportLang, callback) {
         self.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
           if (err) return callback(err);
           if (data.containsEmptyArticlesWarning) containsEmptyArticlesWarning = true;
+
+          // Use profile-specified options or default to production for HTML
+          const resolvedOptions = rendererOptions || ((rendererType === "HTML") ? { target: "production" } : undefined);
+          const renderer = blogRenderer.createRenderer(rendererType, self, resolvedOptions);
           const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && self["close" + exportLang] !== true;
-
-          const renderer = new blogRenderer.MarkdownRenderer(self);
           const result = renderer.renderBlog(exportLang, data, createEmptyForOpenLanguage);
-          if (multiExport) {
-            const wn_4_digit = String(self.name).replace(/\D/g, "").padStart(4, "0");
-            const exportPath = util.replaceTemplateVariables(pathForMarkdownExport,
-              { lang: language.wpExportName(exportLang).toLowerCase(),
-                "blogNumber-4-digits": wn_4_digit });
-            overallResult.append(result, { name: `${exportPath}.md` });
+
+          if (asMarkdown && multiExport) {
+            bundleWriter.append(result, { fileName: markdownExportFileName(exportLang) });
           } else {
-            overallResult = result;
+            bundleWriter.append(result, { langCode: language.wpExportName(exportLang).toLowerCase() });
           }
+
           return callback(null);
         });
       };
     }
 
-    eachSeries(lang, (asMarkdown) ? mergeMdResultFunction() : mergeHtmlResultFunction(), function(err) {
+    eachSeries(lang, mergeRendererResultFunction(), function(err) {
       if (err) return callback(err);
-      if (asMarkdown && multiExport) overallResult.finalize();
-      if (!asMarkdown && multiExport) overallResult = overallResult + "[:]";
+      bundleWriter.finalize();
+
+      const overallResult = bundleWriter.getBody();
 
       let fileName = `${blogName}_${lang.reduce(listify)} ${self.name}.html`;
       let mimeType = "text/html";
@@ -708,8 +808,17 @@ class Blog {
         }
       }
 
+      if (mimeType === "application/zip") {
+        fileName = resolveDownloadFileName(fileName, "zip");
+      } else if (mimeType === "text/markdown") {
+        fileName = resolveDownloadFileName(fileName, "md");
+      } else {
+        fileName = resolveDownloadFileName(fileName, "html");
+      }
+
       const result = {
         lang: lang,
+        rendererType: rendererType,
         asMarkdown: asMarkdown,
         multiExport: multiExport,
         forceDownload: forceDownload,
@@ -869,19 +978,7 @@ class Blog {
 
   startCloseTimer() {
     debug("startCloseTimer");
-
-    // if there is a timer, stop it frist, than decide a new start
-    if (_allTimer[this.id]) {
-      _allTimer[this.id].cancel();
-      _allTimer[this.id] = null;
-    }
-    if (this.status !== "open") return;
-    if (this.endDate) {
-      const date = new Date(this.endDate);
-      _allTimer[this.id] = scheduleJob(date, function () {
-        autoCloseBlog(function () { });
-      });
-    }
+    // Legacy no-op: timer orchestration is handled centrally in blogTransitionScheduler.
   }
 
   getBlogName(lang) {
@@ -902,6 +999,114 @@ class Blog {
 function create (proto) {
   debug("create");
   return new Blog(proto);
+}
+
+function getComparableBlogStartDate(blog) {
+  const parsedStartDate = Date.parse(blog.startDate);
+  if (Number.isNaN(parsedStartDate)) return null;
+  return parsedStartDate;
+}
+
+function getComparableBlogNumber(blog) {
+  if (typeof blog.name !== "string") return null;
+  const match = blog.name.match(/^WN(\d+)$/i);
+  if (!match) return null;
+  return Number.parseInt(match[1], 10);
+}
+
+function isWeeklyNoteBlog(blog) {
+  return getComparableBlogNumber(blog) !== null;
+}
+
+function compareCurrentEditBlogCandidate(leftBlog, rightBlog) {
+  const leftStartDate = getComparableBlogStartDate(leftBlog);
+  const rightStartDate = getComparableBlogStartDate(rightBlog);
+
+  if (leftStartDate !== rightStartDate) {
+    if (leftStartDate === null) return -1;
+    if (rightStartDate === null) return 1;
+    return leftStartDate - rightStartDate;
+  }
+
+  const leftNumber = getComparableBlogNumber(leftBlog);
+  const rightNumber = getComparableBlogNumber(rightBlog);
+
+  if (leftNumber !== rightNumber) {
+    if (leftNumber === null) return -1;
+    if (rightNumber === null) return 1;
+    return leftNumber - rightNumber;
+  }
+
+  const leftName = (typeof leftBlog.name === "string") ? leftBlog.name : "";
+  const rightName = (typeof rightBlog.name === "string") ? rightBlog.name : "";
+  if (leftName !== rightName) return leftName.localeCompare(rightName);
+
+  return Number(leftBlog.id || 0) - Number(rightBlog.id || 0);
+}
+
+function isCurrentBlogRouteId(id) {
+  return typeof id === "string" && id.toLowerCase() === "current";
+}
+
+function resolveBlogRouteAlias(id, callback) {
+  if (id === "TBC") return callback(null, getTBC());
+  if (isCurrentBlogRouteId(id)) return findCurrentEditBlog(callback);
+  return callback(null, null);
+}
+
+function findBlogByRouteId(id, callback) {
+  function _findBlogByRouteId(id, callback) {
+    debug("findBlogByRouteId(%s)", id);
+    resolveBlogRouteAlias(id, function(err, aliasBlog) {
+      if (err) return callback(err);
+      if (aliasBlog) return callback(null, aliasBlog);
+
+      findById(id, function(err, blog) {
+        if (err) return callback(err);
+        if (blog) return callback(null, blog);
+
+        find({ name: id }, function(err, result) {
+          if (err) return callback(err);
+          if (result.length === 0) return callback(null, null);
+          if (result.length > 1) return callback(new Error("Blog >" + id + "< exists twice, internal id of first: " + result[0].id));
+          return callback(null, result[0]);
+        });
+      });
+    });
+  }
+
+  if (callback) {
+    return _findBlogByRouteId(id, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findBlogByRouteId(id, (err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+export function findBlogByRouteIdForUser(id, user, callback) {
+  if (typeof user === "function") {
+    callback = user;
+    user = null;
+  }
+
+  function _findBlogByRouteIdForUser(id, user, callback) {
+    debug("findBlogByRouteIdForUser(%s)", id);
+    findBlogByRouteId(id, function(err, blog) {
+      if (err) return callback(err);
+      if (!blog || !user) return callback(null, blog);
+      return blog.calculateDerived(user, function(derivedErr) {
+        if (derivedErr) return callback(derivedErr);
+        return callback(null, blog);
+      });
+    });
+  }
+
+  if (callback) {
+    return _findBlogByRouteIdForUser(id, user, callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findBlogByRouteIdForUser(id, user, (err, result) => err ? reject(err) : resolve(result));
+  });
 }
 
 
@@ -959,6 +1164,34 @@ export function findOne(obj1, obj2, callback) {
   });
 }
 
+export function findCurrentEditBlog(callback) {
+  function _findCurrentEditBlog(callback) {
+    debug("findCurrentEditBlog");
+    find({ status: "edit" }, function(err, blogs) {
+      if (err) return callback(err);
+      if (!blogs || blogs.length === 0) return callback(null, null);
+
+      const weeklyNoteBlogs = blogs.filter(isWeeklyNoteBlog);
+      if (weeklyNoteBlogs.length === 0) return callback(null, null);
+
+      const currentEditBlog = weeklyNoteBlogs.reduce(function(bestBlog, candidateBlog) {
+        if (!bestBlog) return candidateBlog;
+        if (compareCurrentEditBlogCandidate(candidateBlog, bestBlog) > 0) return candidateBlog;
+        return bestBlog;
+      }, null);
+
+      return callback(null, currentEditBlog);
+    });
+  }
+
+  if (callback) {
+    return _findCurrentEditBlog(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findCurrentEditBlog((err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
 // Create a blog in the database,
 // createNewBlog(proto,callback)
 // for parameter see create
@@ -998,9 +1231,12 @@ function createNewBlog(user, proto, noArticle, callback) {
       const wnId = name.substring(2, 99);
       const newWnId = parseInt(wnId) + 1;
       const newName = "WN" + newWnId;
+      let blogDurationDays = Number(config.getValue("BlogDurationDays", { default: 7 }));
+      if (!Number.isFinite(blogDurationDays) || blogDurationDays <= 0) blogDurationDays = 7;
+      blogDurationDays = Math.round(blogDurationDays);
       const startDate = new Date(endDate);
       startDate.setDate(startDate.getDate() + 1);
-      endDate.setDate(endDate.getDate() + 7);
+      endDate.setDate(endDate.getDate() + blogDurationDays);
       blog.name = newName;
       blog.status = "open";
       blog.startDate = startDate.toISOString();
@@ -1053,13 +1289,24 @@ function createNewBlog(user, proto, noArticle, callback) {
 
 let _autoCloseRunning = 0;
 
+function isAutoEditModeEnabled() {
+  const transitionConfig = config.getValue("Transition", { default: {} }) || {};
+
+  if (transitionConfig && typeof transitionConfig === "object") {
+    const autoEditMode = transitionConfig.AutoEditMode || {};
+    if (autoEditMode.enabled === true || autoEditMode.enabled === "true") return true;
+    if (autoEditMode.enabled === false || autoEditMode.enabled === "false") return false;
+  }
+  return true;
+}
+
 
 
 function autoCloseBlog(callback) {
   debug("autoCloseBlog");
   // Do not run this function twice !
   if (_autoCloseRunning > 0) return callback();
-  if (config.getValue("AutoCreate") === "false") return callback();
+  if (!isAutoEditModeEnabled()) return callback();
   _autoCloseRunning = _autoCloseRunning + 1;
 
 
@@ -1263,21 +1510,11 @@ const pg = pgObject;
 
 
 
-const _allTimer = {};
-
-
+/* commented as it should be replaced by a central scheduler, that calls the autoCloseBlog function of the blog model and the autoCreateBlog function of the blog model
 export function startAllTimers(callback) {
   debug("startAllTimers");
-  find({ status: "open" }, function(err, result) {
-    if (err && err.message === "relation \"blog\" does not exist") return callback();
-    if (err) return callback(err);
-    if (!result) return callback();
-    for (let i = 0; i < result.length; i++) {
-      result[i].startCloseTimer();
-    }
-    autoCloseBlog(callback);
-  });
-}
+  autoCloseBlog(callback);
+}*/
 
 
 export function getTBC() {
@@ -1300,6 +1537,9 @@ const blogModule = {
   findOne: findOne,
   findById: findById,
   find: find,
+  findBlogByRouteId: findBlogByRouteId,
+  findBlogByRouteIdForUser: findBlogByRouteIdForUser,
+  findCurrentEditBlog: findCurrentEditBlog,
   getTBC: getTBC,
   create: create,
   sortArticles: sortArticles,

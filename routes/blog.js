@@ -30,61 +30,9 @@ const htmlroot = config.htmlRoot();
 
 const reviewInWP = config.getValue("ReviewInWP", { default: [] });
 
-// Internal Function to find a blog by an ID
-// it accepts an internal Blog ID of OSMBC and a blog name
-// Additional the fix blog name TBC is recognised.
-function findBlogByRouteId(id, user, callback) {
-  debug("findBlogByRouteId(%s)", id);
-  let blog;
-  assert(typeof (user) === "object");
-  assert(typeof (callback) === "function");
-
-  async.series([
-    function CheckTBC(cb) {
-      // check and return TBC Blog.
-      debug("findBlogByRouteId->CheckTBC");
-      if (id === "TBC") {
-        blog = blogModule.getTBC();
-      }
-      return cb();
-    },
-    function findID(cb) {
-      debug("findBlogByRouteId->findID");
-      // Check and return blog by ID
-      blogModule.findById(id, function(err, r) {
-        if (err) return cb(err);
-        if (r) blog = r;
-        return cb();
-      });
-    },
-    function findByName(cb) {
-      debug("findBlogByRouteId->findByName");
-      // Check and return blog by name
-      if (blog) return cb();
-      blogModule.find({ name: id }, function(err, r) {
-        if (err) return cb(err);
-        if (r.length === 0) return cb();
-        if (r.length > 1) return cb(new Error("Blog >" + id + "< exists twice, internal id of first: " + r[0].id));
-        if (r) blog = r[0];
-        return cb();
-      });
-    },
-    function countItems(cb) {
-      debug("findBlogByRouteId->countItems");
-      // start calculation of derived fields for the current user.
-      // these fields are stored in an temporary _xxx field in the blog object
-      if (blog) return blog.calculateDerived(user, cb);
-      return cb();
-    }], function(err) {
-    debug("findBlogByRouteId->final function");
-    if (err) return callback(err);
-    callback(null, blog);
-  });
-}
-
 function findBlogId(req, res, next, id) {
   debug("findBlogId");
-  findBlogByRouteId(id, req.user, function(err, result) {
+  blogModule.findBlogByRouteIdForUser(id, req.user, function(err, result) {
     if (err) return next(err);
     req.blog = result;
     return next();
@@ -212,9 +160,19 @@ function renderBlogPreview(req, res, next) {
   if (!blog) return next();
 
   const returnToUrl = req.session ? req.session.articleReturnTo : req.originalUrl;
-  const asMarkdown = (req.query.markdown === "true");
+  const selectedExportProfile = (typeof req.query.exportProfile === "string") ? req.query.exportProfile : "";
 
-  blog.buildPreviewExport({ lang: req.query.lang, markdown: asMarkdown }, function(err, result) {
+  // Support both exportProfile (new) and renderer (legacy) parameters
+  const exportOptions = { lang: req.query.lang };
+  if (req.query.exportProfile) {
+    exportOptions.exportProfile = req.query.exportProfile;
+  } else if (req.query.renderer) {
+    exportOptions.renderer = req.query.renderer;
+  } else {
+    exportOptions.renderer = "HTML";
+  }
+
+  blog.buildPreviewExport(exportOptions, function(err, result) {
     debug("renderBlogPreview->final function");
     if (err) return next(err);
 
@@ -239,6 +197,7 @@ function renderBlogPreview(req, res, next) {
       asMarkdown: result.asMarkdown,
       preview: result.preview,
       lang: result.lang,
+      selectedExportProfile: selectedExportProfile,
       returnToUrl: returnToUrl,
       categories: blog.getCategories()
     });
@@ -443,7 +402,7 @@ function renderBlogTab(req, res, next) {
     const languageFlags = configModule.getConfig("languageflags");
 
 
-    const renderer = new blogRenderer.HtmlRenderer(blog, { target: "editor" });
+    const renderer = blogRenderer.createRenderer("HTML", blog, { target: "editor" });
     res.rendervar.layout.title = blog.name + "/" + tab.toLowerCase();
     res.render("blog/blog_" + tab.toLowerCase(), {
       layout: res.rendervar.layout,
