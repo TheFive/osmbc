@@ -2,11 +2,15 @@
 date = 2015-02-02
 draft = false
 title = 'Wochennotiz OG'
-
-
+featureImage = 'https://example.com/feature.jpg'
+featureImageCap = 'OSM''s weekly highlight'
 +++
 
 02.02.2015-05.02.2015
+
+
+
+
 
 ## OpenStreetMap Foundation
 

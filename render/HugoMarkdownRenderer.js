@@ -105,13 +105,17 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
         }
       }
     }
+    const escapedTitle = (blogNames[lang] + " " + this.blog.name.substring(2,10)).replaceAll("'", "''");
+    const escapedPictureLink = pictureLink ? pictureLink.replaceAll("'", "''") : null;
+    const escapedPictureMd = pictureMd ? pictureMd.replaceAll("'", "''") : null;
+
     const text = [
       "+++",
       "date = " + date,
       "draft = false",
-      "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
-      (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
-      (pictureMd) ? "featureImageCap = '" + pictureMd + "'" : "",
+      "title = '" + escapedTitle + "'",
+      (escapedPictureLink) ? "featureImage = '" + escapedPictureLink + "'" : "",
+      (escapedPictureMd) ? "featureImageCap = '" + escapedPictureMd + "'" : "",
       "+++"
     ].join("\n");
 
