@@ -41,13 +41,13 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
     if (!blogRef) blogRef = "undefined";
     const pageLink = util.linkify(blogRef + "_" + article.id);
 
-    let md = this._renderMarkdownListItem(lang, article);
+    const md = this._renderMarkdownListItem(lang, article);
 
-    md = osmbcMarkdown().render(md);
-    const hugoMd = turndownService({ hugo: true }).turndown(md);
+    const html = osmbcMarkdown().render("* " +md);
+    const hugoMd = turndownService({ hugo: true }).turndown(html);
 
 
-    return `* {{< anchor "${pageLink}" >}} ${hugoMd}`;
+    return `* {{< anchor "${pageLink}" >}} ${hugoMd.substring(2)}`;
   }
 
   _renderArticlePicture(lang, article) {

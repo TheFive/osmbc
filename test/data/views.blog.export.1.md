@@ -14,20 +14,20 @@ featureImageCap = 'OSM''s weekly highlight'
 
 ## OpenStreetMap Foundation
 
-* {{< anchor "blog_2" >}} Paul Norman veröffentlicht das [Protokoll](http://wiki.osmfoundation.org/wiki/Board/Minutes/2015-07-20) der ersten öffentlichen OSMF Board Sitzung. Themen waren Mitarbeiterbefragung, das corporate membership Programm, die nächste Vollversammlung und Unterstützung im Admin Bereich. Dem Protokoll angehängt ist die Audio Aufzeichnung des Meetings.
+* {{< anchor "blog_2" >}}   Paul Norman veröffentlicht das [Protokoll](http://wiki.osmfoundation.org/wiki/Board/Minutes/2015-07-20) der ersten öffentlichen OSMF Board Sitzung. Themen waren Mitarbeiterbefragung, das corporate membership Programm, die nächste Vollversammlung und Unterstützung im Admin Bereich. Dem Protokoll angehängt ist die Audio Aufzeichnung des Meetings.
 
-* {{< anchor "blog_1" >}} [Frederik](https://www.openstreetmap.org/user/woodpeck) [ruft](https://lists.openstreetmap.org/pipermail/osmf-talk/2015-August/003366.html) dazu auf, sich über ein grösseres Engagement in der [Foundation](https://wiki.osmfoundation.org/wiki/Main_Page) (Board Membership) Gedanken zu machen.
+* {{< anchor "blog_1" >}}   [Frederik](https://www.openstreetmap.org/user/woodpeck) [ruft](https://lists.openstreetmap.org/pipermail/osmf-talk/2015-August/003366.html) dazu auf, sich über ein grösseres Engagement in der [Foundation](https://wiki.osmfoundation.org/wiki/Main_Page) (Board Membership) Gedanken zu machen.
 
-* {{< anchor "blog_4" >}} Mehr text, mit Vorgänger und aufzählung:
-
-  * Punkt 1
-  * Punkt 2
+* {{< anchor "blog_4" >}}   Mehr text, mit Vorgänger und aufzählung:
+    
+    *   Punkt 1
+    *   Punkt 2
 
 Ende des Textes.
 
 ## Karten
 
-* {{< anchor "blog_5" >}} Die Diskussion um die vorgesehenen [Änderungen im Kartenstil](http://bl.ocks.org/pnorman/raw/c61d6b11193081910866/#12.00/51.9293/4.4866) nehmen auf der talk Mailingliste [kein Ende](https://lists.openstreetmap.org/pipermail/talk/2015-August/073857.html). Auch im deutschen Forum sind die Änderungen ein [Thema](http://forum.openstreetmap.org/viewtopic.php?pid=524613#p524613).
+* {{< anchor "blog_5" >}}   Die Diskussion um die vorgesehenen [Änderungen im Kartenstil](http://bl.ocks.org/pnorman/raw/c61d6b11193081910866/#12.00/51.9293/4.4866) nehmen auf der talk Mailingliste [kein Ende](https://lists.openstreetmap.org/pipermail/talk/2015-August/073857.html). Auch im deutschen Forum sind die Änderungen ein [Thema](http://forum.openstreetmap.org/viewtopic.php?pid=524613#p524613).
 
 ## Wochenvorschau
 
