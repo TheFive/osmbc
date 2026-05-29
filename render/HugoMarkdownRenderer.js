@@ -4,6 +4,7 @@ import MarkdownRenderer from "./MarkdownRenderer.js";
 import util from "../util/util.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
+import { turndownService , osmbcMarkdown } from "../util/md_util.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
@@ -39,7 +40,14 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
     let blogRef = article.blog;
     if (!blogRef) blogRef = "undefined";
     const pageLink = util.linkify(blogRef + "_" + article.id);
-    return `* {{< anchor "${pageLink}" >}} ${this._renderMarkdownListItem(lang, article)}`;
+
+    const md = this._renderMarkdownListItem(lang, article);
+
+    const html = osmbcMarkdown().render("* " +md);
+    const hugoMd = turndownService({ hugo: true }).turndown(html);
+
+
+    return `* {{< anchor "${pageLink}" >}} ${hugoMd.substring(2)}`;
   }
 
   _renderArticlePicture(lang, article) {
@@ -105,13 +113,17 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
         }
       }
     }
+    const escapedTitle = (blogNames[lang] + " " + this.blog.name.substring(2,10)).replaceAll("'", "''");
+    const escapedPictureLink = pictureLink ? pictureLink.replaceAll("'", "''") : null;
+    const escapedPictureMd = pictureMd ? pictureMd.replaceAll("'", "''") : null;
+
     const text = [
       "+++",
       "date = " + date,
       "draft = false",
-      "title = '" + blogNames[lang] + " " + this.blog.name.substring(2,10) + "'",
-      (pictureLink) ? "featureImage = '" + pictureLink + "'" : "",
-      (pictureMd) ? "featureImageCap = '" + pictureMd + "'" : "",
+      "title = '" + escapedTitle + "'",
+      (escapedPictureLink) ? "featureImage = '" + escapedPictureLink + "'" : "",
+      (escapedPictureMd) ? "featureImageCap = '" + escapedPictureMd + "'" : "",
       "+++"
     ].join("\n");
 

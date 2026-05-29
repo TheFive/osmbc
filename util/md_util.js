@@ -196,10 +196,12 @@ function mdTable(json, columns) {
 }
 
 
-export function turndownService() {
+export function turndownService(options) {
     const turndownService = new TurndownService();
     turndownService.use(turndownItSup);
-    turndownService.use(turndownItEmoji);
+    if (!(options && options.hugo)) {
+      turndownService.use(turndownItEmoji);
+    }
     turndownService.use(turndownItImsize);
     return turndownService;
 }

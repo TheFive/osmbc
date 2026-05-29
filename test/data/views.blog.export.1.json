@@ -24,6 +24,11 @@
               "categoryEN":"Maps"
               },
             {"blog":"BLOG",
+              "title":"Lead Picture",
+              "markdownDE":"![Lead image](https://example.com/feature.jpg) OSM's weekly highlight",
+              "categoryEN":"Picture"
+              },
+            {"blog":"BLOG",
               "title":"Picture",
               "markdownDE":"This should be a markdown table",
               "categoryEN":"Upcoming Events"

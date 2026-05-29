@@ -58,3 +58,4 @@ check-chromedriver.sh
 CoPi_Temp/
 config.development.yaml
 config.production.yaml
+WP Data

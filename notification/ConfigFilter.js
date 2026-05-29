@@ -22,6 +22,16 @@ const debug = _debug("OSMBC:notification:messageFilter");
 * */
 
 
+function languageInFilter(filter, lang) {
+  if (typeof filter === "string") {
+    if (filter.toLowerCase() === "all") return true;
+  }
+  if (Array.isArray(filter)) {
+    if (filter.includes(lang)) return true;
+  }
+  return false;
+}
+
 class ConfigFilter {
   constructor(config, receiver) {
     debug("ConfigFilter");
@@ -102,31 +112,24 @@ class ConfigFilter {
 
   sendReviewStatus(user, blog, lang, status, cb) {
     debug("ConfigFilter.prototype.sendReviewStatus");
-    let wnList = [];
-    let notify = false;
-    if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-    for (let i = 0; i < wnList.length; i++) {
-      const l = wnList[i];
-      if (l === lang) notify = true;
+    if (languageInFilter(this.config.notifyBlogLanguageStatusChange, lang)) {
+      debug("Send out notification");
+      return this.receiver.sendReviewStatus(user, blog, lang, status, cb);
     }
-    if (!notify) return cb();
-    debug("Send out notification");
-    this.receiver.sendReviewStatus(user, blog, lang, status, cb);
+    return cb();
   }
 
   sendCloseStatus(user, blog, lang, status, cb) {
     debug("ConfigFilter.prototype.sendCloseStatus");
-    let wnList = [];
-    let notify = false;
-    if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-    if (this.config.notifyBlogLanguageStatusChange) wnList = this.config.notifyBlogLanguageStatusChange;
-    for (let i = 0; i < wnList.length; i++) {
-      const l = wnList[i];
-      if (l === lang) notify = true;
+    if (languageInFilter(this.config.notifyBlogLanguageStatusChange, lang)) {
+      debug("Send out notification");
+      return this.receiver.sendCloseStatus(user, blog, lang, status, cb);
     }
-    if (!notify) return cb();
-    debug("Send out notification");
-    this.receiver.sendCloseStatus(user, blog, lang, status, cb);
+    if (languageInFilter(this.config.notifyBlogLanguageClosed, lang)) {
+      debug("Send out notification");
+      return this.receiver.sendCloseStatus(user, blog, lang, status, cb);
+    }
+    return cb();
   }
 }
 

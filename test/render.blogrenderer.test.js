@@ -232,9 +232,9 @@ describe("render/blogrenderer", function() {
     });
 
     it("should generate markdown for standard article", function (bddone) {
-      const article = articleModule.create({ markdownDE: "Test article with content" });
+      const article = articleModule.create({ markdownDE: "Test article with content with emoji :germany:" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "undefined_0" >}} Test article with content');
+      should(result).equal('* {{< anchor "undefined_0" >}}   Test article with content with emoji ![](/localMediaFOlder2015/de-black.svg)');
       bddone();
     });
 
@@ -266,7 +266,7 @@ describe("render/blogrenderer", function() {
         blog: "BLOG"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal('* {{< anchor "blog_3" >}}   * Already has asterisk');
+      should(result).equal('* {{< anchor "blog_3" >}}   *   Already has asterisk');
       bddone();
     });
 
@@ -277,7 +277,7 @@ describe("render/blogrenderer", function() {
         blog: "TEST"
       });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "test_5" >}}   * line one\n  * line two\n  * line three');
+      should(result).equal('* {{< anchor "test_5" >}}   *   line one\n*   line two\n*   line three');
       bddone();
     });
 
@@ -288,14 +288,14 @@ describe("render/blogrenderer", function() {
         blog: "TEST"
       });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "test_6" >}} normal line\n  * sub item\nnormal again');
+      should(result).equal('* {{< anchor "test_6" >}}   normal line\n    *   sub item normal again');
       bddone();
     });
 
     it("should fallback to title for markdown article with no markdown", function (bddone) {
       const article = articleModule.create({ collection: "Collection Title" ,id: 4, blog: "BLOG" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "blog_4" >}} Collection Title\n');
+      should(result).equal('* {{< anchor "blog_4" >}}   Collection Title');
       bddone();
     });
 
@@ -308,7 +308,7 @@ describe("render/blogrenderer", function() {
       const result = markdownRenderer.renderArticle("DE", article);
       // Unpublished renders via renderArticleStandard (not recognized as special category)
       // which adds "* ", then renderArticleUnpublished returns it unchanged
-      should(result).equal('* {{< anchor "undefined_0" >}} Content');
+      should(result).equal('* {{< anchor "undefined_0" >}}   Content');
       bddone();
     });
   });
