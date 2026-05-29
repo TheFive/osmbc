@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.4.1](https://github.com/TheFive/osmbc/tree/4.4.1) (2026-05-29)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.0...4.4.1)
+
+**Closed issues:**
+
+- Add "notifyBlogLanguageClosed" Filter to notify only if languages are closed [\#1110](https://github.com/TheFive/osmbc/issues/1110)
+- Hugo export has broken toml header [\#1107](https://github.com/TheFive/osmbc/issues/1107)
+- Convert Language flags to markdown before exporting to hugo. [\#1101](https://github.com/TheFive/osmbc/issues/1101)
+
 ## [4.4.0](https://github.com/TheFive/osmbc/tree/4.4.0) (2026-05-17)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.3.1...4.4.0)
@@ -410,6 +420,10 @@
 ## [4.0.3](https://github.com/TheFive/osmbc/tree/4.0.3) (2022-10-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.0.2...4.0.3)
+
+**Fixed bugs:**
+
+- Error Handling is not giving enough information in production mode [\#962](https://github.com/TheFive/osmbc/issues/962)
 
 ## [4.0.2](https://github.com/TheFive/osmbc/tree/4.0.2) (2022-10-08)
 
