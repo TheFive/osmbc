@@ -4,6 +4,7 @@ import MarkdownRenderer from "./MarkdownRenderer.js";
 import util from "../util/util.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
+import { turndownService , osmbcMarkdown } from "../util/md_util.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
@@ -39,7 +40,14 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
     let blogRef = article.blog;
     if (!blogRef) blogRef = "undefined";
     const pageLink = util.linkify(blogRef + "_" + article.id);
-    return `* {{< anchor "${pageLink}" >}} ${this._renderMarkdownListItem(lang, article)}`;
+
+    let md = this._renderMarkdownListItem(lang, article);
+
+    md = osmbcMarkdown().render(md);
+    const hugoMd = turndownService({ hugo: true }).turndown(md);
+
+
+    return `* {{< anchor "${pageLink}" >}} ${hugoMd}`;
   }
 
   _renderArticlePicture(lang, article) {

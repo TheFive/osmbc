@@ -232,9 +232,9 @@ describe("render/blogrenderer", function() {
     });
 
     it("should generate markdown for standard article", function (bddone) {
-      const article = articleModule.create({ markdownDE: "Test article with content" });
+      const article = articleModule.create({ markdownDE: "Test article with content with emoji :germany:" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "undefined_0" >}} Test article with content');
+      should(result).equal('* {{< anchor "undefined_0" >}} Test article with content with emoji ![](/localMediaFOlder2015/de-black.svg)');
       bddone();
     });
 
