@@ -1,9 +1,9 @@
 +++
 date = 2015-02-02
 draft = false
-title = 'Wochennotiz 823'
-featureImage = 'https://bild.irgendwo/foto.png'
-featureImageCap = '[1)](#wn815_34170) verweist auf das bild'
+title = '''Wochennotiz 823'''
+featureImage = '''https://bild.irgendwo/foto.png'''
+featureImageCap = '''[1)](#wn815_34170) verweist auf das bild'''
 +++
 
 02.02.2015-05.02.2015
