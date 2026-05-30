@@ -246,3 +246,5 @@ insert into usert (data) values ('{"OSMUser":"?? your osm user name ??","access"
 
 But of course it will be better to ask the Weekly - Wochennotiz team, to get a SQL dump.
 
+
+
