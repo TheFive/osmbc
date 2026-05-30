@@ -140,7 +140,10 @@ function runLanguageAutoCloseRule(callback) {
       if (ruleConfig.closeAt) {
         closeFromTs = nextWeeklyCloseTimeAtOrAfter(endDateTs, ruleConfig.closeAt);
       }
+      // blog is not ready for close, do nothing
       if (now < closeFromTs) return cbBlog();
+      // do only close blogs that are overdue for at least 1 hour, to avoid unrecognized late close
+      if (now > closeFromTs + (1 * 60 * 60 * 1000)) return cbBlog();
 
       eachSeries(ruleConfig.languages, function(lang, cbLanguage) {
         const closeField = "close" + lang;
