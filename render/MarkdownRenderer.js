@@ -71,7 +71,7 @@ class MarkdownRenderer extends Renderer {
    * @returns {string} A Markdown list item string.
    */
   _renderArticlePicture(lang, article) {
-    return `* ${this._renderMarkdownListItem(lang, article)}`;
+    return `${this._renderMarkdownListItem(lang, article)}`;
   }
 
   /**
