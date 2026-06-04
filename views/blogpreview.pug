@@ -13,10 +13,6 @@ block content
           h1= "Preview " + blog.name
     .col.text-end
       button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}';`) Edit
-      if (asMarkdown)
-        button.btn.btn-secondary( onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&exportProfile=${selectedExportProfile || "HugoDownload"}';`) Download
-      else
-        button.btn.btn-secondary(onclick =`location.href='${layout.htmlroot}/blog/${blog.name}/preview?download=true&lang=${lang}&exportProfile=OsmbcDownload';`) Download
 
   .row
     .col-md-12
@@ -25,15 +21,6 @@ block content
           | #{preview}
       else
         |!{preview}
-  .row
-    .col-md-9
-    .col-md-3
-      if (asMarkdown)
-        p
-          a(href=layout.htmlroot+"/blog/" + blog.name+"/preview?lang=" +lang+"&exportProfile=OsmbcDownload")=blog.name+" as html"
-      else
-        p
-          a(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang +"&exportProfile=HugoDownload")=blog.name + " as markdown"
 
 
 
