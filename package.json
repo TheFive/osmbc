@@ -54,7 +54,7 @@
     "js-yaml": "4.1.x",
     "jsdom": "29.0.2",
     "list-matcher": "1.0.x",
-    "markdown-it": "14.1.x",
+    "markdown-it": "14.2.x",
     "markdown-it-emoji": "3.0.x",
     "markdown-it-imsize": "^2.0.1",
     "markdown-it-link-attributes": "4.0.x",
