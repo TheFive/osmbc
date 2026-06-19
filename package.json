@@ -47,7 +47,7 @@
     "glob": "13.0.6",
     "helmet": "8.1.x",
     "html-to-text": "9.0.x",
-    "http-proxy-middleware": "3.0.5",
+    "http-proxy-middleware": "3.0.7",
     "http-status-codes": "2.3.x",
     "iconv-lite": "0.7.2",
     "jquery": "3.7.1",
