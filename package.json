@@ -65,7 +65,7 @@
     "morgan": "1.10.x",
     "node-cache": "5.1.x",
     "node-schedule": "2.1.1",
-    "nodemailer": "8.0.6",
+    "nodemailer": "9.0.1",
     "passport": "0.7.x",
     "passport-local-htpasswd": "0.1.x",
     "passport-oauth2": "1.8.x",
