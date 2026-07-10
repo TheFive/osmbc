@@ -62,7 +62,7 @@
     "markdown-link-extractor": "4.0.3",
     "moment": "2.30.x",
     "moment-timezone": "0.6.1",
-    "morgan": "1.10.x",
+    "morgan": "1.11.x",
     "node-cache": "5.1.x",
     "node-schedule": "2.1.1",
     "nodemailer": "8.0.6",
