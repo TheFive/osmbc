@@ -39,7 +39,7 @@ describe("views/user", function() {
   });
   afterEach(async function() {
     mockdate.reset();
-    await driver.quit();
+    await testutil.safeQuit(driver);
     mailChecker.restore();
     testutil.stopServer();
   });
@@ -113,7 +113,7 @@ describe("views/user", function() {
     const testDriver = await testutil.getNewDriver("TestUser");
     await testDriver.get(osmbcLink("/usert/2"));
     await testutil.expectHtml(testDriver, errors, "user", "userNoNameChange");
-    testDriver.quit();
+    await testutil.safeQuit(testDriver);
     should(errors).eql([]);
   });
   it("should save userdata and calculate WN User", async function() {

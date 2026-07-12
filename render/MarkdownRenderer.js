@@ -71,7 +71,7 @@ class MarkdownRenderer extends Renderer {
    * @returns {string} A Markdown list item string.
    */
   _renderArticlePicture(lang, article) {
-    return `* ${this._renderMarkdownListItem(lang, article)}`;
+    return `${this._renderMarkdownListItem(lang, article)}`;
   }
 
   /**
@@ -93,9 +93,13 @@ class MarkdownRenderer extends Renderer {
    */
   _renderMarkdownListItem(lang, article) {
     let md = article["markdown" + lang];
-      if (typeof (md) !== "undefined" && md !== "") {
-        // Keep nested lists valid by indenting leading bullet points.
-        return md.replace(/^\*/gm, "  *");
+
+    if (typeof (md) !== "undefined" && md !== "") {
+      if (md.substring(0, 2) === "* ") {
+        md = md.substring(2, 99999);
+      }
+      // Keep nested lists valid by indenting leading bullet points.
+      return md.replace(/^\*/gm, "  *");
     }
     return article.displayTitle(90) + "\n";
   }

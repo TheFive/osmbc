@@ -63,7 +63,8 @@ describe("model/blogTransitionScheduler", function() {
     };
 
     const oldDate = new Date();
-    oldDate.setDate(oldDate.getDate() - 6);
+    oldDate.setDate(oldDate.getDate() - 3);
+    oldDate.setMinutes(oldDate.getMinutes() - 30);
 
     const blog = blogModule.create({
       name: "WN900",

@@ -151,8 +151,8 @@ describe("uc.access", function() {
 
     await testutil.expectHtml(driverGuest, errors, "uc.access", "guestArticle-id3-Page");
     should(errors).eql([]);
-    await driverTheFive.quit();
-    await driverGuest.quit();
+    await testutil.safeQuit(driverTheFive);
+    await testutil.safeQuit(driverGuest);
   });
   it("should create a new guest user, if he logs in", async function() {
     // use TestUserNewGuest (allowed in test_pwd, not created as user)
@@ -160,6 +160,6 @@ describe("uc.access", function() {
     const osmbcApp = new OsmbcApp(driver);
     await osmbcApp.getMainPage().clickUserIcon();
     should(await osmbcApp.getUserPage().getUserName()).eql("TestUserNewGuest");
-    await driver.quit();
+    await testutil.safeQuit(driver);
   });
 });

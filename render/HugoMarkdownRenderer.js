@@ -8,6 +8,10 @@ import { turndownService , osmbcMarkdown } from "../util/md_util.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
+const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
+const dateAdjust = Number(config.getValue("Hugo", "DateAdjust", { mustExist: true }));
+
+
 class HugoMarkdownRenderer extends MarkdownRenderer {
   /**
    * Creates a new HugoMarkdownRenderer instance.
@@ -43,8 +47,8 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
 
     const md = this._renderMarkdownListItem(lang, article);
 
-    const html = osmbcMarkdown().render("* " +md);
-    const hugoMd = turndownService({ hugo: true }).turndown(html);
+    const html = osmbcMarkdown({ target: "hugo" }).render("* " +md);
+    let hugoMd = turndownService({ hugo: true }).turndown(html);
 
 
     return `* {{< anchor "${pageLink}" >}} ${hugoMd.substring(2)}`;
@@ -82,11 +86,12 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
   }
 
   _generateFrontText(lang, pictureArticles) {
-    const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
+    // generate TOML header for Hugo front matter
+    debug("HugoMarkdownRenderer.prototype._generateFrontText %s", lang);
     const categoryTranslation = configModule.getConfig("categorytranslation");
 
     const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
-    const date = moment(this.blog.startDate).tz("Europe/Berlin").format("YYYY-MM-DD");
+    const date = moment(this.blog.endDate).tz("Europe/Berlin").add(dateAdjust, "days").format("YYYY-MM-DD");
     let pictureLink = null;
     let pictureMd = null;
     if (pictureArticles && pictureArticles.length > 0) {

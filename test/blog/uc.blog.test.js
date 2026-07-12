@@ -184,8 +184,8 @@ describe("uc/blog", function() {
 
       // in difference to DE language, here no export should appear.
       await blogPageUser1.clickClose("WN251", "EN");
-      await driverTheFive.quit();
-      await driverUser1.quit();
+      await testutil.safeQuit(driverTheFive);
+      await testutil.safeQuit(driverUser1);
     });
   });
   describe("Test with Blog Data", function() {
@@ -196,7 +196,7 @@ describe("uc/blog", function() {
       driver = await testutil.getNewDriver("TheFive");
     });
     afterEach(async function() {
-      await driver.quit();
+      await testutil.safeQuit(driver);
     });
     describe("Blog Display", function() {
       it("should show Full View", async function() {

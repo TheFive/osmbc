@@ -12,6 +12,7 @@ import pretty from "pretty";
 
 import http from "http";
 import axios from "axios";
+import { execFileSync } from "child_process";
 
 import LoginPage from "../test/PageObjectModel/loginPage.js";
 import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
@@ -39,6 +40,21 @@ import { initialiseMailReceiver, mailReceiverUpdateUser } from "../notification/
 import messageCenter from "../notification/messageCenter.js";
 const osmbcLink = util.osmbcLink;
 const debug = _debug("OSMBC:test:testutil");
+
+function readVersionCommand(command, args = []) {
+  try {
+    return execFileSync(command, args, { encoding: "utf8" }).trim();
+  } catch (_err) {
+    return "not found";
+  }
+}
+
+function readChromeVersion() {
+  if (process.platform === "darwin") {
+    return readVersionCommand("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", ["--version"]);
+  }
+  return readVersionCommand("google-chrome", ["--version"]);
+}
 
 
 // set Test Standard to ignore prototypes for should
@@ -617,7 +633,10 @@ function getWrappedAxiosClient(options) {
 
 async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
-  if (process.env.TEST_HEADLESS === "TRUE") chromeOptions.addArguments("headless=new");
+  const isHeadless = process.env.TEST_HEADLESS === "TRUE";
+  const isLinux = process.platform === "linux";
+
+  if (isHeadless) chromeOptions.addArguments("headless=new");
   chromeOptions.addArguments("window-size=1920,1080");
   chromeOptions.addArguments("disable-search-engine-choice-screen");
   chromeOptions.addArguments("disable-infobars");
@@ -627,11 +646,15 @@ async function getNewDriver(username) {
   chromeOptions.addArguments("guest");
   // End try disable passwort Manager Popup
 
-  // Fix Chrome crashes on headless mode
-  chromeOptions.addArguments("no-sandbox");
-  chromeOptions.addArguments("disable-dev-shm-usage");
-  chromeOptions.addArguments("disable-gpu");
-  chromeOptions.addArguments("single-process");
+  // Linux CI often needs these flags; on macOS headed mode they can crash renderer startup.
+  if (isLinux) {
+    chromeOptions.addArguments("no-sandbox");
+    chromeOptions.addArguments("disable-dev-shm-usage");
+  }
+  if (isHeadless && isLinux) {
+    chromeOptions.addArguments("disable-gpu");
+    chromeOptions.addArguments("single-process");
+  }
 
   // Disable popup dialogs
   chromeOptions.addArguments("disable-blink-features=AutomationControlled");
@@ -642,9 +665,18 @@ async function getNewDriver(username) {
   try {
     driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
   } catch (err) {
-    console.error("Failed to create WebDriver. Check ChromeDriver version matches Chrome version.");
-    console.error("Error:", err.message);
-    throw err;
+    const diagnostics = [
+      `platform=${process.platform}`,
+      `arch=${process.arch}`,
+      `TEST_HEADLESS=${process.env.TEST_HEADLESS || "unset"}`,
+      `chrome=${readChromeVersion()}`,
+      `chromedriver=${readVersionCommand("chromedriver", ["--version"])}`
+    ].join(", ");
+
+    const webdriverMessage = (err && err.message) ? err.message : String(err);
+    const improvedError = new Error(`Failed to create WebDriver (${webdriverMessage}). Diagnostics: ${diagnostics}`);
+    console.error(improvedError.message);
+    throw improvedError;
   }
   // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
@@ -675,9 +707,20 @@ async function getNewDriver(username) {
   return driver;
 }
 
+async function safeQuit(driver) {
+  if (!driver) return;
+  try {
+    await driver.quit();
+  } catch (err) {
+    const quitMessage = (err && err.message) ? err.message : String(err);
+    debug(`safeQuit ignored quit error: ${quitMessage}`);
+  }
+}
+
 
 const testutil = {
   getNewDriver: getNewDriver,
+  safeQuit: safeQuit,
   checkUrlWithUser: checkUrlWithUser,
   checkPostUrlWithUser: checkPostUrlWithUser,
   getWrappedAxiosClient: getWrappedAxiosClient,

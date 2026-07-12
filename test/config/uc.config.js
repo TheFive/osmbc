@@ -29,7 +29,7 @@ describe("uc/config", function() {
     driver = await testutil.getNewDriver("TheFive");
   });
   afterEach(async function() {
-    await driver.quit();
+    await testutil.safeQuit(driver);
     testutil.stopServer();
   });
   it("should open and not save wrong yaml", async function() {
