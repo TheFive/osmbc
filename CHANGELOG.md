@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.4.3](https://github.com/TheFive/osmbc/tree/4.4.3) (2026-07-12)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.2...4.4.3)
+
+**Fixed bugs:**
+
+- Hugo export filter starting bullet points [\#1115](https://github.com/TheFive/osmbc/issues/1115)
+- unable to download ES [\#1113](https://github.com/TheFive/osmbc/issues/1113)
+
+**Closed issues:**
+
+- Hugo toml Header - calculate date [\#1114](https://github.com/TheFive/osmbc/issues/1114)
+
+## [4.4.2](https://github.com/TheFive/osmbc/tree/4.4.2) (2026-05-30)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.1...4.4.2)
+
 ## [4.4.1](https://github.com/TheFive/osmbc/tree/4.4.1) (2026-05-29)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.0...4.4.1)
@@ -8,7 +25,6 @@
 
 - Add "notifyBlogLanguageClosed" Filter to notify only if languages are closed [\#1110](https://github.com/TheFive/osmbc/issues/1110)
 - Hugo export has broken toml header [\#1107](https://github.com/TheFive/osmbc/issues/1107)
-- Convert Language flags to markdown before exporting to hugo. [\#1101](https://github.com/TheFive/osmbc/issues/1101)
 
 ## [4.4.0](https://github.com/TheFive/osmbc/tree/4.4.0) (2026-05-17)
 
