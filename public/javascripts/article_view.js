@@ -172,7 +172,8 @@ function getEventTable(lang, edit, pressedButton) {
 function convert(text) {
   // The cut at the beginning is a little bit "historic" from the
   // OSMBC startup, so only used for emotional motivation of the developer :-)
-  if (text.substring(0, 2) === "* ") text = text.substring(2, 999999);
+  // Feature excluded in Migration to Hugo
+  // if (text.substring(0, 2) === "* ") text = text.substring(2, 999999);
 
 
   // convert md to html

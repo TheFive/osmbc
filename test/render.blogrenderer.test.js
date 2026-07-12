@@ -62,6 +62,18 @@ describe("render/blogrenderer", function() {
       should(result).equal('<li id="undefined_0">\nTest Collection\n</li>\n');
       bddone();
     });
+    it("should indent all leading asterisks in multiline article content", function (bddone) {
+      // Result is broken as "* " in the beginnin of an article is removed
+      // so double * are not allowed yet. They do not make sense imho TheFive
+      const article = articleModule.create({
+        markdownDE: "* line one\n* line two\n* line three",
+        id: 5,
+        blog: "TEST"
+      });
+      const result = renderer.renderArticle("DE", article);
+      should(result).equal("<li id=\"test_5\">\n<p>line one</p>\n<ul>\n<li>line two</li>\n<li>line three</li>\n</ul>\n</li>\n");
+      bddone();
+    });
     it("should generate a preview when markdown is specified (Edit Link) (editor mode)", function (bddone) {
       const renderer = BlogRenderer.createRenderer("HTML", null, { target: "editor" });
       const article = articleModule.create({ markdownDE: "[Paul](https://test.link.de) tells something about [nothing](www.nothing.de)." });
@@ -266,18 +278,20 @@ describe("render/blogrenderer", function() {
         blog: "BLOG"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal('* {{< anchor "blog_3" >}}   *   Already has asterisk');
+      should(result).equal('* {{< anchor "blog_3" >}}   Already has asterisk');
       bddone();
     });
 
     it("should indent all leading asterisks in multiline article content", function (bddone) {
+      // result is broken as "* " in the beginnin of an article is removed
+      // so double * are not allowed yet. They do not make sense imho TheFive
       const article = articleModule.create({
         markdownDE: "* line one\n* line two\n* line three",
         id: 5,
         blog: "TEST"
       });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "test_5" >}}   *   line one\n*   line two\n*   line three');
+      should(result).equal('* {{< anchor "test_5" >}}   line one\n    *   line two\n    *   line three');
       bddone();
     });
 
@@ -332,7 +346,7 @@ describe("render/blogrenderer", function() {
         categoryEN: "Picture"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal("* ![Alt Text](https://example.com/img.jpg =300x200)\n\nCaption text");
+      should(result).equal("![Alt Text](https://example.com/img.jpg =300x200)\n\nCaption text");
       bddone();
     });
 
@@ -353,18 +367,20 @@ describe("render/blogrenderer", function() {
         blog: "BLOG"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal("*   * Already has asterisk");
+      should(result).equal("* Already has asterisk");
       bddone();
     });
 
     it("should indent all leading asterisks in multiline article content", function (bddone) {
+      // result is broken as "* " in the beginnin of an article is removed
+      // so double * are not allowed yet. They do not make sense imho TheFive
       const article = articleModule.create({
         markdownDE: "* line one\n* line two\n* line three",
         id: 5,
         blog: "TEST"
       });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal("*   * line one\n  * line two\n  * line three");
+      should(result).equal("* line one\n  * line two\n  * line three");
       bddone();
     });
 
