@@ -8,6 +8,9 @@ import { turndownService , osmbcMarkdown } from "../util/md_util.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
+const categoryTranslation = configModule.getConfig("categorytranslation");
+
+
 class HugoMarkdownRenderer extends MarkdownRenderer {
   /**
    * Creates a new HugoMarkdownRenderer instance.
@@ -82,11 +85,13 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
   }
 
   _generateFrontText(lang, pictureArticles) {
+    // generate TOML header for Hugo front matter
+    debug("HugoMarkdownRenderer.prototype._generateFrontText %s", lang);
     const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
-    const categoryTranslation = configModule.getConfig("categorytranslation");
+    const dateAdjust = Number(config.getValue("Hugo", "DateAdjust", { mustExist: true }));
 
     const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
-    const date = moment(this.blog.startDate).tz("Europe/Berlin").format("YYYY-MM-DD");
+    const date = moment(this.blog.endDate).tz("Europe/Berlin").add(dateAdjust, "days").format("YYYY-MM-DD");
     let pictureLink = null;
     let pictureMd = null;
     if (pictureArticles && pictureArticles.length > 0) {

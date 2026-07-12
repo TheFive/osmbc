@@ -148,6 +148,9 @@ auth:
 
 "Blog Title For Export": weeklyOSM
 
+Hugo:
+  DateAdjust: 5
+
 # markdown-it link attributes by output target.
 "link-attributes":
   editor:
