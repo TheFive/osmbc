@@ -43,8 +43,8 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
 
     const md = this._renderMarkdownListItem(lang, article);
 
-    const html = osmbcMarkdown().render("* " +md);
-    const hugoMd = turndownService({ hugo: true }).turndown(html);
+    const html = osmbcMarkdown({ target: "hugo" }).render("* " +md);
+    let hugoMd = turndownService({ hugo: true }).turndown(html);
 
 
     return `* {{< anchor "${pageLink}" >}} ${hugoMd.substring(2)}`;
