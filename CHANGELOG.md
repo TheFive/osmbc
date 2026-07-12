@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.4.1](https://github.com/TheFive/osmbc/tree/4.4.1) (2026-05-29)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.0...4.4.1)
+
+**Closed issues:**
+
+- Add "notifyBlogLanguageClosed" Filter to notify only if languages are closed [\#1110](https://github.com/TheFive/osmbc/issues/1110)
+- Hugo export has broken toml header [\#1107](https://github.com/TheFive/osmbc/issues/1107)
+- Convert Language flags to markdown before exporting to hugo. [\#1101](https://github.com/TheFive/osmbc/issues/1101)
+
+## [4.4.0](https://github.com/TheFive/osmbc/tree/4.4.0) (2026-05-17)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.3.1...4.4.0)
+
+**Closed issues:**
+
+- Add "Current" as selector for Curl or Html Blog Requests [\#1100](https://github.com/TheFive/osmbc/issues/1100)
+- Create Scheduled process for close reviewed languages [\#1099](https://github.com/TheFive/osmbc/issues/1099)
+- Implement Configurable Export Types \(WP, Hugo, Markdown\) [\#1098](https://github.com/TheFive/osmbc/issues/1098)
+- Implement Automation to close all Languages / blogs with 2 finalised reviews [\#1097](https://github.com/TheFive/osmbc/issues/1097)
+
 ## [4.3.1](https://github.com/TheFive/osmbc/tree/4.3.1) (2026-05-15)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.3.0...4.3.1)
