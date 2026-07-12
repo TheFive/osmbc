@@ -53,7 +53,7 @@ describe("uc/index", function() {
       driver = await testutil.getNewDriver("TheFive");
     });
     afterEach(async function() {
-      await driver.quit();
+      await testutil.safeQuit(driver);
     });
     describe("Homepage", function() {
       it("should find welcome text on Homepage", async function() {
@@ -163,7 +163,7 @@ describe("uc/index", function() {
     let driver;
 
     afterEach(async function() {
-      await driver.quit();
+      await testutil.safeQuit(driver);
     });
     it("should throw an error if user not exits", async function() {
       driver = await testutil.getNewDriver("TheFiveNotExist");

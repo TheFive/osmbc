@@ -61,7 +61,7 @@ describe("uc.article", function() {
   });
   afterEach(async function() {
     nock.cleanAll();
-    await driver.quit();
+    await testutil.safeQuit(driver);
     testutil.stopServer();
   });
   describe("Scripting Functions", function() {
