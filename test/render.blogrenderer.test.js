@@ -243,11 +243,48 @@ describe("render/blogrenderer", function() {
       markdownRenderer = BlogRenderer.createRenderer("HUGO");
     });
 
-    it("should generate markdown for standard article", function (bddone) {
-      const article = articleModule.create({ markdownDE: "Test article with content with emoji :germany:" });
+    it("should replace configured shortcut emojis in Hugo markdown", function (bddone) {
+      const article = articleModule.create({ markdownDE: "Test article with shortcut :-)" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "undefined_0" >}}   Test article with content with emoji ![](/localMediaFOlder2015/de-black.svg)');
+      should(result).containEql("😃");
+      should(result).not.containEql('{{< icon "😃" >}}');
       bddone();
+    });
+
+    it("should replace configured flag emojis in Hugo markdown", function (bddone) {
+      const article = articleModule.create({ markdownDE: "Test article with flag :germany:" });
+      const result = markdownRenderer.renderArticle("DE", article);
+      should(result).containEql("{{< icon ");
+      should(result).containEql("de-black.svg");
+      bddone();
+    });
+
+    it("should apply chained conversion when shortcut expands to named emoji", function (bddone) {
+      const originalGetConfig = configModule.getConfig;
+      configModule.getConfig = function(name) {
+        if (name === "languageflags") {
+          return {
+            shortcut: {
+              chain: ">>>"
+            },
+            emoji: {
+              chain: ":germany:",
+              germany: "/localMediaFOlder2015/de-black.svg"
+            }
+          };
+        }
+        return originalGetConfig(name);
+      };
+
+      try {
+        const article = articleModule.create({ markdownDE: "Test chain >>> done" });
+        const result = markdownRenderer.renderArticle("DE", article);
+        should(result).containEql('{{< icon "/localMediaFOlder2015/de-black.svg" >}}');
+        should(result).not.containEql(":germany:");
+        bddone();
+      } finally {
+        configModule.getConfig = originalGetConfig;
+      }
     });
 
     it("should generate markdown for picture article", function (bddone) {
@@ -278,7 +315,7 @@ describe("render/blogrenderer", function() {
         blog: "BLOG"
       });
       const result = markdownRenderer.renderArticle("EN", article);
-      should(result).equal('* {{< anchor "blog_3" >}}   Already has asterisk');
+      should(result).equal('* {{< anchor "blog_3" >}} Already has asterisk');
       bddone();
     });
 
@@ -291,7 +328,7 @@ describe("render/blogrenderer", function() {
         blog: "TEST"
       });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "test_5" >}}   line one\n    *   line two\n    *   line three');
+      should(result).equal('* {{< anchor "test_5" >}} line one\n  * line two\n  * line three');
       bddone();
     });
 
@@ -302,14 +339,14 @@ describe("render/blogrenderer", function() {
         blog: "TEST"
       });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "test_6" >}}   normal line\n    *   sub item normal again');
+      should(result).equal('* {{< anchor "test_6" >}} normal line\n  * sub item\nnormal again');
       bddone();
     });
 
     it("should fallback to title for markdown article with no markdown", function (bddone) {
       const article = articleModule.create({ collection: "Collection Title" ,id: 4, blog: "BLOG" });
       const result = markdownRenderer.renderArticle("DE", article);
-      should(result).equal('* {{< anchor "blog_4" >}}   Collection Title');
+      should(result).equal('* {{< anchor "blog_4" >}} Collection Title\n');
       bddone();
     });
 
@@ -322,7 +359,7 @@ describe("render/blogrenderer", function() {
       const result = markdownRenderer.renderArticle("DE", article);
       // Unpublished renders via renderArticleStandard (not recognized as special category)
       // which adds "* ", then renderArticleUnpublished returns it unchanged
-      should(result).equal('* {{< anchor "undefined_0" >}}   Content');
+      should(result).equal('* {{< anchor "undefined_0" >}} Content');
       bddone();
     });
   });
@@ -480,6 +517,40 @@ describe("render/blogrenderer", function() {
       });
     }
     testutil.generateTests("test/data", /^render.blog.renderBlog.+json/, doATest);
+
+    it("should handle fixture render.blog.renderBlog.7.json with Hugo emoji replacements", function(bddone) {
+      const file = path.resolve(config.getDirName(), "test/data", "render.blog.renderBlog.7.json");
+      const data = JSON.parse(fs.readFileSync(file));
+
+      let blog;
+      let html;
+
+      async.series([
+        function(done) {
+          testutil.importData(data, done);
+        },
+        function(done) {
+          blogModule.findOne({ name: data.testBlogName }, function(err, result) {
+            should.not.exist(err);
+            blog = result;
+            should.exist(blog);
+            done();
+          });
+        },
+        function(done) {
+          const renderer = BlogRenderer.createRenderer("HUGO", blog);
+          blog.getPreviewData({ lang: data.lang, createTeam: true, disableNotranslation: true }, function(err, result) {
+            should.not.exist(err);
+            html = renderer.renderBlog(data.lang, result);
+            done();
+          });
+        }
+      ], function(err) {
+        should.not.exist(err);
+        testutil.expectTextFile(html, "data", "render.blog.preview.7.md");
+        bddone();
+      });
+    });
   });
 
   describe("renderBlog warning integration", function() {
