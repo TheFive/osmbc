@@ -5,7 +5,7 @@ import { readFile, unlink, appendFile, rename } from "fs";
 import { join, basename } from "path";
 import moment from "moment";
 import { series, eachLimit } from "async";
-import { load } from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 import { execFile } from "child_process";
 import osmcalLoader from "../model/osmcalLoader.js";
 import sanitize from "sanitize-filename";
@@ -63,7 +63,7 @@ function readScriptConfig(script, callback) {
   readFile(join(scriptFilePath, script), function(err, text) {
     if (err) return callback(err);
     try {
-      const configuration = load(text);
+      const configuration = yamlLoad(text);
       return callback(null, configuration);
     } catch (err) {
       const error = "Error Parsing YAML File: " + script + "\n---" + err.message;
