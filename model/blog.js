@@ -23,7 +23,7 @@ import osmcalLoader from "../model/osmcalLoader.js";
 import pgMap from "./pgMap.js";
 import _debug from "debug";
 import _markdownIt from "markdown-it";
-import archiver from "archiver";
+import { ZipArchive } from "archiver";
 import blogRenderer from "../render/BlogRenderer.js";
 const markdown = _markdownIt();
 const debug = _debug("OSMBC:model:blog");
@@ -710,7 +710,7 @@ class Blog {
     }
 
     function createZipBundleWriter() {
-      const archive = archiver("zip", { zlib: { level: 9 } });
+      const archive = new ZipArchive("zip", { zlib: { level: 9 } });
       return {
         append(content, meta) {
           archive.append(content, { name: meta.fileName });
