@@ -70,13 +70,15 @@ function extractOneIssue(blog, callback) {
 
             const articleSummaries = articles.map(function (article) {
               const lastChangedByField = {};
+              const rawMarkdown = {};
               for (const lang of language.getLid()) {
                 const field = "markdown" + lang;
                 if (article._lastChange && article._lastChange[field]) {
                   lastChangedByField[field] = article._lastChange[field];
                 }
+                rawMarkdown[lang] = article[field];
               }
-              return { id: article.id, categoryEN: article.categoryEN, lastChangedByField };
+              return { id: article.id, version: article.version, categoryEN: article.categoryEN, lastChangedByField, rawMarkdown };
             });
 
             const output = {
