@@ -3,7 +3,7 @@ import config from "../config.js";
 import { strict as assert } from "assert";
 import { existsSync } from "fs";
 import { createTransport } from "nodemailer";
-import Email from "email-templates";
+import pug from "pug";
 import { validate } from "email-validator";
 
 import messageCenter from "../notification/messageCenter.js";
@@ -54,21 +54,10 @@ const logger =  winston.createLogger({
 
 
 const infoMailtemplateDir = join(config.getDirName(), "email", "infomail");
-const infomail = new Email({
-  views: { root: infoMailtemplateDir }
-});
-
 const infoMailBlogtemplateDir = join(config.getDirName(), "email", "infomailBlog");
-const infomailBlog = new Email({ views: { root: infoMailBlogtemplateDir } });
-
 const infoMailReviewtemplateDir = join(config.getDirName(), "email", "infomailReview");
-const infomailReview = new Email({ views: { root: infoMailReviewtemplateDir } });
-
 const infoMailClosetemplateDir = join(config.getDirName(), "email", "infomailClose");
-const infomailClose = new Email({ views: { root: infoMailClosetemplateDir } });
-
 const welcomeMailtemplateDir = join(config.getDirName(), "email", "welcome");
-const welcomemail = new Email({ views: { root: welcomeMailtemplateDir } });
 
 const transporter = createTransport(config.getValue("SMTP"));
 
@@ -76,6 +65,11 @@ const layout = {
   htmlroot: config.htmlRoot(),
   url: config.getValue("url")
 };
+
+function renderPugTemplate(templateDir, templateName, data) {
+  const templatePath = join(templateDir, templateName);
+  return Promise.resolve(pug.renderFile(templatePath, data));
+}
 
 
 
@@ -126,7 +120,7 @@ class MailReceiver {
     const self = this;
     const data = { user: this.user, inviter: inviter, layout: layout };
 
-    welcomemail.render("welcome html.pug", data).then(function welcomemailRender(result) {
+    renderPugTemplate(welcomeMailtemplateDir, "welcome html.pug", data).then(function welcomemailRender(result) {
       debug("welcomemailRender");
 
       const text = convert(result, { tables: ["#valuetable"] });
@@ -161,7 +155,7 @@ class MailReceiver {
 
     const data = { user: user, blog: blog, status: status, lang: lang, layout: layout };
 
-    infomailReview.render("infomailReview html.pug", data).then(function infomailRenderBlog(result) {
+    renderPugTemplate(infoMailReviewtemplateDir, "infomailReview html.pug", data).then(function infomailRenderBlog(result) {
       debug("infomailRenderInfo");
 
       const text = convert(result, { tables: ["#valuetable"] });
@@ -192,7 +186,7 @@ class MailReceiver {
 
     const data = { user: user, blog: blog, status: status, lang: lang, layout: layout };
 
-    infomailClose.render("infomailClose html.pug", data).then(function infomailRenderClose(result) {
+    renderPugTemplate(infoMailClosetemplateDir, "infomailClose html.pug", data).then(function infomailRenderClose(result) {
       debug("infomailRenderClose");
 
       const text = convert(result, { tables: ["#valuetable"] });
@@ -242,7 +236,7 @@ class MailReceiver {
 
     const data = { user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog };
 
-    infomail.render("infomail html.pug", data).then(function infomailRender(result) {
+    renderPugTemplate(infoMailtemplateDir, "infomail html.pug", data).then(function infomailRender(result) {
       debug("infomailRender");
       const text = convert(result, { tables: ["#valuetable"] });
 
@@ -278,7 +272,7 @@ class MailReceiver {
 
     const data = { user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog, addedComment: text };
 
-    infomail.render("infomail html.pug", data).then(function infomailRender(result) {
+    renderPugTemplate(infoMailtemplateDir, "infomail html.pug", data).then(function infomailRender(result) {
       debug("infomailRender");
       const text = convert(result, { tables: ["#valuetable"] });
 
@@ -316,7 +310,7 @@ class MailReceiver {
 
     const data = { user: this.user, changeby: user, article: oldArticle, newArticle: newArticle, layout: layout, logblog: logblog, editedComment: text };
 
-    infomail.render("infomail html.pug", data).then(function infomailRender(result) {
+    renderPugTemplate(infoMailtemplateDir, "infomail html.pug", data).then(function infomailRender(result) {
       debug("infomailRender");
       const text = convert(result, { tables: ["#valuetable"] });
 
@@ -362,7 +356,7 @@ class MailReceiver {
 
     const data = { user: this.user, changeby: user, blog: blog, newBlog: newBlog, layout: layout, blogName: blogName };
 
-    infomailBlog.render("infomailBlog html.pug", data).then(function infomailRenderBlog(result) {
+    renderPugTemplate(infoMailBlogtemplateDir, "infomailBlog html.pug", data).then(function infomailRenderBlog(result) {
       debug("infomailRenderBlog");
       const text = convert(result, { tables: ["#valuetable"] });
 
