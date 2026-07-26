@@ -35,9 +35,7 @@
     "compression": "1.8.1",
     "connect-pg-simple": "10.0.x",
     "debug": "4.4.x",
-    "depcheck": "1.4.x",
     "diff": "9.0.0",
-    "email-templates": "13.0.1",
     "email-validator": "2.0.x",
     "express": "^5.2.1",
     "express-fileupload": "1.5.2",
@@ -104,9 +102,6 @@
     "mocha": {
       "diff": "8.0.4",
       "serialize-javascript": "7.0.5"
-    },
-    "email-templates": {
-      "nodemailer": "8.0.5"
     }
   }
 }
