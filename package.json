@@ -86,7 +86,7 @@
     "eslint": "10.2.1",
     "eslint-plugin-mocha": "^11.2.0",
     "globals": "17.7.0",
-    "mocha": "11.7.x",
+    "mocha": "11.7.6",
     "mockdate": "3.0.x",
     "nock": "14.0.16",
     "npm-check-updates": "22.2.9",
@@ -97,11 +97,5 @@
     "should": "^13.2.3",
     "sinon": "22.1.0",
     "timemachine": "0.3.x"
-  },
-  "overrides": {
-    "mocha": {
-      "diff": "8.0.4",
-      "serialize-javascript": "7.0.5"
-    }
   }
 }
