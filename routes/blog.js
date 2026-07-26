@@ -11,7 +11,7 @@ import language from "../model/language.js";
 
 import util from "../util/util.js";
 import moment from "moment";
-import yaml from "js-yaml";
+import { dump as yamlDump, load as yamlLoad } from "js-yaml";
 import configModule from "../model/config.js";
 
 
@@ -485,7 +485,7 @@ function editBlogId(req, res) {
   if (params.edit && params.edit === "false") {
     res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   }
-  blog._categories_yaml = yaml.dump(blog.categories);
+  blog._categories_yaml = yamlDump(blog.categories);
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
@@ -506,7 +506,7 @@ function postBlogId(req, res, next) {
 
   let categories = null;
   try {
-    if (req.body.categories_yaml) categories = yaml.load(req.body.categories_yaml);
+    if (req.body.categories_yaml) categories = yamlLoad(req.body.categories_yaml);
   } catch (err) {
     return next(err);
   }

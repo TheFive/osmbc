@@ -1,6 +1,6 @@
 import { strict as assert } from "assert";
 import { eachOf, series } from "async";
-import { load } from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 
@@ -91,7 +91,7 @@ class Config {
     }
     if (this.type === "yaml") {
       try {
-        this.json = load(this.yaml);
+        this.json = yamlLoad(this.yaml);
         if (this.name === "votes") this.json = freshupVotes(this.json);
         if (this.name === "languageflags") this.json = freshupEmoji(this.json);
         checkAndRepair[this.name](this);

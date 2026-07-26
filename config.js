@@ -6,7 +6,7 @@ import { strict as assert } from "assert";
 import winston from "winston";
 import _debug from "debug";
 import { execSync } from "child_process";
-import { load as parseYaml } from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 import packageJson from "./package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,7 +65,7 @@ let configuration;
 function parseConfigFile(fileName, fileContent) {
   if (fileName.endsWith(".json")) return JSON.parse(fileContent);
   if (fileName.endsWith(".yaml") || fileName.endsWith(".yml")) {
-    const parsed = parseYaml(fileContent);
+    const parsed = yamlLoad(fileContent);
     return parsed || {};
   }
   throw new Error("Unsupported config file type: " + fileName);

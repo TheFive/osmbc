@@ -4,7 +4,6 @@ import MarkdownRenderer from "./MarkdownRenderer.js";
 import util from "../util/util.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
-import { turndownService , osmbcMarkdown } from "../util/md_util.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
@@ -47,11 +46,60 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
 
     const md = this._renderMarkdownListItem(lang, article);
 
-    const html = osmbcMarkdown({ target: "hugo" }).render("* " +md);
-    let hugoMd = turndownService({ hugo: true }).turndown(html);
+    return `* {{< anchor "${pageLink}" >}} ${md}`;
+  }
 
+  /**
+   * Post-processes Hugo markdown to transform emoji shortcuts to Hugo icon shortcodes.
+   * Used when markdown is already in text form (not converted via HTML/Turndown).
+   * Semantik: Replaces markdown-level emoji shortcuts with Hugo icon shortcodes,
+   * similar to how the HTML-level emoji plugin works.
+   * @param {string} markdown - The markdown text to transform
+   * @returns {string} The transformed markdown
+   */
+  _transformHugoMarkdown(markdown) {
+    let result = markdown;
 
-    return `* {{< anchor "${pageLink}" >}} ${hugoMd.substring(2)}`;
+    // Get emoji configuration from languageflags
+    const languageFlags = configModule.getConfig("languageflags");
+    const shortcut = languageFlags.shortcut || {};
+    const emoji = languageFlags.emoji || {};
+
+    const toHugoEmoji = function(value) {
+      if (!value) return null;
+      // markdown-it-emoji defs may return an <img ...> snippet; extract src.
+      const imgMatch = String(value).match(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/i);
+      const src = imgMatch && imgMatch[1] ? imgMatch[1] : null;
+      const raw = src || String(value);
+
+      // Treat path-like or URL-like values as Hugo icon shortcodes.
+      if (raw.startsWith("/") || raw.startsWith("http://") || raw.startsWith("https://")) {
+        return `{{< icon "${raw}" >}}`;
+      }
+
+      // Otherwise keep as plain markdown text so Hugo can render unicode emojis.
+      return raw;
+    };
+
+    // Transform all configured emoji shortcuts.
+    Object.entries(shortcut).forEach(([emojiName, shortcutString]) => {
+      if (shortcutString && emoji[emojiName]) {
+        const replacement = toHugoEmoji(emoji[emojiName]);
+        if (replacement) {
+          result = result.replaceAll(shortcutString, replacement);
+        }
+      }
+    });
+
+    // Also support :emoji_name: style from markdown-it-emoji semantics.
+    Object.keys(emoji).forEach((emojiName) => {
+      const replacement = toHugoEmoji(emoji[emojiName]);
+      if (replacement) {
+        result = result.replaceAll(`:${emojiName}:`, replacement);
+      }
+    });
+
+    return result;
   }
 
   _renderArticlePicture(lang, article) {
@@ -65,7 +113,10 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
   }
 
   _renderMarkdownListItem(lang, article) {
-    return super._renderMarkdownListItem(lang, article).replaceAll("^1^", '{{< sup "1" >}}');
+    let md = super._renderMarkdownListItem(lang, article).replaceAll("^1^", '{{< sup "1" >}}');
+    // Transform emoji shortcuts to Hugo icon shortcodes for markdown-level processing
+    md = this._transformHugoMarkdown(md);
+    return md;
   }
 
   _renderArticleUnpublished(text, article) {

@@ -1,0 +1,17 @@
+{
+  "blog":[{"name":"WN900","startDate":"2015-02-02","endDate":"2015-02-05","closeDE":true,"closeEN":false}],
+  "article":[{"blog":"WN900",
+              "markdownDE":"[^1^](#wn815_34170) verweist auf das bild ![bild](https://bild.irgendwo/foto.png)",
+              "categoryEN":"Picture",
+              "title":"picture title"},
+             {"blog":"WN900",
+              "title":"Emoji Titel",
+              "markdownDE":"Emoji Test :-) und :germany: und >>>",
+              "categoryEN":"Maps"}],
+  "change":[{"blog":"WN900","user":"USER1","_oid":"2","property":"collection","to":"value"}],
+  "user":[{"OSMUser":"USER1","mdWeeklyAuthor":"user_1","WNPublicAuthor":"PaulTemple"}],
+  "testBlogName":"WN900",
+  "lang":"DE",
+  "asMarkdown":true,
+  "testBlogResultHtml":"render.blog.preview.7.md"
+}

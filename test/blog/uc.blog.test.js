@@ -5,7 +5,7 @@
 import nock from "nock";
 import should from "should";
 import { set, reset } from "mockdate";
-import { load } from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 import * as fs from "fs";
 import { resolve } from "path";
 import { URL } from "url";
@@ -42,7 +42,7 @@ describe("uc/blog", function() {
     testutil.stopServer();
   });
   beforeEach(async function() {
-    const list = load(fs.readFileSync(resolve(config.getDirName(), "test", "blog", "DataWN290LinkList.txt"), "UTF8"));
+    const list = yamlLoad(fs.readFileSync(resolve(config.getDirName(), "test", "blog", "DataWN290LinkList.txt"), "UTF8"));
     list.forEach(function(item) {
       const url = new URL(item);
       let path = url.pathname;
