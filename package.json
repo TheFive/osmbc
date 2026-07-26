@@ -88,6 +88,7 @@
     "globals": "17.7.0",
     "mocha": "11.7.6",
     "mockdate": "3.0.x",
+    "mysql2": "^3.23.1",
     "nock": "14.0.16",
     "npm-check-updates": "22.2.9",
     "nyc": "^18.0.0",
