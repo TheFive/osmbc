@@ -89,7 +89,11 @@ for (const file of files) {
     }
   }
 
-  const status = diffs.length === 0 ? "equal" : "differs";
+  // 0 comparable articles is NOT the same as "equal" - for the earliest
+  // issues (~WN272-304), osmbc's <li id="wn<n>_<id>"> anchor convention
+  // did not exist yet in the real WordPress HTML, so nothing could be
+  // matched at all. Only articlesCompared > 0 constitutes a verified match.
+  const status = articlesCompared === 0 ? "not-comparable" : (diffs.length === 0 ? "equal" : "differs");
   indexRows.push([issue, languagesCompared, articlesCompared, diffs.length, status]);
 
   if (diffs.length > 0) {
