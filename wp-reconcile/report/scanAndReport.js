@@ -81,6 +81,8 @@ for (const file of files) {
 
   let languagesCompared = 0;
   let articlesCompared = 0;
+  let bestMatchRatio = 0;
+  const totalOsmbcArticles = osmbc.articles.length;
   const diffs = [];
   // Buffered, not applied directly: per-language counts must only be merged
   // into the global summary once we know the whole issue is "comparable"
@@ -112,6 +114,9 @@ for (const file of files) {
     const wpArticles = wpLangData.articles || {};
     const commonIds = Object.keys(osmbcArticles).filter((id) => id in wpArticles);
     articlesCompared += commonIds.length;
+    if (totalOsmbcArticles > 0) {
+      bestMatchRatio = Math.max(bestMatchRatio, commonIds.length / totalOsmbcArticles);
+    }
 
     // Only count an article as "missing from WordPress" if osmbc actually
     // has a real translation for it in this language - osmbc's HTML export
@@ -148,14 +153,18 @@ for (const file of files) {
     }
   }
 
-  // 0 comparable articles is NOT the same as "equal" - for the earliest
-  // issues (~WN272-304), osmbc's <li id="wn<n>_<id>"> anchor convention
-  // did not exist yet in the real WordPress HTML, so nothing could be
-  // matched at all. Only articlesCompared > 0 constitutes a verified match.
-  // Below that threshold, onlyOsmbc/onlyWp counts are not meaningful either
-  // (there's no reliable anchor structure to compare), so they are blanked
-  // out rather than reported as if they were a real finding.
-  const comparable = articlesCompared > 0;
+  // A handful of coincidental matches is NOT the same as being reliably
+  // comparable - for the earliest issues (~WN272-304), osmbc's
+  // <li id="wn<n>_<id>"> anchor convention did not exist yet in the real
+  // WordPress HTML, but a small number of unrelated ids can still collide
+  // by chance (verified: WN283 had exactly 4 coincidental matches out of 45
+  // real osmbc articles, all in the single digits - a "> 0" gate let it
+  // through as if it were fully comparable, producing 40 false "onlyOsmbc"
+  // findings). There is a sharp real cliff at WN305: the best per-language
+  // match ratio jumps from <=7% (WN272-304) to >=56% (WN305 onward) with
+  // nothing in between, so a 25% threshold on the best single-language
+  // match ratio cleanly separates real structural adoption from noise.
+  const comparable = bestMatchRatio > 0.25;
   const status = !comparable ? "not-comparable" : (diffs.length === 0 && onlyOsmbcIds.size === 0 && onlyWpIds.size === 0 ? "equal" : "differs");
   const reportedOnlyOsmbc = comparable ? onlyOsmbcIds.size : "";
   const reportedOnlyWp = comparable ? onlyWpIds.size : "";

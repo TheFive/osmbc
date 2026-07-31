@@ -109,14 +109,16 @@ function main(done) {
       return Boolean(raw) && raw.trim() !== "" && raw !== "no translation";
     }
 
-    // 0 comparable articles for the WHOLE issue (across every closed
-    // language) means osmbc's <li id="wn<n>_<id>"> anchor convention did not
-    // exist yet in the real WordPress HTML for this era (~WN272-304) - there
-    // is no structural way to match articles at all, so "gelöscht"/"neu"
-    // would be meaningless noise (everything would look "gelöscht"). Skip
-    // the whole issue in that case, exactly like scanAndReport.js's
-    // "not-comparable" gate.
-    let issueArticlesCompared = 0;
+    // A handful of coincidental matches is NOT the same as being reliably
+    // comparable - see scanAndReport.js for the full reasoning (WN283 had
+    // exactly 4 coincidental matches out of 45 real osmbc articles - a ">0"
+    // gate let it through, producing 40 false "gelöscht" findings). There is
+    // a sharp real cliff at WN305: best per-language match ratio jumps from
+    // <=7% (WN272-304) to >=56% (WN305 onward), so 25% cleanly separates
+    // real structural adoption of osmbc's <li id="wn<n>_<id>"> anchor
+    // convention in the real WordPress HTML from noise.
+    let bestMatchRatio = 0;
+    const totalOsmbcArticles = osmbc.articles.length;
     for (const [osmbcLang, wpLang] of Object.entries(WP_LANG)) {
       if (!osmbc.closedLanguages || osmbc.closedLanguages[osmbcLang] !== true) continue;
       const osmbcBody = osmbc.perLanguage[osmbcLang] && osmbc.perLanguage[osmbcLang].body;
@@ -124,9 +126,10 @@ function main(done) {
       if (!osmbcBody || !wpLangData) continue;
       const osmbcArticles = extractArticles(osmbcBody, n);
       const wpArticles = wpLangData.articles || {};
-      issueArticlesCompared += Object.keys(osmbcArticles).filter((id) => id in wpArticles).length;
+      const common = Object.keys(osmbcArticles).filter((id) => id in wpArticles).length;
+      if (totalOsmbcArticles > 0) bestMatchRatio = Math.max(bestMatchRatio, common / totalOsmbcArticles);
     }
-    if (issueArticlesCompared === 0) continue;
+    if (bestMatchRatio <= 0.25) continue;
 
     for (const [osmbcLang, wpLang] of Object.entries(WP_LANG)) {
       // Only closed<LANG> languages were actually approved/released by the

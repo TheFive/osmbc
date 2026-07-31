@@ -135,6 +135,48 @@ async function run() {
 
   fs.writeFileSync(path.join(dataDir, "_summary.json"), JSON.stringify(summary, null, 2));
   await connection.end();
+
+  mergeGermanFromOldBlog(summary);
+  fs.writeFileSync(path.join(dataDir, "_summary.json"), JSON.stringify(summary, null, 2));
+}
+
+// During the overlap era (roughly WN219-523), weeklyosm.eu (wp_posts) and the
+// old German-only blog.openstreetmap.de (wp_1_posts) were published in
+// parallel for the same issue number. wp_posts' own "de" entry is frequently
+// just a short stub/redirect pointing readers to the old blog (verified:
+// 84 of 236 issues in that range have a wp_posts "de" body under 1000
+// characters, all 84 with a substantially larger wp_1_posts counterpart
+// available) - comparing osmbc's German content against that stub instead
+// of the real published German post produced large false "only in osmbc"
+// findings. Whenever wp_1_posts has richer content for the same issue
+// number, its "de" entry replaces wp_posts' own, tagged with `source` for
+// traceability.
+function mergeGermanFromOldBlog(summary) {
+  const wpPostsDir = path.join(dataDir, "wp_posts");
+  const wp1PostsDir = path.join(dataDir, "wp_1_posts");
+  if (!fs.existsSync(wp1PostsDir)) return;
+
+  let merged = 0;
+  for (const file of fs.readdirSync(wpPostsDir)) {
+    if (!file.endsWith(".json") || file === "_summary.json" || file.startsWith("unmatched-")) continue;
+    const wp1File = path.join(wp1PostsDir, file);
+    if (!fs.existsSync(wp1File)) continue;
+
+    const wpData = JSON.parse(fs.readFileSync(path.join(wpPostsDir, file), "utf8"));
+    const wp1Data = JSON.parse(fs.readFileSync(wp1File, "utf8"));
+    const oldDe = wp1Data.perLanguage && wp1Data.perLanguage.de;
+    if (!oldDe) continue;
+
+    const currentDe = wpData.perLanguage.de;
+    const currentLen = currentDe ? currentDe.body.length : 0;
+    if (oldDe.body.length > currentLen) {
+      wpData.perLanguage.de = { ...oldDe, source: "wp_1_posts" };
+      fs.writeFileSync(path.join(wpPostsDir, file), JSON.stringify(wpData, null, 2));
+      merged++;
+    }
+  }
+  summary.germanMergedFromOldBlog = merged;
+  console.info(`German content substituted from wp_1_posts (old blog) for ${merged} issue(s) where it was richer than wp_posts' own.`);
 }
 
 run().catch((err) => {
