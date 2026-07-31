@@ -18,6 +18,18 @@
 // <strong>, or <span> wrapping a <strong> as a new section heading, and any
 // <ul> as that section's article bullets (one <li> per article - verified
 // bullets stay single-topic even when long).
+//
+// Some categories (verified: "Releases"/"Software Watchlist" issue 296,
+// "Upcoming Events" calendar issue 300) are published as a single <table>
+// instead of a <ul><li> list - but on the osmbc side each of these is one
+// whole article containing the entire table as its markdown (confirmed
+// against both real examples: e.g. WN300's full multi-row event calendar
+// is one single osmbc article, not one per row). So the WHOLE <table> is
+// treated as one article bullet, not one bullet per <tr> - splitting per
+// row was tried first and made matching far worse (a large calendar table
+// alone contributed dozens of bulk unmatched "bullets" with no 1:1 osmbc
+// counterpart, since there is no such counterpart - the row/article
+// correspondence isn't 1:1 for these tables).
 
 import { load } from "cheerio";
 
@@ -57,6 +69,15 @@ export function parseOldBlogSections(html) {
       $el.children("li").each((__, li) => {
         current.articlesHtml.push($(li).html());
       });
+    }
+
+    if (tag === "table") {
+      if (!current) {
+        current = { headingText: "", articlesHtml: [] };
+        sections.push(current);
+        warnings.push("found <table> before any heading - using an empty heading placeholder");
+      }
+      current.articlesHtml.push($el.html());
     }
   });
 

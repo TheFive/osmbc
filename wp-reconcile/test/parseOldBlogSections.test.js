@@ -53,6 +53,26 @@ describe("parseOldBlogSections", function () {
     warnings.length.should.be.above(0);
   });
 
+  it("treats a whole <table> as one article bullet, not one per row (real excerpt, issue 296 Releases - osmbc holds the whole table as a single article)", function () {
+    const html = `<h2 id="wn296_releases">Releases</h2>
+<table>
+<thead>
+<tr><th>Software</th><th>Version</th><th>Release Datum</th><th>Änderungen</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="http://www.locusmap.eu/">Locus Map Free</a></td><td><a href="http://www.locusmap.eu/news-version-3-16-0">3.16.0</a></td><td>14.3.2016</td><td>"Stop Tracking"-Button und einige Erweiterungen</td></tr>
+<tr><td><a href="http://ideditor.com/">iD</a></td><td><a href="https://github.com/openstreetmap/iD/blob/master/CHANGELOG.md">1.9.2</a></td><td>18.3.2016</td><td>-</td></tr>
+</tbody>
+</table>`;
+    const { sections, warnings } = parseOldBlogSections(html);
+    sections.should.have.length(1);
+    sections[0].headingText.should.equal("Releases");
+    sections[0].articlesHtml.should.have.length(1);
+    sections[0].articlesHtml[0].should.containEql('href="http://www.locusmap.eu/"');
+    sections[0].articlesHtml[0].should.containEql('href="http://ideditor.com/"');
+    warnings.should.be.empty();
+  });
+
   it("warns but still captures bullets that appear before any heading", function () {
     const html = `<ul><li>orphan bullet</li></ul><h2 id="mapping">Mapping</h2><ul><li>real bullet</li></ul>`;
     const { sections, warnings } = parseOldBlogSections(html);
