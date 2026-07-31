@@ -53,6 +53,7 @@ program
   .option("--from <n>", "start of issue number range", (v) => parseInt(v, 10))
   .option("--to <n>", "end of issue number range", (v) => parseInt(v, 10))
   .option("--commit", "actually write changes (default: dry-run)")
+  .option("--force", "re-rebuild an issue even if it was already rebuilt before (discards any real edits made since)")
   .parse(process.argv);
 
 const options = program.opts();
@@ -153,6 +154,16 @@ function processIssue(n, callback) {
     if (err) return callback(err);
     if (!blog) return callback(new Error(`No skeleton blog found for ${name}`));
 
+    // Idempotency marker: without this, re-running against a later, fresh
+    // production copy would unconditionally retire-and-recreate articles
+    // that may have received real manual edits since the first rebuild
+    // (e.g. via the manual teamString field, or a category fix) - silently
+    // discarding that work. Skip unless --force is explicitly passed.
+    if (blog.oldEraRebuildVersion && !options.force) {
+      console.info(`${name}: already rebuilt (oldEraRebuildVersion=${blog.oldEraRebuildVersion}), skipping - pass --force to redo it anyway`);
+      return callback();
+    }
+
     const categories = sections.map((s) => {
       const text = s.headingText || NO_CATEGORY;
       return { DE: text, EN: text };
@@ -189,7 +200,8 @@ function processIssue(n, callback) {
             if (err) return cb(err);
             console.info(`${name}: created ${created} article(s)`);
             cb();
-          })
+          }),
+          (cb) => blog.setAndSave(USER, { oldEraRebuildVersion: "1" }, cb)
         ],
         callback
       );
