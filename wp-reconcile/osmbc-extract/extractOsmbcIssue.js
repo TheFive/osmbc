@@ -78,7 +78,7 @@ function extractOneIssue(blog, callback) {
                 }
                 rawMarkdown[lang] = article[field];
               }
-              return { id: article.id, version: article.version, title: article.displayTitle(200), categoryEN: article.categoryEN, lastChangedByField, rawMarkdown };
+              return { id: article.id, version: article.version, title: article.displayTitle(200), categoryEN: article.categoryEN, collection: article.collection, lastChangedByField, rawMarkdown };
             });
 
             // Only closed<LANG> languages were actually approved/released by

@@ -20,6 +20,7 @@ import { fileURLToPath } from "url";
 import { normalizeHtml } from "../diff-engine/normalizeHtml.js";
 import { classifyChange } from "../diff-engine/classifyChange.js";
 import { matchByLinks } from "./matchByLinks.js";
+import { addCollectionFallbackLink } from "./collectionFallback.js";
 import { parseOldBlogSections } from "../old-era/parseOldBlogSections.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -96,16 +97,20 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     // avoids polluting the link-matcher with content that has no links to
     // match on in the first place, and isn't a real "missing from WP" case.
     const osmbcArticlesRaw = extractOsmbcArticles(osmbcBody, n);
-    const osmbcArticles = {};
+    const osmbcArticles = {}; // original html - used for diffing/display
+    const osmbcArticlesForMatching = {}; // may have a collection-link fallback appended - used for matching only
     for (const [id, html] of Object.entries(osmbcArticlesRaw)) {
-      if (hasRealTranslation(id, osmbcLang)) osmbcArticles[id] = html;
+      if (!hasRealTranslation(id, osmbcLang)) continue;
+      osmbcArticles[id] = html;
+      const articleMeta = articleById.get(id);
+      osmbcArticlesForMatching[id] = addCollectionFallbackLink(html, articleMeta && articleMeta.collection);
     }
     if (Object.keys(osmbcArticles).length === 0) continue;
     const { sections } = parseOldBlogSections(wpLangData.body);
     const wpBullets = sections.flatMap((s) => s.articlesHtml);
     if (wpBullets.length === 0) continue;
 
-    const { matches, unmatchedOsmbc, unmatchedWp, ambiguous } = matchByLinks(osmbcArticles, wpBullets);
+    const { matches, unmatchedOsmbc, unmatchedWp, ambiguous } = matchByLinks(osmbcArticlesForMatching, wpBullets);
 
     let changed = 0;
     for (const m of matches) {
@@ -119,7 +124,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     }
 
     for (const u of unmatchedOsmbc) {
-      reviewRows.push([issue, osmbcLang, "unmatched-osmbc", u.articleId, normalizeHtml(u.html)]);
+      reviewRows.push([issue, osmbcLang, "unmatched-osmbc", u.articleId, normalizeHtml(osmbcArticles[u.articleId])]);
       totalUnmatched++;
     }
     for (const html of unmatchedWp) {
@@ -127,7 +132,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       totalUnmatched++;
     }
     for (const a of ambiguous) {
-      reviewRows.push([issue, osmbcLang, "ambiguous", a.articleId, normalizeHtml(a.html)]);
+      reviewRows.push([issue, osmbcLang, "ambiguous", a.articleId, normalizeHtml(osmbcArticles[a.articleId])]);
       totalAmbiguous++;
     }
 
