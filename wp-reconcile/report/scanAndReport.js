@@ -82,6 +82,12 @@ for (const file of files) {
   let languagesCompared = 0;
   let articlesCompared = 0;
   const diffs = [];
+  // Buffered, not applied directly: per-language counts must only be merged
+  // into the global summary once we know the whole issue is "comparable"
+  // (see below) - otherwise the early, anchor-less era (~WN272-304) leaks
+  // false "onlyOsmbc" noise into the per-language breakdown even though the
+  // overall totals already correctly exclude it.
+  const pendingBumps = [];
   // Union across all compared languages: an article's <li id="..."> anchor
   // is a structural marker (present regardless of translation completeness,
   // confirmed even for "no translation" placeholders - see the CZ finding),
@@ -117,13 +123,13 @@ for (const file of files) {
     for (const id of Object.keys(osmbcArticles)) {
       if (!(id in wpArticles) && hasRealTranslation(id, osmbcLang)) {
         onlyOsmbcIds.add(id);
-        bumpLang(osmbcLang, "onlyOsmbc");
+        pendingBumps.push([osmbcLang, "onlyOsmbc"]);
       }
     }
     for (const id of Object.keys(wpArticles)) {
       if (!(id in osmbcArticles)) {
         onlyWpIds.add(id);
-        bumpLang(osmbcLang, "onlyWp");
+        pendingBumps.push([osmbcLang, "onlyWp"]);
       }
     }
 
@@ -137,7 +143,7 @@ for (const file of files) {
       // spaced form is still what gets shown in the report.
       if (a.replace(/\s+/g, "") !== b.replace(/\s+/g, "")) {
         diffs.push({ lang: osmbcLang, articleId: id, osmbc: a, wp: b });
-        bumpLang(osmbcLang, "changed");
+        pendingBumps.push([osmbcLang, "changed"]);
       }
     }
   }
@@ -159,6 +165,7 @@ for (const file of files) {
     totalOnlyWp += onlyWpIds.size;
     comparableIssueNumbers.push(parseInt(n, 10));
     if (status === "equal") equalCount++;
+    for (const [lang, field] of pendingBumps) bumpLang(lang, field);
   } else {
     notComparableCount++;
   }

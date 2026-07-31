@@ -17,10 +17,29 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
+import { diffWords } from "diff";
 
 import configModule from "../../model/config.js";
 import { normalizeHtml } from "../diff-engine/normalizeHtml.js";
 import { htmlToMarkdown } from "./htmlToMarkdown.js";
+
+// Classifies a change to an article that exists on both sides: "Typos" for a
+// small edit (few words changed relative to the article's length), "Text"
+// for anything larger. A heuristic, not a precise judgment - tune the
+// thresholds below if it misclassifies too often in practice.
+function classifyChange(oldText, newText) {
+  const parts = diffWords(oldText, newText);
+  let changedWords = 0;
+  let totalWords = 0;
+  for (const part of parts) {
+    const wordCount = part.value.trim().split(/\s+/).filter(Boolean).length;
+    totalWords += wordCount;
+    if (part.added || part.removed) changedWords += wordCount;
+  }
+  if (totalWords === 0) return "Text";
+  const ratio = changedWords / totalWords;
+  return (changedWords <= 4 || ratio < 0.15) ? "Typos" : "Text";
+}
 
 assert.strictEqual(
   process.env.NODE_ENV,
@@ -71,7 +90,8 @@ function dollarQuote(content) {
 function main(done) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  const changes = [];
+  const changes = []; // drives backport.sql - only genuine both-sides-present edits
+  const findings = []; // drives aenderungen.csv - changes + only-osmbc + only-wp, for review
   const files = fs.readdirSync(OSMBC_DIR).filter((f) => f.endsWith(".json")).sort();
 
   for (const file of files) {
@@ -83,6 +103,30 @@ function main(done) {
     const osmbc = JSON.parse(fs.readFileSync(path.join(OSMBC_DIR, file), "utf8"));
     const wp = JSON.parse(fs.readFileSync(wpFile, "utf8"));
     const articleById = new Map(osmbc.articles.map((a) => [a.id, a]));
+
+    function hasRealTranslation(id, lang) {
+      const raw = articleById.get(id) && articleById.get(id).rawMarkdown && articleById.get(id).rawMarkdown[lang];
+      return Boolean(raw) && raw.trim() !== "" && raw !== "no translation";
+    }
+
+    // 0 comparable articles for the WHOLE issue (across every closed
+    // language) means osmbc's <li id="wn<n>_<id>"> anchor convention did not
+    // exist yet in the real WordPress HTML for this era (~WN272-304) - there
+    // is no structural way to match articles at all, so "gelöscht"/"neu"
+    // would be meaningless noise (everything would look "gelöscht"). Skip
+    // the whole issue in that case, exactly like scanAndReport.js's
+    // "not-comparable" gate.
+    let issueArticlesCompared = 0;
+    for (const [osmbcLang, wpLang] of Object.entries(WP_LANG)) {
+      if (!osmbc.closedLanguages || osmbc.closedLanguages[osmbcLang] !== true) continue;
+      const osmbcBody = osmbc.perLanguage[osmbcLang] && osmbc.perLanguage[osmbcLang].body;
+      const wpLangData = wp.perLanguage[wpLang];
+      if (!osmbcBody || !wpLangData) continue;
+      const osmbcArticles = extractArticles(osmbcBody, n);
+      const wpArticles = wpLangData.articles || {};
+      issueArticlesCompared += Object.keys(osmbcArticles).filter((id) => id in wpArticles).length;
+    }
+    if (issueArticlesCompared === 0) continue;
 
     for (const [osmbcLang, wpLang] of Object.entries(WP_LANG)) {
       // Only closed<LANG> languages were actually approved/released by the
@@ -99,6 +143,31 @@ function main(done) {
       const wpArticles = wpLangData.articles || {};
       const commonIds = Object.keys(osmbcArticles).filter((id) => id in wpArticles);
 
+      // "gelöscht": osmbc has a real translation for this article/language
+      // that never made it into the published WordPress post. Informational
+      // only - never written to backport.sql.
+      for (const id of Object.keys(osmbcArticles)) {
+        if (id in wpArticles || !hasRealTranslation(id, osmbcLang)) continue;
+        const articleMeta = articleById.get(id);
+        findings.push({
+          issue, articleId: id, title: articleMeta && articleMeta.title, categoryEN: articleMeta && articleMeta.categoryEN,
+          lang: osmbcLang, changeType: "gelöscht",
+          oldValue: articleMeta && articleMeta.rawMarkdown ? articleMeta.rawMarkdown[osmbcLang] : "",
+          newValue: ""
+        });
+      }
+      // "neu": WordPress has this article/language with no matching osmbc
+      // anchor at all. Informational only - never written to backport.sql.
+      for (const id of Object.keys(wpArticles)) {
+        if (id in osmbcArticles) continue;
+        findings.push({
+          issue, articleId: id, title: "", categoryEN: "",
+          lang: osmbcLang, changeType: "neu",
+          oldValue: "",
+          newValue: htmlToMarkdown(wpArticles[id])
+        });
+      }
+
       for (const id of commonIds) {
         const a = normalizeHtml(osmbcArticles[id]);
         const b = normalizeHtml(wpArticles[id]);
@@ -110,8 +179,9 @@ function main(done) {
         const field = "markdown" + osmbcLang;
         const oldValue = articleMeta.rawMarkdown ? articleMeta.rawMarkdown[osmbcLang] : undefined;
         const newValue = htmlToMarkdown(wpArticles[id]);
+        const oldValueSafe = oldValue === undefined || oldValue === null ? "" : oldValue;
 
-        changes.push({
+        const change = {
           issue,
           articleId: id,
           version: articleMeta.version,
@@ -119,8 +189,14 @@ function main(done) {
           categoryEN: articleMeta.categoryEN,
           lang: osmbcLang,
           field,
-          oldValue: oldValue === undefined || oldValue === null ? "" : oldValue,
+          oldValue: oldValueSafe,
           newValue
+        };
+        changes.push(change);
+        findings.push({
+          issue, articleId: id, title: articleMeta.title, categoryEN: articleMeta.categoryEN,
+          lang: osmbcLang, changeType: classifyChange(oldValueSafe, newValue),
+          oldValue: oldValueSafe, newValue
         });
       }
     }
@@ -200,17 +276,24 @@ BEGIN;
   );
 
   // --- Spreadsheet for LibreOffice Calc (German headers, UTF-8 BOM so
-  // umlauts display correctly on open without a manual encoding prompt) ---
-  const spreadsheetRows = [["Blog", "Sprache", "ArtikelNummer", "ArtikelName", "Kategorie", "Text vorher", "Text nachher"]];
-  for (const c of changes) {
-    spreadsheetRows.push([c.issue, c.lang, c.articleId, c.title || "", c.categoryEN, c.oldValue, c.newValue]);
+  // umlauts display correctly on open without a manual encoding prompt).
+  // Includes changes + only-osmbc ("gelöscht") + only-WordPress ("neu")
+  // findings - broader than backport.sql, which only ever touches the
+  // both-sides-present "Typos"/"Text" cases. ---
+  const spreadsheetRows = [["Blog", "Sprache", "ArtikelNummer", "ArtikelName", "Änderungsart", "Text vorher", "Text nachher"]];
+  for (const f of findings) {
+    spreadsheetRows.push([f.issue, f.lang, f.articleId, f.title || "", f.changeType, f.oldValue, f.newValue]);
   }
   fs.writeFileSync(
     path.join(OUT_DIR, "aenderungen.csv"),
     "﻿" + spreadsheetRows.map((row) => row.map(csvEscape).join(",")).join("\r\n")
   );
 
-  console.info(`${changes.length} change(s) across ${changesByArticle.size} article(s) written.`);
+  const byType = {};
+  for (const f of findings) byType[f.changeType] = (byType[f.changeType] || 0) + 1;
+
+  console.info(`${changes.length} change(s) across ${changesByArticle.size} article(s) written to backport.sql.`);
+  console.info(`${findings.length} finding(s) written to aenderungen.csv: ${JSON.stringify(byType)}`);
   console.info(`SQL script: ${path.join(OUT_DIR, "backport.sql")}`);
   console.info(`Documentation: ${path.join(OUT_DIR, "documentation.csv")}`);
   console.info(`Spreadsheet (LibreOffice Calc): ${path.join(OUT_DIR, "aenderungen.csv")}`);

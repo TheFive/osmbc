@@ -3,7 +3,7 @@
 // wp-reconcile run: how many articles changed/were only in osmbc/were only
 // in WordPress, per language, plus a pointer to the detailed per-issue
 // reports for anyone who wants to see the actual content differences.
-// Reads wp-reconcile/data/reports/summary.json (from scanAndReport.js).
+// Reads backport/output/reports/summary.json (from scanAndReport.js).
 
 import fs from "fs";
 import path from "path";
@@ -58,7 +58,7 @@ ${table(["Language", "Changed", "Only in osmbc", "Only in WordPress"])}
 
 ## Individual content changes
 
-Every changed article, side by side (osmbc vs. WordPress), is in \`wp-reconcile/data/reports/<issue>.md\` (one file per affected issue) and \`wp-reconcile/data/reports/index.csv\` (one row per issue, all issues). The exact old/new value that was backported for each article is in \`documentation.csv\`.
+Every changed article, side by side (osmbc vs. WordPress), is in \`backport/output/reports/<issue>.md\` (one file per affected issue) and \`backport/output/reports/index.csv\` (one row per issue, all issues). The exact old/new value that was backported for each article is in \`backport/output/documentation.csv\` (or the LibreOffice-ready \`backport/output/aenderungen.csv\`).
 
 ## Scope limits
 
@@ -88,7 +88,7 @@ ${table(["Sprache", "Geändert", "Nur in osmbc", "Nur in WordPress"])}
 
 ## Einzelne inhaltliche Änderungen
 
-Jeder geänderte Artikel im direkten Vergleich (osmbc vs. WordPress) steht in \`wp-reconcile/data/reports/<issue>.md\` (eine Datei pro betroffener Ausgabe) und \`wp-reconcile/data/reports/index.csv\` (eine Zeile pro Ausgabe, alle Ausgaben). Der genaue alte/neue Wert pro übernommener Änderung steht in \`documentation.csv\`.
+Jeder geänderte Artikel im direkten Vergleich (osmbc vs. WordPress) steht in \`backport/output/reports/<issue>.md\` (eine Datei pro betroffener Ausgabe) und \`backport/output/reports/index.csv\` (eine Zeile pro Ausgabe, alle Ausgaben). Der genaue alte/neue Wert pro übernommener Änderung steht in \`backport/output/documentation.csv\` (oder der LibreOffice-tauglichen \`backport/output/aenderungen.csv\`).
 
 ## Grenzen
 
