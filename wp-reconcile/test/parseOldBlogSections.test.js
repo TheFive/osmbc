@@ -73,6 +73,15 @@ describe("parseOldBlogSections", function () {
     warnings.should.be.empty();
   });
 
+  it("unwraps a single top-level <div id=\"preview\"> container (real structural variant, issues 231/253)", function () {
+    const html = `<div id="preview">\r\n\r\n16.12.-22.12.2014\r\n\r\n<h2 id="mapping">Mapping</h2><ul><li>Text mit <a href="#">Link</a>.</li></ul></div>`;
+    const { sections, warnings } = parseOldBlogSections(html);
+    sections.should.have.length(1);
+    sections[0].headingText.should.equal("Mapping");
+    sections[0].articlesHtml.should.have.length(1);
+    warnings.should.be.empty();
+  });
+
   it("warns but still captures bullets that appear before any heading", function () {
     const html = `<ul><li>orphan bullet</li></ul><h2 id="mapping">Mapping</h2><ul><li>real bullet</li></ul>`;
     const { sections, warnings } = parseOldBlogSections(html);

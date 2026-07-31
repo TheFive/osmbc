@@ -30,6 +30,13 @@
 // alone contributed dozens of bulk unmatched "bullets" with no 1:1 osmbc
 // counterpart, since there is no such counterpart - the row/article
 // correspondence isn't 1:1 for these tables).
+//
+// A handful of issues (verified: WN231, WN253) wrap the entire body in a
+// single top-level <div id="preview">...</div> instead of putting the
+// headings/lists/tables directly at the top level - without unwrapping
+// this, the walk below finds nothing at all ("no sections found"). Detected
+// generically (exactly one top-level tag, and it's a <div>) rather than by
+// matching the "preview" id, since that id isn't guaranteed to be stable.
 
 import { load } from "cheerio";
 
@@ -41,11 +48,17 @@ export function parseOldBlogSections(html) {
   }
 
   const $ = load(html, null, false);
+  let root = $.root();
+  const topLevelTags = root.contents().toArray().filter((n) => n.type === "tag");
+  if (topLevelTags.length === 1 && (topLevelTags[0].tagName || topLevelTags[0].name) === "div") {
+    root = $(topLevelTags[0]);
+  }
+
   const sections = [];
   const warnings = [];
   let current = null;
 
-  $.root().contents().each((_, node) => {
+  root.contents().each((_, node) => {
     if (node.type !== "tag") return;
     const tag = node.tagName || node.name;
     const $el = $(node);
