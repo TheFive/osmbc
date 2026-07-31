@@ -19,7 +19,7 @@ import { issueNumberFromOldTitle, issueNumberFromNewTitle } from "./issueNumber.
 import { splitByAnchor } from "./splitByAnchor.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataDir = path.join(__dirname, "..", "data", "wp");
+const dataDir = path.join(__dirname, "..", "..", "backport", "input", "wp");
 
 program
   .option("--socket <path>", "MariaDB unix socket path", process.env.WPRECONCILE_DB_SOCKET || "/tmp/mysql.sock")

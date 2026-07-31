@@ -28,7 +28,7 @@ assert.strictEqual(
 );
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataDir = path.join(__dirname, "..", "data", "osmbc");
+const dataDir = path.join(__dirname, "..", "..", "backport", "input", "osmbc");
 
 program
   .option("--issue <name>", "single issue name to extract, e.g. WN825")

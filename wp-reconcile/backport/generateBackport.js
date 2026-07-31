@@ -29,9 +29,9 @@ assert.strictEqual(
 );
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OSMBC_DIR = path.join(__dirname, "..", "data", "osmbc");
-const WP_DIR = path.join(__dirname, "..", "data", "wp", "wp_posts");
-const OUT_DIR = path.join(__dirname, "output");
+const OSMBC_DIR = path.join(__dirname, "..", "..", "backport", "input", "osmbc");
+const WP_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp", "wp_posts");
+const OUT_DIR = path.join(__dirname, "..", "..", "backport", "output");
 
 // osmbc language code -> WordPress-facing language code (model/language.js:wpExportName).
 // CZ is intentionally excluded - confirmed out of scope by the user (translated

@@ -19,7 +19,7 @@
 #   PGUSER     (default: pm2)
 #   SOURCE_DB  (default: osmbc)
 #   TARGET_DB  (default: osmbcbeta)
-#   BACKPORT_SQL (default: ./output/backport.sql, relative to this script)
+#   BACKPORT_SQL (default: <repo root>/backport/output/backport.sql)
 
 set -euo pipefail
 
@@ -29,7 +29,8 @@ PGUSER="${PGUSER:-pm2}"
 SOURCE_DB="${SOURCE_DB:-osmbc}"
 TARGET_DB="${TARGET_DB:-osmbcbeta}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BACKPORT_SQL="${BACKPORT_SQL:-$SCRIPT_DIR/output/backport.sql}"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+BACKPORT_SQL="${BACKPORT_SQL:-$REPO_ROOT/backport/output/backport.sql}"
 
 PSQL=(psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -v ON_ERROR_STOP=1)
 

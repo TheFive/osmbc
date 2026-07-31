@@ -1,6 +1,6 @@
 # wp-reconcile backport - admin guide
 
-Audience: admins running the backport. For the editor-facing result summary, see `output/migration-log-en.md` / `output/migration-log-de.md` (regenerated each run).
+Audience: admins running the backport. For the editor-facing result summary, see `backport/output/migration-log-en.md` / `backport/output/migration-log-de.md` (regenerated each run).
 
 ## What this does
 
@@ -28,7 +28,7 @@ NODE_ENV=wpreconcile node wp-reconcile/backport/generateBackport.js
 node wp-reconcile/backport/generateMigrationLog.js
 ```
 
-Outputs land in `wp-reconcile/data/reports/` (per-issue diff detail, `index.csv`, `summary.json`) and `wp-reconcile/backport/output/` (`backport.sql`, `documentation.csv`, `migration-log-en.md`, `migration-log-de.md`). All gitignored - review locally, do not commit.
+Inputs (extracted data) land in `backport/input/` (`wp/wp_posts/`, `wp/wp_1_posts/`, `osmbc/`), outputs in `backport/output/` (`reports/` with per-issue diff detail, `index.csv`, `summary.json`; plus `backport.sql`, `documentation.csv`, `aenderungen.csv`, `migration-log-en.md`, `migration-log-de.md`). Both directories live at the repo root, entirely gitignored (`/backport` in the root `.gitignore`) - review locally, never commit.
 
 ## Applying to a database
 
@@ -38,7 +38,7 @@ Outputs land in `wp-reconcile/data/reports/` (per-issue diff detail, `index.csv`
 ```bash
 createdb osmbcbeta_local          # or reuse/refresh an existing one
 pg_dump -d osmbc_prod_copie | psql -d osmbcbeta_local
-psql -d osmbcbeta_local -f wp-reconcile/backport/output/backport.sql
+psql -d osmbcbeta_local -f backport/output/backport.sql
 ```
 
 **Production run** (refreshes `osmbcbeta` from `osmbc`, then applies the backport - see the script header for env vars, defaults assume host `localhost`, user `pm2`, matching the production role that owns these tables and does **not** have CREATEDB/superuser):

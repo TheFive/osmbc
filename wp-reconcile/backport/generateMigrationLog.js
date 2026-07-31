@@ -10,8 +10,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUT_DIR = path.join(__dirname, "output");
-const SUMMARY_PATH = path.join(__dirname, "..", "data", "reports", "summary.json");
+const OUT_DIR = path.join(__dirname, "..", "..", "backport", "output");
+const SUMMARY_PATH = path.join(OUT_DIR, "reports", "summary.json");
 
 if (!fs.existsSync(SUMMARY_PATH)) {
   console.error(`Not found: ${SUMMARY_PATH} - run scanAndReport.js first.`);
