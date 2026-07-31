@@ -17,29 +17,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
-import { diffWords } from "diff";
 
 import configModule from "../../model/config.js";
 import { normalizeHtml } from "../diff-engine/normalizeHtml.js";
+import { classifyChange } from "../diff-engine/classifyChange.js";
 import { htmlToMarkdown } from "./htmlToMarkdown.js";
-
-// Classifies a change to an article that exists on both sides: "Typos" for a
-// small edit (few words changed relative to the article's length), "Text"
-// for anything larger. A heuristic, not a precise judgment - tune the
-// thresholds below if it misclassifies too often in practice.
-function classifyChange(oldText, newText) {
-  const parts = diffWords(oldText, newText);
-  let changedWords = 0;
-  let totalWords = 0;
-  for (const part of parts) {
-    const wordCount = part.value.trim().split(/\s+/).filter(Boolean).length;
-    totalWords += wordCount;
-    if (part.added || part.removed) changedWords += wordCount;
-  }
-  if (totalWords === 0) return "Text";
-  const ratio = changedWords / totalWords;
-  return (changedWords <= 4 || ratio < 0.15) ? "Typos" : "Text";
-}
 
 assert.strictEqual(
   process.env.NODE_ENV,
