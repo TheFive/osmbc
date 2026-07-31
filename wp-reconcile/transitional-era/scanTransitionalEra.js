@@ -57,7 +57,14 @@ function csvEscape(value) {
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 const summaryRows = [["issue", "lang", "osmbcArticles", "wpBullets", "matched", "changed", "unmatchedOsmbc", "unmatchedWp", "ambiguous"]];
-const findingsRows = [["issue", "lang", "articleId", "changeType", "matchScore", "textVorher", "textNachher"]];
+// Same columns/format as wp-reconcile/backport/generateBackport.js's
+// aenderungen.csv - but only confirmed link-matched Typos/Text changes go
+// here. Unmatched/ambiguous cases are NOT "gelöscht"/"neu": unlike the
+// WN272+ tool's exact anchor match, a link-matcher "no match" can just mean
+// the matcher failed (e.g. an article with no links at all), not a
+// confirmed absence - those stay in needs-review.csv for a human to judge
+// (per explicit user decision, asked rather than assumed).
+const aenderungenRows = [["Blog", "Sprache", "ArtikelNummer", "ArtikelName", "Änderungsart", "Text vorher", "Text nachher"]];
 const reviewRows = [["issue", "lang", "type", "articleId", "text"]];
 
 let totalChanged = 0, totalUnmatched = 0, totalAmbiguous = 0;
@@ -107,7 +114,8 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       if (a.replace(/\s+/g, "") === b.replace(/\s+/g, "")) continue;
       changed++;
       totalChanged++;
-      findingsRows.push([issue, osmbcLang, m.articleId, classifyChange(a, b), m.score === null ? "leftover" : m.score.toFixed(2), a, b]);
+      const articleMeta = articleById.get(m.articleId);
+      aenderungenRows.push([issue, osmbcLang, m.articleId, (articleMeta && articleMeta.title) || "", classifyChange(a, b), a, b]);
     }
 
     for (const u of unmatchedOsmbc) {
@@ -128,10 +136,15 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
 }
 
 fs.writeFileSync(path.join(OUT_DIR, "summary.csv"), summaryRows.map((r) => r.map(csvEscape).join(",")).join("\n"));
-fs.writeFileSync(path.join(OUT_DIR, "findings.csv"), findingsRows.map((r) => r.map(csvEscape).join(",")).join("\n"));
+// UTF-8 BOM + CRLF, same convention as generateBackport.js's aenderungen.csv,
+// so it opens correctly in LibreOffice Calc without an encoding prompt.
+fs.writeFileSync(
+  path.join(OUT_DIR, "aenderungen.csv"),
+  "﻿" + aenderungenRows.map((r) => r.map(csvEscape).join(",")).join("\r\n")
+);
 fs.writeFileSync(path.join(OUT_DIR, "needs-review.csv"), reviewRows.map((r) => r.map(csvEscape).join(",")).join("\n"));
 
-console.info(`Issues ${FIRST_ISSUE}-${LAST_ISSUE}: ${findingsRows.length - 1} genuine change(s) found via link-matching, ${totalUnmatched} item(s) need manual review, ${totalAmbiguous} ambiguous match(es).`);
+console.info(`Issues ${FIRST_ISSUE}-${LAST_ISSUE}: ${aenderungenRows.length - 1} genuine change(s) found via link-matching, ${totalUnmatched} item(s) need manual review, ${totalAmbiguous} ambiguous match(es).`);
 console.info(`Summary: ${path.join(OUT_DIR, "summary.csv")}`);
-console.info(`Findings: ${path.join(OUT_DIR, "findings.csv")}`);
+console.info(`Spreadsheet (LibreOffice Calc): ${path.join(OUT_DIR, "aenderungen.csv")}`);
 console.info(`Needs review: ${path.join(OUT_DIR, "needs-review.csv")}`);
