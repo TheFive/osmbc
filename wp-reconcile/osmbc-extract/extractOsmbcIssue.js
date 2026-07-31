@@ -81,9 +81,22 @@ function extractOneIssue(blog, callback) {
               return { id: article.id, version: article.version, categoryEN: article.categoryEN, lastChangedByField, rawMarkdown };
             });
 
+            // Only closed<LANG> languages were actually approved/released by
+            // the editorial team for this issue - a language can "hang" in
+            // osmbc unfinished (never closed) while other languages of the
+            // same issue are done. Content for a non-closed language must
+            // never be treated as a comparison target or backport candidate,
+            // to avoid accidentally publishing something that was never
+            // released.
+            const closedLanguages = {};
+            for (const lang of language.getLid()) {
+              closedLanguages[lang] = blog["close" + lang] === true;
+            }
+
             const output = {
               issue: issueName,
               categories: blog.getCategories(),
+              closedLanguages,
               perLanguage,
               articles: articleSummaries
             };

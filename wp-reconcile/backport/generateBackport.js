@@ -85,6 +85,12 @@ function main(done) {
     const articleById = new Map(osmbc.articles.map((a) => [a.id, a]));
 
     for (const [osmbcLang, wpLang] of Object.entries(WP_LANG)) {
+      // Only closed<LANG> languages were actually approved/released by the
+      // editorial team for this issue - never backport content for a
+      // language that was never closed for this specific issue, even if it
+      // happens to render/differ from something in WordPress.
+      if (!osmbc.closedLanguages || osmbc.closedLanguages[osmbcLang] !== true) continue;
+
       const osmbcBody = osmbc.perLanguage[osmbcLang] && osmbc.perLanguage[osmbcLang].body;
       const wpLangData = wp.perLanguage[wpLang];
       if (!osmbcBody || !wpLangData) continue;
