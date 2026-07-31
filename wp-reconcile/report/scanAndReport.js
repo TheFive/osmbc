@@ -55,6 +55,14 @@ const files = fs.readdirSync(OSMBC_DIR).filter((f) => f.endsWith(".json")).sort(
 let issuesWithDiffs = 0;
 let totalOnlyOsmbc = 0;
 let totalOnlyWp = 0;
+let equalCount = 0;
+let notComparableCount = 0;
+const comparableIssueNumbers = [];
+const perLanguageSummary = {}; // lang -> { changed, onlyOsmbc, onlyWp }
+function bumpLang(lang, field, by = 1) {
+  if (!perLanguageSummary[lang]) perLanguageSummary[lang] = { changed: 0, onlyOsmbc: 0, onlyWp: 0 };
+  perLanguageSummary[lang][field] += by;
+}
 
 for (const file of files) {
   const issue = file.replace(".json", "");
@@ -107,9 +115,17 @@ for (const file of files) {
     // entirely when there's no translation. Without this filter the count
     // was dominated by that rendering difference, not by real drift.
     for (const id of Object.keys(osmbcArticles)) {
-      if (!(id in wpArticles) && hasRealTranslation(id, osmbcLang)) onlyOsmbcIds.add(id);
+      if (!(id in wpArticles) && hasRealTranslation(id, osmbcLang)) {
+        onlyOsmbcIds.add(id);
+        bumpLang(osmbcLang, "onlyOsmbc");
+      }
     }
-    for (const id of Object.keys(wpArticles)) if (!(id in osmbcArticles)) onlyWpIds.add(id);
+    for (const id of Object.keys(wpArticles)) {
+      if (!(id in osmbcArticles)) {
+        onlyWpIds.add(id);
+        bumpLang(osmbcLang, "onlyWp");
+      }
+    }
 
     for (const id of commonIds) {
       const a = normalizeHtml(osmbcArticles[id]);
@@ -121,6 +137,7 @@ for (const file of files) {
       // spaced form is still what gets shown in the report.
       if (a.replace(/\s+/g, "") !== b.replace(/\s+/g, "")) {
         diffs.push({ lang: osmbcLang, articleId: id, osmbc: a, wp: b });
+        bumpLang(osmbcLang, "changed");
       }
     }
   }
@@ -137,7 +154,14 @@ for (const file of files) {
   const reportedOnlyOsmbc = comparable ? onlyOsmbcIds.size : "";
   const reportedOnlyWp = comparable ? onlyWpIds.size : "";
   indexRows.push([issue, languagesCompared, articlesCompared, diffs.length, reportedOnlyOsmbc, reportedOnlyWp, status]);
-  if (comparable) { totalOnlyOsmbc += onlyOsmbcIds.size; totalOnlyWp += onlyWpIds.size; }
+  if (comparable) {
+    totalOnlyOsmbc += onlyOsmbcIds.size;
+    totalOnlyWp += onlyWpIds.size;
+    comparableIssueNumbers.push(parseInt(n, 10));
+    if (status === "equal") equalCount++;
+  } else {
+    notComparableCount++;
+  }
 
   if (diffs.length > 0 || (comparable && (onlyOsmbcIds.size > 0 || onlyWpIds.size > 0))) {
     issuesWithDiffs++;
@@ -164,8 +188,24 @@ for (const file of files) {
 const csv = indexRows.map((row) => row.map(csvEscape).join(",")).join("\n");
 fs.writeFileSync(path.join(REPORT_DIR, "index.csv"), csv);
 
+const summary = {
+  generatedAt: new Date().toISOString(),
+  issuesCompared: indexRows.length - 1,
+  issuesComparable: comparableIssueNumbers.length,
+  issuesNotComparable: notComparableCount,
+  issuesEqual: equalCount,
+  issuesWithFindings: issuesWithDiffs,
+  comparableIssueRange: comparableIssueNumbers.length > 0
+    ? { min: Math.min(...comparableIssueNumbers), max: Math.max(...comparableIssueNumbers) }
+    : null,
+  totals: { onlyOsmbc: totalOnlyOsmbc, onlyWp: totalOnlyWp },
+  perLanguage: perLanguageSummary
+};
+fs.writeFileSync(path.join(REPORT_DIR, "summary.json"), JSON.stringify(summary, null, 2));
+
 console.info(`Compared ${indexRows.length - 1} issues. ${issuesWithDiffs} have at least one genuine (non-cosmetic, non-CZ) finding.`);
 console.info(`Articles only in osmbc (across all comparable issues): ${totalOnlyOsmbc}`);
 console.info(`Articles only in WordPress (across all comparable issues): ${totalOnlyWp}`);
 console.info(`Index: ${path.join(REPORT_DIR, "index.csv")}`);
+console.info(`Summary: ${path.join(REPORT_DIR, "summary.json")}`);
 console.info(`Per-issue detail files in: ${REPORT_DIR}`);
