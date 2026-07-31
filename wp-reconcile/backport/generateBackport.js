@@ -115,6 +115,7 @@ function main(done) {
           issue,
           articleId: id,
           version: articleMeta.version,
+          title: articleMeta.title,
           categoryEN: articleMeta.categoryEN,
           lang: osmbcLang,
           field,
@@ -198,9 +199,21 @@ BEGIN;
     csvRows.map((row) => row.map(csvEscape).join(",")).join("\n")
   );
 
+  // --- Spreadsheet for LibreOffice Calc (German headers, UTF-8 BOM so
+  // umlauts display correctly on open without a manual encoding prompt) ---
+  const spreadsheetRows = [["Blog", "Sprache", "ArtikelNummer", "ArtikelName", "Kategorie", "Text vorher", "Text nachher"]];
+  for (const c of changes) {
+    spreadsheetRows.push([c.issue, c.lang, c.articleId, c.title || "", c.categoryEN, c.oldValue, c.newValue]);
+  }
+  fs.writeFileSync(
+    path.join(OUT_DIR, "aenderungen.csv"),
+    "﻿" + spreadsheetRows.map((row) => row.map(csvEscape).join(",")).join("\r\n")
+  );
+
   console.info(`${changes.length} change(s) across ${changesByArticle.size} article(s) written.`);
   console.info(`SQL script: ${path.join(OUT_DIR, "backport.sql")}`);
   console.info(`Documentation: ${path.join(OUT_DIR, "documentation.csv")}`);
+  console.info(`Spreadsheet (LibreOffice Calc): ${path.join(OUT_DIR, "aenderungen.csv")}`);
   done();
 }
 
