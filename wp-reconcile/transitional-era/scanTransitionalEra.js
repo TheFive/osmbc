@@ -23,6 +23,7 @@ import { matchByLinks } from "./matchByLinks.js";
 import { addCollectionFallbackLink } from "./collectionFallback.js";
 import { findStubMatch } from "./stubCollectionMatch.js";
 import { textSimilarity } from "./textSimilarity.js";
+import { matchByReferenceLanguage } from "./positionalMatch.js";
 import { parseOldBlogSections } from "../old-era/parseOldBlogSections.js";
 
 // A last-resort fallback for whatever neither link-matching nor the
@@ -106,6 +107,12 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     return Boolean(raw) && raw.trim() !== "" && raw !== "no translation";
   }
 
+  // Pass 1: run the normal link-based matching for every closed language
+  // and cache the results - needed for the main output below, and also as
+  // potential positional-matching reference material (see
+  // positionalMatch.js) for any OTHER language in this same issue that
+  // turns out to be a total stub (no real per-article content anywhere).
+  const perLang = {};
   for (const [osmbcLang, wpLang] of Object.entries(WP_LANG)) {
     if (!osmbc.closedLanguages || osmbc.closedLanguages[osmbcLang] !== true) continue;
     const osmbcBody = osmbc.perLanguage[osmbcLang] && osmbc.perLanguage[osmbcLang].body;
@@ -148,6 +155,23 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     if (wpBullets.length === 0) continue;
 
     const { matches, unmatchedOsmbc, unmatchedWp, ambiguous } = matchByLinks(osmbcArticlesForMatching, wpBullets);
+    perLang[osmbcLang] = { osmbcArticles, stubArticleIds, wpSections: sections, wpBullets, matches, unmatchedOsmbc, unmatchedWp, ambiguous };
+  }
+
+  // Candidate reference languages for positional matching, best (most
+  // confident real matches) first. Only used for OTHER languages that turn
+  // out to be a total stub below - a language with its own real matches
+  // never needs this. Tries candidates in order rather than only the
+  // single best one: the best-matching language isn't necessarily
+  // structurally comparable to the stub language (real case: WN276 - DE
+  // has the most matches (49) but also more content overall than JP (51 WP
+  // bullets vs JP's 43), so DE's category counts don't line up with JP's
+  // at all; EN (42 matches, 43 WP bullets) does line up exactly).
+  const referenceCandidates = Object.keys(perLang).sort((a, b) => perLang[b].matches.length - perLang[a].matches.length);
+
+  // Pass 2: emit findings per language.
+  for (const [osmbcLang, data] of Object.entries(perLang)) {
+    const { osmbcArticles, stubArticleIds, wpSections, wpBullets, matches, unmatchedOsmbc, ambiguous } = data;
 
     let changed = 0;
     for (const m of matches) {
@@ -161,6 +185,23 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       aenderungenRows.push([issue, osmbcLang, m.articleId, (articleMeta && articleMeta.title) || "", classifyChange(a, b), a, b]);
     }
 
+    // Positional matching: only attempted for a language that is a TOTAL
+    // stub (zero real per-article content) in this issue - a language with
+    // its own real link-based matches never needs a positional guess, and
+    // mixing the two could only make things less certain, not more.
+    let positionalMap = new Map();
+    if (Object.keys(osmbcArticles).length === 0) {
+      for (const candidateLang of referenceCandidates) {
+        if (candidateLang === osmbcLang) continue;
+        const ref = perLang[candidateLang];
+        const attempt = matchByReferenceLanguage(ref.wpSections, ref.matches, wpSections);
+        if (attempt) {
+          positionalMap = attempt;
+          break;
+        }
+      }
+    }
+
     // Stub matching runs AFTER the normal matcher, against only what's left
     // in unmatchedWp - a real, already-written article must always get
     // first claim on a bullet over a never-written stub. Running this
@@ -168,9 +209,23 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     // unpublished duplicate stub (WN276 article 10162, collection link
     // shared with the real, already-matching article 10136) steal the
     // bullet the real article needed, before it ever got a chance to match.
-    let remainingWp = unmatchedWp;
+    // Positional matching (built from the reference language's OWN real
+    // matches) takes priority over collection-link stub matching when both
+    // could apply to the same article - it's the more specific signal.
+    let remainingWp = data.unmatchedWp;
     for (const id of stubArticleIds) {
       const articleMeta = articleById.get(id);
+
+      if (positionalMap.has(id)) {
+        matchedArticleIds.add(id);
+        const wpHtml = positionalMap.get(id);
+        const b = normalizeHtml(wpHtml);
+        totalChanged++;
+        aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
+        remainingWp = remainingWp.filter((html) => html !== wpHtml);
+        continue;
+      }
+
       const collection = articleMeta && articleMeta.collection;
       if (!collection) continue;
       const stubResult = findStubMatch(collection, remainingWp, linkCounts);
