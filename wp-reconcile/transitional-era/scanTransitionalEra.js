@@ -21,12 +21,14 @@ import { normalizeHtml } from "../diff-engine/normalizeHtml.js";
 import { classifyChange } from "../diff-engine/classifyChange.js";
 import { matchByLinks } from "./matchByLinks.js";
 import { addCollectionFallbackLink } from "./collectionFallback.js";
+import { findStubMatch } from "./stubCollectionMatch.js";
 import { parseOldBlogSections } from "../old-era/parseOldBlogSections.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OSMBC_DIR = path.join(__dirname, "..", "..", "backport", "input", "osmbc");
 const WP_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp", "wp_posts");
 const OUT_DIR = path.join(__dirname, "..", "..", "backport", "output", "transitional-era");
+const linkCounts = JSON.parse(fs.readFileSync(path.join(OSMBC_DIR, "collectionLinkCounts.json"), "utf8"));
 
 // Verified exact range: scanAndReport.js's index.csv shows every issue
 // WN272-304 as "not-comparable", and WN305 onward as reliably anchor-matched.
@@ -91,11 +93,16 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     const wpLangData = wp.perLanguage[wpLang];
     if (!osmbcBody || !wpLangData) continue;
 
-    // Osmbc's export always emits an anchor per article even when there is
-    // no real translation for this language (verified early on: the
-    // fallback is a placeholder/title-only render) - excluding those here
-    // avoids polluting the link-matcher with content that has no links to
-    // match on in the first place, and isn't a real "missing from WP" case.
+    // Osmbc's export usually still emits an anchor per article even when
+    // there is no real translation for this language (verified early on via
+    // CZ/SW: a placeholder/title-only render) - excluding those here avoids
+    // polluting the link-matcher with content that has no links to match on
+    // in the first place. But a fully-unwritten stub (rawMarkdown is empty
+    // or the literal "no translation"/"german only" marker in EVERY
+    // language - confirmed real cases WN275 articles 10097/10120) gets NO
+    // anchor at all, so it never appears in osmbcArticlesRaw - stub
+    // candidates have to be sourced from the full per-issue article list
+    // instead (osmbc.articles), not from what actually got rendered.
     const osmbcArticlesRaw = extractOsmbcArticles(osmbcBody, n);
     const osmbcArticles = {}; // original html - used for diffing/display
     const osmbcArticlesForMatching = {}; // may have a collection-link fallback appended - used for matching only
@@ -105,10 +112,39 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       const articleMeta = articleById.get(id);
       osmbcArticlesForMatching[id] = addCollectionFallbackLink(html, articleMeta && articleMeta.collection);
     }
-    if (Object.keys(osmbcArticles).length === 0) continue;
+    const stubArticleIds = osmbc.articles
+      .map((a) => a.id)
+      .filter((id) => !hasRealTranslation(id, osmbcLang) && !(id in osmbcArticles));
+    if (Object.keys(osmbcArticles).length === 0 && stubArticleIds.length === 0) continue;
     const { sections } = parseOldBlogSections(wpLangData.body);
-    const wpBullets = sections.flatMap((s) => s.articlesHtml);
+    let wpBullets = sections.flatMap((s) => s.articlesHtml);
     if (wpBullets.length === 0) continue;
+
+    // Stub articles (no real written text in ANY language) are normally
+    // invisible to matching entirely - but per the project owner's explicit
+    // rule, a collection link that is GLOBALLY UNIQUE across the whole
+    // osmbc database (see extractCollectionLinks.js) overrides that: it
+    // means this exact story was collected but never written up in osmbc,
+    // and instead written directly in WordPress (confirmed real cases:
+    // WN275 articles 10097/10120). A reused/ambiguous link is NOT safe to
+    // auto-match (a "no translation"/"german only" marker is normally a
+    // deliberate choice) and goes to manual review instead.
+    for (const id of stubArticleIds) {
+      const articleMeta = articleById.get(id);
+      const collection = articleMeta && articleMeta.collection;
+      if (!collection) continue;
+      const stubResult = findStubMatch(collection, wpBullets, linkCounts);
+      if (!stubResult) continue; // unique link, but genuinely not published here - correctly stays invisible
+      if (stubResult.ambiguous) {
+        reviewRows.push([issue, osmbcLang, "stub-ambiguous-collection", id, collection.trim()]);
+        totalAmbiguous++;
+        continue;
+      }
+      const b = normalizeHtml(stubResult.wpHtml);
+      totalChanged++;
+      aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
+      wpBullets = wpBullets.filter((html) => html !== stubResult.wpHtml); // consumed - don't also offer it to the normal matcher below
+    }
 
     const { matches, unmatchedOsmbc, unmatchedWp, ambiguous } = matchByLinks(osmbcArticlesForMatching, wpBullets);
 

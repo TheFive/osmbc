@@ -17,7 +17,7 @@
 
 import { load } from "cheerio";
 
-function normalizeUrl(url) {
+export function normalizeUrl(url) {
   // Unwrap Google Translate's URL wrapping (seen throughout the real dump,
   // e.g. https://www-example-com.translate.goog/path?_x_tr_sl=auto&_x_tr_tl=EN)
   // so a translated and an original link to the same source compare equal.
@@ -97,4 +97,4 @@ export function matchByLinks(osmbcArticles, wpBullets) {
   return { matches, unmatchedOsmbc, unmatchedWp, ambiguous };
 }
 
-export default { matchByLinks, extractLinks };
+export default { matchByLinks, extractLinks, normalizeUrl };
