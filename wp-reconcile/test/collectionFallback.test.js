@@ -42,4 +42,21 @@ describe("addCollectionFallbackLink", function () {
     const result = addCollectionFallbackLink(html, "some note, not a link", {});
     result.should.equal(html);
   });
+
+  it("strips a trailing unbalanced ) from markdown-style \"[text] ( url)\" wrapping (real case: WN276 article 10136's collection field)", function () {
+    const html = "Text with no link.";
+    const collection = "Geography Students Organize Crisis-Mapping Relief Efforts for Hurricane Patricia, more information [here] ( http://dailyutahchronicle.com/2015/10/28/geography-students-organize-crisis-mapping-relief-efforts-for-hurricane-patricia/)";
+    const linkCounts = { "dailyutahchronicle.com/2015/10/28/geography-students-organize-crisis-mapping-relief-efforts-for-hurricane-patricia": ["10136"] };
+    const result = addCollectionFallbackLink(html, collection, linkCounts);
+    result.should.containEql('href="http://dailyutahchronicle.com/2015/10/28/geography-students-organize-crisis-mapping-relief-efforts-for-hurricane-patricia/"');
+    result.should.not.containEql("/)\"");
+  });
+
+  it("keeps a trailing ) that is a genuine, balanced part of the URL (e.g. a Wikipedia article title)", function () {
+    const html = "Text with no link.";
+    const collection = "http://wiki.openstreetmap.org/wiki/Atlas_(navigation_application)";
+    const linkCounts = { "wiki.openstreetmap.org/wiki/atlas_(navigation_application)": ["10188"] };
+    const result = addCollectionFallbackLink(html, collection, linkCounts);
+    result.should.containEql('href="http://wiki.openstreetmap.org/wiki/Atlas_(navigation_application)"');
+  });
 });

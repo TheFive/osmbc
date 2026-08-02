@@ -21,14 +21,34 @@
 // confident signal.
 import { extractLinks, normalizeUrl } from "./matchByLinks.js";
 
+// A trailing ")" from surrounding markdown-style "[text] ( url)" wrapping
+// (real case: WN276 article 10136's collection field) can get swallowed
+// into the match, since a bare /\S+/ has no way to know the paren isn't
+// part of the URL. Only strip it when unbalanced - some real URLs
+// legitimately end in a closing paren as part of the path (e.g. a
+// Wikipedia article title like ".../Atlas_(navigation_application)").
+function stripTrailingUnbalancedParen(url) {
+  let opens = 0, closes = 0;
+  for (const c of url) {
+    if (c === "(") opens++;
+    if (c === ")") closes++;
+  }
+  while (closes > opens && url.endsWith(")")) {
+    url = url.slice(0, -1);
+    closes--;
+  }
+  return url;
+}
+
 export function addCollectionFallbackLink(html, collection, linkCounts) {
   const m = collection && /https?:\/\/\S+/.exec(collection);
   if (!m) return html;
-  const url = normalizeUrl(m[0]);
+  const rawUrl = stripTrailingUnbalancedParen(m[0]);
+  const url = normalizeUrl(rawUrl);
   const ids = linkCounts && linkCounts[url];
   if (!ids || ids.length !== 1) return html; // not reasonably unique - don't risk it
   if (extractLinks(html).has(url)) return html; // already present, nothing to add
-  return `${html} <a href="${m[0]}">collection</a>`;
+  return `${html} <a href="${rawUrl}">collection</a>`;
 }
 
 export default { addCollectionFallbackLink };
