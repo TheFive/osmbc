@@ -22,12 +22,29 @@ export function normalizeUrl(url) {
   // e.g. https://www-example-com.translate.goog/path?_x_tr_sl=auto&_x_tr_tl=EN)
   // so a translated and an original link to the same source compare equal.
   let u = url;
-  const m = /^https?:\/\/([a-z0-9-]+(?:-[a-z0-9-]+)*)\.translate\.goog(\/[^?]*)/i.exec(u);
+  const m = /^https?:\/\/([a-z0-9-]+(?:-[a-z0-9-]+)*)\.translate\.goog(\/.*)$/i.exec(u);
   if (m) u = "https://" + m[1].replace(/-/g, ".") + m[2];
   try {
     const parsed = new URL(u);
     const path = parsed.pathname.replace(/\/$/, "");
-    return (parsed.hostname + path).toLowerCase();
+    // The query string is real, identifying content for many common link
+    // shapes here (OSM forum "viewtopic.php?pid=...", YouTube "watch?v=...",
+    // Hacker News "item?id=...") - dropping it entirely (as an earlier
+    // version of this function did) collapsed hundreds of distinct forum
+    // posts alone into one indistinguishable "forum.openstreetmap.org/
+    // viewtopic.php" bucket (confirmed: 681 different articles' links all
+    // collapsed together), breaking both Jaccard scoring and the
+    // stub-collection global-uniqueness check (real case: WN275 article
+    // 10129 - a genuinely unique forum post link, wrongly bucketed with 680
+    // unrelated ones). Only Google Translate's own added params are noise
+    // and get dropped; everything else in the query string is kept.
+    const params = new URLSearchParams(parsed.search);
+    for (const key of [...params.keys()]) {
+      if (key.startsWith("_x_tr_")) params.delete(key);
+    }
+    params.sort();
+    const query = params.toString();
+    return (parsed.hostname + path + (query ? "?" + query : "")).toLowerCase();
   } catch {
     return url.toLowerCase();
   }
