@@ -158,16 +158,23 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     perLang[osmbcLang] = { osmbcArticles, stubArticleIds, wpSections: sections, wpBullets, matches, unmatchedOsmbc, unmatchedWp, ambiguous };
   }
 
-  // Candidate reference languages for positional matching, best (most
-  // confident real matches) first. Only used for OTHER languages that turn
-  // out to be a total stub below - a language with its own real matches
-  // never needs this. Tries candidates in order rather than only the
-  // single best one: the best-matching language isn't necessarily
-  // structurally comparable to the stub language (real case: WN276 - DE
-  // has the most matches (49) but also more content overall than JP (51 WP
-  // bullets vs JP's 43), so DE's category counts don't line up with JP's
-  // at all; EN (42 matches, 43 WP bullets) does line up exactly).
-  const referenceCandidates = Object.keys(perLang).sort((a, b) => perLang[b].matches.length - perLang[a].matches.length);
+  // Candidate reference languages for positional matching, EN first
+  // (per the project owner: EN is the language every other translation is
+  // actually derived from - DE only "led" in the very first issues, back
+  // when the team was still German-only), then the rest by most confident
+  // real matches. Only used for OTHER languages that turn out to be a
+  // total stub below - a language with its own real matches never needs
+  // this. Tries candidates in order rather than only the single best one:
+  // the best-matching language isn't necessarily structurally comparable
+  // to the stub language (real case: WN276 - DE has the most matches (49)
+  // but also more overall content than JP (51 WP bullets vs JP's 43), so
+  // DE's category counts don't line up with JP's at all; EN (42 matches,
+  // 43 WP bullets) does line up exactly).
+  const referenceCandidates = Object.keys(perLang).sort((a, b) => {
+    if (a === "EN") return -1;
+    if (b === "EN") return 1;
+    return perLang[b].matches.length - perLang[a].matches.length;
+  });
 
   // Pass 2: emit findings per language.
   for (const [osmbcLang, data] of Object.entries(perLang)) {
