@@ -110,7 +110,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       if (!hasRealTranslation(id, osmbcLang)) continue;
       osmbcArticles[id] = html;
       const articleMeta = articleById.get(id);
-      osmbcArticlesForMatching[id] = addCollectionFallbackLink(html, articleMeta && articleMeta.collection);
+      osmbcArticlesForMatching[id] = addCollectionFallbackLink(html, articleMeta && articleMeta.collection, linkCounts);
     }
     // Stub candidates: no real written text in ANY language, AND not
     // already deliberately excluded from output (categoryEN
