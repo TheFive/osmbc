@@ -77,6 +77,17 @@ const summaryRows = [["issue", "lang", "osmbcArticles", "wpBullets", "matched", 
 // (per explicit user decision, asked rather than assumed).
 const aenderungenRows = [["Blog", "Sprache", "ArtikelNummer", "ArtikelName", "Änderungsart", "Text vorher", "Text nachher"]];
 const reviewRows = [["issue", "lang", "type", "articleId", "text"]];
+// Every article id that confidently matched in ANY language, INCLUDING a
+// clean match with no text difference at all - aenderungen.csv only records
+// genuine changes, so a clean match never appears there at all. Consumers
+// that need "did this article match somewhere" (e.g.
+// applyDefaultResolutions.js deciding whether an unmatched-in-one-language
+// article is safe to unpublish) must use this, not aenderungen.csv, or they
+// will incorrectly treat a perfectly-matched-elsewhere article as never
+// matched at all (confirmed real case: WN280 article 10438 matched cleanly
+// in DE - identical text, so no aenderungen.csv row - but was unmatched in
+// EN, since it was genuinely never published in English).
+const matchedArticleIds = new Set();
 
 let totalChanged = 0, totalUnmatched = 0, totalAmbiguous = 0;
 
@@ -140,6 +151,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
 
     let changed = 0;
     for (const m of matches) {
+      matchedArticleIds.add(m.articleId);
       const a = normalizeHtml(osmbcArticles[m.articleId]);
       const b = normalizeHtml(m.wpHtml);
       if (a.replace(/\s+/g, "") === b.replace(/\s+/g, "")) continue;
@@ -168,6 +180,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
         totalAmbiguous++;
         continue;
       }
+      matchedArticleIds.add(id);
       const b = normalizeHtml(stubResult.wpHtml);
       totalChanged++;
       aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
@@ -226,6 +239,7 @@ fs.writeFileSync(
   "﻿" + aenderungenRows.map((r) => r.map(csvEscape).join(",")).join("\r\n")
 );
 fs.writeFileSync(path.join(OUT_DIR, "needs-review.csv"), reviewRows.map((r) => r.map(csvEscape).join(",")).join("\n"));
+fs.writeFileSync(path.join(OUT_DIR, "matchedArticleIds.json"), JSON.stringify([...matchedArticleIds], null, 2));
 
 console.info(`Issues ${FIRST_ISSUE}-${LAST_ISSUE}: ${aenderungenRows.length - 1} genuine change(s) found via link-matching, ${totalUnmatched} item(s) need manual review, ${totalAmbiguous} ambiguous match(es).`);
 console.info(`Summary: ${path.join(OUT_DIR, "summary.csv")}`);

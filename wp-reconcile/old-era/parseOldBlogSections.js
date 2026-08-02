@@ -16,8 +16,13 @@
 // Both conventions are handled uniformly here by walking the body's
 // top-level nodes in document order and treating any <h2>, top-level
 // <strong>, or <span> wrapping a <strong> as a new section heading, and any
-// <ul> as that section's article bullets (one <li> per article - verified
-// bullets stay single-topic even when long).
+// <ul> OR <ol> as that section's article bullets (one <li> per article -
+// verified bullets stay single-topic even when long). A handful of
+// sections use <ol> instead of <ul> for no apparent reason (confirmed real
+// case: WN279 DE "Humanitarian OSM") - without treating it the same as
+// <ul>, every bullet in that section was silently invisible to matching
+// entirely (not a matching failure - the bullets were never even offered
+// as candidates).
 //
 // Some categories (verified: "Releases"/"Software Watchlist" issue 296,
 // "Upcoming Events" calendar issue 300) are published as a single <table>
@@ -73,11 +78,11 @@ export function parseOldBlogSections(html) {
       return;
     }
 
-    if (tag === "ul") {
+    if (tag === "ul" || tag === "ol") {
       if (!current) {
         current = { headingText: "", articlesHtml: [] };
         sections.push(current);
-        warnings.push("found <ul> before any heading - using an empty heading placeholder");
+        warnings.push(`found <${tag}> before any heading - using an empty heading placeholder`);
       }
       $el.children("li").each((__, li) => {
         current.articlesHtml.push($(li).html());

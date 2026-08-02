@@ -82,6 +82,16 @@ describe("parseOldBlogSections", function () {
     warnings.should.be.empty();
   });
 
+  it("treats <ol> the same as <ul> (real case: WN279 DE \"Humanitarian OSM\" section)", function () {
+    const html = `<h2 id="wn279_humanitarian osm">Humanitarian OSM</h2><ol><li>Für die FOSSGIS 2017 wird ein Ort <a href="http://fossgis-konferenz.de/2017/">gesucht</a>.</li></ol>`;
+    const { sections, warnings } = parseOldBlogSections(html);
+    sections.should.have.length(1);
+    sections[0].headingText.should.equal("Humanitarian OSM");
+    sections[0].articlesHtml.should.have.length(1);
+    sections[0].articlesHtml[0].should.containEql("FOSSGIS 2017");
+    warnings.should.be.empty();
+  });
+
   it("warns but still captures bullets that appear before any heading", function () {
     const html = `<ul><li>orphan bullet</li></ul><h2 id="mapping">Mapping</h2><ul><li>real bullet</li></ul>`;
     const { sections, warnings } = parseOldBlogSections(html);
