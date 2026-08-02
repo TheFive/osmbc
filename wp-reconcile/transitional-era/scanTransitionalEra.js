@@ -112,39 +112,21 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       const articleMeta = articleById.get(id);
       osmbcArticlesForMatching[id] = addCollectionFallbackLink(html, articleMeta && articleMeta.collection);
     }
+    // Stub candidates: no real written text in ANY language, AND not
+    // already deliberately excluded from output (categoryEN
+    // "--unpublished--" already means "this isn't part of the output" -
+    // resurrecting it via a coincidental link match doesn't make sense).
     const stubArticleIds = osmbc.articles
       .map((a) => a.id)
-      .filter((id) => !hasRealTranslation(id, osmbcLang) && !(id in osmbcArticles));
+      .filter((id) => {
+        const meta = articleById.get(id);
+        return !hasRealTranslation(id, osmbcLang) && !(id in osmbcArticles) &&
+          (!meta || meta.categoryEN !== "--unpublished--");
+      });
     if (Object.keys(osmbcArticles).length === 0 && stubArticleIds.length === 0) continue;
     const { sections } = parseOldBlogSections(wpLangData.body);
-    let wpBullets = sections.flatMap((s) => s.articlesHtml);
+    const wpBullets = sections.flatMap((s) => s.articlesHtml);
     if (wpBullets.length === 0) continue;
-
-    // Stub articles (no real written text in ANY language) are normally
-    // invisible to matching entirely - but per the project owner's explicit
-    // rule, a collection link that is GLOBALLY UNIQUE across the whole
-    // osmbc database (see extractCollectionLinks.js) overrides that: it
-    // means this exact story was collected but never written up in osmbc,
-    // and instead written directly in WordPress (confirmed real cases:
-    // WN275 articles 10097/10120). A reused/ambiguous link is NOT safe to
-    // auto-match (a "no translation"/"german only" marker is normally a
-    // deliberate choice) and goes to manual review instead.
-    for (const id of stubArticleIds) {
-      const articleMeta = articleById.get(id);
-      const collection = articleMeta && articleMeta.collection;
-      if (!collection) continue;
-      const stubResult = findStubMatch(collection, wpBullets, linkCounts);
-      if (!stubResult) continue; // unique link, but genuinely not published here - correctly stays invisible
-      if (stubResult.ambiguous) {
-        reviewRows.push([issue, osmbcLang, "stub-ambiguous-collection", id, collection.trim()]);
-        totalAmbiguous++;
-        continue;
-      }
-      const b = normalizeHtml(stubResult.wpHtml);
-      totalChanged++;
-      aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
-      wpBullets = wpBullets.filter((html) => html !== stubResult.wpHtml); // consumed - don't also offer it to the normal matcher below
-    }
 
     const { matches, unmatchedOsmbc, unmatchedWp, ambiguous } = matchByLinks(osmbcArticlesForMatching, wpBullets);
 
@@ -159,11 +141,36 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       aenderungenRows.push([issue, osmbcLang, m.articleId, (articleMeta && articleMeta.title) || "", classifyChange(a, b), a, b]);
     }
 
+    // Stub matching runs AFTER the normal matcher, against only what's left
+    // in unmatchedWp - a real, already-written article must always get
+    // first claim on a bullet over a never-written stub. Running this
+    // first (an earlier version of this script did) let an already-
+    // unpublished duplicate stub (WN276 article 10162, collection link
+    // shared with the real, already-matching article 10136) steal the
+    // bullet the real article needed, before it ever got a chance to match.
+    let remainingWp = unmatchedWp;
+    for (const id of stubArticleIds) {
+      const articleMeta = articleById.get(id);
+      const collection = articleMeta && articleMeta.collection;
+      if (!collection) continue;
+      const stubResult = findStubMatch(collection, remainingWp, linkCounts);
+      if (!stubResult) continue; // unique link, but genuinely not published here (or already claimed above) - correctly stays invisible
+      if (stubResult.ambiguous) {
+        reviewRows.push([issue, osmbcLang, "stub-ambiguous-collection", id, collection.trim()]);
+        totalAmbiguous++;
+        continue;
+      }
+      const b = normalizeHtml(stubResult.wpHtml);
+      totalChanged++;
+      aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
+      remainingWp = remainingWp.filter((html) => html !== stubResult.wpHtml);
+    }
+
     for (const u of unmatchedOsmbc) {
       reviewRows.push([issue, osmbcLang, "unmatched-osmbc", u.articleId, normalizeHtml(osmbcArticles[u.articleId])]);
       totalUnmatched++;
     }
-    for (const html of unmatchedWp) {
+    for (const html of remainingWp) {
       reviewRows.push([issue, osmbcLang, "unmatched-wp", "", normalizeHtml(html)]);
       totalUnmatched++;
     }
@@ -172,7 +179,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       totalAmbiguous++;
     }
 
-    summaryRows.push([issue, osmbcLang, Object.keys(osmbcArticles).length, wpBullets.length, matches.length, changed, unmatchedOsmbc.length, unmatchedWp.length, ambiguous.length]);
+    summaryRows.push([issue, osmbcLang, Object.keys(osmbcArticles).length, wpBullets.length, matches.length, changed, unmatchedOsmbc.length, remainingWp.length, ambiguous.length]);
   }
 }
 
