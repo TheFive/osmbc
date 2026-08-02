@@ -22,7 +22,15 @@ import { classifyChange } from "../diff-engine/classifyChange.js";
 import { matchByLinks } from "./matchByLinks.js";
 import { addCollectionFallbackLink } from "./collectionFallback.js";
 import { findStubMatch } from "./stubCollectionMatch.js";
+import { textSimilarity } from "./textSimilarity.js";
 import { parseOldBlogSections } from "../old-era/parseOldBlogSections.js";
+
+// A last-resort fallback for whatever neither link-matching nor the
+// collection-link fallback found anything for: two bullets can be the same
+// real story with no shared link at all. Deliberately not auto-matched
+// (text similarity is fuzzy, unlike a shared link) - only ever surfaced as
+// a candidate for the project owner's own review.
+const SIMILARITY_THRESHOLD = 0.5;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OSMBC_DIR = path.join(__dirname, "..", "..", "backport", "input", "osmbc");
@@ -166,11 +174,38 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       remainingWp = remainingWp.filter((html) => html !== stubResult.wpHtml);
     }
 
+    // Last resort: for whatever is still unmatched on both sides, check for
+    // high text similarity even with no shared link at all - greedily pairs
+    // each unmatched osmbc article with its best-scoring available WP
+    // bullet (if any clears SIMILARITY_THRESHOLD), removing that bullet
+    // from the pool so it isn't also claimed by another article.
+    const claimedWp = new Set();
+    const similarityCandidates = [];
     for (const u of unmatchedOsmbc) {
+      const osmbcText = normalizeHtml(osmbcArticles[u.articleId]);
+      let best = null;
+      for (const html of remainingWp) {
+        if (claimedWp.has(html)) continue;
+        const score = textSimilarity(osmbcText, normalizeHtml(html));
+        if (score >= SIMILARITY_THRESHOLD && (!best || score > best.score)) best = { html, score };
+      }
+      if (best) {
+        claimedWp.add(best.html);
+        similarityCandidates.push({ articleId: u.articleId, osmbcText, wpText: normalizeHtml(best.html), score: best.score });
+      }
+    }
+
+    for (const c of similarityCandidates) {
+      reviewRows.push([issue, osmbcLang, "similar-text-candidate", c.articleId, `(${Math.round(c.score * 100)}%) OSMBC: ${c.osmbcText} || WP: ${c.wpText}`]);
+      totalAmbiguous++;
+    }
+    for (const u of unmatchedOsmbc) {
+      if (similarityCandidates.some((c) => c.articleId === u.articleId)) continue;
       reviewRows.push([issue, osmbcLang, "unmatched-osmbc", u.articleId, normalizeHtml(osmbcArticles[u.articleId])]);
       totalUnmatched++;
     }
     for (const html of remainingWp) {
+      if (claimedWp.has(html)) continue;
       reviewRows.push([issue, osmbcLang, "unmatched-wp", "", normalizeHtml(html)]);
       totalUnmatched++;
     }
