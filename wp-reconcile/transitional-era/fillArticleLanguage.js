@@ -59,7 +59,8 @@ program
   .requiredOption("--id <n>", "article id", (v) => parseInt(v, 10))
   .requiredOption("--issue <name>", "issue name, e.g. WN276")
   .requiredOption("--lang <LANG>", "osmbc language code, e.g. EN")
-  .requiredOption("--search <text>", "a substring uniquely identifying the WP bullet")
+  .requiredOption("--search <text>", "a substring (or, with --exact, the full text) uniquely identifying the WP bullet")
+  .option("--exact", "require the bullet's converted markdown to equal --search exactly, not just contain it (needed for a short bare-label bullet, e.g. \"Releases\", that is also a substring of several other real bullets)")
   .option("--commit", "actually write the change (default: dry-run)")
   .parse(process.argv);
 
@@ -89,7 +90,8 @@ const { sections } = parseOldBlogSections(body);
 const found = [];
 for (const section of sections) {
   for (const html of section.articlesHtml) {
-    if (html.includes(options.search)) found.push({ heading: section.headingText, html });
+    const isMatch = options.exact ? htmlToMarkdown(html).trim() === options.search : html.includes(options.search);
+    if (isMatch) found.push({ heading: section.headingText, html });
   }
 }
 

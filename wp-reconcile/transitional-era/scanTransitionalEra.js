@@ -253,7 +253,13 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     // high text similarity even with no shared link at all - greedily pairs
     // each unmatched osmbc article with its best-scoring available WP
     // bullet (if any clears SIMILARITY_THRESHOLD), removing that bullet
-    // from the pool so it isn't also claimed by another article.
+    // from the pool so it isn't also claimed by another article. A result
+    // that's textually IDENTICAL (after whitespace normalization) has zero
+    // ambiguity left - e.g. confirmed real cases WN276 articles 10147/10165
+    // in ES/ID, both 100% identical, just missing a link in those specific
+    // languages - so it's treated as a clean match, same as an identical
+    // link-based match, not surfaced as a "candidate" needing a human to
+    // confirm the obvious.
     const claimedWp = new Set();
     const similarityCandidates = [];
     for (const u of unmatchedOsmbc) {
@@ -266,7 +272,12 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       }
       if (best) {
         claimedWp.add(best.html);
-        similarityCandidates.push({ articleId: u.articleId, osmbcText, wpText: normalizeHtml(best.html), score: best.score });
+        const wpText = normalizeHtml(best.html);
+        if (osmbcText.replace(/\s+/g, "") === wpText.replace(/\s+/g, "")) {
+          matchedArticleIds.add(u.articleId);
+          continue;
+        }
+        similarityCandidates.push({ articleId: u.articleId, osmbcText, wpText, score: best.score });
       }
     }
 
@@ -276,6 +287,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
     }
     for (const u of unmatchedOsmbc) {
       if (similarityCandidates.some((c) => c.articleId === u.articleId)) continue;
+      if (matchedArticleIds.has(u.articleId)) continue; // resolved via an identical (clean) text-similarity match above
       reviewRows.push([issue, osmbcLang, "unmatched-osmbc", u.articleId, normalizeHtml(osmbcArticles[u.articleId])]);
       totalUnmatched++;
     }
