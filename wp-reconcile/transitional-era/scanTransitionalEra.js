@@ -28,6 +28,19 @@ import { textSimilarity } from "./textSimilarity.js";
 import { matchByReferenceLanguage } from "./positionalMatch.js";
 import { parseOldBlogSections } from "../old-era/parseOldBlogSections.js";
 import { htmlToMarkdown } from "../backport/htmlToMarkdown.js";
+import { htmlTableToMarkdown } from "../backport/htmlTableToMarkdown.js";
+
+// htmlToMarkdown's turndownService has no GFM table plugin, so feeding it a
+// whole table (as parseOldBlogSections.js stores for a table-shaped
+// section - the <table>'s inner thead/tbody html, no outer <table> tag)
+// flattens every row into one run-on paragraph, losing all row/column
+// structure (confirmed real case: this would have overwritten WN275
+// article 10072's carefully-built real Markdown table with flattened
+// text). Detected generically by the presence of a <tr> - only a
+// table-shaped WP bullet ever contains one.
+function convertWpHtml(html) {
+  return /<tr[\s>]/i.test(html) ? htmlTableToMarkdown(html) : htmlToMarkdown(html);
+}
 
 // A last-resort fallback for whatever neither link-matching nor the
 // collection-link fallback found anything for: two bullets can be the same
@@ -201,7 +214,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       totalChanged++;
       const articleMeta = articleById.get(m.articleId);
       aenderungenRows.push([issue, osmbcLang, m.articleId, (articleMeta && articleMeta.title) || "", classifyChange(a, b), a, b]);
-      pendingChanges.push({ issue, lang: osmbcLang, articleId: m.articleId, markdown: htmlToMarkdown(m.wpHtml) });
+      pendingChanges.push({ issue, lang: osmbcLang, articleId: m.articleId, markdown: convertWpHtml(m.wpHtml) });
     }
 
     // Positional matching only ever fills in stubArticleIds (articles with
@@ -244,7 +257,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
         const b = normalizeHtml(wpHtml);
         totalChanged++;
         aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
-        pendingChanges.push({ issue, lang: osmbcLang, articleId: id, markdown: htmlToMarkdown(wpHtml) });
+        pendingChanges.push({ issue, lang: osmbcLang, articleId: id, markdown: convertWpHtml(wpHtml) });
         remainingWp = remainingWp.filter((html) => html !== wpHtml);
         continue;
       }
@@ -262,7 +275,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       const b = normalizeHtml(stubResult.wpHtml);
       totalChanged++;
       aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
-      pendingChanges.push({ issue, lang: osmbcLang, articleId: id, markdown: htmlToMarkdown(stubResult.wpHtml) });
+      pendingChanges.push({ issue, lang: osmbcLang, articleId: id, markdown: convertWpHtml(stubResult.wpHtml) });
       remainingWp = remainingWp.filter((html) => html !== stubResult.wpHtml);
     }
 
