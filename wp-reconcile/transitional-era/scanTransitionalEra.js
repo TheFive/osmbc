@@ -192,20 +192,23 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       aenderungenRows.push([issue, osmbcLang, m.articleId, (articleMeta && articleMeta.title) || "", classifyChange(a, b), a, b]);
     }
 
-    // Positional matching: only attempted for a language that is a TOTAL
-    // stub (zero real per-article content) in this issue - a language with
-    // its own real link-based matches never needs a positional guess, and
-    // mixing the two could only make things less certain, not more.
+    // Positional matching only ever fills in stubArticleIds (articles with
+    // no real translation in THIS language) below, so it can't conflict
+    // with this language's own real link-based matches above regardless of
+    // how many of those exist - gating on "zero real content anywhere in
+    // this language" was too strict (real case: WN276 JP - filling in just
+    // one stub article, 46780 "Releases", with its real JP text made
+    // osmbcArticles.length go from 0 to 1, which turned positional matching
+    // off for every OTHER still-stub JP article in the same issue as a
+    // side effect).
     let positionalMap = new Map();
-    if (Object.keys(osmbcArticles).length === 0) {
-      for (const candidateLang of referenceCandidates) {
-        if (candidateLang === osmbcLang) continue;
-        const ref = perLang[candidateLang];
-        const attempt = matchByReferenceLanguage(ref.wpSections, ref.matches, wpSections);
-        if (attempt) {
-          positionalMap = attempt;
-          break;
-        }
+    for (const candidateLang of referenceCandidates) {
+      if (candidateLang === osmbcLang) continue;
+      const ref = perLang[candidateLang];
+      const attempt = matchByReferenceLanguage(ref.wpSections, ref.matches, wpSections);
+      if (attempt) {
+        positionalMap = attempt;
+        break;
       }
     }
 
