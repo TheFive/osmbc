@@ -1,17 +1,19 @@
 #!/usr/bin/env node
-// Report-only scan (never writes anywhere - no backport.sql, unlike
-// generateBackport.js) for WN272-304: the transitional era where osmbc's
-// <li id="wn<n>_<id>"> anchor convention doesn't help, because osmbc's
-// CURRENT renderer emits numeric-id anchors but the real published
-// WordPress HTML from this era used a different, now-obsolete id scheme
-// (or none at all) - confirmed "not-comparable" by scanAndReport.js's
-// anchor-ratio gate for exactly this range.
+// This script itself never writes anywhere - for WN272-304: the
+// transitional era where osmbc's <li id="wn<n>_<id>"> anchor convention
+// doesn't help, because osmbc's CURRENT renderer emits numeric-id anchors
+// but the real published WordPress HTML from this era used a different,
+// now-obsolete id scheme (or none at all) - confirmed "not-comparable" by
+// scanAndReport.js's anchor-ratio gate for exactly this range.
 //
 // Matches articles by shared external links instead (see
 // transitional-era/matchByLinks.js) - validated across WN285/295/300:
 // 95-98% confident matches, 0 ambiguous. Lower confidence than the
-// WN272+ tool's exact anchor matching, so this only ever produces a
-// report for human review - no SQL, no writes.
+// WN272+ tool's exact anchor matching, so every finding still needs a
+// human's sign-off in aenderungen.csv/needs-review.csv before being
+// applied - applyBackport.js is the separate write step (reads this
+// script's pendingChanges.json), the transitional-era counterpart to
+// generateBackport.js's backport.sql.
 
 import fs from "fs";
 import path from "path";
@@ -25,6 +27,7 @@ import { findStubMatch } from "./stubCollectionMatch.js";
 import { textSimilarity } from "./textSimilarity.js";
 import { matchByReferenceLanguage } from "./positionalMatch.js";
 import { parseOldBlogSections } from "../old-era/parseOldBlogSections.js";
+import { htmlToMarkdown } from "../backport/htmlToMarkdown.js";
 
 // A last-resort fallback for whatever neither link-matching nor the
 // collection-link fallback found anything for: two bullets can be the same
@@ -89,6 +92,14 @@ const reviewRows = [["issue", "lang", "type", "articleId", "text"]];
 // in DE - identical text, so no aenderungen.csv row - but was unmatched in
 // EN, since it was genuinely never published in English).
 const matchedArticleIds = new Set();
+// Real, ready-to-write markdown per (issue, articleId, lang) - unlike
+// aenderungenRows, which holds normalizeHtml()'d flat text for human
+// display only (links stripped), this holds htmlToMarkdown() output
+// suitable for actually writing into markdown<LANG> - consumed by
+// applyBackport.js. Only populated where aenderungenRows also gets an
+// entry (a genuine difference was found), never for a clean/identical
+// match (nothing to write).
+const pendingChanges = [];
 
 let totalChanged = 0, totalUnmatched = 0, totalAmbiguous = 0;
 
@@ -190,6 +201,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       totalChanged++;
       const articleMeta = articleById.get(m.articleId);
       aenderungenRows.push([issue, osmbcLang, m.articleId, (articleMeta && articleMeta.title) || "", classifyChange(a, b), a, b]);
+      pendingChanges.push({ issue, lang: osmbcLang, articleId: m.articleId, markdown: htmlToMarkdown(m.wpHtml) });
     }
 
     // Positional matching only ever fills in stubArticleIds (articles with
@@ -232,6 +244,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
         const b = normalizeHtml(wpHtml);
         totalChanged++;
         aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
+        pendingChanges.push({ issue, lang: osmbcLang, articleId: id, markdown: htmlToMarkdown(wpHtml) });
         remainingWp = remainingWp.filter((html) => html !== wpHtml);
         continue;
       }
@@ -249,6 +262,7 @@ for (let n = FIRST_ISSUE; n <= LAST_ISSUE; n++) {
       const b = normalizeHtml(stubResult.wpHtml);
       totalChanged++;
       aenderungenRows.push([issue, osmbcLang, id, (articleMeta && articleMeta.title) || "", "Text", "", b]);
+      pendingChanges.push({ issue, lang: osmbcLang, articleId: id, markdown: htmlToMarkdown(stubResult.wpHtml) });
       remainingWp = remainingWp.filter((html) => html !== stubResult.wpHtml);
     }
 
@@ -317,6 +331,7 @@ fs.writeFileSync(
 );
 fs.writeFileSync(path.join(OUT_DIR, "needs-review.csv"), reviewRows.map((r) => r.map(csvEscape).join(",")).join("\n"));
 fs.writeFileSync(path.join(OUT_DIR, "matchedArticleIds.json"), JSON.stringify([...matchedArticleIds], null, 2));
+fs.writeFileSync(path.join(OUT_DIR, "pendingChanges.json"), JSON.stringify(pendingChanges, null, 2));
 
 console.info(`Issues ${FIRST_ISSUE}-${LAST_ISSUE}: ${aenderungenRows.length - 1} genuine change(s) found via link-matching, ${totalUnmatched} item(s) need manual review, ${totalAmbiguous} ambiguous match(es).`);
 console.info(`Summary: ${path.join(OUT_DIR, "summary.csv")}`);
