@@ -73,6 +73,25 @@ function isStyledHeadingParagraph($el) {
   return text.length > 0 && text.length <= 80 && spans.eq(0).text().trim() === text;
 }
 
+// A handful of issues (real case: WN278's Japanese body) wrap the real
+// bullets in several empty, redundant <ul> levels: <ul><ul><ul><li>...
+// instead of a single <ul><li>...  A plain $el.children("li") on the
+// outermost <ul> finds nothing (its only child is another empty <ul>), so
+// the whole section - and often the whole language - was silently treated
+// as having no bullets at all (real cases traced back to this: WN278 JP,
+// a issue with real substantial content that never got backported at all
+// despite being marked closed; also explains earlier "no bullets parsed"
+// warnings, e.g. WN247's old-era languages). Drill down through any chain
+// of childless-of-li <ul>/<ol> wrappers until direct <li> children are
+// found.
+function findListItems($, $el) {
+  const directLi = $el.children("li");
+  if (directLi.length > 0) return directLi;
+  const nestedList = $el.children("ul, ol").first();
+  if (nestedList.length > 0) return findListItems($, nestedList);
+  return directLi; // genuinely empty
+}
+
 export function parseOldBlogSections(html) {
   if (typeof html !== "string" || html.trim() === "") {
     return { sections: [], warnings: ["empty or non-string html"] };
@@ -111,7 +130,7 @@ export function parseOldBlogSections(html) {
         sections.push(current);
         warnings.push(`found <${tag}> before any heading - using an empty heading placeholder`);
       }
-      $el.children("li").each((__, li) => {
+      findListItems($, $el).each((__, li) => {
         current.articlesHtml.push($(li).html());
       });
     }

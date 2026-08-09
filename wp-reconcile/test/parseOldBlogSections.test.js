@@ -117,6 +117,16 @@ describe("parseOldBlogSections", function () {
     warnings.should.be.empty();
   });
 
+  it("drills down through nested empty <ul> wrappers to find the real <li>s (real case: WN278 JP)", function () {
+    const html = `<h2 id="wn278_mapping">マッピング</h2><ul><ul><ul><li>bullet one</li><li>bullet two</li></ul></ul></ul>`;
+    const { sections, warnings } = parseOldBlogSections(html);
+    sections.should.have.length(1);
+    sections[0].headingText.should.equal("マッピング");
+    sections[0].articlesHtml.should.have.length(2);
+    sections[0].articlesHtml[0].should.equal("bullet one");
+    warnings.should.be.empty();
+  });
+
   it("treats <ol> the same as <ul> (real case: WN279 DE \"Humanitarian OSM\" section)", function () {
     const html = `<h2 id="wn279_humanitarian osm">Humanitarian OSM</h2><ol><li>Für die FOSSGIS 2017 wird ein Ort <a href="http://fossgis-konferenz.de/2017/">gesucht</a>.</li></ol>`;
     const { sections, warnings } = parseOldBlogSections(html);
