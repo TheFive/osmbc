@@ -17,6 +17,8 @@ block all
       link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
       if (layout.style)
         link(rel='stylesheet', href=`${layout.htmlroot}${layout.style}?osmbc_v=${layout.osmbc_version}`)
+      if (layout.extraStyle)
+        link(rel='stylesheet', href=`${layout.htmlroot}${layout.extraStyle}?osmbc_v=${layout.osmbc_version}`)
 
     body
 

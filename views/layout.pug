@@ -105,6 +105,8 @@ block all
       link(href=layout.htmlroot + "/stylesheets/font-awesome.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
       if (typeof stylesheet !== 'undefined' && stylesheet)
         link(rel='stylesheet', href=`${htmlroot}${stylesheet}?osmbc_v=${layout.osmbc_version}`)
+      if (typeof extraStyle !== 'undefined' && extraStyle)
+        link(rel='stylesheet', href=`${htmlroot}${extraStyle}?osmbc_v=${layout.osmbc_version}`)
 
     body
       - function blogNumberNotFormulated(blog,language) {return ((blog)?blog.getUnEdited(language):"?") }
