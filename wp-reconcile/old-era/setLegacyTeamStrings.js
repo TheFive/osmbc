@@ -27,7 +27,15 @@ assert.strictEqual(process.env.NODE_ENV, "wpreconcile", "setLegacyTeamStrings.js
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WP1_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp", "wp_1_posts");
 const USER = { OSMUser: "wp-oldimport" };
-const NAMES_RE = /(?:Das Autorenteam|Die Autoren)\s+([^]+?)\s+wünsch\w*/i;
+// Captures the WHOLE credit sentence (not just the names) - createTeamString's
+// manual-override branch (model/blog.js:343) returns teamString<LANG> verbatim,
+// with no further template wrapping (unlike the computed/log-based branch,
+// which wraps names in the "##Team##" editorstrings template) - storing only
+// the bare names left the export ending in a naked, sentence-less name list
+// (real case found: WN024, and confirmed the same for all 25 of these
+// overrides). One sentence ends in "." (most issues) or "!" (the one
+// Christmas-week issue, #23).
+const CREDIT_SENTENCE_RE = /((?:Das Autorenteam|Die Autoren)\s+[^]+?wünsch\w*[^.!]*[.!])/i;
 
 program.option("--commit", "actually write changes (default: dry-run)").parse(process.argv);
 const options = program.opts();
@@ -39,8 +47,8 @@ function findTeamString(n) {
   const body = source.perLanguage.de.body;
   const tagIndex = body.indexOf("<");
   const intro = (tagIndex === -1 ? body : body.slice(0, tagIndex)).replace(/\r?\n/g, " ");
-  const m = NAMES_RE.exec(intro);
-  return m ? m[1].trim() : null;
+  const m = CREDIT_SENTENCE_RE.exec(intro);
+  return m ? m[1].trim().replace(/\s+/g, " ") : null;
 }
 
 async.series([configModule.initialise, messageCenter.initialise], function (err) {
@@ -52,8 +60,8 @@ async.series([configModule.initialise, messageCenter.initialise], function (err)
 
   const found = [];
   for (let n = 1; n <= 271; n++) {
-    const names = findTeamString(n);
-    if (names) found.push({ n, names });
+    const sentence = findTeamString(n);
+    if (sentence) found.push({ n, sentence });
   }
   console.info(`Found team credits in ${found.length} issue(s).`);
 
@@ -61,12 +69,12 @@ async.series([configModule.initialise, messageCenter.initialise], function (err)
     found,
     function (item, cb) {
       const name = "WN" + String(item.n).padStart(3, "0");
-      console.info(`${name}: "${item.names}"`);
+      console.info(`${name}: "${item.sentence}"`);
       if (!options.commit) return cb();
       blogModule.findOne({ name }, function (err, blog) {
         if (err) return cb(err);
         if (!blog) return cb(new Error(`No blog found for ${name}`));
-        blog.setAndSave(USER, { teamStringDE: item.names }, cb);
+        blog.setAndSave(USER, { teamStringDE: item.sentence }, cb);
       });
     },
     function (err) {
