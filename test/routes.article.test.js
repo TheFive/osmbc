@@ -1043,6 +1043,29 @@ describe("router/article", function() {
       should(sitecall.calledOnce).be.true();
     });
 
+    it("should pass matching http/https agents so a protocol-switching redirect (http -> https) does not fail", async function () {
+      // Regression test: a plain http:// link that redirects to https:// (the
+      // common case, and also true for old WN issues whose http links are
+      // now https-only) used to be handed the *same* agent for both the
+      // httpAgent and httpsAgent axios options. Node then rejected the
+      // request with `Protocol "https:" not supported. Expected "http:"` as
+      // soon as axios tried to follow the redirect - even though the link
+      // itself was perfectly reachable.
+      const form = { urls: ["http://www.site.ort5/apage"] };
+      const sitecall = sinon.stub(axios, "head").resolves();
+
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, form);
+
+      body.data.should.deepEqual({ "http://www.site.ort5/apage": "OK" });
+      should(body.status).eql(HttpStatus.OK);
+      should(sitecall.calledOnce).be.true();
+      const options = sitecall.firstCall.args[1];
+      should(options.httpAgent.protocol).eql("http:");
+      should(options.httpsAgent.protocol).eql("https:");
+    });
+
     it("should run with guest access user", async function () {
       const form = { urls: ["https://www.site.ort3/apage"] };
       let sitecall = nock("https://www.site.ort3")
