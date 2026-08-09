@@ -32,4 +32,21 @@ describe("issueNumber", function () {
       should(issueNumberFromNewTitle(title)).eql(null);
     });
   });
+
+  describe("issueNumberFromNewTitle (older <!--:xx--> style, real issues #219-257)", function () {
+    it("extracts the issue number, not the trailing year, from a real WN221 title", function () {
+      const title = "<!--:en-->weekly 221 – 07.10.-13.10.2014<!--:--><!--:de-->Wochennotiz 221 – 07.10.-13.10.2014<!--:-->";
+      should(issueNumberFromNewTitle(title)).eql(221);
+    });
+
+    it("handles a title with no space before the date range (real WN220 title)", function () {
+      const title = "<!--:en-->weekly 220– 30.09.-06.10.2014<!--:-->";
+      should(issueNumberFromNewTitle(title)).eql(220);
+    });
+
+    it("returns null for a one-off special post with no issue number", function () {
+      const title = "<!--:en-->Disaster routing in Nepal available at OpenRouteService<!--:-->";
+      should(issueNumberFromNewTitle(title)).eql(null);
+    });
+  });
 });
