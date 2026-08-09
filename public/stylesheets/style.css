@@ -22,6 +22,17 @@ a.osmbc-nonexist {
   padding-left: 7px
 }
 
+/* OSMBC Link notice for a reachable plain http:// link - insecure, not
+   broken, so deliberately much milder than a.osmbc-nonexist. */
+a.osmbc-insecure {
+  color: #664d03;
+  background-color: #fff3cd;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 7px;
+  padding-left: 7px
+}
+
 /* OSMBC Marker for not formulated article texts */
 .osmbc-not-formulated {
   color: #000 !important;
