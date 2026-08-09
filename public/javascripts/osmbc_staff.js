@@ -39,6 +39,16 @@ function highlightWrongLinks() {
           k.addClass("osmbc-nonexist");
           k.text(k.text() + " #" + window.cacheLink[l]);
         });
+      } else if (l.indexOf("http://") === 0) {
+        // A reachable plain-http link is a different thing from a broken
+        // one - "insecure" vs. "dead" - and shouldn't compete for the same
+        // urgent red as a genuinely broken link (real case: plain http://
+        // links show up even in the most recent issues, not just old ones,
+        // so this can't be limited by issue age either - it's simply about
+        // the link's own protocol, checked live like everything else).
+        mapping[l].forEach(function(k) {
+          k.addClass("osmbc-insecure");
+        });
       }
     }
   }
