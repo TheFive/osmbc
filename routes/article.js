@@ -895,6 +895,28 @@ function searchArticles(req, res, next) {
 }
 
 
+// Matches the "#wn<issue>_<articleId>" footnote-anchor convention used in
+// Picture-article captions (e.g. "[[1](#wn796_33564)]") - a contract with
+// the separate Hugo renderer, which is the only thing that actually emits
+// an element with this id; osmbc's own preview never does, so this can
+// only be checked against the database, not the rendered DOM. Not cached
+// via linkCache (unlike external URLs) - the article it points to can
+// change from one edit to the next.
+const ANCHOR_RE = /^#wn(\d+)_(\d+)$/i;
+
+function checkAnchor(url, callback) {
+  const m = ANCHOR_RE.exec(url);
+  const issue = "WN" + m[1];
+  const articleId = parseInt(m[2], 10);
+  articleModule.findById(articleId, function(err, article) {
+    if (err) return callback(err);
+    if (!article) return callback(null, `Anchor "${url}" refers to a non-existing article`);
+    if (article.blog !== issue) return callback(null, `Anchor "${url}" points to an article in ${article.blog}, not ${issue}`);
+    if (article.categoryEN === "--unpublished--") return callback(null, `Anchor "${url}" points to an unpublished article`);
+    return callback(null, "OK");
+  });
+}
+
 function urlExist(req, res) {
   debug("urlExists");
   let urls = req.body.urls;
@@ -905,6 +927,13 @@ function urlExist(req, res) {
 
   each(urls,
     (url, callback) => {
+      if (ANCHOR_RE.test(url)) {
+        return checkAnchor(url, function(err, status) {
+          if (err) return callback(err);
+          result[url] = status;
+          return callback();
+        });
+      }
       if ((linkCache.get(url) === "OK") || (req.user.access === "guest")) {
         result[url] = "OK";
         return callback();

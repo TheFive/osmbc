@@ -15,8 +15,14 @@ function highlightWrongLinks() {
 
   function collectLinks() {
     const o = $(this);
-    if (o.attr("href").charAt(0) === "#") return;
     const url = o.attr("href");
+    // Anchor hrefs are usually just in-page UI (collapse toggles etc.),
+    // not worth checking - except our own footnote-anchor convention
+    // ("#wn<issue>_<articleId>", e.g. in a Picture caption's "[1]" link),
+    // which the server can validate against the database (osmbc's own
+    // preview never renders a matching element - only the separate Hugo
+    // renderer does - so this can't be checked against the page's DOM).
+    if (url.charAt(0) === "#" && !/^#wn\d+_\d+$/i.test(url)) return;
     if (!mapping[url]) mapping[url] = [];
     mapping[url].push(o);
   }
