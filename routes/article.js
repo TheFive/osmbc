@@ -6,6 +6,8 @@ import { strict as assert } from "assert";
 import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
 import { URL } from "url";
+import http from "http";
+import https from "https";
 import { renderFile } from "pug";
 import ssrfFilter from "ssrf-req-filter";
 
@@ -50,6 +52,15 @@ const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 
 const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
+
+// SSRF-filtered agents for urlExist's link check, one per protocol. axios
+// needs both httpAgent and httpsAgent to be of the matching type, or
+// following a redirect that switches protocol (very common: plain http://
+// links in old WN issues now redirect to https://) makes Node throw
+// `Protocol "https:" not supported. Expected "http:"` and the link gets
+// reported as broken even though it's perfectly reachable.
+const httpLinkAgent = ssrfFilter.requestFilterHandler(new http.Agent());
+const httpsLinkAgent = ssrfFilter.requestFilterHandler(new https.Agent());
 
 
 
@@ -954,8 +965,8 @@ function urlExist(req, res) {
       }
 
       axios.head(url, {
-        httpAgent: ssrfFilter(url),
-        httpsAgent: ssrfFilter(url),
+        httpAgent: httpLinkAgent,
+        httpsAgent: httpsLinkAgent,
         headers: { "User-Agent": userAgent }
       }).then(function() {
         linkCache.set(url, "OK");
