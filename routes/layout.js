@@ -40,7 +40,10 @@ const layoutConst = {
   appName: appName,
   osmbc_version: (process.env.NODE_ENV !== "test") ? config.version : "T.V.S",
   title: appName,
-  auth: config.getValue("auth", { mustExist: true })
+  auth: config.getValue("auth", { mustExist: true }),
+  // Additional stylesheet loaded on top of the regular one, e.g. to mark
+  // a non-production instance (beta) with a visible color/banner.
+  extraStyle: config.getValue("extraStyle")
 };
 
 

@@ -159,6 +159,52 @@ describe("routes/blog", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
+  describe("manual teamString override for pre-teamString-era issues", function () {
+    beforeEach(function (bddone) {
+      testutil.importData({
+        clear: false,
+        blog: [
+          { name: "WN200", status: "closed", startDate: "2013-01-01T00:00:00.000Z", endDate: "2013-01-07T23:59:59.000Z" }
+        ]
+      }, bddone);
+    });
+
+    it("shows the manual teamString field on the edit form for an issue at/before WN282", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/edit/WN200?edit=true");
+      body.data.should.containEql("teamStringDE");
+    });
+
+    it("does not show the manual teamString field on the edit form for a modern issue (WN333)", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/edit/WN333?edit=true");
+      body.data.should.not.containEql("teamStringDE");
+    });
+
+    it("accepts a manual teamStringDE for an old issue, and createTeamString returns it verbatim", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      await client.post(baseLink + "/blog/edit/WN200", { teamStringDE: "Jonas, Mitja, Claudius" });
+
+      const blog = await blogModule.findOne({ name: "WN200" });
+      should(blog.teamStringDE).eql("Jonas, Mitja, Claudius");
+      blog.createTeamString("DE", function (err, result) {
+        should(err).eql(null);
+        should(result).eql("Jonas, Mitja, Claudius");
+      });
+    });
+
+    it("ignores a submitted teamStringDE for a modern issue (WN333) - server-side gate, not just hidden in the form", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      await client.post(baseLink + "/blog/edit/WN333", { teamStringDE: "Should not be saved" });
+
+      const blog = await blogModule.findOne({ name: "WN333" });
+      should(blog.teamStringDE).eql(undefined);
+    });
+  });
   describe("route POST /blog/:blog_id/setReviewComment", function () {
     const url = baseLink + "/blog/WN333/setReviewComment";
     const form = { lang: "EN", text: "Everything is fine" };

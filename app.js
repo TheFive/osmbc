@@ -66,6 +66,9 @@ app.set("trust proxy", limitTrustProxy);
 app.locals.htmlroot = config.htmlRoot();
 app.locals.appName = config.getValue("AppName", { mustExist: true });
 app.locals.stylesheet = config.getValue("style");
+// Additional stylesheet loaded on top of the regular one, e.g. to mark
+// a non-production instance (beta) with a visible color/banner.
+app.locals.extraStyle = config.getValue("extraStyle");
 app.locals._path = path;
 
 

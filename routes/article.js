@@ -6,6 +6,8 @@ import { strict as assert } from "assert";
 import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
 import { URL } from "url";
+import http from "http";
+import https from "https";
 import { renderFile } from "pug";
 import ssrfFilter from "ssrf-req-filter";
 
@@ -50,6 +52,15 @@ const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 
 const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
+
+// SSRF-filtered agents for urlExist's link check, one per protocol. axios
+// needs both httpAgent and httpsAgent to be of the matching type, or
+// following a redirect that switches protocol (very common: plain http://
+// links in old WN issues now redirect to https://) makes Node throw
+// `Protocol "https:" not supported. Expected "http:"` and the link gets
+// reported as broken even though it's perfectly reachable.
+const httpLinkAgent = ssrfFilter.requestFilterHandler(new http.Agent());
+const httpsLinkAgent = ssrfFilter.requestFilterHandler(new https.Agent());
 
 
 
@@ -895,6 +906,28 @@ function searchArticles(req, res, next) {
 }
 
 
+// Matches the "#wn<issue>_<articleId>" footnote-anchor convention used in
+// Picture-article captions (e.g. "[[1](#wn796_33564)]") - a contract with
+// the separate Hugo renderer, which is the only thing that actually emits
+// an element with this id; osmbc's own preview never does, so this can
+// only be checked against the database, not the rendered DOM. Not cached
+// via linkCache (unlike external URLs) - the article it points to can
+// change from one edit to the next.
+const ANCHOR_RE = /^#wn(\d+)_(\d+)$/i;
+
+function checkAnchor(url, callback) {
+  const m = ANCHOR_RE.exec(url);
+  const issue = "WN" + m[1];
+  const articleId = parseInt(m[2], 10);
+  articleModule.findById(articleId, function(err, article) {
+    if (err) return callback(err);
+    if (!article) return callback(null, `Anchor "${url}" refers to a non-existing article`);
+    if (article.blog !== issue) return callback(null, `Anchor "${url}" points to an article in ${article.blog}, not ${issue}`);
+    if (article.categoryEN === "--unpublished--") return callback(null, `Anchor "${url}" points to an unpublished article`);
+    return callback(null, "OK");
+  });
+}
+
 function urlExist(req, res) {
   debug("urlExists");
   let urls = req.body.urls;
@@ -905,6 +938,13 @@ function urlExist(req, res) {
 
   each(urls,
     (url, callback) => {
+      if (ANCHOR_RE.test(url)) {
+        return checkAnchor(url, function(err, status) {
+          if (err) return callback(err);
+          result[url] = status;
+          return callback();
+        });
+      }
       if ((linkCache.get(url) === "OK") || (req.user.access === "guest")) {
         result[url] = "OK";
         return callback();
@@ -925,8 +965,8 @@ function urlExist(req, res) {
       }
 
       axios.head(url, {
-        httpAgent: ssrfFilter(url),
-        httpsAgent: ssrfFilter(url),
+        httpAgent: httpLinkAgent,
+        httpsAgent: httpsLinkAgent,
         headers: { "User-Agent": userAgent }
       }).then(function() {
         linkCache.set(url, "OK");

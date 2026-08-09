@@ -332,6 +332,17 @@ class Blog {
     assert(typeof (lang) === "string");
     assert(typeof (callback) === "function");
     const self = this;
+    // Manual override: for issues predating the automated team string
+    // (computed from the change log below) - roughly WN282 and earlier,
+    // the "wp-oldimport" bulk import for the pre-osmbc era (blog.openstreetmap.de,
+    // 2010-2015) and the sparsely-used earliest osmbc issues (WN272-282,
+    // before the wider editorial team had adopted the tool) have no
+    // meaningful change-log data to compute a real team from. Editors can
+    // set this by hand (Blog Edit) instead, so the honor of the people who
+    // actually collected/wrote those issues isn't lost.
+    if (self["teamString" + lang] !== undefined && self["teamString" + lang] !== null) {
+      return callback(null, self["teamString" + lang]);
+    }
     let logs;
     let users = null;
     series([
