@@ -42,6 +42,7 @@ import MarkdownIt from "markdown-it";
 import configModule from "../../model/config.js";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
+import language from "../../model/language.js";
 import messageCenter from "../../notification/messageCenter.js";
 import { parseOldBlogSections } from "./parseOldBlogSections.js";
 import { matchByLinks } from "../transitional-era/matchByLinks.js";
@@ -141,6 +142,34 @@ function processIssue(n, callback) {
   });
 }
 
+function withReopenedBlog(blogName, action, callback) {
+  blogModule.findOne({ name: blogName }, function (err, blog) {
+    if (err) return callback(err);
+    if (!blog) return callback(new Error(`No blog found for ${blogName}`));
+
+    const langlist = language.getLanguages();
+    const original = { status: blog.status };
+    const openData = { status: "edit" };
+    for (const l in langlist) {
+      original["close" + l] = blog["close" + l];
+      original["exported" + l] = blog["exported" + l];
+      openData["close" + l] = false;
+      openData["exported" + l] = false;
+    }
+
+    blog.setAndSave(USER, openData, function (err) {
+      if (err) return callback(err);
+      action(function (actionErr) {
+        blog.setAndSave(USER, original, function (restoreErr) {
+          if (actionErr) return callback(actionErr);
+          if (restoreErr) return callback(restoreErr);
+          callback();
+        });
+      });
+    });
+  });
+}
+
 function applyChanges(callback) {
   const groups = new Map();
   for (const c of pendingChanges) {
@@ -149,18 +178,29 @@ function applyChanges(callback) {
     groups.get(key).fields.push({ lang: c.lang, markdown: c.markdown });
   }
 
-  async.eachSeries([...groups.values()], function ({ issue, articleId, fields }, cb) {
-    articleModule.findById(parseInt(articleId, 10), function (err, article) {
-      if (err) return cb(err);
-      if (!article) return cb(new Error(`No article found for id ${articleId}`));
-      const data = { version: article.version };
-      for (const f of fields) data["markdown" + f.lang] = f.markdown;
-      article.setAndSave(USER, data, function (err) {
-        if (err) return cb(err);
-        console.info(`${issue} article ${articleId}: ${fields.map((f) => f.lang).join(", ")} updated.`);
-        cb();
-      });
-    });
+  const byBlog = new Map();
+  for (const g of groups.values()) {
+    if (!byBlog.has(g.issue)) byBlog.set(g.issue, []);
+    byBlog.get(g.issue).push(g);
+  }
+
+  async.eachSeries([...byBlog.entries()], function ([issue, articleGroups], cb) {
+    withReopenedBlog(issue, function (done) {
+      async.eachSeries(articleGroups, function ({ articleId, fields }, cb2) {
+        articleModule.findById(parseInt(articleId, 10), function (err, article) {
+          if (err) return cb2(err);
+          if (!article) return cb2(new Error(`No article found for id ${articleId}`));
+          article._blog = null;
+          const data = { version: article.version };
+          for (const f of fields) data["markdown" + f.lang] = f.markdown;
+          article.setAndSave(USER, data, function (err) {
+            if (err) return cb2(err);
+            console.info(`${issue} article ${articleId}: ${fields.map((f) => f.lang).join(", ")} updated.`);
+            cb2();
+          });
+        });
+      }, done);
+    }, cb);
   }, callback);
 }
 
