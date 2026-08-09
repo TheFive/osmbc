@@ -4,8 +4,9 @@
 // convention entirely (see wp-extract/splitByAnchor.js for that, later
 // convention) - there is no per-article id to rely on at all.
 //
-// Category heading markup changed twice across the real 2010-2015 archive
-// (verified by sampling issues spread across the whole range):
+// Category heading markup changed across the real 2010-2015 archive
+// (verified by sampling issues spread across the whole range, plus a
+// scope-check of every issue for each of the rarer variants below):
 //   - most of the era: <h2 id="slug">Heading</h2>, or (from ~#271) with the
 //     id moved into a nested empty anchor: <h2><a id="slug"></a>Heading</h2>.
 //     Some later issues have stale ids that don't match the visible heading
@@ -13,16 +14,23 @@
 //   - issue #1 (WN001) has no <h2> at all: categories are plain top-level
 //     <strong>Heading</strong> or <span style="..."><strong>Heading</strong></span>
 //     blocks instead.
-// Both conventions are handled uniformly here by walking the body's
-// top-level nodes in document order and treating any <h2>, top-level
-// <strong>, or <span> wrapping a <strong> as a new section heading, and any
-// <ul> OR <ol> as that section's article bullets (one <li> per article -
-// verified bullets stay single-topic even when long). A handful of
-// sections use <ol> instead of <ul> for no apparent reason (confirmed real
-// case: WN279 DE "Humanitarian OSM") - without treating it the same as
-// <ul>, every bullet in that section was silently invisible to matching
-// entirely (not a matching failure - the bullets were never even offered
-// as candidates).
+//   - issue #7 (WN007) uses <h4><strong>Heading</strong></h4> instead of
+//     <h2> - the only issue in the whole archive that does (scope-checked).
+//   - issues #25 and #67 (WN025, WN067) render their very first category
+//     heading as a plain <p> wrapping a single large-font <span>, e.g.
+//     `<p><span style="font-size: 23px; ...">Talk, Forum, Blog & Wiki</span></p>`,
+//     before settling into normal <h2>s for the rest of that same issue -
+//     also scope-checked as unique to these two issues.
+// All these conventions are handled uniformly here by walking the body's
+// top-level nodes in document order and treating any <h2>, <h4>, top-level
+// <strong>, a <span> wrapping a <strong>, or a <p> wrapping nothing but one
+// large-font <span> as a new section heading, and any <ul> OR <ol> as that
+// section's article bullets (one <li> per article - verified bullets stay
+// single-topic even when long). A handful of sections use <ol> instead of
+// <ul> for no apparent reason (confirmed real case: WN279 DE "Humanitarian
+// OSM") - without treating it the same as <ul>, every bullet in that
+// section was silently invisible to matching entirely (not a matching
+// failure - the bullets were never even offered as candidates).
 //
 // Some categories (verified: "Releases"/"Software Watchlist" issue 296,
 // "Upcoming Events" calendar issue 300) are published as a single <table>
@@ -45,7 +53,25 @@
 
 import { load } from "cheerio";
 
-const HEADING_TAGS = new Set(["h2", "strong"]);
+const HEADING_TAGS = new Set(["h2", "h4", "strong"]);
+
+// A handful of the earliest issues (verified: #25, #67) render category
+// headings as a plain <p> wrapping a single large-font <span> instead of
+// any heading tag at all - e.g.
+// `<p><span style="font-size: 23px; ...">Talk, Forum, Blog & Wiki</span></p>`.
+// Scope-checked against the whole 2010-2015 archive: this exact shape
+// (a lone big-font span, nothing else of substance in the paragraph) only
+// ever matches these two issues' real category titles, never ordinary
+// prose (which always carries more text alongside any styled span).
+function isStyledHeadingParagraph($el) {
+  const spans = $el.find("span");
+  if (spans.length !== 1) return false;
+  const style = spans.eq(0).attr("style") || "";
+  const fontSize = style.match(/font-size:\s*(\d+)px/);
+  if (!fontSize || parseInt(fontSize[1], 10) < 20) return false;
+  const text = $el.text().trim();
+  return text.length > 0 && text.length <= 80 && spans.eq(0).text().trim() === text;
+}
 
 export function parseOldBlogSections(html) {
   if (typeof html !== "string" || html.trim() === "") {
@@ -68,7 +94,8 @@ export function parseOldBlogSections(html) {
     const tag = node.tagName || node.name;
     const $el = $(node);
 
-    const isHeading = HEADING_TAGS.has(tag) || (tag === "span" && $el.find("strong").length > 0);
+    const isHeading = HEADING_TAGS.has(tag) || (tag === "span" && $el.find("strong").length > 0) ||
+      (tag === "p" && isStyledHeadingParagraph($el));
     if (isHeading) {
       const headingText = $el.text().trim();
       if (headingText) {

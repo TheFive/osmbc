@@ -40,6 +40,41 @@ describe("parseOldBlogSections", function () {
     warnings.should.be.empty();
   });
 
+  it("parses the <h4><strong>Heading</strong></h4> era (real excerpt, issue 7 - the only issue using h4)", function () {
+    const { sections, warnings } = parseOldBlogSections(fixture("old-era-h4-heading.html"));
+    sections.should.have.length(2);
+    sections[0].headingText.should.equal("Lizenzwechsel");
+    sections[0].articlesHtml.should.have.length(2);
+    sections[1].headingText.should.equal("Talk-de & Forum");
+    sections[1].articlesHtml.should.have.length(1);
+    warnings.should.be.empty();
+  });
+
+  it("parses a <p><span style=font-size large></span></p> pseudo-heading (real excerpt, issue 25)", function () {
+    const { sections, warnings } = parseOldBlogSections(fixture("old-era-styled-p-heading.html"));
+    sections.should.have.length(2);
+    sections[0].headingText.should.equal("Talk, Forum, Blog & Wiki");
+    sections[0].articlesHtml.should.have.length(2);
+    sections[1].headingText.should.equal("openstreetmap.de");
+    sections[1].articlesHtml.should.have.length(1);
+    warnings.should.be.empty();
+  });
+
+  it("recognises the styled-p heading with issue 67's slightly different markup (empty <em>, class attribute on the span)", function () {
+    const html = `<p style="text-align: left;"><em></em><span class="Apple-style-span" style="color: #000000; font-size: 22px; line-height: 32px;">Talk, Forum, Wiki &amp; Blogs</span></p><ul><li>bullet</li></ul>`;
+    const { sections } = parseOldBlogSections(html);
+    sections.should.have.length(1);
+    sections[0].headingText.should.equal("Talk, Forum, Wiki & Blogs");
+  });
+
+  it("does not treat an ordinary styled paragraph (real prose alongside the span) as a heading", function () {
+    const html = `<p style="text-align: center;"><span style="font-size: 23px;">Bild</span> und dazu noch ein ganzer Satz Fließtext, der die Bildunterschrift beschreibt.</p><h2 id="mapping">Mapping</h2><ul><li>echter bullet</li></ul>`;
+    const { sections, warnings } = parseOldBlogSections(html);
+    sections.should.have.length(1);
+    sections[0].headingText.should.equal("Mapping");
+    warnings.should.be.empty();
+  });
+
   it("keeps <em>/<a> emphasis inside a bullet without treating it as a new heading", function () {
     const html = `<h2 id="mapping">Mapping</h2><ul><li>Text mit <em>addr:housename</em> und <a href="#">Link</a>.</li></ul>`;
     const { sections } = parseOldBlogSections(html);
