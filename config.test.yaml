@@ -68,6 +68,9 @@ languages:
 
 htmlroot: ""
 style: /stylesheets/style.css
+# Optional additional stylesheet, loaded on top of "style" above, e.g. to
+# visually mark a non-production instance (beta):
+# extraStyle: /stylesheets/beta-marker.css
 
 # POTENTIALLY_UNUSED: likely old style/bootstrap mode
 bootstrap: ""

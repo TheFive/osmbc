@@ -1,0 +1,30 @@
+/*
+ * Visual marker for a non-production / modified OSMBC instance (e.g. beta).
+ *
+ * Intentionally kept small and additive: it is loaded on top of the normal
+ * style.css (see "extraStyle" in config.*.yaml), so it never needs to be
+ * kept in sync with style.css and can never overwrite/break its rules.
+ *
+ * Usage in config.*.yaml:
+ *   extraStyle: /stylesheets/beta-marker.css
+ */
+
+nav.navbar.fixed-top {
+  background-color: #fff3e0 !important;
+  border-bottom: 3px solid #ff9800;
+}
+
+nav.navbar.fixed-top::after {
+  content: "BETA";
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #fff;
+  background-color: #ff9800;
+  border-radius: 3px;
+  pointer-events: none;
+}
