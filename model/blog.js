@@ -340,7 +340,7 @@ class Blog {
     // meaningful change-log data to compute a real team from. Editors can
     // set this by hand (Blog Edit) instead, so the honor of the people who
     // actually collected/wrote those issues isn't lost.
-    if (self["teamString" + lang]) {
+    if (self["teamString" + lang] !== undefined && self["teamString" + lang] !== null) {
       return callback(null, self["teamString" + lang]);
     }
     let logs;
