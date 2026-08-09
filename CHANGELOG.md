@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.4.5](https://github.com/TheFive/osmbc/tree/4.4.5) (2026-08-09)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.4...4.4.5)
+
 ## [4.4.4](https://github.com/TheFive/osmbc/tree/4.4.4) (2026-07-26)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.3...4.4.4)
