@@ -24,8 +24,25 @@
 // emoji/user-linkify setup) so matchByLinks' HTML-based extractLinks
 // works unchanged on both sides.
 //
-// Dry-run by default; --commit to actually write. --issue/--from/--to to
-// scope a partial run.
+// After matchByLinks' direct per-language pass, two more passes resolve
+// some of what's left, both reported for manual confirmation rather than
+// written out like direct matches (weaker evidence than a direct link hit):
+//   - Cross-language "bridge" pass (bridgeMatch.js): e.g. WN220's osmbc/DE
+//     article links a secondary source, EN's translation kept that link and
+//     matched directly, but ES only linked the two primary sources the
+//     sentence names - zero overlap with DE, so ES alone would land in
+//     unmatched-wp even though it's the same bullet. ES DOES share a link
+//     with EN, though, so it bridges to EN's already-matched osmbc article.
+//   - Anchor-relative positional pass (anchorPositionalMatch.js): e.g.
+//     WN225's DE article links a mailing-list message reporting an outage,
+//     EN's translation (written later) links a follow-up message in the
+//     same thread reporting the fix - no link overlap at all, but both sit
+//     immediately next to the same already-matched neighbour, which is
+//     enough to infer the pairing without ever comparing bullet content.
+//
+// Dry-run by default; --commit to actually write (bridged matches are never
+// auto-written, direct matches only). --issue/--from/--to to scope a partial
+// run.
 //
 // Usage:
 //   NODE_ENV=wpreconcile node wp-reconcile/old-era/backfillLanguages.js --issue 221
@@ -46,6 +63,8 @@ import language from "../../model/language.js";
 import messageCenter from "../../notification/messageCenter.js";
 import { parseOldBlogSections } from "./parseOldBlogSections.js";
 import { matchByLinks } from "../transitional-era/matchByLinks.js";
+import { bridgeMatch } from "./bridgeMatch.js";
+import { anchorPositionalMatch } from "./anchorPositionalMatch.js";
 import { htmlToMarkdown } from "../backport/htmlToMarkdown.js";
 import { htmlTableToMarkdown } from "../backport/htmlTableToMarkdown.js";
 
@@ -58,6 +77,7 @@ assert.strictEqual(
 const USER = { OSMUser: "wp-oldimport" };
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WP_POSTS_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp", "wp_posts");
+const WP1_POSTS_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp", "wp_1_posts");
 const OUT_DIR = path.join(__dirname, "..", "..", "backport", "output", "old-era-languages");
 const MIN_REAL_BODY_LENGTH = 50; // shorter than this is a stub/placeholder translation, not real content (verified: WN221 es/ro/ja bodies are literally "</p>", 5 chars)
 
@@ -91,6 +111,39 @@ const pendingChanges = [];
 const reviewRows = [["issue", "lang", "type", "articleId", "text"]];
 let totalMatched = 0;
 
+// Re-parses the DE wp_1_posts body (the exact source rebuildOldBlog.js used
+// to create these osmbc articles in the first place) and maps each parsed
+// bullet to the osmbc articleId it became, by converting it with the same
+// htmlToMarkdown() rebuildOldBlog.js used and looking that string up
+// against the articles' own markdownDE - not by id/sequence assumptions.
+// Returns [{ headingText, articleIds }] (articleIds[i] parallels the
+// section's bullets in original document order; null where no osmbc
+// article matches, e.g. it was later moved to "Trash").
+function buildDeSections(n, articles) {
+  const file = path.join(WP1_POSTS_DIR, n + ".json");
+  if (!fs.existsSync(file)) return [];
+  const wp1 = JSON.parse(fs.readFileSync(file, "utf8"));
+  const body = wp1.perLanguage.de && wp1.perLanguage.de.body;
+  if (!body) return [];
+
+  const markdownToId = new Map();
+  for (const a of articles) {
+    if (a.markdownDE) markdownToId.set(a.markdownDE, a.id);
+  }
+
+  const { sections } = parseOldBlogSections(body);
+  return sections.map((s) => ({
+    headingText: s.headingText,
+    articleIds: s.articlesHtml.map((html) => {
+      // rebuildOldBlog.js wrote markdownDE via plain htmlToMarkdown (never
+      // the table-aware convertWpHtml dispatcher) - match that exactly, or
+      // table-shaped DE bullets would never resolve to their articleId.
+      const id = markdownToId.get(htmlToMarkdown(html));
+      return id != null ? id : null;
+    })
+  }));
+}
+
 function processIssue(n, callback) {
   const file = path.join(WP_POSTS_DIR, n + ".json");
   if (!fs.existsSync(file)) return callback();
@@ -105,10 +158,22 @@ function processIssue(n, callback) {
     }
 
     const osmbcArticles = {};
+    const articleById = new Map();
     for (const a of articles) {
+      articleById.set(String(a.id), a);
       if (!a.markdownDE || a.markdownDE.trim() === "" || a.markdownDE === "no translation") continue;
       osmbcArticles[a.id] = md.render(a.markdownDE);
     }
+
+    const deSections = buildDeSections(n, articles);
+
+    // Direct per-language pass first, keeping every bullet (matched or not)
+    // around in one flat list so the cross-language bridge pass below can
+    // see all languages of this issue at once.
+    const bridgeNodes = [];
+    const perLangResults = [];
+    const validatedArticleIds = new Set();
+    let nodeSeq = 0;
 
     for (const [lang, data] of Object.entries(wp.perLanguage)) {
       if (lang === "de") continue;
@@ -125,14 +190,92 @@ function processIssue(n, callback) {
 
       const { matches, unmatchedOsmbc, unmatchedWp, ambiguous } = matchByLinks(osmbcArticles, bullets);
       totalMatched += matches.length;
-      console.info(`${name} [${lang}]: ${matches.length} matched, ${unmatchedWp.length} unmatched-wp, ${ambiguous.length} ambiguous (${bullets.length} real bullets, ${Object.keys(osmbcArticles).length} osmbc articles with DE content)`);
+
+      // Anchor-relative positional pass: some bullets left unmatched above
+      // share no link with DE at all (or with any other language), but sit
+      // in a single-item gap immediately next to an already-matched
+      // neighbour on both sides - see anchorPositionalMatch.js.
+      const anchored = anchorPositionalMatch({ deSections, targetSections: sections, directMatches: matches });
+      const anchoredByHtml = new Map(anchored.map((a) => [a.wpHtml, a.articleId]));
+
+      // Full-issue-completeness check (the project owner's proposed
+      // validation): if applying every anchor-position match for this
+      // language leaves NOTHING else unresolved, that's strong indirect
+      // evidence those specific matches are correct - a wrong pairing would
+      // very likely leave some inconsistency rather than a perfectly clean
+      // 1:1 accounting of every bullet. Real case: WN229 ES/TR reach 0
+      // unmatched-wp / 0 ambiguous once their one anchor match (article
+      // 44783) is counted, validating that match well enough to write it
+      // for real - including for EN/JA, where it doesn't itself complete
+      // the language (a separate, unrelated bullet is still missing there).
+      const complete = unmatchedWp.length === anchored.length && ambiguous.length === 0;
+      if (complete) {
+        for (const a of anchored) validatedArticleIds.add(a.articleId);
+
+        // The other half of completeness: every real bullet in this
+        // language is now accounted for, so whatever DE article is STILL
+        // left with no counterpart cannot possibly have been translated -
+        // not a guess, a direct consequence of the WP side being fully
+        // exhausted. Mark it "no translation" (the established sentinel,
+        // model/blog.js:532/784) instead of leaving it silently blank,
+        // which would otherwise render as an empty-article warning/"No
+        // Title" placeholder rather than being cleanly excluded.
+        const langUpper = lang.toUpperCase();
+        for (const o of unmatchedOsmbc) {
+          const article = articleById.get(String(o.articleId));
+          if (article && !article["markdown" + langUpper]) {
+            pendingChanges.push({ issue: name, articleId: o.articleId, lang: langUpper, markdown: "no translation" });
+            reviewRows.push([name, langUpper, "marked-no-translation", o.articleId, "(every real bullet in this language matched something else)"]);
+          }
+        }
+      }
+
+      console.info(`${name} [${lang}]: ${matches.length} matched, ${anchored.length} anchor-positioned${complete ? " (issue complete for this language)" : ""}, ${unmatchedWp.length - anchored.length} unmatched-wp, ${ambiguous.length} ambiguous (${bullets.length} real bullets, ${Object.keys(osmbcArticles).length} osmbc articles with DE content)`);
 
       for (const m of matches) {
         const langUpper = lang.toUpperCase();
         pendingChanges.push({ issue: name, articleId: m.articleId, lang: langUpper, markdown: convertWpHtml(m.wpHtml) });
+        bridgeNodes.push({ id: nodeSeq++, lang, html: m.wpHtml, articleId: m.articleId });
       }
-      for (const html of unmatchedWp) {
-        reviewRows.push([name, lang.toUpperCase(), "unmatched-wp", "", md.render ? html.replace(/<[^>]+>/g, " ").trim() : html]);
+
+      const unmatchedNodes = unmatchedWp.map((html) => {
+        const node = { id: nodeSeq++, lang, html, articleId: anchoredByHtml.get(html) || null };
+        bridgeNodes.push(node);
+        return node;
+      });
+
+      perLangResults.push({ lang, unmatchedNodes, ambiguous });
+    }
+
+    // Cross-language bridge pass: some bullets left unmatched above share no
+    // link with the DE original but DO share one with another language's
+    // translation of the same bullet that already matched directly - see
+    // bridgeMatch.js. Nodes the anchor-position pass already resolved carry
+    // their articleId in from the start, so they bridge (and report) as
+    // "anchor-position", never fall through to plain "unmatched-wp".
+    const bridged = bridgeMatch(bridgeNodes);
+    const bridgeByNodeId = new Map(bridged.map((b) => [b.node.id, b]));
+
+    for (const { lang, unmatchedNodes, ambiguous } of perLangResults) {
+      for (const node of unmatchedNodes) {
+        const plain = node.html.replace(/<[^>]+>/g, " ").trim();
+        if (node.articleId != null) {
+          const langUpper = lang.toUpperCase();
+          if (validatedArticleIds.has(node.articleId)) {
+            pendingChanges.push({ issue: name, articleId: node.articleId, lang: langUpper, markdown: convertWpHtml(node.html) });
+            reviewRows.push([name, langUpper, "written-via-anchor-position", node.articleId, plain]);
+          } else {
+            reviewRows.push([name, langUpper, "matched-via-anchor-position", node.articleId, plain]);
+          }
+          continue;
+        }
+        const b = bridgeByNodeId.get(node.id);
+        if (b) {
+          const via = `bridged via ${b.viaLang.toUpperCase()}${b.sharedLink ? " (" + b.sharedLink + ")" : ""}`;
+          reviewRows.push([name, lang.toUpperCase(), "matched-via-bridge", b.articleId, `[${via}] ${plain}`]);
+        } else {
+          reviewRows.push([name, lang.toUpperCase(), "unmatched-wp", "", plain]);
+        }
       }
       for (const a of ambiguous) {
         reviewRows.push([name, lang.toUpperCase(), "ambiguous", a.articleId, a.html.replace(/<[^>]+>/g, " ").trim()]);
