@@ -17,6 +17,7 @@ import mysql from "mysql2/promise";
 import { parseShortcode } from "./parseShortcode.js";
 import { issueNumberFromOldTitle, issueNumberFromNewTitle } from "./issueNumber.js";
 import { splitByAnchor } from "./splitByAnchor.js";
+import { mergeIssueResult } from "./mergeIssueRevisions.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(__dirname, "..", "..", "backport", "input", "wp");
@@ -116,21 +117,33 @@ async function run() {
     const outDir = path.join(dataDir, table.name);
     fs.mkdirSync(outDir, { recursive: true });
 
-    let withIssue = 0;
     let withoutIssue = 0;
-    let withWarnings = 0;
+    let mergedIssues = 0;
+    const byIssue = new Map();
 
     for (const row of rows) {
       const result = extractIssue(row, table.multiLanguage);
-      if (result.issue !== null) withIssue++; else withoutIssue++;
-      if (result.warnings.length > 0) withWarnings++;
-
-      const fileName = result.issue !== null ? `${result.issue}.json` : `unmatched-${result.postId}.json`;
-      fs.writeFileSync(path.join(outDir, fileName), JSON.stringify(result, null, 2));
+      if (result.issue === null) {
+        withoutIssue++;
+        fs.writeFileSync(path.join(outDir, `unmatched-${result.postId}.json`), JSON.stringify(result, null, 2));
+        continue;
+      }
+      if (!byIssue.has(result.issue)) {
+        byIssue.set(result.issue, result);
+      } else {
+        mergeIssueResult(byIssue.get(result.issue), result);
+        mergedIssues++;
+      }
     }
 
-    summary.tables[table.name] = { totalRows: rows.length, withIssue, withoutIssue, withWarnings };
-    console.info(`${table.name}: ${rows.length} rows, ${withIssue} matched an issue, ${withoutIssue} unmatched, ${withWarnings} produced warnings`);
+    let withWarnings = 0;
+    for (const result of byIssue.values()) {
+      if (result.warnings.length > 0) withWarnings++;
+      fs.writeFileSync(path.join(outDir, `${result.issue}.json`), JSON.stringify(result, null, 2));
+    }
+
+    summary.tables[table.name] = { totalRows: rows.length, withIssue: byIssue.size, withoutIssue, withWarnings, mergedRevisions: mergedIssues };
+    console.info(`${table.name}: ${rows.length} rows, ${byIssue.size} matched an issue (${mergedIssues} row(s) merged into an earlier issue's result), ${withoutIssue} unmatched, ${withWarnings} produced warnings`);
   }
 
   fs.writeFileSync(path.join(dataDir, "_summary.json"), JSON.stringify(summary, null, 2));
