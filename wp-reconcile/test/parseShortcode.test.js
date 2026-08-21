@@ -47,9 +47,23 @@ describe("parseShortcode", function () {
     warnings.length.should.be.above(0);
   });
 
-  it("warns on a duplicate language marker but keeps the last value", function () {
+  it("warns on a duplicate language marker and keeps whichever occurrence is longer", function () {
     const { languages, warnings } = parseShortcode("[:en]first[:en]second[:]");
     languages.en.should.equal("second");
+    warnings.length.should.be.above(0);
+  });
+
+  it("keeps the real content when a duplicate marker's later occurrence is an empty stub (real case: WN221/223 <!--:es--> trailing reset artifact)", function () {
+    const { languages, warnings } = parseShortcode(
+      "<!--:es-->contenido real de la noticia<!--:--><!--:de-->Text<!--:--><!--:es--></p><!--:-->"
+    );
+    languages.es.should.equal("contenido real de la noticia");
+    warnings.length.should.be.above(0);
+  });
+
+  it("keeps the real content when a duplicate bracket marker's later occurrence is empty", function () {
+    const { languages, warnings } = parseShortcode("[:es]contenido real[:de]Text[:es][:]");
+    languages.es.should.equal("contenido real");
     warnings.length.should.be.above(0);
   });
 });

@@ -46,6 +46,12 @@ function parseBracketShortcode(raw) {
 
     if (Object.prototype.hasOwnProperty.call(languages, lang)) {
       warnings.push(`duplicate language marker [:${lang}]`);
+      // Real case (WN221/223): a trailing, empty "<!--:xx--></p>"-style stub
+      // (a qTranslate editing-UI artifact) duplicates a marker that already
+      // had real content - keep whichever occurrence is more substantial
+      // instead of blindly taking the last one, which silently discarded
+      // real Spanish/Romanian/Japanese/German content down to "</p>".
+      if (content.trim().length <= languages[lang].trim().length) continue;
     }
     languages[lang] = content;
   }
@@ -78,6 +84,9 @@ function parseHtmlCommentShortcode(raw) {
 
     if (Object.prototype.hasOwnProperty.call(languages, lang)) {
       warnings.push(`duplicate language marker <!--:${lang}-->`);
+      // See the matching comment in parseBracketShortcode above - same
+      // real-world artifact, same fix: keep the richer occurrence.
+      if (content.trim().length <= languages[lang].trim().length) continue;
     }
     languages[lang] = content;
   }
