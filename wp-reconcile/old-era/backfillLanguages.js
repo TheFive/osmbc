@@ -67,6 +67,7 @@ import { bridgeMatch } from "./bridgeMatch.js";
 import { anchorPositionalMatch } from "./anchorPositionalMatch.js";
 import { htmlToMarkdown } from "../backport/htmlToMarkdown.js";
 import { htmlTableToMarkdown } from "../backport/htmlTableToMarkdown.js";
+import { qMarkRatio } from "../wp-extract/mergeIssueRevisions.js";
 
 assert.strictEqual(
   process.env.NODE_ENV,
@@ -80,6 +81,14 @@ const WP_POSTS_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp",
 const WP1_POSTS_DIR = path.join(__dirname, "..", "..", "backport", "input", "wp", "wp_1_posts");
 const OUT_DIR = path.join(__dirname, "..", "..", "backport", "output", "old-era-languages");
 const MIN_REAL_BODY_LENGTH = 50; // shorter than this is a stub/placeholder translation, not real content (verified: WN221 es/ro/ja bodies are literally "</p>", 5 chars)
+// Genuine historical WordPress-side corruption (raw MySQL bytes are literal
+// 0x3f "?") - confirmed on JA/RU/TR content for specific issues (see
+// project_wp_backport_data_corruption_incident). Links inside a corrupted
+// body stay intact (URLs are ASCII), so matchByLinks would still "succeed"
+// and happily write the corrupted text out - this check stops that before
+// any matching is attempted, instead of relying on a one-off manual fix
+// that a fresh re-run would silently have to repeat.
+const CORRUPTION_QMARK_RATIO = 0.08;
 
 const md = new MarkdownIt();
 
@@ -180,6 +189,18 @@ function processIssue(n, callback) {
       const body = data.body || "";
       const stripped = body.replace(/<[^>]+>/g, "").trim();
       if (stripped.length < MIN_REAL_BODY_LENGTH) continue; // stub translation, nothing real to backport
+
+      if (qMarkRatio(body) > CORRUPTION_QMARK_RATIO) {
+        const langUpper = lang.toUpperCase();
+        console.info(`${name} [${lang}]: skipped, source body looks corrupted (${(qMarkRatio(body) * 100).toFixed(1)}% "?") - marking existing articles no translation instead of writing garbage`);
+        for (const article of articles) {
+          if (!article.markdownDE || article.markdownDE === "no translation") continue;
+          if (article["markdown" + langUpper]) continue; // don't clobber real content that's already there
+          pendingChanges.push({ issue: name, articleId: article.id, lang: langUpper, markdown: "no translation" });
+          reviewRows.push([name, langUpper, "skipped-source-corrupted", article.id, "(source body for this language/issue is corrupted - see project_wp_backport_data_corruption_incident)"]);
+        }
+        continue;
+      }
 
       const { sections, warnings } = parseOldBlogSections(body);
       const bullets = sections.flatMap((s) => s.articlesHtml);
