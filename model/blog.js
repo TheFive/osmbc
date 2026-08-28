@@ -1359,6 +1359,11 @@ function convertLogsToTeamString(logs, lang, users) {
   for (const f in translator) {
     apiEditors.push(translator[f].user);
   }
+  // Synthetic users the wp-reconcile migration tooling uses for audit-log
+  // attribution (see wp-reconcile/ scripts) - never real contributors, so
+  // they must not show up in the public credit sentence, same as the
+  // API/translator users above.
+  apiEditors.push("wp-backport", "wp-oldimport");
   function addEditors(property, min) {
     for (const user in logs[property]) {
       if (logs[property][user] >= min) {
