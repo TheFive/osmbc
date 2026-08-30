@@ -774,6 +774,34 @@ describe("model/blog", function() {
     });
   });
 
+  describe("createTeamString", function() {
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", status: "edit" }]
+      }, bddone);
+    });
+    it("excludes wp-reconcile's synthetic migration users (wp-backport, wp-oldimport) from the credit sentence", function(bddone) {
+      async.parallel([
+        function writeAlice(cb) { logModule.log({ user: "Alice", blog: "WN1", oid: "1", property: "reviewCommentEN" }, cb); },
+        function writeBackport(cb) { logModule.log({ user: "wp-backport", blog: "WN1", oid: "2", property: "reviewCommentEN" }, cb); },
+        function writeOldimport(cb) { logModule.log({ user: "wp-oldimport", blog: "WN1", oid: "3", property: "reviewCommentEN" }, cb); }
+      ], function(err) {
+        should.not.exist(err);
+        blogModule.findOne({ name: "WN1" }, function(err, blog) {
+          should.not.exist(err);
+          blog.createTeamString("EN", function(err, result) {
+            should.not.exist(err);
+            result.should.containEql("Alice");
+            result.should.not.containEql("wp-backport");
+            result.should.not.containEql("wp-oldimport");
+            bddone();
+          });
+        });
+      });
+    });
+  });
+
   describe("Helper Functions", function() {
     it("should sanitize Blog Key", async function() {
       should(blogModule.sanitizeBlogKey("WN34887")).eql("WN34887");
