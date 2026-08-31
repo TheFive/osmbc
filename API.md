@@ -208,11 +208,26 @@ After the ZIP has been fully sent, each included blog+language is marked:
 "exportedBy": { "<exportProfile>": { "<LANG>": "<ISO timestamp>" } }
 ```
 
-This is written as a normal blog change (via `setAndSave`), so it also
-produces a change-log entry (`property: "exportedBy"`), attributed to:
-- the calling user's `OSMUser`, for a personal API key
-- `"apikey:<label>"` (the configured label, not the secret key), for a
-  shared API key
+This goes through the normal `setAndSave` mutation path (same as every
+other blog change), but does **not** appear in the blog's change history
+shown to editors and does **not** trigger the mail/Slack "blog changed"
+notifications a real editorial change would — see "Notifications" in
+`CLAUDE.md` for why: the Postgres change-log receiver is wrapped to skip
+purely operational fields like `exportedBy`, and the mail/Slack receivers
+already only react to an actual `status` change, which this never sets.
+Instead, it is recorded in a separate rotating text log file (see
+`notification/exportLogWriter.js`, config keys `exportlog_directory` /
+`exportlog_prefix` / `exportlog_dateformat`, same idea as the existing mail
+delivery log: an admin-readable operational record, not editorial content),
+as one JSON line per blog+lang:
+
+```json
+{"user": "apikey:hugoPipeline", "blog": "WN1234", "exportProfile": "HugoDownload", "lang": "DE", "timestamp": "2026-08-31T12:00:00.000Z"}
+```
+
+`user` is the calling user's `OSMUser` for a personal API key, or
+`"apikey:<label>"` (the configured label, not the secret key) for a shared
+API key.
 
 If a blog's language is reopened later (`close{LANG}` → `false`), its marker
 for that language is cleared and it becomes "outstanding" again. If a blog's

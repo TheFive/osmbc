@@ -12,6 +12,7 @@ import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 import blogRenderer from "../render/BlogRenderer.js";
+import { ExportLogWriterForTestOnly } from "../notification/exportLogWriter.js";
 
 function toDateKey(value) {
   const d = new Date(value);
@@ -936,11 +937,15 @@ describe("model/blog", function() {
   });
 
   describe("markAsExported", function() {
+    afterEach(function() {
+      sinon.restore();
+    });
+
     beforeEach(function(bddone) {
       testutil.clearDB(bddone);
     });
 
-    it("should set the marker and write a change-log entry attributing the given user", function(bddone) {
+    it("should set the marker without creating a Postgres changes-log entry", function(bddone) {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2300", status: "closed", closeDE: true }, function(err, blog) {
         should.not.exist(err);
         blog.markAsExported({ OSMUser: "apikey:hugoPipeline" }, "HugoDownload", "DE", function(err) {
@@ -948,13 +953,33 @@ describe("model/blog", function() {
           testutil.getJsonWithId("blog", blog.id, function(err, result) {
             should.not.exist(err);
             should.exist(result.exportedBy.HugoDownload.DE);
+            // Goes through setAndSave like every mutation, but
+            // LogModuleReceiver is wrapped in a FilterReceiver (see
+            // notification/messageCenter.js) that skips exportedBy-only
+            // changes, so editors never see this in the blog history tab.
             logModule.find({ oid: blog.id, property: "exportedBy" }, function(err, result) {
               should.not.exist(err);
-              should(result.length).equal(1);
-              should(result[0].user).equal("apikey:hugoPipeline");
+              should(result.length).equal(0);
               bddone();
             });
           });
+        });
+      });
+    });
+
+    it("should write an entry to the text export log, attributing the given user", function(bddone) {
+      const infoStub = sinon.stub(ExportLogWriterForTestOnly.logger, "info");
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2301", status: "closed", closeDE: true }, function(err, blog) {
+        should.not.exist(err);
+        blog.markAsExported({ OSMUser: "apikey:hugoPipeline" }, "HugoDownload", "DE", function(err) {
+          should.not.exist(err);
+          should(infoStub.calledOnce).be.True();
+          const logEntry = infoStub.getCall(0).args[0];
+          should(logEntry.user).equal("apikey:hugoPipeline");
+          should(logEntry.blog).equal("WN2301");
+          should(logEntry.exportProfile).equal("HugoDownload");
+          should(logEntry.lang).equal("DE");
+          bddone();
         });
       });
     });

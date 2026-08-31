@@ -862,8 +862,19 @@ class Blog {
 
   // markAsExported(user, exportProfile, lang, callback)
   // Sets the export marker for the given exportProfile and lang.
-  // Goes through setAndSave (not a direct save()) so a "exportedBy" change
-  // log entry is written, same as every other blog mutation.
+  // Goes through setAndSave, same as every other blog mutation - "every
+  // change is broadcast to every notification receiver, and it's up to
+  // each receiver to decide whether it's relevant" is exactly how
+  // MailReceiver/SlackReceiver already behave. The receivers that would
+  // otherwise turn this into editor-facing noise are taught to ignore it:
+  // LogModuleReceiver is wrapped in a FilterReceiver (see
+  // notification/messageCenter.js) so an exportedBy-only change never
+  // becomes a Postgres changes-log row, and Mail/Slack already only react
+  // to an actual `change.status`, which this never sets. The admin-facing
+  // audit trail instead goes to a rotating text log file, written by
+  // notification/exportReceiver.js listening on the same broadcast - same
+  // reasoning as the existing mail delivery log (maillog_*): less Postgres
+  // load, nothing editors need to see, admins can still read it.
   markAsExported(user, exportProfile, lang, callback) {
     debug("markAsExported");
     const currentExportedBy = (this.exportedBy && typeof this.exportedBy === "object") ? this.exportedBy : {};

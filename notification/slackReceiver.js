@@ -200,15 +200,19 @@ export class SlackReceiver {
   updateBlog(user, blog, change, callback) {
     debug("SlackReceiver::updateBlog %s", this.name);
 
-
-
+    const isCreate = !blog.name && change.name;
+    const isStatusChange = typeof change.status !== "undefined" && blog.status !== change.status;
+    // Anything else (e.g. only the operational `exportedBy` export marker
+    // changed, see model/blog.js markAsExported) is not worth a message -
+    // without this check every setAndSave() call, regardless of which
+    // field it touched, used to post "changed status to undefined".
+    if (!isCreate && !isStatusChange) return callback();
 
     let subject = blogNameSlack(blog.name, change.name);
 
-
-    if (!blog.name && change.name) {
+    if (isCreate) {
       subject += " was created\n";
-    } else if (blog.status !== change.status) {
+    } else {
       subject += " changed status to " + change.status + "\n";
     }
     const username = botName + "(" + user.OSMUser + ")";
