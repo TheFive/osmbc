@@ -473,6 +473,53 @@ describe("router/api", function() {
         should(blog3000.exportedBy).be.undefined();
       });
 
+      it("should narrow the dryRun listing to minBlogNumber/maxBlogNumber", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/outstanding?exportProfile=HugoDownload&lang=DE&dryRun=true&minBlogNumber=3001&maxBlogNumber=3001",
+          { validateStatus: (status) => true }
+        );
+
+        should(response.status).eql(200);
+        should(response.data.minBlogNumber).eql(3001);
+        should(response.data.maxBlogNumber).eql(3001);
+        should(response.data.count).eql(1);
+        should(response.data.blogs.map((b) => b.name)).eql(["WN3001"]);
+      });
+
+      it("should only export blogs within the given WN range", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/outstanding?exportProfile=HugoDownload&lang=DE&minBlogNumber=3001&maxBlogNumber=3001",
+          { validateStatus: (status) => true, responseType: "arraybuffer" }
+        );
+
+        should(response.status).eql(200);
+        const zipText = Buffer.from(response.data).toString("latin1");
+        zipText.should.containEql("de/archives/3001.md");
+        zipText.should.not.containEql("de/archives/3000.md");
+
+        await waitUntilExported("WN3001", "HugoDownload", "DE");
+        const blog3000 = await blogModule.findOne({ name: "WN3000" });
+        should(blog3000.exportedBy).be.undefined();
+      });
+
+      it("should reject a non-numeric minBlogNumber with 422", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/outstanding?exportProfile=HugoDownload&minBlogNumber=notanumber",
+          { validateStatus: (status) => true }
+        );
+        should(response.status).eql(422);
+        should(response.data).containEql("minBlogNumber");
+      });
+
+      it("should reject minBlogNumber greater than maxBlogNumber with 422", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/outstanding?exportProfile=HugoDownload&minBlogNumber=3001&maxBlogNumber=3000",
+          { validateStatus: (status) => true }
+        );
+        should(response.status).eql(422);
+        should(response.data).containEql("minBlogNumber");
+      });
+
       it("should reject a second concurrent outstanding export for the same profile with 409", async function() {
         const requestOptions = { validateStatus: (status) => true, responseType: "arraybuffer" };
         const url = baseLink + "/api/blogPreviewDownload/testapikey/outstanding?exportProfile=HugoDownload&lang=DE";

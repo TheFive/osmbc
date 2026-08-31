@@ -887,6 +887,51 @@ describe("model/blog", function() {
         });
       });
     });
+
+    describe("minBlogNumber / maxBlogNumber", function() {
+      beforeEach(function(bddone) {
+        async.series([
+          function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2010", status: "edit", closeDE: true }, cb); },
+          function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2020", status: "edit", closeDE: true }, cb); },
+          function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2030", status: "edit", closeDE: true }, cb); }
+        ], bddone);
+      });
+
+      it("should only return blogs within [minBlogNumber, maxBlogNumber]", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], { minBlogNumber: 2015, maxBlogNumber: 2025 }, function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].name).equal("WN2020");
+          bddone();
+        });
+      });
+
+      it("should only apply minBlogNumber when maxBlogNumber is omitted", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], { minBlogNumber: 2020 }, function(err, result) {
+          should.not.exist(err);
+          const names = result.map((b) => b.name).sort();
+          should(names).eql(["WN2020", "WN2030"]);
+          bddone();
+        });
+      });
+
+      it("should only apply maxBlogNumber when minBlogNumber is omitted", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], { maxBlogNumber: 2020 }, function(err, result) {
+          should.not.exist(err);
+          const names = result.map((b) => b.name).sort();
+          should(names).eql(["WN2010", "WN2020"]);
+          bddone();
+        });
+      });
+
+      it("should return all outstanding blogs when no range is given (backward compatible)", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(3);
+          bddone();
+        });
+      });
+    });
   });
 
   describe("buildOutstandingExportZip", function() {

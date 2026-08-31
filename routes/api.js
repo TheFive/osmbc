@@ -234,6 +234,22 @@ function getOutstandingExportUser(req) {
   return { OSMUser: "apikey:" + (req.apiKey || "unknown") };
 }
 
+// Parses an optional minBlogNumber/maxBlogNumber query param into a
+// non-negative integer. Returns { value: undefined } when the param wasn't
+// given at all, or { error } (a ready-to-use API error) when it was given
+// but isn't a valid non-negative integer.
+function parseBlogNumberBound(raw, fieldName) {
+  if (typeof raw === "undefined") return { value: undefined };
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    const error = new Error(`Invalid ${fieldName}: must be a non-negative integer`);
+    error.status = 422;
+    error.type = "API";
+    return { error };
+  }
+  return { value: parsed };
+}
+
 /**
  * Download a combined ZIP of all blogs with outstanding (not yet delivered) export,
  * or (with `dryRun=true`) just list what that download would currently contain.
@@ -244,10 +260,13 @@ function getOutstandingExportUser(req) {
  * Query params:
  * - exportProfile {string} required profile name from config key `ExportProfiles`
  * - lang {string} optional language code or `ALL` (defaults to all configured languages)
+ * - minBlogNumber {number} optional, inclusive lower bound on the WN number (e.g. 256 for "WN256")
+ * - maxBlogNumber {number} optional, inclusive upper bound on the WN number
  * - dryRun {string} optional, "true" returns a JSON preview instead of building/marking anything
  *
  * Behavior:
- * - Finds all WeeklyNote blogs that are closed for the requested lang(s) and not yet exported
+ * - Finds all WeeklyNote blogs that are closed for the requested lang(s) and not yet exported,
+ *   optionally narrowed to [minBlogNumber, maxBlogNumber] to page through a large backlog
  * - Returns a combined ZIP with one file per blog+lang
  * - A rendering failure for one blog/lang is skipped and reported via the
  *   `X-Outstanding-Export-Warnings` response header, it does not abort the whole batch
@@ -291,16 +310,39 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
     langs = language.getLid();
   }
 
+  // Optional WN-number range, so a consumer can page through a large
+  // backlog (e.g. an initial catch-up run) instead of getting everything
+  // outstanding in one response.
+  const minBound = parseBlogNumberBound(req.query.minBlogNumber, "minBlogNumber");
+  if (minBound.error) return next(minBound.error);
+  const maxBound = parseBlogNumberBound(req.query.maxBlogNumber, "maxBlogNumber");
+  if (maxBound.error) return next(maxBound.error);
+  if (typeof minBound.value === "number" && typeof maxBound.value === "number" && minBound.value > maxBound.value) {
+    const error = new Error("minBlogNumber must not be greater than maxBlogNumber");
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
+  const blogNumberOptions = {};
+  if (typeof minBound.value === "number") blogNumberOptions.minBlogNumber = minBound.value;
+  if (typeof maxBound.value === "number") blogNumberOptions.maxBlogNumber = maxBound.value;
+
   const dryRun = req.query.dryRun === "true";
 
   if (dryRun) {
-    return blogModule.findBlogsForOutstandingExport(exportProfile, langs, function(err, blogs) {
+    return blogModule.findBlogsForOutstandingExport(exportProfile, langs, blogNumberOptions, function(err, blogs) {
       if (err) return next(err);
       const preview = blogs.map(function(blog) {
         return { name: blog.name, langs: blogModule.getOutstandingLangsForBlog(blog, exportProfile, langs) };
       });
       res.set("content-type", "application/json");
-      res.end(JSON.stringify({ exportProfile: exportProfile, count: preview.length, blogs: preview }));
+      res.end(JSON.stringify({
+        exportProfile: exportProfile,
+        minBlogNumber: blogNumberOptions.minBlogNumber ?? null,
+        maxBlogNumber: blogNumberOptions.maxBlogNumber ?? null,
+        count: preview.length,
+        blogs: preview
+      }));
     });
   }
 
@@ -314,7 +356,7 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
   let markingStarted = false;
   function releaseLock() { outstandingExportLocks.delete(exportProfile); }
 
-  blogModule.buildOutstandingExportZip(exportProfile, langs, function(err, result) {
+  blogModule.buildOutstandingExportZip(exportProfile, langs, blogNumberOptions, function(err, result) {
     if (err) {
       releaseLock();
       return next(err);

@@ -1257,14 +1257,34 @@ function getOutstandingLangsForBlog(blog, exportProfile, langs) {
   });
 }
 
-// findBlogsForOutstandingExport(exportProfile, langs, callback)
+// isWithinBlogNumberRange(blog, options)
+// options.minBlogNumber / options.maxBlogNumber are inclusive bounds on the
+// numeric WN number (e.g. 256 for "WN256"). Lets a caller page through a
+// large backlog of outstanding blogs instead of getting all of them (there
+// can be hundreds) in a single response.
+function isWithinBlogNumberRange(blog, options) {
+  if (!options) return true;
+  const number = getComparableBlogNumber(blog);
+  if (number === null) return false;
+  if (typeof options.minBlogNumber === "number" && number < options.minBlogNumber) return false;
+  if (typeof options.maxBlogNumber === "number" && number > options.maxBlogNumber) return false;
+  return true;
+}
+
+// findBlogsForOutstandingExport(exportProfile, langs, options, callback)
+// options is optional: { minBlogNumber, maxBlogNumber } (both inclusive).
 // Returns all WeeklyNote blogs that:
 //   - have status 'edit' or 'closed'
+//   - are within [minBlogNumber, maxBlogNumber] if given
 //   - have close{LANG} === true for at least one of the given langs
 //   - have NOT yet been exported under exportProfile for that lang
 //     (i.e. exportedBy[exportProfile][lang] is not set)
 // langs: array of language codes, e.g. ["DE","EN"]
-export function findBlogsForOutstandingExport(exportProfile, langs, callback) {
+export function findBlogsForOutstandingExport(exportProfile, langs, options, callback) {
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
   function _findBlogsForOutstandingExport(callback) {
     debug("findBlogsForOutstandingExport");
     find(function(err, blogs) {
@@ -1274,6 +1294,7 @@ export function findBlogsForOutstandingExport(exportProfile, langs, callback) {
       const eligible = blogs.filter(function(blog) {
         if (!isWeeklyNoteBlog(blog)) return false;
         if (blog.status !== "edit" && blog.status !== "closed") return false;
+        if (!isWithinBlogNumberRange(blog, options)) return false;
         return getOutstandingLangsForBlog(blog, exportProfile, langs).length > 0;
       });
 
@@ -1289,13 +1310,19 @@ export function findBlogsForOutstandingExport(exportProfile, langs, callback) {
   });
 }
 
-// buildOutstandingExportZip(exportProfile, langs, callback)
+// buildOutstandingExportZip(exportProfile, langs, options, callback)
+// options is optional: { minBlogNumber, maxBlogNumber }, see
+// findBlogsForOutstandingExport.
 // Renders all eligible blogs (from findBlogsForOutstandingExport) into a single combined ZIP.
 // Returns { archive: ZipArchive|null, toMark: [{blog, lang}], failures: [{blog, lang, error}] }
 // archive is null when no eligible blogs exist.
 // A rendering failure for one blog/lang does NOT abort the whole batch: it is
 // recorded in `failures` and skipped, so the other blogs/langs still get exported.
-export function buildOutstandingExportZip(exportProfile, langs, callback) {
+export function buildOutstandingExportZip(exportProfile, langs, options, callback) {
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
   function _buildOutstandingExportZip(callback) {
     debug("buildOutstandingExportZip");
 
@@ -1311,7 +1338,7 @@ export function buildOutstandingExportZip(exportProfile, langs, callback) {
     const rendererOptions = profileConfig.rendererOptions;
     const pathTemplate = profileConfig.pathTemplate;
 
-    findBlogsForOutstandingExport(exportProfile, langs, function(err, blogs) {
+    findBlogsForOutstandingExport(exportProfile, langs, options, function(err, blogs) {
       if (err) return callback(err);
       if (blogs.length === 0) return callback(null, { archive: null, toMark: [], failures: [] });
 

@@ -190,12 +190,20 @@ are unaffected.
 |---|---|---|
 | `exportProfile` | yes | Must be a profile with a `pathTemplate` configured (e.g. `HugoDownload`, `MarkdownDownload` in the test config) — profiles without one (plain HTML export profiles) can't produce a bundle and are rejected. |
 | `lang` | no | A single language code, or `ALL` (default: all configured languages). Each blog is only included for languages where it is actually closed and not yet exported. |
+| `minBlogNumber` | no | Inclusive lower bound on the WN number (e.g. `256` for `WN256`). Non-negative integer. |
+| `maxBlogNumber` | no | Inclusive upper bound on the WN number. Non-negative integer; rejected with `422` if smaller than `minBlogNumber`. |
 | `dryRun` | no | `true` → return a JSON preview instead of building/downloading/marking anything (see below). |
+
+`minBlogNumber`/`maxBlogNumber` exist so a consumer can page through a large
+backlog (there can be hundreds of outstanding blogs on a first run) instead
+of getting everything in one response, e.g. `minBlogNumber=1&maxBlogNumber=100`,
+then `minBlogNumber=101&maxBlogNumber=200`, and so on.
 
 ### What counts as "outstanding"
 
 A blog+language is included if **all** of:
 - the blog is a WeeklyNote blog (name matches `WN<number>`)
+- its WN number is within `[minBlogNumber, maxBlogNumber]`, if given
 - `blog.status` is `edit` or `closed` (not `open`, not archived states)
 - `close{LANG}` is `true` for that language
 - `blog.exportedBy[exportProfile][lang]` is **not** set
@@ -274,6 +282,8 @@ across multiple server instances/processes.
   ```json
   {
     "exportProfile": "HugoDownload",
+    "minBlogNumber": null,
+    "maxBlogNumber": null,
     "count": 2,
     "blogs": [
       { "name": "WN1234", "langs": ["DE"] },
@@ -281,14 +291,17 @@ across multiple server instances/processes.
     ]
   }
   ```
-  No side effects — nothing is rendered, bundled, or marked.
+  `minBlogNumber`/`maxBlogNumber` echo back the applied bounds (`null` if not
+  given). No side effects — nothing is rendered, bundled, or marked.
 - `200` (empty ZIP) — only if the profile sets `noContentBehavior:
   "emptyZip"` and nothing is outstanding.
 - `404` — nothing outstanding and the profile's `noContentBehavior` is
   unset or `"404"` (the default): `No blogs available for outstanding
   export`.
 - `409` — see Concurrency above.
-- `422` — missing/unknown `exportProfile`, or profile has no `pathTemplate`.
+- `422` — missing/unknown `exportProfile`, profile has no `pathTemplate`,
+  `minBlogNumber`/`maxBlogNumber` isn't a non-negative integer, or
+  `minBlogNumber` is greater than `maxBlogNumber`.
 
 ### Example
 
@@ -296,7 +309,13 @@ across multiple server instances/processes.
 # See what would be exported, without downloading or marking anything
 curl "https://<host>/api/blogPreviewDownload/<apiKey>/outstanding?exportProfile=HugoDownload&dryRun=true"
 
-# Actually pull it (and mark everything included as delivered)
+# Page through a large backlog in chunks of 100 WN numbers
+curl -o outstanding-1.zip \
+  "https://<host>/api/blogPreviewDownload/<apiKey>/outstanding?exportProfile=HugoDownload&minBlogNumber=1&maxBlogNumber=100"
+curl -o outstanding-2.zip \
+  "https://<host>/api/blogPreviewDownload/<apiKey>/outstanding?exportProfile=HugoDownload&minBlogNumber=101&maxBlogNumber=200"
+
+# Actually pull it all (and mark everything included as delivered)
 curl -o outstanding.zip \
   "https://<host>/api/blogPreviewDownload/<apiKey>/outstanding?exportProfile=HugoDownload"
 ```
