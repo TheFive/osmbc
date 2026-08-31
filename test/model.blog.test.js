@@ -934,6 +934,50 @@ describe("model/blog", function() {
         bddone();
       });
     });
+
+    it("should continue past a failing language of one blog to both other languages and the next blog", function(bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [
+          { name: "WN256", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }], closeDE: true, closeEN: true },
+          { name: "WN255", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }], closeDE: true }
+        ],
+        article: [
+          { blog: "WN256", title: "Article 256", markdownDE: "* Article 256 DE", markdownEN: "* Article 256 EN", category: "Mapping" },
+          { blog: "WN255", title: "Article 255", markdownDE: "* Article 255 DE", category: "Mapping" }
+        ]
+      }, function(err) {
+        should.not.exist(err);
+
+        // Only WN256/EN fails to render - WN256/DE (processed first) and
+        // WN255/DE (the next blog) must still make it through.
+        const originalCreateRenderer = blogRenderer.createRenderer;
+        sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
+          const realRenderer = originalCreateRenderer(type, blog, options);
+          return {
+            renderBlog(lang, data, createEmptyForOpenLanguage) {
+              if (blog.name === "WN256" && lang === "EN") {
+                throw new Error("Simulated render failure for WN256/EN");
+              }
+              return realRenderer.renderBlog(lang, data, createEmptyForOpenLanguage);
+            }
+          };
+        });
+
+        blogModule.buildOutstandingExportZip("HugoDownload", ["DE", "EN"], function(err, result) {
+          should.not.exist(err);
+          should.exist(result.archive);
+
+          should(result.failures.length).equal(1);
+          should(result.failures[0].blog.name).equal("WN256");
+          should(result.failures[0].lang).equal("EN");
+
+          const marked = result.toMark.map((m) => `${m.blog.name}:${m.lang}`).sort();
+          should(marked).eql(["WN255:DE", "WN256:DE"]);
+          bddone();
+        });
+      });
+    });
   });
 
   describe("markAsExported", function() {
