@@ -105,7 +105,7 @@ mixin labeledText(label,name,value,explanation)
 
 
 mixin languageDisplay(article,options)
-  div.d-flex.flex-nowrap
+  div.d-flex.flex-wrap.gap-1
     - langList = layout.activeLanguages
     - onClick = ""
     - if (options && options.short) {
