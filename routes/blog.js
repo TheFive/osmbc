@@ -30,21 +30,6 @@ const htmlroot = config.htmlRoot();
 
 const reviewInWP = config.getValue("ReviewInWP", { default: [] });
 
-// The automated team string (model/blog.js:createTeamString, computed from
-// the change log) has no meaningful data to work with for WN282 and
-// earlier: the pre-osmbc era (WN001-271, bulk-imported from the old
-// blog.openstreetmap.de) never had real osmbc editors, and the earliest
-// osmbc issues (WN272-282) had very little editorial adoption yet (commit
-// history: the team string feature itself only landed 2015-12-23, between
-// WN282's and WN284's real publish dates). Manual teamString<LANG> is only
-// accepted for issues at or below this boundary.
-const TEAM_STRING_MANUAL_OVERRIDE_LAST_ISSUE = 282;
-
-function isPreTeamStringEra(blogName) {
-  const n = parseInt(String(blogName).replace(/\D/g, ""), 10);
-  return !isNaN(n) && n <= TEAM_STRING_MANUAL_OVERRIDE_LAST_ISSUE;
-}
-
 function findBlogId(req, res, next, id) {
   debug("findBlogId");
   blogModule.findBlogByRouteIdForUser(id, req.user, function(err, result) {
@@ -510,8 +495,7 @@ function editBlogId(req, res) {
     params: params,
     reviewInWP: reviewInWP,
     copyLanguageFromAnother: copyLanguageFromAnother,
-    categories: blog.getCategories(),
-    showManualTeamString: isPreTeamStringEra(blog.name)
+    categories: blog.getCategories()
   });
 }
 
@@ -534,15 +518,12 @@ function postBlogId(req, res, next) {
     markdownImage: req.body.markdownImage,
     categories: categories
   };
-  // Manual teamString<LANG> override is only accepted for issues predating
-  // the automated team string (see model/blog.js:createTeamString) - checked
-  // server-side too, not just hidden in the edit form, so a crafted request
-  // can't set it on a modern issue where the computed version is correct.
-  if (isPreTeamStringEra(blog.name)) {
-    for (const lang of language.getLid()) {
-      const field = "teamString" + lang;
-      if (typeof req.body[field] !== "undefined") changes[field] = req.body[field];
-    }
+  // A stored manual override is data, not an issue-era special case.
+  // Respect it whenever the payload contains it; do not hide it behind a WN
+  // number gate that only exists because the feature was once ui-only.
+  for (const lang of language.getLid()) {
+    const field = "teamString" + lang;
+    if (typeof req.body[field] !== "undefined") changes[field] = req.body[field];
   }
   blog.setAndSave(req.user, changes, function(err) {
     if (err) {

@@ -200,6 +200,7 @@ ExportProfiles:
     bundleMode: zip
     pathTemplate: "##lang##/archives/##blogNumber-4-digits##"
     fileNameTemplate: "##blogName##"
+    noContentBehavior: "404"
     download: true
     guiEnabled: true
     guiLabel: Export All as Hugo (*.zip)
@@ -210,6 +211,7 @@ ExportProfiles:
     bundleMode: zip
     pathTemplate: "##lang##-##blogNumber-4-digits##"
     fileNameTemplate: "##blogName##"
+    noContentBehavior: "emptyZip"
     download: true
     guiEnabled: true
     guiLabel: Export All as Markdown (*.zip)

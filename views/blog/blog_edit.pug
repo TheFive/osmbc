@@ -54,19 +54,20 @@ block content
           .col-md-6
             textarea.form-control(name="categories_yaml",rows=30)=blog._categories_yaml
 
-        if showManualTeamString
+        .row
+          .col-md-12
+            hr
+            p.text-muted
+              | Team string is normally computed automatically from the edit history.
+              | Set it by hand per language below to override it - e.g. for issues predating
+              | osmbc's automated team string, or for issues backported from a published WN
+              | that never went through osmbc's own editorial workflow.
+        each lang in layout.activeLanguages
           .row
-            .col-md-12
-              hr
-              p.text-muted
-                | This issue predates osmbc's automated team string (computed from the edit history).
-                | Set it by hand per language below so the people who actually collected/wrote it are credited.
-          each lang in layout.activeLanguages
-            .row
-              .col-md-2
-                | Team (#{lang})
-              .col-md-6
-                input(type="text",class="form-control",name=`teamString${lang}`,value=blog["teamString" + lang])
+            .col-md-2
+              | Team (#{lang})
+            .col-md-6
+              input(type="text",class="form-control",name=`teamString${lang}`,value=blog["teamString" + lang])
 
 
 

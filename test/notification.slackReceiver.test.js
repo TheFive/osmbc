@@ -203,6 +203,26 @@ describe("notification/slackReceiver", function() {
       compactErrorLine.should.not.match(/nativeProtocols|_redirectable|_headerSent|\[Circular\]/);
     });
 
+    it("should not slack when an unrelated field changes (e.g. the exportedBy export marker)", function (bddone) {
+      const receiver = new SlackReceiver("test", "osmde", "#osmbcblog");
+      let sendCalled = false;
+      receiver.slack = {
+        send(_message, cb) {
+          sendCalled = true;
+          cb();
+        }
+      };
+      receiver.updateBlog(
+        { OSMUser: "testuser" },
+        { name: "WN251", status: "edit" },
+        { exportedBy: { HugoDownload: { DE: "2026-01-01T00:00:00.000Z" } } },
+        function (err) {
+          should.not.exist(err);
+          should(sendCalled).be.False();
+          bddone();
+        });
+    });
+
     it("should slack message when creating a blog", function (bddone) {
       const slack1 = nock("https://missingmattermost.example.com")
         .post("/services/osmde",
