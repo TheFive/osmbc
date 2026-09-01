@@ -119,6 +119,13 @@ class Blog {
           }
           self[key] = value;
         }
+        // If blog is reopened (status → edit or open), clear all exportedBy markers
+        if (data.status && (data.status === "edit" || data.status === "open") &&
+            previousBlogState.status !== data.status) {
+          if (self.exportedBy && typeof self.exportedBy === "object") {
+            self.exportedBy = {};
+          }
+        }
         cb();
       }
     ], function (err) {
@@ -304,6 +311,14 @@ class Blog {
             }
           }
           self["exported" + options.lang] = false;
+          // Clear exportedBy marker for this language across all export profiles
+          if (self.exportedBy && typeof self.exportedBy === "object") {
+            for (const profile of Object.keys(self.exportedBy)) {
+              if (self.exportedBy[profile] && typeof self.exportedBy[profile] === "object") {
+                delete self.exportedBy[profile][options.lang];
+              }
+            }
+          }
         }
         callback();
       }
@@ -845,6 +860,32 @@ class Blog {
     });
   }
 
+  // markAsExported(user, exportProfile, lang, callback)
+  // Sets the export marker for the given exportProfile and lang.
+  // Goes through setAndSave, same as every other blog mutation - "every
+  // change is broadcast to every notification receiver, and it's up to
+  // each receiver to decide whether it's relevant" is exactly how
+  // MailReceiver/SlackReceiver already behave. The receivers that would
+  // otherwise turn this into editor-facing noise are taught to ignore it:
+  // LogModuleReceiver is wrapped in a FilterReceiver (see
+  // notification/messageCenter.js) so an exportedBy-only change never
+  // becomes a Postgres changes-log row, and Mail/Slack already only react
+  // to an actual `change.status`, which this never sets. The admin-facing
+  // audit trail instead goes to a rotating text log file, written by
+  // notification/exportReceiver.js listening on the same broadcast - same
+  // reasoning as the existing mail delivery log (maillog_*): less Postgres
+  // load, nothing editors need to see, admins can still read it.
+  markAsExported(user, exportProfile, lang, callback) {
+    debug("markAsExported");
+    const currentExportedBy = (this.exportedBy && typeof this.exportedBy === "object") ? this.exportedBy : {};
+    const updatedExportedBy = JSON.parse(JSON.stringify(currentExportedBy));
+    if (!updatedExportedBy[exportProfile] || typeof updatedExportedBy[exportProfile] !== "object") {
+      updatedExportedBy[exportProfile] = {};
+    }
+    updatedExportedBy[exportProfile][lang] = new Date().toISOString();
+    this.setAndSave(user, { exportedBy: updatedExportedBy }, callback);
+  }
+
   calculateTimeToClose(callback) {
     debug("Blog.prototype.calculateTimeToClose");
     if (this._timeToClose) return callback();
@@ -1203,6 +1244,153 @@ export function findCurrentEditBlog(callback) {
   });
 }
 
+// getOutstandingLangsForBlog(blog, exportProfile, langs)
+// Returns the subset of langs for which blog is closed but not yet exported
+// under exportProfile. Shared by findBlogsForOutstandingExport,
+// buildOutstandingExportZip and the dry-run listing in routes/api.js.
+function getOutstandingLangsForBlog(blog, exportProfile, langs) {
+  return langs.filter(function(lang) {
+    if (blog["close" + lang] !== true) return false;
+    const exportedBy = blog.exportedBy;
+    if (!exportedBy || !exportedBy[exportProfile]) return true;
+    return !exportedBy[exportProfile][lang];
+  });
+}
+
+// isWithinBlogNumberRange(blog, options)
+// options.minBlogNumber / options.maxBlogNumber are inclusive bounds on the
+// numeric WN number (e.g. 256 for "WN256"). Lets a caller page through a
+// large backlog of outstanding blogs instead of getting all of them (there
+// can be hundreds) in a single response.
+function isWithinBlogNumberRange(blog, options) {
+  if (!options) return true;
+  const number = getComparableBlogNumber(blog);
+  if (number === null) return false;
+  if (typeof options.minBlogNumber === "number" && number < options.minBlogNumber) return false;
+  if (typeof options.maxBlogNumber === "number" && number > options.maxBlogNumber) return false;
+  return true;
+}
+
+// findBlogsForOutstandingExport(exportProfile, langs, options, callback)
+// options is optional: { minBlogNumber, maxBlogNumber } (both inclusive).
+// Returns all WeeklyNote blogs that:
+//   - have status 'edit' or 'closed'
+//   - are within [minBlogNumber, maxBlogNumber] if given
+//   - have close{LANG} === true for at least one of the given langs
+//   - have NOT yet been exported under exportProfile for that lang
+//     (i.e. exportedBy[exportProfile][lang] is not set)
+// langs: array of language codes, e.g. ["DE","EN"]
+export function findBlogsForOutstandingExport(exportProfile, langs, options, callback) {
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
+  function _findBlogsForOutstandingExport(callback) {
+    debug("findBlogsForOutstandingExport");
+    find(function(err, blogs) {
+      if (err) return callback(err);
+      if (!blogs || blogs.length === 0) return callback(null, []);
+
+      const eligible = blogs.filter(function(blog) {
+        if (!isWeeklyNoteBlog(blog)) return false;
+        if (blog.status !== "edit" && blog.status !== "closed") return false;
+        if (!isWithinBlogNumberRange(blog, options)) return false;
+        return getOutstandingLangsForBlog(blog, exportProfile, langs).length > 0;
+      });
+
+      return callback(null, eligible);
+    });
+  }
+
+  if (callback) {
+    return _findBlogsForOutstandingExport(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findBlogsForOutstandingExport((err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+// buildOutstandingExportZip(exportProfile, langs, options, callback)
+// options is optional: { minBlogNumber, maxBlogNumber }, see
+// findBlogsForOutstandingExport.
+// Renders all eligible blogs (from findBlogsForOutstandingExport) into a single combined ZIP.
+// Returns { archive: ZipArchive|null, toMark: [{blog, lang}], failures: [{blog, lang, error}] }
+// archive is null when no eligible blogs exist.
+// A rendering failure for one blog/lang does NOT abort the whole batch: it is
+// recorded in `failures` and skipped, so the other blogs/langs still get exported.
+export function buildOutstandingExportZip(exportProfile, langs, options, callback) {
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
+  function _buildOutstandingExportZip(callback) {
+    debug("buildOutstandingExportZip");
+
+    const profileConfig = config.getValue("ExportProfiles", exportProfile);
+    if (!profileConfig) {
+      return callback(new Error(`Unknown export profile: ${exportProfile}`));
+    }
+    if (!profileConfig.pathTemplate) {
+      return callback(new Error(`Export profile '${exportProfile}' has no pathTemplate and cannot be used for outstanding bundle export`));
+    }
+
+    const rendererType = profileConfig.renderer || "HTML";
+    const rendererOptions = profileConfig.rendererOptions;
+    const pathTemplate = profileConfig.pathTemplate;
+
+    findBlogsForOutstandingExport(exportProfile, langs, options, function(err, blogs) {
+      if (err) return callback(err);
+      if (blogs.length === 0) return callback(null, { archive: null, toMark: [], failures: [] });
+
+      const archive = new ZipArchive("zip", { zlib: { level: 9 } });
+      const toMark = [];
+      const failures = [];
+
+      eachSeries(blogs, function(blog, blogCb) {
+        const eligibleLangs = getOutstandingLangsForBlog(blog, exportProfile, langs);
+
+        eachSeries(eligibleLangs, function(exportLang, langCb) {
+          blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
+            if (err) {
+              failures.push({ blog, lang: exportLang, error: err });
+              return langCb();
+            }
+
+            let content;
+            try {
+              const renderer = blogRenderer.createRenderer(rendererType, blog, rendererOptions);
+              content = renderer.renderBlog(exportLang, data, false);
+            } catch (renderErr) {
+              failures.push({ blog, lang: exportLang, error: renderErr });
+              return langCb();
+            }
+
+            const wn_4_digit = String(blog.name).replace(/\D/g, "").padStart(4, "0");
+            const exportPath = util.replaceTemplateVariables(pathTemplate,
+              { lang: language.wpExportName(exportLang).toLowerCase(), "blogNumber-4-digits": wn_4_digit });
+            const fileName = `${exportPath}.md`;
+
+            archive.append(content, { name: fileName });
+            toMark.push({ blog, lang: exportLang });
+            langCb();
+          });
+        }, blogCb);
+      }, function(err) {
+        if (err) return callback(err);
+        archive.finalize();
+        return callback(null, { archive, toMark, failures });
+      });
+    });
+  }
+
+  if (callback) {
+    return _buildOutstandingExportZip(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _buildOutstandingExportZip((err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
 // Create a blog in the database,
 // createNewBlog(proto,callback)
 // for parameter see create
@@ -1556,6 +1744,9 @@ const blogModule = {
   findBlogByRouteId: findBlogByRouteId,
   findBlogByRouteIdForUser: findBlogByRouteIdForUser,
   findCurrentEditBlog: findCurrentEditBlog,
+  findBlogsForOutstandingExport: findBlogsForOutstandingExport,
+  buildOutstandingExportZip: buildOutstandingExportZip,
+  getOutstandingLangsForBlog: getOutstandingLangsForBlog,
   getTBC: getTBC,
   create: create,
   sortArticles: sortArticles,

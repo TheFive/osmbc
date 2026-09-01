@@ -3,6 +3,7 @@
 import async from "async";
 import should from "should";
 import nock from "nock";
+import sinon from "sinon";
 
 import testutil from "./testutil.js";
 
@@ -10,6 +11,8 @@ import config from "../config.js";
 import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
+import blogRenderer from "../render/BlogRenderer.js";
+import { ExportLogWriterForTestOnly } from "../notification/exportLogWriter.js";
 
 function toDateKey(value) {
   const d = new Date(value);
@@ -807,6 +810,316 @@ describe("model/blog", function() {
       should(blogModule.sanitizeBlogKey("WN34887")).eql("WN34887");
       should(blogModule.sanitizeBlogKey("blog34887")).eql("34887");
       should(blogModule.sanitizeBlogKey("blog348\n87")).eql("34887");
+    });
+  });
+
+  describe("findBlogsForOutstandingExport", function() {
+    beforeEach(function(bddone) {
+      testutil.clearDB(bddone);
+    });
+
+    it("should return an empty array when there are no blogs at all", function(bddone) {
+      blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE", "EN"], function(err, result) {
+        should.not.exist(err);
+        should(result).eql([]);
+        bddone();
+      });
+    });
+
+    it("should return a blog that is closed for the language and not yet exported", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2000", status: "edit", closeDE: true }, function(err) {
+        should.not.exist(err);
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE", "EN"], function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].name).equal("WN2000");
+          bddone();
+        });
+      });
+    });
+
+    it("should not return a blog already exported under this profile+lang", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, {
+        name: "WN2001",
+        status: "closed",
+        closeDE: true,
+        exportedBy: { HugoDownload: { DE: "2020-01-01T00:00:00.000Z" } }
+      }, function(err) {
+        should.not.exist(err);
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], function(err, result) {
+          should.not.exist(err);
+          should(result).eql([]);
+          bddone();
+        });
+      });
+    });
+
+    it("should not return a blog with status open, even if closed for the language", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2002", status: "open", closeDE: true }, function(err) {
+        should.not.exist(err);
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], function(err, result) {
+          should.not.exist(err);
+          should(result).eql([]);
+          bddone();
+        });
+      });
+    });
+
+    it("should return only the not-yet-exported blogs among several candidates", function(bddone) {
+      async.series([
+        function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2003", status: "edit", closeDE: true }, cb); },
+        function(cb) {
+          blogModule.createNewBlog({ OSMUser: "test" }, {
+            name: "WN2004",
+            status: "closed",
+            closeDE: true,
+            exportedBy: { HugoDownload: { DE: "2020-01-01T00:00:00.000Z" } }
+          }, cb);
+        },
+        function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2005", status: "open", closeDE: true }, cb); }
+      ], function(err) {
+        should.not.exist(err);
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].name).equal("WN2003");
+          bddone();
+        });
+      });
+    });
+
+    describe("minBlogNumber / maxBlogNumber", function() {
+      beforeEach(function(bddone) {
+        async.series([
+          function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2010", status: "edit", closeDE: true }, cb); },
+          function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2020", status: "edit", closeDE: true }, cb); },
+          function(cb) { blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2030", status: "edit", closeDE: true }, cb); }
+        ], bddone);
+      });
+
+      it("should only return blogs within [minBlogNumber, maxBlogNumber]", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], { minBlogNumber: 2015, maxBlogNumber: 2025 }, function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].name).equal("WN2020");
+          bddone();
+        });
+      });
+
+      it("should only apply minBlogNumber when maxBlogNumber is omitted", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], { minBlogNumber: 2020 }, function(err, result) {
+          should.not.exist(err);
+          const names = result.map((b) => b.name).sort();
+          should(names).eql(["WN2020", "WN2030"]);
+          bddone();
+        });
+      });
+
+      it("should only apply maxBlogNumber when minBlogNumber is omitted", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], { maxBlogNumber: 2020 }, function(err, result) {
+          should.not.exist(err);
+          const names = result.map((b) => b.name).sort();
+          should(names).eql(["WN2010", "WN2020"]);
+          bddone();
+        });
+      });
+
+      it("should return all outstanding blogs when no range is given (backward compatible)", function(bddone) {
+        blogModule.findBlogsForOutstandingExport("HugoDownload", ["DE"], function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(3);
+          bddone();
+        });
+      });
+    });
+  });
+
+  describe("buildOutstandingExportZip", function() {
+    afterEach(function() {
+      sinon.restore();
+    });
+
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [
+          { name: "WN2200", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }], closeDE: true },
+          { name: "WN2201", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }], closeDE: true }
+        ],
+        article: [
+          { blog: "WN2200", title: "Article one", markdownDE: "* Article one DE", category: "Mapping" },
+          { blog: "WN2201", title: "Article two", markdownDE: "* Article two DE", category: "Mapping" }
+        ]
+      }, bddone);
+    });
+
+    it("should reject a profile without pathTemplate", function(bddone) {
+      blogModule.buildOutstandingExportZip("OsmbcDownload", ["DE"], function(err) {
+        should.exist(err);
+        should(err.message).containEql("pathTemplate");
+        bddone();
+      });
+    });
+
+    it("should skip a blog that fails to render but still export the others", function(bddone) {
+      const originalCreateRenderer = blogRenderer.createRenderer;
+      sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
+        if (blog.name === "WN2200") throw new Error("Simulated render failure");
+        return originalCreateRenderer(type, blog, options);
+      });
+
+      blogModule.buildOutstandingExportZip("HugoDownload", ["DE"], function(err, result) {
+        should.not.exist(err);
+        should.exist(result.archive);
+        should(result.failures.length).equal(1);
+        should(result.failures[0].blog.name).equal("WN2200");
+        should(result.failures[0].lang).equal("DE");
+        should(result.toMark.length).equal(1);
+        should(result.toMark[0].blog.name).equal("WN2201");
+        bddone();
+      });
+    });
+
+    it("should continue past a failing language of one blog to both other languages and the next blog", function(bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [
+          { name: "WN256", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }], closeDE: true, closeEN: true },
+          { name: "WN255", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }], closeDE: true }
+        ],
+        article: [
+          { blog: "WN256", title: "Article 256", markdownDE: "* Article 256 DE", markdownEN: "* Article 256 EN", category: "Mapping" },
+          { blog: "WN255", title: "Article 255", markdownDE: "* Article 255 DE", category: "Mapping" }
+        ]
+      }, function(err) {
+        should.not.exist(err);
+
+        // Only WN256/EN fails to render - WN256/DE (processed first) and
+        // WN255/DE (the next blog) must still make it through.
+        const originalCreateRenderer = blogRenderer.createRenderer;
+        sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
+          const realRenderer = originalCreateRenderer(type, blog, options);
+          return {
+            renderBlog(lang, data, createEmptyForOpenLanguage) {
+              if (blog.name === "WN256" && lang === "EN") {
+                throw new Error("Simulated render failure for WN256/EN");
+              }
+              return realRenderer.renderBlog(lang, data, createEmptyForOpenLanguage);
+            }
+          };
+        });
+
+        blogModule.buildOutstandingExportZip("HugoDownload", ["DE", "EN"], function(err, result) {
+          should.not.exist(err);
+          should.exist(result.archive);
+
+          should(result.failures.length).equal(1);
+          should(result.failures[0].blog.name).equal("WN256");
+          should(result.failures[0].lang).equal("EN");
+
+          const marked = result.toMark.map((m) => `${m.blog.name}:${m.lang}`).sort();
+          should(marked).eql(["WN255:DE", "WN256:DE"]);
+          bddone();
+        });
+      });
+    });
+  });
+
+  describe("markAsExported", function() {
+    afterEach(function() {
+      sinon.restore();
+    });
+
+    beforeEach(function(bddone) {
+      testutil.clearDB(bddone);
+    });
+
+    it("should set the marker without creating a Postgres changes-log entry", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2300", status: "closed", closeDE: true }, function(err, blog) {
+        should.not.exist(err);
+        blog.markAsExported({ OSMUser: "apikey:hugoPipeline" }, "HugoDownload", "DE", function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", blog.id, function(err, result) {
+            should.not.exist(err);
+            should.exist(result.exportedBy.HugoDownload.DE);
+            // Goes through setAndSave like every mutation, but
+            // LogModuleReceiver is wrapped in a FilterReceiver (see
+            // notification/messageCenter.js) that skips exportedBy-only
+            // changes, so editors never see this in the blog history tab.
+            logModule.find({ oid: blog.id, property: "exportedBy" }, function(err, result) {
+              should.not.exist(err);
+              should(result.length).equal(0);
+              bddone();
+            });
+          });
+        });
+      });
+    });
+
+    it("should write an entry to the text export log, attributing the given user", function(bddone) {
+      const infoStub = sinon.stub(ExportLogWriterForTestOnly.logger, "info");
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2301", status: "closed", closeDE: true }, function(err, blog) {
+        should.not.exist(err);
+        blog.markAsExported({ OSMUser: "apikey:hugoPipeline" }, "HugoDownload", "DE", function(err) {
+          should.not.exist(err);
+          should(infoStub.calledOnce).be.True();
+          const logEntry = infoStub.getCall(0).args[0];
+          should(logEntry.user).equal("apikey:hugoPipeline");
+          should(logEntry.blog).equal("WN2301");
+          should(logEntry.exportProfile).equal("HugoDownload");
+          should(logEntry.lang).equal("DE");
+          bddone();
+        });
+      });
+    });
+  });
+
+  describe("exportedBy marker reset", function() {
+    beforeEach(function(bddone) {
+      testutil.clearDB(bddone);
+    });
+
+    it("should clear the exportedBy marker for a language when it is reopened via closeBlog", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, {
+        name: "WN2100",
+        status: "edit",
+        closeDE: true,
+        closeEN: true,
+        exportedBy: {
+          HugoDownload: { DE: "2020-01-01T00:00:00.000Z", EN: "2020-01-01T00:00:00.000Z" }
+        }
+      }, function(err, blog) {
+        should.not.exist(err);
+        blog.closeBlog({ lang: "DE", user: { OSMUser: "user" }, status: false }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", blog.id, function(err, result) {
+            should.not.exist(err);
+            should(result.exportedBy.HugoDownload).not.have.property("DE");
+            should(result.exportedBy.HugoDownload.EN).equal("2020-01-01T00:00:00.000Z");
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should clear all exportedBy markers when the blog status changes to edit", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, {
+        name: "WN2101",
+        status: "closed",
+        exportedBy: {
+          HugoDownload: { DE: "2020-01-01T00:00:00.000Z", EN: "2020-01-01T00:00:00.000Z" }
+        }
+      }, function(err, blog) {
+        should.not.exist(err);
+        blog.setAndSave({ OSMUser: "user" }, { status: "edit" }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", blog.id, function(err, result) {
+            should.not.exist(err);
+            should(result.exportedBy).eql({});
+            bddone();
+          });
+        });
+      });
     });
   });
 });

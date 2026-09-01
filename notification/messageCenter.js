@@ -1,9 +1,24 @@
 import _debug from "debug";
 import async from "async";
 import LogModuleReceiver from "../notification/LogModuleReceiver.js";
+import FilterReceiver from "../notification/FilterReceiver.js";
+import ExportReceiver from "../notification/exportReceiver.js";
 
 import config from "../config.js";
 const debug = _debug("OSMBC:notification:messageCenter");
+
+// Blog fields that are purely operational (not editorial content) and
+// therefore must not turn a setAndSave() call into a Postgres changes-log
+// row that editors see in the blog history tab. See
+// Blog.prototype.markAsExported in model/blog.js and
+// notification/exportReceiver.js.
+const OPERATIONAL_ONLY_BLOG_FIELDS = ["exportedBy"];
+
+function isEditorialBlogChange(user, blog, change) {
+  const keys = Object.keys(change).filter((k) => typeof change[k] !== "undefined");
+  if (keys.length === 0) return false;
+  return keys.some((k) => !OPERATIONAL_ONLY_BLOG_FIELDS.includes(k));
+}
 
 
 
@@ -90,7 +105,10 @@ function initialise(callback) {
 
 
 
-  messageCenter.global.registerReceiver(new LogModuleReceiver());
+  messageCenter.global.registerReceiver(
+    new FilterReceiver(new LogModuleReceiver(), { updateBlog: isEditorialBlogChange })
+  );
+  messageCenter.global.registerReceiver(new ExportReceiver());
 
   config.logger.info("Message Center initialised.");
   if (callback) return callback();

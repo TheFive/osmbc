@@ -50,7 +50,44 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
 - Export targets are defined under `ExportProfiles` in the config
   (HTML/WP, Markdown, Hugo — `renderer: HUGO`). OSMBC is meant to be the
   editorial source of truth; Hugo export is one of several render targets
-  generated from it, not a separate data source.
+  generated from it, not a separate data source. See
+  `docs/export-profiles.md` for the field-by-field meaning of a profile
+  entry, and `docs/API.md` for the caller-facing API that consumes it.
+
+## Notifications (`setAndSave` → `messageCenter`)
+
+- Every `setAndSave`/`closeBlog`/etc. mutation broadcasts the full `change`
+  object to **every** registered `messageCenter.global` receiver
+  (`notification/messageCenter.js`), via `updateBlog`/`updateArticle`/
+  `sendReviewStatus`/`sendCloseStatus`/`addComment`/`editComment`/`sendInfo`.
+  It is each receiver's own job to decide whether a given change is
+  relevant to it — the broadcaster does not filter anything itself.
+  Concretely today: `LogModuleReceiver` (Postgres `changes` log, wrapped in
+  a `FilterReceiver`), `ExportReceiver` (text-log for operational markers),
+  and, via `IteratorReceiver`, one `MailReceiver`/`SlackReceiver` instance
+  per interested channel/user.
+- `MessageCenter` calls every receiver method **unconditionally, with no
+  existence check** — a receiver that's missing one of the seven interface
+  methods (`sendInfo`, `updateArticle`, `updateBlog`, `sendReviewStatus`,
+  `sendCloseStatus`, `addComment`, `editComment`) throws as soon as that
+  event fires. Any new receiver must implement all seven (no-op stubs for
+  the irrelevant ones), e.g. `notification/exportReceiver.js`.
+- Relevance filtering is inconsistent by receiver, and that inconsistency
+  matters: `UserConfigFilter` (wrapping `MailReceiver` per user) checks
+  `change.status` before reacting; `LogModuleReceiver` on its own does
+  **not** filter at all — it logs whatever keys are present in `change`
+  unconditionally, so an unfiltered receiver turns every field change into
+  a Postgres row visible to editors. `notification/FilterReceiver.js` is
+  the generic, reusable wrapper for bolting a relevance predicate in front
+  of a receiver that doesn't already do its own filtering (formalizes what
+  `UserConfigFilter` did ad hoc) — see `notification/messageCenter.js` for
+  how it wraps `LogModuleReceiver` to skip purely operational fields (e.g.
+  `blog.exportedBy`, set by `Blog.prototype.markAsExported`).
+- Net effect: a field that should stay invisible to editors (not appear in
+  the change history, not trigger a mail/Slack "changed" notification)
+  should still be written via `setAndSave` like everything else — never by
+  reaching for a bare `save()` to dodge the broadcast — and instead get a
+  `FilterReceiver`-wrapped or self-filtering receiver that ignores it.
 
 ## Development workflow
 
