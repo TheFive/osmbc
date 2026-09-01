@@ -1338,6 +1338,64 @@ export function findBlogsForOutstandingExport(exportProfile, langs, options, cal
   });
 }
 
+// buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback)
+// blogsWithLangs: [{ blog, langs: ["DE","EN"] }, ...] - the blog/lang
+// selection is entirely up to the caller (outstanding and closedSince use
+// different selection rules, see findBlogsForOutstandingExport resp.
+// findBlogsClosedSince); this only renders and zips what it is given.
+// Returns { archive: ZipArchive|null, toMark: [{blog, lang}], failures: [{blog, lang, error}] }
+// archive is null when there is nothing to export.
+// A rendering failure for one blog/lang does NOT abort the whole batch: it is
+// recorded in `failures` and skipped, so the other blogs/langs still get exported.
+function buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback) {
+  const rendererType = profileConfig.renderer || "HTML";
+  const rendererOptions = profileConfig.rendererOptions;
+  const pathTemplate = profileConfig.pathTemplate;
+
+  const hasAnyLang = blogsWithLangs.some(function(entry) { return entry.langs && entry.langs.length > 0; });
+  if (!hasAnyLang) return callback(null, { archive: null, toMark: [], failures: [] });
+
+  const archive = new ZipArchive("zip", { zlib: { level: 9 } });
+  const toMark = [];
+  const failures = [];
+
+  eachSeries(blogsWithLangs, function(entry, blogCb) {
+    const blog = entry.blog;
+    const eligibleLangs = entry.langs;
+
+    eachSeries(eligibleLangs, function(exportLang, langCb) {
+      blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
+        if (err) {
+          failures.push({ blog, lang: exportLang, error: err });
+          return langCb();
+        }
+
+        let content;
+        try {
+          const renderer = blogRenderer.createRenderer(rendererType, blog, rendererOptions);
+          content = renderer.renderBlog(exportLang, data, false);
+        } catch (renderErr) {
+          failures.push({ blog, lang: exportLang, error: renderErr });
+          return langCb();
+        }
+
+        const wn_4_digit = String(blog.name).replace(/\D/g, "").padStart(4, "0");
+        const exportPath = util.replaceTemplateVariables(pathTemplate,
+          { lang: language.wpExportName(exportLang).toLowerCase(), "blogNumber-4-digits": wn_4_digit });
+        const fileName = `${exportPath}.md`;
+
+        archive.append(content, { name: fileName });
+        toMark.push({ blog, lang: exportLang });
+        langCb();
+      });
+    }, blogCb);
+  }, function(err) {
+    if (err) return callback(err);
+    archive.finalize();
+    return callback(null, { archive, toMark, failures });
+  });
+}
+
 // buildOutstandingExportZip(exportProfile, langs, options, callback)
 // options is optional: { minBlogNumber, maxBlogNumber }, see
 // findBlogsForOutstandingExport.
@@ -1362,52 +1420,12 @@ export function buildOutstandingExportZip(exportProfile, langs, options, callbac
       return callback(new Error(`Export profile '${exportProfile}' has no pathTemplate and cannot be used for outstanding bundle export`));
     }
 
-    const rendererType = profileConfig.renderer || "HTML";
-    const rendererOptions = profileConfig.rendererOptions;
-    const pathTemplate = profileConfig.pathTemplate;
-
     findBlogsForOutstandingExport(exportProfile, langs, options, function(err, blogs) {
       if (err) return callback(err);
-      if (blogs.length === 0) return callback(null, { archive: null, toMark: [], failures: [] });
-
-      const archive = new ZipArchive("zip", { zlib: { level: 9 } });
-      const toMark = [];
-      const failures = [];
-
-      eachSeries(blogs, function(blog, blogCb) {
-        const eligibleLangs = getOutstandingLangsForBlog(blog, exportProfile, langs);
-
-        eachSeries(eligibleLangs, function(exportLang, langCb) {
-          blog.getPreviewData({ lang: exportLang, createTeam: true, disableNotranslation: true, warningOnEmptyMarkdown: true }, function(err, data) {
-            if (err) {
-              failures.push({ blog, lang: exportLang, error: err });
-              return langCb();
-            }
-
-            let content;
-            try {
-              const renderer = blogRenderer.createRenderer(rendererType, blog, rendererOptions);
-              content = renderer.renderBlog(exportLang, data, false);
-            } catch (renderErr) {
-              failures.push({ blog, lang: exportLang, error: renderErr });
-              return langCb();
-            }
-
-            const wn_4_digit = String(blog.name).replace(/\D/g, "").padStart(4, "0");
-            const exportPath = util.replaceTemplateVariables(pathTemplate,
-              { lang: language.wpExportName(exportLang).toLowerCase(), "blogNumber-4-digits": wn_4_digit });
-            const fileName = `${exportPath}.md`;
-
-            archive.append(content, { name: fileName });
-            toMark.push({ blog, lang: exportLang });
-            langCb();
-          });
-        }, blogCb);
-      }, function(err) {
-        if (err) return callback(err);
-        archive.finalize();
-        return callback(null, { archive, toMark, failures });
+      const blogsWithLangs = blogs.map(function(blog) {
+        return { blog, langs: getOutstandingLangsForBlog(blog, exportProfile, langs) };
       });
+      buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback);
     });
   }
 
@@ -1416,6 +1434,118 @@ export function buildOutstandingExportZip(exportProfile, langs, options, callbac
   }
   return new Promise((resolve, reject) => {
     _buildOutstandingExportZip((err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+// findBlogsClosedSince(since, langs, options, callback)
+// options is optional: { minBlogNumber, maxBlogNumber }, see
+// findBlogsForOutstandingExport.
+// since: a date string usable with the changes-log "GE:" query operator
+// (e.g. "2026-01-01").
+// Looks at the changes log for close{LANG} -> true transitions logged on or
+// after `since`, then keeps only the ones where the blog is STILL closed for
+// that language now (a later reopen drops it again - this is intentionally
+// "closed now, and has been closed at some point since `since`", not
+// "closed at any point since `since` regardless of current state").
+// Unlike findBlogsForOutstandingExport, this does NOT look at exportedBy -
+// it is a read-only report/re-export helper and does not participate in the
+// outstanding-export bookkeeping.
+// Returns [{ blog, langs: [...] }, ...] (only blogs with >=1 matching lang).
+export function findBlogsClosedSince(since, langs, options, callback) {
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
+  function _findBlogsClosedSince(callback) {
+    debug("findBlogsClosedSince");
+
+    const properties = langs.map(function(lang) { return "close" + lang; });
+    logModule.find({
+      table: "blog",
+      property: "IN(" + properties.join(",") + ")",
+      to: "true",
+      timestamp: "GE:" + since
+    }, { column: "timestamp", desc: true }, function(err, changes) {
+      if (err) return callback(err);
+      if (!changes || changes.length === 0) return callback(null, []);
+
+      // Which languages were closed (to=true) at least once since `since`,
+      // keyed by blog name (the log has no reliable typed id to join on).
+      const candidateLangsByBlog = new Map();
+      changes.forEach(function(change) {
+        if (typeof change.property !== "string" || change.property.substring(0, 5) !== "close") return;
+        const lang = change.property.substring(5);
+        if (!langs.includes(lang) || !change.blog) return;
+        if (!candidateLangsByBlog.has(change.blog)) candidateLangsByBlog.set(change.blog, new Set());
+        candidateLangsByBlog.get(change.blog).add(lang);
+      });
+      if (candidateLangsByBlog.size === 0) return callback(null, []);
+
+      find(function(err, blogs) {
+        if (err) return callback(err);
+
+        const result = [];
+        blogs.forEach(function(blog) {
+          const candidateLangs = candidateLangsByBlog.get(blog.name);
+          if (!candidateLangs) return;
+          if (!isWeeklyNoteBlog(blog)) return;
+          if (!isWithinBlogNumberRange(blog, options)) return;
+
+          // Only keep languages that are STILL closed now - drops a
+          // language that got reopened again after the logged close event.
+          const closedLangs = langs.filter(function(lang) {
+            return candidateLangs.has(lang) && blog["close" + lang] === true;
+          });
+          if (closedLangs.length === 0) return;
+          result.push({ blog, langs: closedLangs });
+        });
+        return callback(null, result);
+      });
+    });
+  }
+
+  if (callback) {
+    return _findBlogsClosedSince(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _findBlogsClosedSince((err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+// buildClosedSinceExportZip(exportProfile, since, langs, options, callback)
+// options is optional: { minBlogNumber, maxBlogNumber }, see
+// findBlogsClosedSince.
+// Renders every blog+lang returned by findBlogsClosedSince into a single
+// combined ZIP, same shape as buildOutstandingExportZip. Read-only: it does
+// NOT call markAsExported / touch exportedBy, so re-running it for the same
+// (or an overlapping) date range is safe and has no effect on `outstanding`.
+export function buildClosedSinceExportZip(exportProfile, since, langs, options, callback) {
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
+  function _buildClosedSinceExportZip(callback) {
+    debug("buildClosedSinceExportZip");
+
+    const profileConfig = config.getValue("ExportProfiles", exportProfile);
+    if (!profileConfig) {
+      return callback(new Error(`Unknown export profile: ${exportProfile}`));
+    }
+    if (!profileConfig.pathTemplate) {
+      return callback(new Error(`Export profile '${exportProfile}' has no pathTemplate and cannot be used for closedSince bundle export`));
+    }
+
+    findBlogsClosedSince(since, langs, options, function(err, blogsWithLangs) {
+      if (err) return callback(err);
+      buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback);
+    });
+  }
+
+  if (callback) {
+    return _buildClosedSinceExportZip(callback);
+  }
+  return new Promise((resolve, reject) => {
+    _buildClosedSinceExportZip((err, result) => err ? reject(err) : resolve(result));
   });
 }
 
@@ -1775,6 +1905,8 @@ const blogModule = {
   findBlogsForOutstandingExport: findBlogsForOutstandingExport,
   buildOutstandingExportZip: buildOutstandingExportZip,
   getOutstandingLangsForBlog: getOutstandingLangsForBlog,
+  findBlogsClosedSince: findBlogsClosedSince,
+  buildClosedSinceExportZip: buildClosedSinceExportZip,
   getTBC: getTBC,
   create: create,
   sortArticles: sortArticles,

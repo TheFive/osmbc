@@ -1050,6 +1050,191 @@ describe("model/blog", function() {
     });
   });
 
+  describe("findBlogsClosedSince", function() {
+    beforeEach(function(bddone) {
+      testutil.clearDB(bddone);
+    });
+
+    it("should return an empty array when there are no blogs at all", function(bddone) {
+      blogModule.findBlogsClosedSince("2020-01-01", ["DE", "EN"], function(err, result) {
+        should.not.exist(err);
+        should(result).eql([]);
+        bddone();
+      });
+    });
+
+    it("should return a blog closed on/after since", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2400", status: "edit" }, function(err, blog) {
+        should.not.exist(err);
+        blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
+          should.not.exist(err);
+          blogModule.findBlogsClosedSince("2020-01-01", ["DE", "EN"], function(err, result) {
+            should.not.exist(err);
+            should(result.length).equal(1);
+            should(result[0].blog.name).equal("WN2400");
+            should(result[0].langs).eql(["DE"]);
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should not return a blog whose only matching close event lies before since", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2401", status: "edit", closeDE: true }, function(err, blog) {
+        should.not.exist(err);
+        logModule.log({
+          oid: blog.id, blog: blog.name, table: "blog", property: "closeDE", to: true, timestamp: new Date("2019-01-01")
+        }, function(err) {
+          should.not.exist(err);
+          blogModule.findBlogsClosedSince("2020-01-01", ["DE"], function(err, result) {
+            should.not.exist(err);
+            should(result).eql([]);
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should drop a language that was closed since `since` but has been reopened again", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2402", status: "edit" }, function(err, blog) {
+        should.not.exist(err);
+        async.series([
+          function(cb) { blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb); },
+          function(cb) {
+            blogModule.findOne({ name: "WN2402" }, function(err, freshBlog) {
+              if (err) return cb(err);
+              freshBlog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: false }, cb);
+            });
+          }
+        ], function(err) {
+          should.not.exist(err);
+          blogModule.findBlogsClosedSince("2020-01-01", ["DE"], function(err, result) {
+            should.not.exist(err);
+            should(result).eql([]);
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should only include the requested langs, even if another lang was also closed since `since`", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2403", status: "edit" }, function(err, blog) {
+        should.not.exist(err);
+        async.series([
+          function(cb) { blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb); },
+          function(cb) {
+            blogModule.findOne({ name: "WN2403" }, function(err, freshBlog) {
+              if (err) return cb(err);
+              freshBlog.closeBlog({ user: { OSMUser: "test" }, lang: "EN", status: true }, cb);
+            });
+          }
+        ], function(err) {
+          should.not.exist(err);
+          blogModule.findBlogsClosedSince("2020-01-01", ["DE"], function(err, result) {
+            should.not.exist(err);
+            should(result.length).equal(1);
+            should(result[0].langs).eql(["DE"]);
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should not require or touch exportedBy", function(bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2404", status: "edit" }, function(err, blog) {
+        should.not.exist(err);
+        blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
+          should.not.exist(err);
+          blogModule.findBlogsClosedSince("2020-01-01", ["DE"], function(err, result) {
+            should.not.exist(err);
+            should(result.length).equal(1);
+            blogModule.findOne({ name: "WN2404" }, function(err, freshBlog) {
+              should.not.exist(err);
+              should(freshBlog.exportedBy).be.undefined();
+              bddone();
+            });
+          });
+        });
+      });
+    });
+
+    describe("minBlogNumber / maxBlogNumber", function() {
+      beforeEach(function(bddone) {
+        async.series([
+          function(cb) {
+            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2410", status: "edit" }, function(err, blog) {
+              if (err) return cb(err);
+              blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
+            });
+          },
+          function(cb) {
+            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2420", status: "edit" }, function(err, blog) {
+              if (err) return cb(err);
+              blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
+            });
+          },
+          function(cb) {
+            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2430", status: "edit" }, function(err, blog) {
+              if (err) return cb(err);
+              blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
+            });
+          }
+        ], bddone);
+      });
+
+      it("should only return blogs within [minBlogNumber, maxBlogNumber]", function(bddone) {
+        blogModule.findBlogsClosedSince("2020-01-01", ["DE"], { minBlogNumber: 2415, maxBlogNumber: 2425 }, function(err, result) {
+          should.not.exist(err);
+          should(result.length).equal(1);
+          should(result[0].blog.name).equal("WN2420");
+          bddone();
+        });
+      });
+    });
+  });
+
+  describe("buildClosedSinceExportZip", function() {
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [
+          { name: "WN2500", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }] }
+        ],
+        article: [
+          { blog: "WN2500", title: "Article one", markdownDE: "* Article one DE", category: "Mapping" }
+        ]
+      }, bddone);
+    });
+
+    it("should reject a profile without pathTemplate", function(bddone) {
+      blogModule.buildClosedSinceExportZip("OsmbcDownload", "2020-01-01", ["DE"], function(err) {
+        should.exist(err);
+        should(err.message).containEql("pathTemplate");
+        bddone();
+      });
+    });
+
+    it("should render the blog closed since the given date and not touch exportedBy", function(bddone) {
+      blogModule.findOne({ name: "WN2500" }, function(err, blog) {
+        should.not.exist(err);
+        blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
+          should.not.exist(err);
+          blogModule.buildClosedSinceExportZip("HugoDownload", "2020-01-01", ["DE"], function(err, result) {
+            should.not.exist(err);
+            should.exist(result.archive);
+            should(result.toMark.length).equal(1);
+            should(result.toMark[0].blog.name).equal("WN2500");
+            blogModule.findOne({ name: "WN2500" }, function(err, freshBlog) {
+              should.not.exist(err);
+              should(freshBlog.exportedBy).be.undefined();
+              bddone();
+            });
+          });
+        });
+      });
+    });
+  });
+
   describe("markAsExported", function() {
     afterEach(function() {
       sinon.restore();

@@ -637,4 +637,167 @@ describe("router/api", function() {
       });
     });
   });
+
+  describe("Blog preview download API for closedSince exports", function() {
+    describe("with no eligible blogs", function() {
+      it("should reject a missing since with 422", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload",
+          { validateStatus: (status) => true }
+        );
+        should(response.status).eql(422);
+        should(response.data).containEql("since");
+      });
+
+      it("should reject an unparseable since with 422", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&since=not-a-date",
+          { validateStatus: (status) => true }
+        );
+        should(response.status).eql(422);
+        should(response.data).containEql("since");
+      });
+
+      it("should respond 404 (default noContentBehavior)", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&since=2020-01-01",
+          { validateStatus: (status) => true }
+        );
+        should(response.status).eql(404);
+      });
+
+      it("should respond with an empty zip when noContentBehavior=emptyZip", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=MarkdownDownload&since=2020-01-01",
+          { validateStatus: (status) => true, responseType: "arraybuffer" }
+        );
+        should(response.status).eql(200);
+        should(response.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+        const zipBuffer = Buffer.from(response.data);
+        zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+      });
+    });
+
+    describe("with a blog closed since the given date", function() {
+      beforeEach(function(bddone) {
+        testutil.importData({
+          clear: false,
+          blog: [
+            { name: "WN3100", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }] },
+            { name: "WN3101", status: "edit", categories: [{ EN: "Mapping", DE: "Mapping" }] }
+          ],
+          article: [
+            { blog: "WN3100", title: "ClosedSince article one", markdownDE: "* ClosedSince article one DE", category: "Mapping" },
+            { blog: "WN3101", title: "ClosedSince article two", markdownDE: "* ClosedSince article two DE", category: "Mapping" }
+          ]
+        }, function(err) {
+          if (err) return bddone(err);
+          async.series([
+            function(cb) {
+              blogModule.findOne({ name: "WN3100" }, function(err, blog) {
+                if (err) return cb(err);
+                blog.closeBlog({ user: { OSMUser: "TheFive" }, lang: "DE", status: true }, cb);
+              });
+            },
+            function(cb) {
+              blogModule.findOne({ name: "WN3101" }, function(err, blog) {
+                if (err) return cb(err);
+                blog.closeBlog({ user: { OSMUser: "TheFive" }, lang: "DE", status: true }, cb);
+              });
+            }
+          ], bddone);
+        });
+      });
+
+      it("should return a zip with one file per blog and NOT mark them as exported", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&lang=DE&since=2020-01-01",
+          { validateStatus: (status) => true, responseType: "arraybuffer" }
+        );
+
+        should(response.status).eql(200);
+        should(response.headers["content-type"]).match(/application\/(zip|octet-stream)/);
+        const zipBuffer = Buffer.from(response.data);
+        zipBuffer.subarray(0, 2).toString("binary").should.eql("PK");
+        const zipText = zipBuffer.toString("latin1");
+        zipText.should.containEql("de/archives/3100.md");
+        zipText.should.containEql("de/archives/3101.md");
+
+        const blog3100 = await blogModule.findOne({ name: "WN3100" });
+        should(blog3100.exportedBy).be.undefined();
+      });
+
+      it("should list candidates via dryRun without downloading anything", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&lang=DE&since=2020-01-01&dryRun=true",
+          { validateStatus: (status) => true }
+        );
+
+        should(response.status).eql(200);
+        should(response.headers["content-type"]).match(/application\/json/);
+        should(response.data.exportProfile).eql("HugoDownload");
+        should(response.data.since).eql("2020-01-01");
+        should(response.data.count).eql(2);
+        const names = response.data.blogs.map((b) => b.name).sort();
+        should(names).eql(["WN3100", "WN3101"]);
+        response.data.blogs.forEach((b) => should(b.langs).eql(["DE"]));
+      });
+
+      it("should not return a blog closed before the given since date", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&lang=DE&since=2099-01-01&dryRun=true",
+          { validateStatus: (status) => true }
+        );
+        should(response.status).eql(200);
+        should(response.data.count).eql(0);
+      });
+
+      it("should only export blogs within the given WN range", async function() {
+        const response = await axios.get(
+          baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&lang=DE&since=2020-01-01&minBlogNumber=3101&maxBlogNumber=3101",
+          { validateStatus: (status) => true, responseType: "arraybuffer" }
+        );
+
+        should(response.status).eql(200);
+        const zipText = Buffer.from(response.data).toString("latin1");
+        zipText.should.containEql("de/archives/3101.md");
+        zipText.should.not.containEql("de/archives/3100.md");
+      });
+
+      it("should skip a blog that fails to render and report it via a header", async function() {
+        const originalCreateRenderer = blogRenderer.createRenderer;
+        const stub = sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
+          if (blog.name === "WN3100") throw new Error("Simulated render failure");
+          return originalCreateRenderer(type, blog, options);
+        });
+
+        try {
+          const response = await axios.get(
+            baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&lang=DE&since=2020-01-01",
+            { validateStatus: (status) => true, responseType: "arraybuffer" }
+          );
+
+          should(response.status).eql(200);
+          should(response.headers["x-closedsince-export-warnings"]).eql("WN3100:DE");
+          const zipText = Buffer.from(response.data).toString("latin1");
+          zipText.should.not.containEql("de/archives/3100.md");
+          zipText.should.containEql("de/archives/3101.md");
+        } finally {
+          stub.restore();
+        }
+      });
+
+      it("running it twice should return the same content both times (read-only, no bookkeeping)", async function() {
+        const url = baseLink + "/api/blogPreviewDownload/testapikey/closedSince?exportProfile=HugoDownload&lang=DE&since=2020-01-01";
+        const first = await axios.get(url, { validateStatus: (status) => true, responseType: "arraybuffer" });
+        const second = await axios.get(url, { validateStatus: (status) => true, responseType: "arraybuffer" });
+        should(first.status).eql(200);
+        should(second.status).eql(200);
+        const firstText = Buffer.from(first.data).toString("latin1");
+        const secondText = Buffer.from(second.data).toString("latin1");
+        firstText.should.containEql("de/archives/3100.md");
+        secondText.should.containEql("de/archives/3100.md");
+      });
+    });
+  });
 });

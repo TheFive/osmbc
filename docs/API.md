@@ -324,3 +324,86 @@ curl -o outstanding-2.zip \
 curl -o outstanding.zip \
   "https://<host>/api/blogPreviewDownload/<apiKey>/outstanding?exportProfile=HugoDownload"
 ```
+
+---
+
+## `GET /api/blogPreviewDownload/:apiKey/closedSince`
+
+Bulk export, read-only variant of `outstanding`: bundles every WeeklyNote
+blog+language that was closed (`close{LANG}` → `true`) on or after a given
+date, regardless of `exportedBy`. Intended for re-exporting/backfilling a
+date range (e.g. rebuilding a Hugo site from scratch, or recovering from a
+pipeline outage) without touching the `outstanding` bookkeeping — running it
+twice for the same (or an overlapping) range is safe and has no side effect.
+
+### Query parameters
+
+| Param | Required | Description |
+|---|---|---|
+| `exportProfile` | yes | Same requirement as `outstanding`: must be a profile with a `pathTemplate` configured. |
+| `since` | yes | A parseable date (e.g. `2026-01-01`). Looks at the Postgres changes log for `close{LANG}` → `true` entries logged on or after this date. |
+| `lang` | no | A single language code, or `ALL` (default: all configured languages). |
+| `minBlogNumber` | no | Inclusive lower bound on the WN number. Non-negative integer. |
+| `maxBlogNumber` | no | Inclusive upper bound on the WN number. Non-negative integer; rejected with `422` if smaller than `minBlogNumber`. |
+| `dryRun` | no | `true` → return a JSON preview instead of building/downloading anything. |
+
+### What counts as "closed since"
+
+A blog+language is included if **all** of:
+- the blog is a WeeklyNote blog, within `[minBlogNumber, maxBlogNumber]` if given
+- the changes log has a `close{LANG}` → `true` entry for that blog on or after `since`
+- `close{LANG}` is **still** `true` on the blog right now — a language that
+  was closed after `since` but has since been reopened again is **not**
+  included (this is "closed now, and has been closed at least once since
+  `since`", not "closed at any point since `since` regardless of current
+  state")
+
+Unlike `outstanding`, `exportedBy` is never consulted or written — a blog
+that was already delivered via `outstanding` (or a previous `closedSince`
+call) is still included here if it matches the above.
+
+### Partial rendering failures
+
+Same behavior as `outstanding`: a failing blog/language is skipped, not
+fatal, and listed in:
+
+```
+X-ClosedSince-Export-Warnings: WN1234:DE,WN1235:EN
+```
+
+### Responses
+
+- `200` (ZIP) — `application/zip`, filename from `fileNameTemplate` (with
+  template placeholders resolved to `closedsince`) or `closedSince.zip`.
+- `200` (dry run, `dryRun=true`) — `application/json`:
+  ```json
+  {
+    "exportProfile": "HugoDownload",
+    "since": "2026-01-01",
+    "minBlogNumber": null,
+    "maxBlogNumber": null,
+    "count": 2,
+    "blogs": [
+      { "name": "WN1234", "langs": ["DE"] },
+      { "name": "WN1235", "langs": ["DE", "EN"] }
+    ]
+  }
+  ```
+- `200` (empty ZIP) — only if the profile sets `noContentBehavior:
+  "emptyZip"` and nothing matches.
+- `404` — nothing matches and the profile's `noContentBehavior` is unset or
+  `"404"` (the default): `No blogs available for closedSince export`.
+- `422` — missing/unknown `exportProfile`, profile has no `pathTemplate`,
+  missing/unparseable `since`, `minBlogNumber`/`maxBlogNumber` isn't a
+  non-negative integer, or `minBlogNumber` is greater than `maxBlogNumber`.
+
+### Example
+
+```bash
+# See what has been closed since a given date, without downloading anything
+curl "https://<host>/api/blogPreviewDownload/<apiKey>/closedSince?exportProfile=HugoDownload&since=2026-01-01&dryRun=true"
+
+# Re-export everything closed since that date (safe to re-run)
+curl -o closedSince.zip \
+  "https://<host>/api/blogPreviewDownload/<apiKey>/closedSince?exportProfile=HugoDownload&since=2026-01-01"
+```

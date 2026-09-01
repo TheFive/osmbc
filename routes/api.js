@@ -428,6 +428,167 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
   });
 }
 
+// Parses the required `since` query param into a string usable with the
+// changes-log "GE:" query operator. Returns { value } or { error }.
+function parseSinceParam(raw) {
+  if (typeof raw !== "string" || raw.trim() === "") {
+    const error = new Error("Missing since");
+    error.status = 422;
+    error.type = "API";
+    return { error };
+  }
+  const trimmed = raw.trim();
+  if (Number.isNaN(Date.parse(trimmed))) {
+    const error = new Error("Invalid since: must be a parseable date (e.g. 2026-01-01)");
+    error.status = 422;
+    error.type = "API";
+    return { error };
+  }
+  return { value: trimmed };
+}
+
+/**
+ * Download a combined ZIP of all blogs closed for a language on or after a
+ * given date, or (with `dryRun=true`) just list what that download would
+ * currently contain.
+ *
+ * Route params:
+ * - apiKey {string} API key used by middleware `checkApiKey`
+ *
+ * Query params:
+ * - exportProfile {string} required profile name from config key `ExportProfiles`
+ * - since {string} required date (e.g. "2026-01-01"); looks at the changes log for
+ *   close{LANG} transitions on or after this date
+ * - lang {string} optional language code or `ALL` (defaults to all configured languages)
+ * - minBlogNumber {number} optional, inclusive lower bound on the WN number (e.g. 256 for "WN256")
+ * - maxBlogNumber {number} optional, inclusive upper bound on the WN number
+ * - dryRun {string} optional, "true" returns a JSON preview instead of building anything
+ *
+ * Behavior:
+ * - Finds all WeeklyNote blogs that were closed for the requested lang(s) on/after
+ *   `since` AND are still closed now (a later reopen excludes them again)
+ * - Returns a combined ZIP with one file per blog+lang, same shape as `outstanding`
+ * - A rendering failure for one blog/lang is skipped and reported via the
+ *   `X-ClosedSince-Export-Warnings` response header, it does not abort the whole batch
+ * - Read-only: unlike `outstanding`, it never sets exportedBy markers, so re-running it
+ *   for the same (or an overlapping) date range is safe and does not affect `outstanding`
+ * - If no eligible blogs: respects `noContentBehavior` in the ExportProfile config
+ *   ("404" = default, "emptyZip" = return empty ZIP with HTTP 200)
+ */
+function getBlogPreviewDownloadClosedSince(req, res, next) {
+  debug("getBlogPreviewDownloadClosedSince");
+
+  const exportProfile = (typeof req.query.exportProfile === "string") ? req.query.exportProfile.trim() : "";
+  if (!exportProfile) {
+    const error = new Error("Missing exportProfile");
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
+
+  const profileConfig = config.getValue("ExportProfiles", exportProfile);
+  if (!profileConfig) {
+    const error = new Error("Unknown export profile: " + exportProfile);
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
+
+  if (!profileConfig.pathTemplate) {
+    const error = new Error(`Export profile '${exportProfile}' has no pathTemplate and cannot be used for closedSince bundle export`);
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
+
+  const since = parseSinceParam(req.query.since);
+  if (since.error) return next(since.error);
+
+  let langs = req.query.lang;
+  if (!langs || langs === "ALL") {
+    langs = language.getLid();
+  } else if (typeof langs === "string") {
+    langs = [langs];
+  } else if (!Array.isArray(langs)) {
+    langs = language.getLid();
+  }
+
+  const minBound = parseBlogNumberBound(req.query.minBlogNumber, "minBlogNumber");
+  if (minBound.error) return next(minBound.error);
+  const maxBound = parseBlogNumberBound(req.query.maxBlogNumber, "maxBlogNumber");
+  if (maxBound.error) return next(maxBound.error);
+  if (typeof minBound.value === "number" && typeof maxBound.value === "number" && minBound.value > maxBound.value) {
+    const error = new Error("minBlogNumber must not be greater than maxBlogNumber");
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
+  const blogNumberOptions = {};
+  if (typeof minBound.value === "number") blogNumberOptions.minBlogNumber = minBound.value;
+  if (typeof maxBound.value === "number") blogNumberOptions.maxBlogNumber = maxBound.value;
+
+  const dryRun = req.query.dryRun === "true";
+
+  if (dryRun) {
+    return blogModule.findBlogsClosedSince(since.value, langs, blogNumberOptions, function(err, blogsWithLangs) {
+      if (err) return next(err);
+      const preview = blogsWithLangs.map(function(entry) {
+        return { name: entry.blog.name, langs: entry.langs };
+      });
+      res.set("content-type", "application/json");
+      res.end(JSON.stringify({
+        exportProfile: exportProfile,
+        since: since.value,
+        minBlogNumber: blogNumberOptions.minBlogNumber ?? null,
+        maxBlogNumber: blogNumberOptions.maxBlogNumber ?? null,
+        count: preview.length,
+        blogs: preview
+      }));
+    });
+  }
+
+  blogModule.buildClosedSinceExportZip(exportProfile, since.value, langs, blogNumberOptions, function(err, result) {
+    if (err) return next(err);
+
+    const { archive, failures } = result;
+
+    if (failures && failures.length > 0) {
+      const failureList = failures.map((f) => `${f.blog.name}:${f.lang}`).join(",");
+      debug("Skipped %d blog/lang exports due to render errors: %s", failures.length, failureList);
+      res.set("X-ClosedSince-Export-Warnings", failureList);
+    }
+
+    if (!archive) {
+      const noContentBehavior = profileConfig.noContentBehavior || "404";
+      if (noContentBehavior === "emptyZip") {
+        const emptyArchive = new ZipArchive("zip", { zlib: { level: 9 } });
+        res.set("content-type", "application/zip");
+        res.attachment("closedSince.zip");
+        emptyArchive.pipe(res);
+        emptyArchive.finalize();
+        return;
+      }
+      const notFound = new Error("No blogs available for closedSince export");
+      notFound.status = 404;
+      notFound.type = "API";
+      return next(notFound);
+    }
+
+    let zipFileName = "closedSince.zip";
+    if (profileConfig.fileNameTemplate) {
+      const templated = profileConfig.fileNameTemplate.replace(/##[^#]+##/g, "closedsince");
+      if (templated && templated.trim()) {
+        zipFileName = templated.toLowerCase().endsWith(".zip") ? templated : `${templated}.zip`;
+      }
+    }
+
+    res.set("content-type", "application/zip");
+    res.attachment(zipFileName);
+
+    archive.pipe(res);
+  });
+}
+
 /**
  * Download a rendered blog preview using a configured export profile.
  *
@@ -480,6 +641,7 @@ publicApiRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
 publicApiRouter.post("/collectArticle/:apiKey", collectArticle);
 publicApiRouter.get("/collect/:apiKey", collectArticleLink);
 publicApiRouter.get("/blogPreviewDownload/:apiKey/outstanding", getBlogPreviewDownloadOutstanding);
+publicApiRouter.get("/blogPreviewDownload/:apiKey/closedSince", getBlogPreviewDownloadClosedSince);
 publicApiRouter.get("/blogPreviewDownload/:apiKey/:blog_id", getBlogPreviewDownload);
 
 export default publicApiRouter;
