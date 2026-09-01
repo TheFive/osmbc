@@ -649,6 +649,31 @@ describe("model/blog", function() {
     });
     /* eslint-enable mocha/no-synchronous-tests */
   });
+  describe("getPreviewData disableNotranslation predecessor chain", function() {
+    beforeEach(function(bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", status: "edit" }],
+        article: [
+          { blog: "WN1", id: 1, title: "first", categoryEN: "News", markdownEN: "First article" },
+          { blog: "WN1", id: 2, title: "second", categoryEN: "News", predecessorId: 1, markdownEN: "no translation" },
+          { blog: "WN1", id: 3, title: "third", categoryEN: "News", predecessorId: 2, markdownEN: "Third article" }
+        ]
+      }, bddone);
+    });
+    it("should keep the predecessor chain intact across a removed no translation article", function(bddone) {
+      blogModule.findOne({ name: "WN1" }, function(err, blog) {
+        should.not.exist(err);
+        blog.getPreviewData({ lang: "EN", disableNotranslation: true }, function(err, result) {
+          should.not.exist(err);
+          const news = result.articles.News;
+          should(news.map((a) => String(a.id))).eql(["1", "3"]);
+          should(String(news[1].predecessorId)).eql("1");
+          bddone();
+        });
+      });
+    });
+  });
   describe("copyAllArticles", function () {
     beforeEach(function(bddone) {
       testutil.importData({

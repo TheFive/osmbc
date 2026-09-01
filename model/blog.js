@@ -540,11 +540,39 @@ class Blog {
 
 
         let i; // often used iterator, declared here because there is no block scope in JS.
+
+        // Build lookup tables over the full (unfiltered) articleList so a
+        // predecessorId chain can be resolved "through" no translation
+        // articles that are about to be removed below. Without this, a
+        // chain A -> B -> C where B is a no translation article would lose
+        // the A -> C link once B disappears from the list handed to
+        // sortArticles.
+        const predecessorMap = {};
+        const noTranslationIds = {};
+        if (options.disableNotranslation) {
+          for (i = 0; i < articleList.length; i++) {
+            const a = articleList[i];
+            predecessorMap[a.id] = a.predecessorId;
+            if (a["markdown" + options.lang] === "no translation") noTranslationIds[a.id] = true;
+          }
+        }
+
         for (i = 0; i < articleList.length; i++) {
           const r = articleList[i];
 
           // remove no translation article, if wanted
-          if (options.disableNotranslation && r["markdown" + options.lang] === "no translation") continue;
+          if (options.disableNotranslation && noTranslationIds[r.id]) continue;
+          if (options.disableNotranslation) {
+            // Skip over removed no translation predecessors so the chain
+            // stays intact; guard against cycles in corrupted data.
+            let pid = r.predecessorId;
+            const visited = {};
+            while (pid !== undefined && pid !== null && noTranslationIds[pid] && !visited[pid]) {
+              visited[pid] = true;
+              pid = predecessorMap[pid];
+            }
+            r.predecessorId = pid;
+          }
           if (options.warningOnEmptyMarkdown && r.categoryEN !== "--unpublished--" &&
             (!r["markdown" + options.lang] || r["markdown" + options.lang].trim() === "")) {
             containsEmptyArticlesWarning = true;
