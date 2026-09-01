@@ -1,7 +1,7 @@
 # OSMBC Public API
 
 This document describes the public, API-key-secured HTTP API exposed by
-[routes/api.js](routes/api.js). It is separate from the session/cookie-based
+[routes/api.js](../routes/api.js). It is separate from the session/cookie-based
 web UI. All endpoints below are mounted under:
 
 ```
@@ -10,6 +10,11 @@ web UI. All endpoints below are mounted under:
 
 `<htmlroot>` is the `htmlroot` value from `config.<env>.yaml` (often empty).
 Examples in this document use `/api/...` directly.
+
+For the full field-by-field meaning of an `ExportProfiles` entry itself
+(`renderer`, `pathTemplate`, `noContentBehavior`, the `gui*` menu fields,
+...), see [docs/export-profiles.md](export-profiles.md). This document only
+covers what a *caller* of the routes below needs to know.
 
 ## Authentication
 

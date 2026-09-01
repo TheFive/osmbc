@@ -50,7 +50,9 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
 - Export targets are defined under `ExportProfiles` in the config
   (HTML/WP, Markdown, Hugo — `renderer: HUGO`). OSMBC is meant to be the
   editorial source of truth; Hugo export is one of several render targets
-  generated from it, not a separate data source.
+  generated from it, not a separate data source. See
+  `docs/export-profiles.md` for the field-by-field meaning of a profile
+  entry, and `docs/API.md` for the caller-facing API that consumes it.
 
 ## Notifications (`setAndSave` → `messageCenter`)
 
