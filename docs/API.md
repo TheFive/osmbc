@@ -407,3 +407,83 @@ curl "https://<host>/api/blogPreviewDownload/<apiKey>/closedSince?exportProfile=
 curl -o closedSince.zip \
   "https://<host>/api/blogPreviewDownload/<apiKey>/closedSince?exportProfile=HugoDownload&since=2026-01-01"
 ```
+
+## `GET /api/blogSync/:apiKey/:blog_id`
+
+Blog-Sync-Merger read endpoint (see `CLAUDE.local.md` in the `osmbc-develop`
+worktree for the full design). Unlike every `blogPreviewDownload` route
+above, this does **not** go through a renderer — it returns the raw,
+unrendered field values for a blog and all of its articles, which a local
+merge tool needs to compute a diff against another OSMBC instance.
+
+### Route parameter
+
+| Param | Description |
+|---|---|
+| `blog_id` | Internal id or `name` (e.g. `WN842`) of the blog, resolved the same way as `blogPreviewDownload/:blog_id`. |
+
+### Responses
+
+- `200` — `application/json`:
+  ```json
+  {
+    "blog": { "id": 842, "name": "WN842", "status": "closed", "categories": ["Mapping", "..."] },
+    "trackedFields": ["categoryEN", "predecessorId", "title", "markdownDE", "markdownEN", "..."],
+    "articles": [
+      { "id": 12345, "categoryEN": "Mapping", "predecessorId": "", "title": "...", "markdownDE": "...", "markdownEN": "..." }
+    ]
+  }
+  ```
+  An article field OSMBC has no value for is serialized as `""`, never
+  omitted — `wp-reconcile/blog-sync-merger/blogSyncMerger.js`'s diff logic and `setAndSave`'s own
+  optimistic-concurrency check both rely on this sentinel rather than a
+  JSON-dropped key.
+- `401` — invalid `apiKey`.
+- `404` — no such blog.
+
+## `POST /api/blogSync/:apiKey/:blog_id/apply`
+
+Blog-Sync-Merger write endpoint. Applies a merge plan (as computed by
+`wp-reconcile/blog-sync-merger/blogSyncMerger.js` against a local copy and a prior `GET
+/blogSync` download) to this blog. Every write is attributed to the
+synthetic `wp-backport` user (`notification/migrationFilter.js`), which
+keeps it out of editor mail/Slack notifications while remaining fully
+visible in the Postgres changes-log audit trail (`wp-reconcile/blog-sync-merger/rollback.js`
+depends on that log to revert a run later).
+
+### Body (`application/json`)
+
+| Field | Required | Description |
+|---|---|---|
+| `maxBlogNumber` | yes | Safety net: re-checked server-side against this blog's WN number — never trusted from a client-computed plan alone. |
+| `dryRun` | no | `true` → only re-validates eligibility and reports counts (`wouldCreate`/`wouldPatch`); no write of any kind happens. |
+| `creates` | no | `Array<{ localId, fields }>`. `fields.predecessorId`, if present, may reference another entry's `localId` in the same batch — resolved once real ids are known (two-phase create, see `wp-reconcile/blog-sync-merger/blogSyncMerger.js` `remapPredecessorIds`). |
+| `patches` | no | `Array<{ id, changes, old }>`. `old` is passed straight through to `setAndSave`'s optimistic-concurrency check. |
+
+### Eligibility (safety net a)
+
+Rejected with `409` unless the blog is a WeeklyNote blog, `status ===
+"closed"`, and its WN number is `<= maxBlogNumber` — i.e. this endpoint
+refuses to touch a blog that is still being worked on live, regardless of
+what the request body asks for.
+
+Because `categoryEN`/`predecessorId`/`title` are themselves locked by
+`Article.prototype.isChangeAllowed` while the blog is closed, applying a
+non-dry-run batch temporarily reopens the blog and restores it (including
+`exported{LANG}`) once the batch finishes — see `wp-reconcile/blog-sync-merger/withReopenedBlog.js`.
+
+### Responses
+
+- `200` (dry run) — `application/json`: `{ "blog": "WN842", "wouldCreate": 2, "wouldPatch": 5 }`.
+- `200` (applied) — `application/json`:
+  ```json
+  {
+    "created": [{ "localId": "local-1", "id": 99999 }],
+    "patched": [{ "id": 12345 }],
+    "conflicts": [{ "id": 12346, "error": "Field markdownDE already changed in DB", "detail": { "oldValue": "...", "databaseValue": "...", "newValue": "..." } }],
+    "errors": []
+  }
+  ```
+  A conflict (someone changed that field since the plan was computed) or a
+  per-item error never aborts the rest of the batch.
+- `409` — blog not eligible (see above).

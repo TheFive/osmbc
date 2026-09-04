@@ -259,6 +259,81 @@ describe("model/blog", function() {
         });
       });
     });
+
+    // Optional optimistic-concurrency check via `data.old`, opt-in per key
+    // - added for the Blog-Sync-Merger (see CLAUDE.local.md). Backward
+    // compatibility with every pre-existing caller (none of which ever set
+    // `data.old`) is what the test above already covers; these cover the
+    // new opt-in behaviour itself.
+    it("should accept a matching data.old and never persist the old key itself", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "TeamStringBlog", status: "TEST" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", old: { status: "TEST" } }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", id, function(err, result) {
+            should.not.exist(err);
+            should(result.status).eql("published");
+            should(result.old).be.undefined();
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should reject with a CONFLICT error when data.old no longer matches the current value, without writing anything", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "ConflictBlog", status: "TEST" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        newBlog.setAndSave({ OSMUser: "someone-else" }, { status: "closed" }, function(err) {
+          should.not.exist(err);
+          // newBlog's in-memory status is now "closed"; claim a stale "TEST" old-value
+          newBlog.setAndSave({ OSMUser: "user" }, { status: "published", old: { status: "TEST" } }, function(err) {
+            should.exist(err);
+            should(err.message).eql("Field status already changed in DB");
+            should(err.status).eql(409);
+            should(err.detail).eql({ oldValue: "TEST", databaseValue: "closed", newValue: "published" });
+            testutil.getJsonWithId("blog", id, function(err, result) {
+              should.not.exist(err);
+              should(result.status).eql("closed"); // unchanged by the rejected call
+              bddone();
+            });
+          });
+        });
+      });
+    });
+
+    it("should treat a field that was never set (undefined) as matching an old-value claim of \"\" (no conflict)", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "NeverSetFieldBlog", status: "TEST" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        should(newBlog.teamStringDE).be.undefined(); // never set, e.g. a legacy blog predating this field
+        newBlog.setAndSave({ OSMUser: "user" }, { teamStringDE: "Alice", old: { teamStringDE: "" } }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", id, function(err, result) {
+            should.not.exist(err);
+            should(result.teamStringDE).eql("Alice");
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should only check keys the caller actually makes a claim about in data.old, writing the rest unconditionally", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "PartialOldBlog", status: "TEST" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", teamStringDE: "Alice", old: { status: "TEST" } }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", id, function(err, result) {
+            should.not.exist(err);
+            should(result.status).eql("published");
+            should(result.teamStringDE).eql("Alice");
+            bddone();
+          });
+        });
+      });
+    });
   });
   describe("closeBlog", function() {
     before(function (bddone) {

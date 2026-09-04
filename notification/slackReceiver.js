@@ -10,6 +10,7 @@ import configModule from "../model/config.js";
 import messageCenter from "../notification/messageCenter.js";
 import ConfigFilter from "../notification/ConfigFilter.js";
 import IteratorReceiver from "../notification/IteratorReceiver.js";
+import { suppressMigrationNotifications } from "../notification/migrationFilter.js";
 
 import Slack from "../notification/SlackAPI.js";
 
@@ -281,7 +282,7 @@ export const initialiseSlackReceiver = function initialiseSlackReceiver(callback
     iteratorReceiver.receiverMap = channelReceiverMap;
     assert(messageCenter.global);
     if (!registered) {
-      messageCenter.global.registerReceiver(iteratorReceiver);
+      messageCenter.global.registerReceiver(suppressMigrationNotifications(iteratorReceiver));
       registered = true;
     }
     if (callback) return callback();

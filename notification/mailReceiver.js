@@ -20,6 +20,7 @@ import "winston-daily-rotate-file";
 
 
 import UserConfigFilter from "../notification/UserConfigFilter.js";
+import { suppressMigrationNotifications } from "../notification/migrationFilter.js";
 
 import IteratorReceiver from "../notification/IteratorReceiver.js";
 import _debug from "debug";
@@ -462,7 +463,7 @@ function initialise(userList) {
   }
   assert(messageCenter.global);
   if (!registered) {
-    messageCenter.global.registerReceiver(iteratorReceiver);
+    messageCenter.global.registerReceiver(suppressMigrationNotifications(iteratorReceiver));
     registered = true;
   }
 }

@@ -4,7 +4,7 @@
 import { series, eachOfSeries, each, eachLimit, eachSeries } from "async";
 import language from "../model/language.js";
 import util from "../util/util.js";
-import { FORBIDDEN } from "http-status-codes";
+import { FORBIDDEN, CONFLICT } from "http-status-codes";
 import config from "../config.js";
 
 
@@ -98,10 +98,56 @@ class Blog {
   // at the end, the blog value is written in total
   // This is may be relevant for concurrent save
   // as there is no locking with version numbers yet.
+  //
+  // Optional optimistic-concurrency check via `data.old`, opt-in per key -
+  // unlike Article.prototype.setAndSave (model/article.js), which
+  // *requires* `old`/`version` for every changed key, this stays backward
+  // compatible with every existing Blog caller (none of which ever set
+  // `data.old` - verified 2026-09-03, see CLAUDE.local.md): a key with no
+  // corresponding `data.old[key]` is written exactly as before,
+  // unconditionally. Only keys the caller *does* make a claim about get
+  // checked against the current in-memory value; a mismatch means someone
+  // else changed it since the caller last read it, and aborts the whole
+  // call with a CONFLICT error before anything is broadcast or saved.
+  // `data.old` itself is always stripped before it can reach
+  // messageCenter/persistence - LogModuleReceiver logs whatever keys are
+  // present in `data` unconditionally (see notification/messageCenter.js),
+  // so a lingering `old` key would otherwise turn into a bogus "property:
+  // old" changes-log row, in addition to corrupting the blog's own data.
   setAndSave(user, data, callback) {
     debug("setAndSave");
     util.requireTypes([user, data, callback], ["object", "object", "function"]);
     const self = this;
+
+    if (data.old) {
+      for (const key in data) {
+        if (key === "old") continue;
+        if (typeof data.old[key] === "undefined") continue; // no claim made for this key - skip the check
+        const dbValue = self[key];
+        const oldValue = data.old[key];
+        const dbComparable = (typeof dbValue === "object") ? JSON.stringify(dbValue) : dbValue;
+        const oldComparable = (typeof oldValue === "object") ? JSON.stringify(oldValue) : oldValue;
+        // Mirrors Article.prototype.setAndSave's own special case
+        // (model/article.js): a field that was never set at all
+        // (`undefined`, e.g. a legacy blog that predates teamString<LANG>
+        // existing) must compare equal to a caller's old-value claim of
+        // "" - found by a real osmbc_prod_copie -> osmbc dry run
+        // (WN028), where a naive `dbComparable !== oldComparable` treated
+        // "field genuinely never existed" as a conflict against "caller
+        // correctly believed there was no prior value".
+        const conflict = (typeof dbValue === "undefined")
+          ? oldComparable !== ""
+          : dbComparable !== oldComparable;
+        if (conflict) {
+          const error = new Error("Field " + key + " already changed in DB");
+          error.status = CONFLICT;
+          error.detail = { oldValue: oldValue, databaseValue: dbValue, newValue: data[key] };
+          return callback(error);
+        }
+      }
+      delete data.old;
+    }
+
     const previousBlogState = Object.assign(Object.create(Object.getPrototypeOf(self)), self);
     delete self.lock;
     assert.notEqual(typeof self.id, "undefined");
@@ -110,6 +156,7 @@ class Blog {
       function copyDataToBlog(cb) {
         assert.notEqual(self.id, 0);
         for (const key in data) {
+          if (key === "old") continue;
           const value = data[key];
           if (typeof (value) === "undefined") continue;
           if (value === self[key]) continue;

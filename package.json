@@ -22,7 +22,7 @@
     "nanoid": "^3.3.18"
   },
   "scripts": {
-    "lint": "eslint --no-error-on-unmatched-pattern app.js staticFileServer.js config.js postinstall.js bin/**/*.js export/**/*.js genstaticpage/**/*.js import/**/*.js model/**/*.js notification/**/*.js render/**/*.js routes/**/*.js scripts/**/*.js test/**/*.js util/**/*.js",
+    "lint": "eslint --no-error-on-unmatched-pattern app.js staticFileServer.js config.js postinstall.js bin/**/*.js export/**/*.js genstaticpage/**/*.js import/**/*.js model/**/*.js notification/**/*.js render/**/*.js routes/**/*.js scripts/**/*.js test/**/*.js util/**/*.js wp-reconcile/**/*.js",
     "start": "NODE_ENV=development node ./bin/www.js",
     "test": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx nyc mocha \"$@\"; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status' --",
     "test:fast": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx mocha \"$@\"; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Fast-Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status' --",
@@ -32,7 +32,7 @@
     "test:coverage:render:functions": "npm run -s test:coverage:render:detail && node scripts/coverage-uncovered-functions.js coverage/lcov.info render/",
     "test:coverage:render:check": "NODE_ENV=test TEST_HEADLESS=TRUE npx c8 --all --include='render/**/*.js' --check-coverage --lines 90 --statements 90 --branches 85 --functions 60 --reporter=text-summary --reporter=text mocha test/render.blogrenderer.test.js",
     "test:coverage:render:strict": "NODE_ENV=test TEST_HEADLESS=TRUE npx c8 --all --include='render/**/*.js' --exclude='render/Renderer.js' --check-coverage --lines 90 --statements 90 --branches 85 --functions 75 --reporter=text-summary --reporter=text mocha test/render.blogrenderer.test.js",
-    "test:model": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/model.*.test.js\" \"test/notification.*.test.js\" \"test/render.*.test.js\" \"test/util.test.js\"",
+    "test:model": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/model.*.test.js\" \"test/notification.*.test.js\" \"test/render.*.test.js\" \"test/util.test.js\" \"test/merger.*.test.js\"",
     "test:router": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/routes.*.test.js\"",
     "test:ui": "NODE_ENV=test TEST_HEADLESS=TRUE npx nyc mocha \"test/**/uc.*.test.js\"",
     "test:layers": "npm run test:model && npm run test:router && npm run test:ui",

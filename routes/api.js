@@ -11,6 +11,10 @@ import config from "../config.js";
 import language from "../model/language.js";
 import blogModule from "../model/blog.js";
 import { ZipArchive } from "archiver";
+import { CONFLICT } from "http-status-codes";
+import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
+import { withReopenedBlog } from "../wp-reconcile/blog-sync-merger/withReopenedBlog.js";
+import { SYNTHETIC_MIGRATION_USER_NAME } from "../notification/migrationFilter.js";
 
 const debug = _debug("OSMBC:routes:api");
 const publicApiRouter  = express.Router();
@@ -632,6 +636,278 @@ function getBlogPreviewDownload(req, res, next) {
   });
 }
 
+function getSyncTrackedFields() {
+  const fields = [...blogSyncMerger.BASE_TRACKED_FIELDS];
+  for (const lang in language.getLanguages()) fields.push("markdown" + lang);
+  return fields;
+}
+
+// Blog-level fields the Blog-Sync-Merger also diffs/patches, in addition
+// to categories/status (handled separately via eligibility/
+// missingCategories). Currently just teamString<LANG> ("who produced this
+// issue" credit line, feeds the Hugo footer) - found missing after a real
+// osmbc_prod_copie vs. osmbc Hugo-export byte-diff (see CLAUDE.local.md).
+// Deliberately opt-in and separate from article fields: Blog.setAndSave
+// (model/blog.js) has no isChangeAllowed-style lock (so, unlike article
+// patches, doesn't strictly need the reopen window below), but its
+// optimistic-concurrency check via `data.old` is opt-in per key rather
+// than required, since most other Blog callers never set it.
+function getSyncTrackedBlogFields() {
+  const fields = [];
+  for (const lang in language.getLanguages()) fields.push("teamString" + lang);
+  return fields;
+}
+
+/**
+ * Blog-Sync-Merger read endpoint: returns one blog and all of its articles
+ * as raw JSON (not rendered through any export profile) - the input the
+ * merger's planning logic (merger/blogSyncMerger.js) needs to compute a
+ * diff against a local copy.
+ *
+ * Route params:
+ * - apiKey {string} API key used by middleware `checkApiKey`
+ * - blog_id {string} blog identifier (internal id or name), resolved by `checkBlogId`
+ */
+function getBlogSync(req, res, next) {
+  debug("getBlogSync");
+  const blog = req.blog;
+  const trackedFields = getSyncTrackedFields();
+  const trackedBlogFields = getSyncTrackedBlogFields();
+
+  articleModule.find({ blog: blog.name }, function(err, articles) {
+    if (err) return next(err);
+    const blogData = {
+      id: blog.id,
+      name: blog.name,
+      status: blog.status,
+      categories: blog.categories,
+      ...blogSyncMerger.serializeFieldsForSync(blog, trackedBlogFields)
+    };
+    res.set("content-type", "application/json");
+    res.end(JSON.stringify({
+      blog: blogData,
+      trackedFields: trackedFields,
+      trackedBlogFields: trackedBlogFields,
+      articles: articles.map((a) => blogSyncMerger.serializeArticleForSync(a, trackedFields))
+    }));
+  });
+}
+
+/**
+ * Blog-Sync-Merger write endpoint: applies a merge plan (as produced by
+ * merger/blogSyncMerger.js against a client-side download of getBlogSync)
+ * against this blog. Every write is attributed to the synthetic
+ * `wp-backport` user (see notification/migrationFilter.js) so it stays out
+ * of editor mail/Slack notifications while remaining fully visible in the
+ * changes-log audit trail, which merger/rollback.js depends on.
+ *
+ * Route params: apiKey, blog_id - as getBlogSync.
+ *
+ * Body:
+ * - maxBlogNumber {number} required - safety net (a): re-checked here
+ *   server-side, never trusted from a client-computed plan alone.
+ * - dryRun {boolean} optional - if true, only re-validates eligibility and
+ *   reports counts, no write of any kind happens.
+ * - creates {Array<{localId, fields}>} optional - articles to create.
+ *   `fields.predecessorId`, if present, may reference another entry's
+ *   `localId` in this same batch - resolved in a second pass once real ids
+ *   are known (see merger/blogSyncMerger.js remapPredecessorIds).
+ * - patches {Array<{id, changes, old}>} optional - existing articles to
+ *   patch; `old` is passed straight through to setAndSave for its
+ *   optimistic-concurrency check.
+ * - blogPatch {{changes, old}} optional - blog-level fields to patch (e.g.
+ *   teamString<LANG>, see getSyncTrackedBlogFields). `old` is passed
+ *   straight through to Blog.prototype.setAndSave (model/blog.js), same
+ *   as an article patch's `old` - its optimistic-concurrency check is
+ *   opt-in per key there specifically so this works without touching the
+ *   many other Blog callers that never set `old`.
+ * - categories {Array} optional - the local side's full `categories`
+ *   array. Unlike blogPatch, the decision of what to actually do about it
+ *   is never trusted from the client: this endpoint always recomputes
+ *   `blogSyncMerger.planCategoriesMerge(body.categories, blog.categories)`
+ *   against the blog's *current* live state, and only ever applies it when
+ *   that still comes back "replace" (remote's existing categories are an
+ *   ordered subsequence of local's - i.e. local only added to them, never
+ *   removed/reordered one). Anything else is left untouched and reported
+ *   for manual review, never auto-applied - see CLAUDE.md on why
+ *   `categories` order is sensitive (heading order + lead-picture caption
+ *   position).
+ *
+ * Response: { created, patched, conflicts, errors, blogPatched,
+ * blogConflicts, categoriesAction, categoriesConflict } - a conflict (409
+ * from setAndSave, for an article or a blog/categories patch) or a
+ * per-item error never aborts the rest of the batch.
+ */
+function applyBlogSync(req, res, next) {
+  debug("applyBlogSync");
+  const blog = req.blog;
+  const body = req.body || {};
+
+  const eligibility = blogSyncMerger.checkBlogEligibility(blog, { maxBlogNumber: body.maxBlogNumber });
+  if (!eligibility.eligible) {
+    const error = new Error(eligibility.reason);
+    error.status = 409;
+    error.type = "API";
+    return next(error);
+  }
+
+  const creates = Array.isArray(body.creates) ? body.creates : [];
+  const patches = Array.isArray(body.patches) ? body.patches : [];
+  const blogPatch = (body.blogPatch && typeof body.blogPatch.changes === "object") ? body.blogPatch : null;
+  const migrationUser = { OSMUser: SYNTHETIC_MIGRATION_USER_NAME };
+
+  // Always recomputed against the blog's current live categories - never
+  // trust a client-precomputed "replace" decision for this, since it's the
+  // one write here with no per-field optimistic-concurrency check to fall
+  // back on (a whole-array replace either happens or it doesn't).
+  const categoriesPlan = Array.isArray(body.categories)
+    ? blogSyncMerger.planCategoriesMerge(body.categories, blog.categories)
+    : { action: "none" };
+
+  if (body.dryRun === true) {
+    res.set("content-type", "application/json");
+    return res.end(JSON.stringify({
+      blog: blog.name,
+      wouldCreate: creates.length,
+      wouldPatch: patches.length,
+      wouldPatchBlogFields: blogPatch ? Object.keys(blogPatch.changes) : [],
+      wouldPatchCategories: categoriesPlan.action
+    }));
+  }
+
+  const createdIdMap = new Map(); // localId -> id actually assigned remotely
+  const result = {
+    created: [], patched: [], conflicts: [], errors: [],
+    blogPatched: [], blogConflicts: {},
+    categoriesAction: categoriesPlan.action, categoriesConflict: null
+  };
+
+  // One single reopen/restore cycle around the whole batch (blog-level
+  // patch included, even though Blog.setAndSave itself has no
+  // isChangeAllowed-style lock to work around) - simpler than a separate
+  // open/close per concern, and keeps the changes-log audit trail to one
+  // status edit->closed pair per migration run instead of one per step.
+  withReopenedBlog(blog, migrationUser, function runBatch(done) {
+    async.series([
+      doBlogPatch,
+      doCategoriesPatch,
+      doCreates,
+      doPredecessorPatchForCreated,
+      doPatches
+    ], done);
+  }, function(err) {
+    if (err) return next(err);
+    res.set("content-type", "application/json");
+    res.end(JSON.stringify(result));
+  });
+
+  function doCategoriesPatch(cb) {
+    if (categoriesPlan.action !== "replace") return cb();
+    blog.setAndSave(migrationUser, { categories: categoriesPlan.categories, old: { categories: categoriesPlan.old } }, function(err) {
+      if (err) {
+        if (err.status === CONFLICT) {
+          result.categoriesConflict = { error: err.message, detail: err.detail };
+        } else {
+          result.errors.push({ blog: blog.name, error: err.message });
+        }
+        return cb();
+      }
+      cb();
+    });
+  }
+
+  function doBlogPatch(cb) {
+    if (!blogPatch || Object.keys(blogPatch.changes).length === 0) return cb();
+    blog.setAndSave(migrationUser, { ...blogPatch.changes, old: blogPatch.old }, function(err) {
+      if (err) {
+        if (err.status === CONFLICT) {
+          // setAndSave reports the first conflicting key it finds, not
+          // every one - same behavior as Article.prototype.setAndSave.
+          result.blogConflicts = { error: err.message, detail: err.detail };
+        } else {
+          result.errors.push({ blog: blog.name, error: err.message });
+        }
+        return cb();
+      }
+      result.blogPatched = Object.keys(blogPatch.changes);
+      cb();
+    });
+  }
+
+  function doCreates(cb) {
+    async.eachSeries(creates, function(item, cbEach) {
+      const fields = { ...item.fields };
+      delete fields.predecessorId; // set in the pass below, once real ids are known
+      fields.blog = blog.name;
+      articleModule.createNewArticle(function(err, article) {
+        if (err) return cbEach(err);
+        fields.version = article.version;
+        fields.firstCollector = SYNTHETIC_MIGRATION_USER_NAME;
+        article.setAndSave(migrationUser, fields, function(err) {
+          if (err) {
+            result.errors.push({ localId: item.localId, error: err.message });
+            return cbEach();
+          }
+          createdIdMap.set(item.localId, article.id);
+          result.created.push({ localId: item.localId, id: article.id });
+          cbEach();
+        });
+      });
+    }, cb);
+  }
+
+  function doPredecessorPatchForCreated(cb) {
+    async.eachSeries(creates, function(item, cbEach) {
+      const wantedPredecessorId = item.fields && item.fields.predecessorId;
+      if (!wantedPredecessorId) return cbEach();
+      const createdId = createdIdMap.get(item.localId);
+      if (typeof createdId === "undefined") return cbEach(); // creation itself failed, already recorded above
+      const remotePredecessorId = createdIdMap.has(wantedPredecessorId)
+        ? createdIdMap.get(wantedPredecessorId)
+        : wantedPredecessorId; // already a shared/pre-existing id, no remap needed
+      articleModule.findById(createdId, function(err, article) {
+        if (err) return cbEach(err);
+        article.setAndSave(migrationUser, { predecessorId: remotePredecessorId, old: { predecessorId: article.predecessorId || "" } }, function(err) {
+          if (err) result.errors.push({ localId: item.localId, error: err.message });
+          cbEach();
+        });
+      });
+    }, cb);
+  }
+
+  function doPatches(cb) {
+    async.eachSeries(patches, function(item, cbEach) {
+      // An existing article's predecessorId can legitimately need to
+      // point at a brand-new sibling created earlier in this very batch
+      // (e.g. a new article inserted between two already-migrated ones) -
+      // that reference is still a local id at plan time, only resolvable
+      // once doCreates has actually run and populated createdIdMap.
+      if (item.changes && item.changes.predecessorId && createdIdMap.has(item.changes.predecessorId)) {
+        item.changes.predecessorId = createdIdMap.get(item.changes.predecessorId);
+      }
+      articleModule.findById(item.id, function(err, article) {
+        if (err) return cbEach(err);
+        if (!article) {
+          result.errors.push({ id: item.id, error: "Article not found" });
+          return cbEach();
+        }
+        article.setAndSave(migrationUser, { ...item.changes, old: item.old }, function(err) {
+          if (err) {
+            if (err.status === CONFLICT) {
+              result.conflicts.push({ id: item.id, error: err.message, detail: err.detail });
+            } else {
+              result.errors.push({ id: item.id, error: err.message });
+            }
+            return cbEach();
+          }
+          result.patched.push({ id: item.id });
+          cbEach();
+        });
+      });
+    }, cb);
+  }
+}
+
 publicApiRouter.param("apiKey", checkApiKey);
 publicApiRouter.param("blog_id", checkBlogId);
 
@@ -643,5 +919,7 @@ publicApiRouter.get("/collect/:apiKey", collectArticleLink);
 publicApiRouter.get("/blogPreviewDownload/:apiKey/outstanding", getBlogPreviewDownloadOutstanding);
 publicApiRouter.get("/blogPreviewDownload/:apiKey/closedSince", getBlogPreviewDownloadClosedSince);
 publicApiRouter.get("/blogPreviewDownload/:apiKey/:blog_id", getBlogPreviewDownload);
+publicApiRouter.get("/blogSync/:apiKey/:blog_id", getBlogSync);
+publicApiRouter.post("/blogSync/:apiKey/:blog_id/apply", applyBlogSync);
 
 export default publicApiRouter;
