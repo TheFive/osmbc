@@ -58,7 +58,9 @@ github-changelog-http-cache
 check-chromedriver.sh
 CoPi_Temp/
 config.development.yaml
+config.prodcopie.yaml
 config.production.yaml
 WP Data
 dependency-maintenance-2026-07-26.md
 backport
+wp-reconcile/blog-sync-merger/.sync-state.json
