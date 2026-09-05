@@ -28,7 +28,21 @@ const WN_NUMBER_RE = /^WN(\d+)$/i;
 
 // Fields carried unconditionally in addition to whatever language-specific
 // markdown fields the caller passes in trackedFields (e.g. "markdownDE").
-export const BASE_TRACKED_FIELDS = ["categoryEN", "predecessorId", "title"];
+//
+// unpublishReason: found missing via a real WN275 dry/commit run (see
+// CLAUDE.local.md) - Article.prototype.setAndSave (model/article.js)
+// refuses to set categoryEN to "--unpublished--" (or blog to "Trash")
+// unless the write carries a non-empty unpublishReason (or the article
+// already has one). Without this field tracked, a genuine local
+// unpublish-correction (categoryEN diff alone) is rejected by that guard
+// as "Missing reason for unpublishing article." - not a data-loss risk
+// (the patch is cleanly refused, reported in the caller's `errors`), but
+// the correction never lands. Treated as informational/read-only content
+// (never independently reconciled against a differing remote value the
+// way, say, a real editor's own unpublish note might be) - the local
+// side's value is simply carried along whenever it has one, same as any
+// other tracked field.
+export const BASE_TRACKED_FIELDS = ["categoryEN", "predecessorId", "title", "unpublishReason"];
 
 export function extractBlogNumber(name) {
   if (typeof name !== "string") return null;
@@ -68,7 +82,11 @@ function fieldsEqual(a, b) {
 
 // Computes the set of tracked fields that differ between a local article
 // and its matched remote counterpart. Returns null if nothing differs.
-function diffFields(localArticle, remoteArticle, trackedFields) {
+// Exported (not just used internally for article/blogPatch diffing) so
+// routes/api.js can reuse it to diff close<LANG> flags directly against
+// the blog's *live* state at write time - see withReopenedBlog.js for why
+// that one specifically is never trusted from a client-precomputed value.
+export function diffFields(localArticle, remoteArticle, trackedFields) {
   const changes = {};
   const old = {};
   for (const field of trackedFields) {
@@ -300,10 +318,24 @@ export function planCategoriesMerge(localCategories, remoteCategories) {
 //   ["teamStringDE", "teamStringEN", ...] - deliberately opt-in and
 //   separate from article trackedFields; categories/status are handled
 //   via eligibility/missingCategories above, never via this generic diff.
-export function planMerge({ localBlog, localArticles, remoteBlog, remoteArticles, trackedFields, trackedBlogFields = [], maxBlogNumber, knownRemoteIds }) {
+//
+// trackedCloseFields: close<LANG> flags to sync (e.g. ["closeDE", ...]) -
+// deliberately kept separate from trackedBlogFields even though it's the
+// exact same diffFields mechanism: render/Renderer.js skips a language's
+// content entirely unless close<LANG> is true, found via a real
+// Hugo-export diff (see CLAUDE.local.md) - but unlike teamString, this
+// can never be applied at the *start* of a write batch (would lock this
+// same batch's own markdown<LANG> patches for that language, see
+// withReopenedBlog.js) - routes/api.js applies it as a `withReopenedBlog`
+// restoreOverride instead, after all article patches have already run.
+// Deliberately excludes exported<LANG> - that's export-delivery
+// bookkeeping (see notification/exportReceiver.js), not a rendering gate,
+// and syncing it could make a real delivery pipeline think a blog needs
+// re-exporting when it doesn't.
+export function planMerge({ localBlog, localArticles, remoteBlog, remoteArticles, trackedFields, trackedBlogFields = [], trackedCloseFields = [], maxBlogNumber, knownRemoteIds }) {
   const eligibility = checkBlogEligibility(remoteBlog, { maxBlogNumber });
   if (!eligibility.eligible) {
-    return { eligible: false, reason: eligibility.reason, toCreate: [], toPatch: [], unchanged: [], remoteOnly: [], missingCategories: [], blogPatch: null, categoriesPlan: { action: "none" } };
+    return { eligible: false, reason: eligibility.reason, toCreate: [], toPatch: [], unchanged: [], remoteOnly: [], missingCategories: [], blogPatch: null, closeFlagsPatch: null, localCloseFlags: {}, categoriesPlan: { action: "none" } };
   }
   const articlePlan = planArticleMerge(localArticles, remoteArticles, trackedFields, knownRemoteIds);
   const localCategories = Array.isArray(localBlog && localBlog.categories) ? localBlog.categories : [];
@@ -312,17 +344,80 @@ export function planMerge({ localBlog, localArticles, remoteBlog, remoteArticles
   const missingCategories = localCategories.filter((c) => !remoteCategoryIds.has(categoryIdentity(c)));
   const categoriesPlan = planCategoriesMerge(localCategories, remoteCategories);
   const blogPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedBlogFields);
-  return { eligible: true, blog: remoteBlog.name, missingCategories, categoriesPlan, blogPatch, ...articlePlan };
+  const closeFlagsPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedCloseFields);
+  // The full local snapshot (not just the diff) - like planCategoriesMerge's
+  // localCategories, this is what syncBlog.js actually sends: the write
+  // endpoint always recomputes the diff itself against live state, never
+  // trusting a client-precomputed one for this field.
+  const localCloseFlags = {};
+  for (const field of trackedCloseFields) {
+    if (localBlog && typeof localBlog[field] !== "undefined") localCloseFlags[field] = localBlog[field];
+  }
+  return { eligible: true, blog: remoteBlog.name, missingCategories, categoriesPlan, blogPatch, closeFlagsPatch, localCloseFlags, ...articlePlan };
+}
+
+// Old-era "replace" plan (WN001–WN271). The local side rebuilt these blogs
+// from scratch: `wp-oldimport` moved every original article to
+// `blog:"Trash"` and recreated fresh bigserial ids, so there are ZERO
+// shared article ids between the two instances. planArticleMerge/id-matching
+// would then classify every remote original as `remoteOnly` (left in place)
+// and every local article as `toCreate` - producing a full DUPLICATE set
+// instead of a merge (found the hard way by a real full-range run, see
+// CLAUDE.local.md). This plan does the only correct thing for that case:
+// trash every remote article, recreate every local one, and replace the
+// blog's `categories` wholesale (no subsequence check - the old era is a
+// clean replace, never a pure insertion).
+//
+// Replace-vs-merge is decided by the caller (syncBlog.js) on the
+// 0-shared-ids test; the write endpoint (routes/api.js) independently
+// refuses replace mode for any blog above a configured WN ceiling (default
+// 271) as a backstop, exactly the way it re-checks `maxBlogNumber`.
+export function planReplace({ localBlog, localArticles, remoteBlog, remoteArticles, trackedBlogFields = [], trackedCloseFields = [], maxBlogNumber }) {
+  const eligibility = checkBlogEligibility(remoteBlog, { maxBlogNumber });
+  if (!eligibility.eligible) {
+    return { eligible: false, reason: eligibility.reason, mode: "replace", toTrash: [], toCreate: [], toPatch: [], unchanged: [], remoteOnly: [], missingCategories: [], blogPatch: null, closeFlagsPatch: null, localCloseFlags: {}, categoriesPlan: { action: "none" } };
+  }
+  const localCategories = Array.isArray(localBlog && localBlog.categories) ? localBlog.categories : [];
+  const remoteCategories = Array.isArray(remoteBlog && remoteBlog.categories) ? remoteBlog.categories : [];
+  const blogPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedBlogFields);
+  const closeFlagsPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedCloseFields);
+  const localCloseFlags = {};
+  for (const field of trackedCloseFields) {
+    if (localBlog && typeof localBlog[field] !== "undefined") localCloseFlags[field] = localBlog[field];
+  }
+  return {
+    eligible: true,
+    mode: "replace",
+    blog: remoteBlog.name,
+    // every remote article (server re-reads the live list itself; this is
+    // for the CLI's dry-run display only)
+    toTrash: remoteArticles.map((a) => ({ id: a.id, categoryEN: a.categoryEN, title: a.title })),
+    // every local article - carries its local id (buildApplyBody turns that
+    // into `localId`), predecessorId left intact for the apply endpoint's
+    // existing two-phase remap (a local predecessorId chain among articles
+    // that are ALL being created is exactly what that pass handles)
+    toCreate: localArticles.map((a) => ({ ...a })),
+    toPatch: [],
+    unchanged: [],
+    remoteOnly: [],
+    missingCategories: [],
+    categoriesPlan: { action: "replace", localCategories, categories: localCategories, old: remoteCategories, remoteCategories },
+    blogPatch,
+    closeFlagsPatch,
+    localCloseFlags
+  };
 }
 
 export default {
   BASE_TRACKED_FIELDS,
   extractBlogNumber,
   checkBlogEligibility,
+  diffFields,
   serializeFieldsForSync,
   serializeArticleForSync,
   planArticleMerge,
   planCategoriesMerge,
   remapPredecessorIds,
-  planMerge
+  planMerge,
+  planReplace
 };

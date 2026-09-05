@@ -2,7 +2,7 @@ import should from "should";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { loadKnownRemoteIds, recordCreated } from "../wp-reconcile/blog-sync-merger/syncState.js";
+import { loadKnownRemoteIds, recordCreated, isReplaced, markReplaced, loadReplacedCreatedIds } from "../wp-reconcile/blog-sync-merger/syncState.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STATE_FILE = path.join(__dirname, "..", "wp-reconcile", "blog-sync-merger", ".sync-state.json");
@@ -79,5 +79,37 @@ describe("wp-reconcile/blog-sync-merger/syncState", function() {
     recordCreated("WN300", [{ localId: 1, id: 100 }]);
     const map = loadKnownRemoteIds("WN_NEVER_TOUCHED");
     should(map.size).eql(0);
+  });
+
+  describe("isReplaced / markReplaced / loadReplacedCreatedIds (old-era wholesale replace)", function() {
+    it("should report a blog as not replaced when no state file exists yet", function() {
+      should(isReplaced("WN005")).eql(false);
+      should(loadReplacedCreatedIds("WN005")).eql([]);
+    });
+
+    it("should round-trip a marked replace", function() {
+      markReplaced("WN005", [{ localId: 35281, id: 246 }, { localId: 35282, id: 247 }]);
+      should(isReplaced("WN005")).eql(true);
+      should(loadReplacedCreatedIds("WN005")).eql(["246", "247"]);
+    });
+
+    it("should keep different blogs' replaced-marker state separate", function() {
+      markReplaced("WN005", [{ localId: 1, id: 100 }]);
+      should(isReplaced("WN005")).eql(true);
+      should(isReplaced("WN006")).eql(false);
+    });
+
+    it("should not collide with the per-blog id map used by knownRemoteIds/recordCreated", function() {
+      recordCreated("WN005", [{ localId: 1, id: 100 }]);
+      markReplaced("WN005", [{ localId: 2, id: 200 }]);
+      should(loadKnownRemoteIds("WN005").get("1")).eql("100");
+      should(loadReplacedCreatedIds("WN005")).eql(["200"]);
+    });
+
+    it("should treat a missing created list as an empty one", function() {
+      markReplaced("WN005", undefined);
+      should(isReplaced("WN005")).eql(true);
+      should(loadReplacedCreatedIds("WN005")).eql([]);
+    });
   });
 });

@@ -53,4 +53,39 @@ export function recordCreated(blogName, created) {
   writeState(state);
 }
 
-export default { loadKnownRemoteIds, recordCreated };
+// Old-era "replace" mode (syncBlog.js runReplace) is not idempotent by
+// id-matching: a completed replace leaves the remote article ids unrelated
+// to the local ones, so the 0-shared-ids auto-detect would say "replace"
+// again on a re-run and trash+recreate the whole blog a second time. This
+// marker - under a reserved top-level key that can never collide with a
+// "WN..." blog name - is what lets a re-run short-circuit instead. Kept
+// here (local, disposable) for the same reason as the id map above: nothing
+// about this one-off migration belongs in the target's own data.
+const REPLACED_KEY = "__replaced__";
+
+export function isReplaced(blogName) {
+  const replaced = readState()[REPLACED_KEY] || {};
+  return Boolean(replaced[blogName]);
+}
+
+export function markReplaced(blogName, created) {
+  const state = readState();
+  if (!state[REPLACED_KEY]) state[REPLACED_KEY] = {};
+  state[REPLACED_KEY][blogName] = {
+    at: new Date().toISOString(),
+    created: Array.isArray(created)
+      ? created.map(({ localId, id }) => ({ localId: String(localId), id: String(id) }))
+      : []
+  };
+  writeState(state);
+}
+
+// The remote ids a replace run created for this blog (used by
+// rollback.js rollbackReplace to know which articles to trash back out).
+export function loadReplacedCreatedIds(blogName) {
+  const entry = (readState()[REPLACED_KEY] || {})[blogName];
+  if (!entry || !Array.isArray(entry.created)) return [];
+  return entry.created.map((c) => c.id);
+}
+
+export default { loadKnownRemoteIds, recordCreated, isReplaced, markReplaced, loadReplacedCreatedIds };

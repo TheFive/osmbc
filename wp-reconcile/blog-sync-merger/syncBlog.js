@@ -82,8 +82,13 @@ export function buildApplyBody(plan, maxBlogNumber, dryRun) {
     }
     return { localId: article.id, fields };
   });
-  const patches = plan.toPatch.map((item) => ({ id: item.id, changes: item.changes, old: item.old }));
+  const patches = (plan.toPatch || []).map((item) => ({ id: item.id, changes: item.changes, old: item.old }));
   const body = { maxBlogNumber, dryRun, creates, patches };
+  // Old-era wholesale replace: tells the apply endpoint to trash every
+  // current remote article for this blog before applying `creates`, and to
+  // replace `categories` unconditionally. The endpoint still enforces its
+  // own WN ceiling for this mode - see blogSyncMerger.planReplace.
+  if (plan.mode === "replace") body.mode = "replace";
   if (plan.blogPatch) body.blogPatch = plan.blogPatch;
   // The actual "replace or not" decision is always re-made server-side
   // against the blog's live categories (see routes/api.js applyBlogSync) -
@@ -94,15 +99,34 @@ export function buildApplyBody(plan, maxBlogNumber, dryRun) {
   if (plan.categoriesPlan && plan.categoriesPlan.localCategories) {
     body.categories = plan.categoriesPlan.localCategories;
   }
+  // Same "server always recomputes against live state" principle as
+  // categories - see routes/api.js applyBlogSync and
+  // blogSyncMerger.planMerge for why close<LANG> can't just be part of
+  // blogPatch.
+  if (plan.localCloseFlags && Object.keys(plan.localCloseFlags).length > 0) {
+    body.closeFlags = plan.localCloseFlags;
+  }
   return body;
+}
+
+// Decides whether this blog is a normal id-stable merge or an old-era
+// wholesale replace. "auto" (the default) picks "replace" only when NOT A
+// SINGLE local article id is also a remote article id AND both sides have
+// articles - the signature of a from-scratch rebuild (see
+// blogSyncMerger.planReplace). "merge"/"replace" force the choice.
+export function resolveMode(mode, localArticles, remoteArticles) {
+  if (mode === "merge" || mode === "replace") return mode;
+  const remoteIds = new Set(remoteArticles.map((a) => String(a.id)));
+  const shared = localArticles.filter((a) => remoteIds.has(String(a.id))).length;
+  if (shared === 0 && localArticles.length > 0 && remoteArticles.length > 0) return "replace";
+  return "merge";
 }
 
 // Core orchestration, side-effect free w.r.t. the local DB (read-only) and
 // only writes remotely when `commit` is true. Exported (rather than only
 // reachable via the CLI) so tests can drive it directly against a mocked
-// remote (see test/wp-reconcile.syncBlog.test.js) without spawning a
-// subprocess.
-export async function runSync({ blogName, remoteUrl, apiKey, maxBlogNumber, commit, httpsAgent }) {
+// remote (see test/merger.syncBlog.test.js) without spawning a subprocess.
+export async function runSync({ blogName, remoteUrl, apiKey, maxBlogNumber, commit, httpsAgent, mode = "auto" }) {
   const localBlog = await blogModule.findOne({ name: blogName });
   if (!localBlog) throw new Error(`Local blog ${blogName} not found`);
   const localArticlesRaw = await articleModule.find({ blog: blogName });
@@ -110,7 +134,30 @@ export async function runSync({ blogName, remoteUrl, apiKey, maxBlogNumber, comm
   const remoteData = await fetchRemoteBlog(remoteUrl, apiKey, blogName, httpsAgent);
   const trackedFields = remoteData.trackedFields;
   const trackedBlogFields = remoteData.trackedBlogFields || [];
+  const trackedCloseFields = remoteData.trackedCloseFields || [];
   const localArticles = localArticlesRaw.map((a) => blogSyncMerger.serializeArticleForSync(a, trackedFields));
+
+  // Once a blog has actually been replaced, it must ALWAYS go through the
+  // replace path again on a re-run under "auto" - never fall back to the
+  // raw 0-shared-ids heuristic. Found via a real full-range run: after a
+  // replace, both sides independently assign fresh bigserial ids to that
+  // blog's articles: local's (from its own earlier rebuild) and remote's
+  // (from this replace run). Those two id ranges can coincidentally
+  // OVERLAP (found for real: WN005 local ids 35350-35380, remote ids
+  // 35345-35375 - 26 of 31 collide) even though neither side's id was ever
+  // derived from the other - so resolveMode's own overlap test can no
+  // longer tell "genuinely still a from-scratch mismatch" from "already
+  // replaced, coincidentally overlapping id ranges", and would otherwise
+  // route into planMerge, which would then try to patch pairs of totally
+  // unrelated articles that merely share a numeric id. The already-replaced
+  // marker is unambiguous and must win; an explicit --mode still overrides
+  // it (the caller is asserting they know better).
+  const resolvedMode = (mode === "auto" && syncState.isReplaced(blogName))
+    ? "replace"
+    : resolveMode(mode, localArticles, remoteData.articles);
+  if (resolvedMode === "replace") {
+    return runReplace({ blogName, localBlog, localArticles, remoteData, trackedFields, trackedBlogFields, trackedCloseFields, maxBlogNumber, commit, remoteUrl, apiKey, httpsAgent });
+  }
 
   // Which local ids this tool already migrated to which remote ids on an
   // earlier run - see syncState.js for why this lives in a local file
@@ -130,6 +177,7 @@ export async function runSync({ blogName, remoteUrl, apiKey, maxBlogNumber, comm
     remoteArticles: remoteData.articles,
     trackedFields,
     trackedBlogFields,
+    trackedCloseFields,
     maxBlogNumber,
     knownRemoteIds
   });
@@ -144,17 +192,50 @@ export async function runSync({ blogName, remoteUrl, apiKey, maxBlogNumber, comm
   return { plan, applyResult };
 }
 
+// Old-era wholesale replace (see blogSyncMerger.planReplace). Separate from
+// the merge path because it is NOT idempotent by id-matching: once done,
+// the remote article ids are unrelated to the local ones, so the very same
+// 0-shared-ids test that selected replace mode would select it again on a
+// re-run. The local `syncState` marker is what stops a second
+// trash+recreate - a re-run with the marker set and a matching article
+// count is reported as already-done and never calls `/apply`.
+async function runReplace({ blogName, localBlog, localArticles, remoteData, trackedBlogFields, trackedCloseFields, maxBlogNumber, commit, remoteUrl, apiKey, httpsAgent }) {
+  const plan = blogSyncMerger.planReplace({
+    localBlog,
+    localArticles,
+    remoteBlog: remoteData.blog,
+    remoteArticles: remoteData.articles,
+    trackedBlogFields,
+    trackedCloseFields,
+    maxBlogNumber
+  });
+
+  if (!plan.eligible) return { plan, applyResult: null };
+
+  if (syncState.isReplaced(blogName) && remoteData.articles.length === localArticles.length) {
+    return { plan, applyResult: { skipped: "already replaced (sync-state marker + matching article count)", replaced: true, created: [], trashed: [] } };
+  }
+
+  const body = buildApplyBody(plan, maxBlogNumber, !commit);
+  const applyResult = await applyRemote(remoteUrl, apiKey, blogName, body, httpsAgent);
+  if (commit && !applyResult.skipped) syncState.markReplaced(blogName, applyResult.created);
+  return { plan, applyResult };
+}
+
 function summarizePlan(plan) {
   return {
+    mode: plan.mode || "merge",
     eligible: plan.eligible,
     reason: plan.reason,
+    toTrash: (plan.toTrash || []).length,
     toCreate: plan.toCreate.length,
-    toPatch: plan.toPatch.length,
-    unchanged: plan.unchanged.length,
-    remoteOnly: plan.remoteOnly.length,
+    toPatch: (plan.toPatch || []).length,
+    unchanged: (plan.unchanged || []).length,
+    remoteOnly: (plan.remoteOnly || []).length,
     missingCategories: plan.missingCategories,
     categoriesAction: plan.categoriesPlan ? plan.categoriesPlan.action : "none",
-    blogPatch: plan.blogPatch ? plan.blogPatch.changes : null
+    blogPatch: plan.blogPatch ? plan.blogPatch.changes : null,
+    closeFlagsPatch: plan.closeFlagsPatch ? plan.closeFlagsPatch.changes : null
   };
 }
 
@@ -165,6 +246,7 @@ async function main() {
     .requiredOption("--api-key <key>", "API key for the remote instance's blogSync endpoint")
     .requiredOption("--max-blog-number <n>", "Safety ceiling: refuse to touch a blog newer than this WN number", Number)
     .option("--commit", "Actually write to the remote (default: dry-run, only prints the plan)", false)
+    .option("--mode <mode>", "auto (default) | merge | replace. 'auto' picks 'replace' (trash every remote article, recreate from local) only for an old-era blog whose local rebuild shares no article ids with the remote", "auto")
     .option("--insecure", "Skip TLS certificate verification - ONLY for a local dev server with a self-signed cert, never for a real remote", false)
     .parse(process.argv);
 
@@ -185,6 +267,7 @@ async function main() {
     apiKey: options.apiKey,
     maxBlogNumber: options.maxBlogNumber,
     commit: options.commit === true,
+    mode: options.mode,
     httpsAgent
   });
 
@@ -196,7 +279,15 @@ async function main() {
     return;
   }
 
-  if (plan.remoteOnly.length > 0) {
+  if (plan.mode === "replace") {
+    console.warn(`REPLACE MODE: ${(plan.toTrash || []).length} remote article(s) will be trashed and ${plan.toCreate.length} recreated from local; categories replaced wholesale. (old-era rebuild - no shared article ids)`);
+    if (applyResult && applyResult.skipped) {
+      console.info(`Skipped: ${applyResult.skipped}`);
+      return;
+    }
+  }
+
+  if ((plan.remoteOnly || []).length > 0) {
     console.warn(`WARNING: ${plan.remoteOnly.length} article(s) exist only remotely (created after the local snapshot) - left untouched, but check for predecessorId/category interactions:`);
     console.warn(JSON.stringify(plan.remoteOnly, null, 2));
   }
@@ -214,6 +305,9 @@ async function main() {
 
   console.info("Applied (--commit given). Result:");
   console.info(JSON.stringify(applyResult, null, 2));
+  if (applyResult.trashed && applyResult.trashed.length > 0) {
+    console.info(`${applyResult.trashed.length} remote article(s) trashed (replace mode).`);
+  }
   if (applyResult.conflicts && applyResult.conflicts.length > 0) {
     console.warn(`${applyResult.conflicts.length} conflict(s) reported - NOT overwritten, review manually.`);
   }
@@ -222,6 +316,9 @@ async function main() {
   }
   if (applyResult.categoriesConflict) {
     console.warn("Categories conflict reported - NOT overwritten, review manually:", applyResult.categoriesConflict);
+  }
+  if (applyResult.closeFlagsPatched && applyResult.closeFlagsPatched.length > 0) {
+    console.info("close<LANG> flags synced:", applyResult.closeFlagsPatched);
   }
   if (applyResult.errors && applyResult.errors.length > 0) {
     console.error(`${applyResult.errors.length} error(s) reported.`);

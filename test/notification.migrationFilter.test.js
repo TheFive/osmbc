@@ -77,4 +77,29 @@ describe("notification/migrationFilter", function() {
       done();
     });
   });
+
+  // config.test.yaml defines apiKeys["testapikey.dataadmin"] =
+  // "dataAdmin-TestUser" - a per-data-admin identity (routes/api.js
+  // getBlogSyncUser) distinct from SYNTHETIC_MIGRATION_USER_NAME, see
+  // CLAUDE.local.md 2026-09-05.
+  it("should also suppress updateArticle/updateBlog for a name configured under apiKeys, not just the hardcoded fallback", function(done) {
+    const spy = makeSpyReceiver();
+    const filtered = suppressMigrationNotifications(spy);
+    const dataAdmin = { OSMUser: "dataAdmin-TestUser" };
+    filtered.updateArticle(dataAdmin, {}, {}, function() {
+      filtered.updateBlog(dataAdmin, {}, {}, function() {
+        should(spy.calls).eql([]);
+        done();
+      });
+    });
+  });
+
+  it("should still forward a real editor's name that merely resembles a configured apiKeys value", function(done) {
+    const spy = makeSpyReceiver();
+    const filtered = suppressMigrationNotifications(spy);
+    filtered.updateArticle({ OSMUser: "dataAdmin-TestUser-but-not-quite" }, {}, {}, function() {
+      should(spy.calls).eql([["updateArticle", { OSMUser: "dataAdmin-TestUser-but-not-quite" }]]);
+      done();
+    });
+  });
 });

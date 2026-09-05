@@ -159,7 +159,14 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 app.use(htmlRoot, express.static(join(config.getDirName(), "public")));
 
 
-app.use(express.json());
+// Default express.json() limit is 100kb - too small for the Blog-Sync-
+// Merger's apply endpoint (routes/api.js), whose body carries every
+// tracked field of every article being created/patched for a blog (real
+// example: WN302, 76 articles across ~19 languages, comfortably over
+// 100kb). This is an authenticated-only surface (session or apiKey on
+// every route), so a generous but still-bounded ceiling is a reasonable
+// trade-off over raising it to effectively unlimited.
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: false }));
 
 

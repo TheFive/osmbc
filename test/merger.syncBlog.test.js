@@ -1,14 +1,65 @@
 import should from "should";
 import nock from "nock";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
-import { buildApplyBody, runSync } from "../wp-reconcile/blog-sync-merger/syncBlog.js";
+import { buildApplyBody, runSync, resolveMode } from "../wp-reconcile/blog-sync-merger/syncBlog.js";
+import syncState from "../wp-reconcile/blog-sync-merger/syncState.js";
 
 const REMOTE = "http://fake-remote.test";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const STATE_FILE = path.join(__dirname, "..", "wp-reconcile", "blog-sync-merger", ".sync-state.json");
 
 describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
+  // resolveMode/runReplace read+write the real, gitignored .sync-state.json
+  // (not a test-scoped file) - preserve whatever a human running the actual
+  // tool has accumulated there, same precaution as test/merger.syncState.test.js.
+  let originalStateContent;
+  before(function() {
+    try {
+      originalStateContent = fs.readFileSync(STATE_FILE, "utf8");
+    } catch (err) {
+      if (err.code !== "ENOENT") throw err;
+      originalStateContent = null;
+    }
+  });
+  after(function() {
+    if (originalStateContent === null) {
+      try { fs.unlinkSync(STATE_FILE); } catch (err) { if (err.code !== "ENOENT") throw err; }
+    } else {
+      fs.writeFileSync(STATE_FILE, originalStateContent, "utf8");
+    }
+  });
+
+  describe("resolveMode (replace-vs-merge auto-detect)", function() {
+    it("should pick \"replace\" when local and remote share zero article ids and both sides have articles", function() {
+      const local = [{ id: 35281 }, { id: 35282 }];
+      const remote = [{ id: 246 }, { id: 247 }];
+      should(resolveMode("auto", local, remote)).eql("replace");
+    });
+
+    it("should pick \"merge\" when at least one article id is shared", function() {
+      const local = [{ id: 11520 }, { id: 47687 }]; // one shared, one new
+      const remote = [{ id: 11520 }];
+      should(resolveMode("auto", local, remote)).eql("merge");
+    });
+
+    it("should pick \"merge\" when either side has no articles at all (nothing to distinguish rebuild-from-scratch from a genuinely empty/new blog)", function() {
+      should(resolveMode("auto", [], [{ id: 1 }])).eql("merge");
+      should(resolveMode("auto", [{ id: 1 }], [])).eql("merge");
+      should(resolveMode("auto", [], [])).eql("merge");
+    });
+
+    it("should honor an explicit mode regardless of id overlap", function() {
+      should(resolveMode("merge", [{ id: 1 }], [{ id: 2 }])).eql("merge");
+      should(resolveMode("replace", [{ id: 1 }], [{ id: 1 }])).eql("replace");
+    });
+  });
+
   describe("buildApplyBody", function() {
     it("should turn toCreate entries into { localId, fields } without the id key", function() {
       const plan = { toCreate: [{ id: 7, categoryEN: "Mapping", predecessorId: "" }], toPatch: [] };
@@ -52,11 +103,30 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
       const body = buildApplyBody(plan, 500, false);
       should(body).not.have.property("categories");
     });
+
+    it("should include the full local closeFlags snapshot whenever localCloseFlags is non-empty", function() {
+      const plan = { toCreate: [], toPatch: [], localCloseFlags: { closeCZ: true, closeDE: false } };
+      const body = buildApplyBody(plan, 500, false);
+      should(body.closeFlags).eql({ closeCZ: true, closeDE: false });
+    });
+
+    it("should omit closeFlags entirely when localCloseFlags is empty or absent", function() {
+      should(buildApplyBody({ toCreate: [], toPatch: [], localCloseFlags: {} }, 500, false)).not.have.property("closeFlags");
+      should(buildApplyBody({ toCreate: [], toPatch: [] }, 500, false)).not.have.property("closeFlags");
+    });
+
+    it("should include mode: \"replace\" when the plan is a replace plan, and omit it otherwise", function() {
+      const replacePlan = { mode: "replace", toCreate: [], toPatch: [] };
+      should(buildApplyBody(replacePlan, 500, false).mode).eql("replace");
+      const mergePlan = { toCreate: [], toPatch: [] };
+      should(buildApplyBody(mergePlan, 500, false)).not.have.property("mode");
+    });
   });
 
   describe("runSync (against a mocked remote)", function() {
     beforeEach(async function() {
       nock.cleanAll();
+      fs.writeFileSync(STATE_FILE, "{}\n", "utf8"); // isolate replace-idempotency tests from each other; restored in the outer after()
       await testutil.importData({
         initialise: true,
         clear: true,
@@ -81,7 +151,7 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
           blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"] },
           trackedFields,
           articles: [
-            { id: localArticle.id, categoryEN: "Mapping", predecessorId: "", title: "Existing article", markdownDE: "* stale remote text" }
+            { id: localArticle.id, categoryEN: "Mapping", predecessorId: "", unpublishReason: "", title: "Existing article", markdownDE: "* stale remote text" }
           ]
         });
 
@@ -196,6 +266,129 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
       }
       should.exist(caught);
       should(caught.message).match(/HTTP 401/);
+    });
+
+    describe("old-era replace mode (auto-detect + idempotency, see CLAUDE.local.md)", function() {
+      it("should auto-detect replace mode when local and remote share zero article ids, and send mode:\"replace\" to /apply", async function() {
+        const localArticle = (await articleModule.find({ blog: "WN100" }))[0];
+        const remoteOnlyId = localArticle.id + 999999; // guaranteed disjoint from the local id
+
+        nock(REMOTE)
+          .get("/api/blogSync/testkey/WN100")
+          .reply(200, {
+            blog: { id: 999, name: "WN100", status: "closed", categories: ["Not Translated"] },
+            trackedFields: [...blogSyncMerger.BASE_TRACKED_FIELDS, "markdownDE"],
+            articles: [{ id: remoteOnlyId, categoryEN: "Not Translated", predecessorId: "", title: "old stub", markdownDE: "* raw import" }]
+          });
+
+        let capturedBody;
+        nock(REMOTE)
+          .post("/api/blogSync/testkey/WN100/apply", (body) => { capturedBody = body; return true; })
+          .reply(200, { trashed: [{ id: remoteOnlyId }], created: [{ localId: localArticle.id, id: 555 }], patched: [], conflicts: [], errors: [] });
+
+        const { plan, applyResult } = await runSync({ blogName: "WN100", remoteUrl: REMOTE, apiKey: "testkey", maxBlogNumber: 500, commit: true });
+
+        should(plan.mode).eql("replace");
+        should(plan.toTrash).eql([{ id: remoteOnlyId, categoryEN: "Not Translated", title: "old stub" }]);
+        should(plan.toCreate.map((a) => a.id)).eql([localArticle.id]);
+        should(plan.categoriesPlan.action).eql("replace");
+
+        should(capturedBody.mode).eql("replace");
+        should(capturedBody.creates).eql([{ localId: localArticle.id, fields: { categoryEN: "Mapping", predecessorId: "", unpublishReason: "", title: "Existing article", markdownDE: "* local corrected text" } }]);
+
+        should(applyResult.created).eql([{ localId: localArticle.id, id: 555 }]);
+        // the create must have been recorded as a replace-marker, not the
+        // plain knownRemoteIds map a normal merge run would use
+        should(syncState.isReplaced("WN100")).eql(true);
+        should(syncState.loadReplacedCreatedIds("WN100")).eql(["555"]);
+        should(syncState.loadKnownRemoteIds("WN100").size).eql(0);
+      });
+
+      it("should skip the /apply call entirely on a re-run once already marked replaced with a matching article count", async function() {
+        const localArticle = (await articleModule.find({ blog: "WN100" }))[0];
+        syncState.markReplaced("WN100", [{ localId: localArticle.id, id: 555 }]);
+
+        nock(REMOTE)
+          .get("/api/blogSync/testkey/WN100")
+          .reply(200, {
+            blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"] },
+            trackedFields: [...blogSyncMerger.BASE_TRACKED_FIELDS, "markdownDE"],
+            // remote now has exactly 1 article (the earlier replace's own
+            // creation) - same count as local, so the marker short-circuits.
+            articles: [{ id: 555, categoryEN: "Mapping", predecessorId: "", title: "Existing article", markdownDE: "* local corrected text" }]
+          });
+        // deliberately no POST .../apply interceptor - nock would throw if
+        // runSync tried to call it anyway.
+
+        const { plan, applyResult } = await runSync({ blogName: "WN100", remoteUrl: REMOTE, apiKey: "testkey", maxBlogNumber: 500, commit: true });
+
+        should(plan.mode).eql("replace");
+        should(applyResult.skipped).match(/already replaced/);
+      });
+
+      // Real full-range-run finding (see CLAUDE.local.md): after a replace,
+      // both sides independently assign fresh ids to that blog's articles -
+      // those ranges can coincidentally overlap even though neither id was
+      // ever derived from the other. A naive re-run of the 0-shared-ids
+      // test would then see a nonzero overlap and misroute into a merge
+      // that patches unrelated articles sharing only a numeric id.
+      it("should stay in replace mode on a re-run even when a coincidental id overlap would otherwise fool the 0-shared-ids test", async function() {
+        const localArticle = (await articleModule.find({ blog: "WN100" }))[0];
+        // A previous replace run completed and recorded its marker...
+        syncState.markReplaced("WN100", [{ localId: localArticle.id, id: 999999 }]);
+
+        // ...but this mock simulates the coincidence found for real: the
+        // CURRENT remote article set happens to include an id numerically
+        // equal to the LOCAL article's own id (pure coincidence, unrelated
+        // content) - and the remote count (2) differs from local's (1), so
+        // the marker+count skip-check must NOT short-circuit either; this
+        // must go through a real replace (trash both remote articles,
+        // create the local one), never a merge patch.
+        nock(REMOTE)
+          .get("/api/blogSync/testkey/WN100")
+          .reply(200, {
+            blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"] },
+            trackedFields: [...blogSyncMerger.BASE_TRACKED_FIELDS, "markdownDE"],
+            articles: [
+              { id: localArticle.id, categoryEN: "Community", predecessorId: "", title: "unrelated coincidence", markdownDE: "* unrelated content" },
+              { id: 42, categoryEN: "Mapping", predecessorId: "", title: "another leftover", markdownDE: "* leftover" }
+            ]
+          });
+
+        let capturedBody;
+        nock(REMOTE)
+          .post("/api/blogSync/testkey/WN100/apply", (body) => { capturedBody = body; return true; })
+          .reply(200, { trashed: [{ id: localArticle.id }, { id: 42 }], created: [{ localId: localArticle.id, id: 1234 }], patched: [], conflicts: [], errors: [] });
+
+        const { plan } = await runSync({ blogName: "WN100", remoteUrl: REMOTE, apiKey: "testkey", maxBlogNumber: 500, commit: true, mode: "auto" });
+
+        should(plan.mode).eql("replace");
+        should(capturedBody.mode).eql("replace");
+        should(capturedBody.patches).eql([]);
+      });
+
+      it("should honor an explicit --mode merge even when ids don't overlap, never switching to replace on its own", async function() {
+        const localArticle = (await articleModule.find({ blog: "WN100" }))[0];
+        const remoteOnlyId = localArticle.id + 999999;
+
+        nock(REMOTE)
+          .get("/api/blogSync/testkey/WN100")
+          .reply(200, {
+            blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"] },
+            trackedFields: [...blogSyncMerger.BASE_TRACKED_FIELDS, "markdownDE"],
+            articles: [{ id: remoteOnlyId, categoryEN: "Mapping", predecessorId: "", title: "unrelated", markdownDE: "* x" }]
+          });
+
+        let capturedBody;
+        nock(REMOTE)
+          .post("/api/blogSync/testkey/WN100/apply", (body) => { capturedBody = body; return true; })
+          .reply(200, { created: [{ localId: localArticle.id, id: 555 }], patched: [], conflicts: [], errors: [] });
+
+        const { plan } = await runSync({ blogName: "WN100", remoteUrl: REMOTE, apiKey: "testkey", maxBlogNumber: 500, commit: true, mode: "merge" });
+
+        should(plan.mode || "merge").eql("merge");
+        should(capturedBody).not.have.property("mode");
+      });
     });
   });
 });

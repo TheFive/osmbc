@@ -8,6 +8,7 @@ const {
   planCategoriesMerge,
   remapPredecessorIds,
   planMerge,
+  planReplace,
   BASE_TRACKED_FIELDS
 } = blogSyncMerger;
 
@@ -123,6 +124,23 @@ describe("merger/blogSyncMerger", function() {
       should(plan.unchanged.map((a) => a.id)).eql([2]);
       should(plan.toPatch.map((a) => a.id)).eql([3]);
       should(plan.remoteOnly.map((a) => a.id)).eql([4]);
+    });
+
+    // Found via a real WN275 dry/commit run (see CLAUDE.local.md):
+    // unpublishReason was not tracked, so a genuine local unpublish
+    // correction (categoryEN -> "--unpublished--") produced a patch with no
+    // unpublishReason, rejected by Article.prototype.setAndSave's own guard
+    // ("Missing reason for unpublishing article."). BASE_TRACKED_FIELDS now
+    // includes it, so the diff carries the reason along with categoryEN.
+    it("should include unpublishReason alongside a categoryEN unpublish diff, so setAndSave's own guard is satisfied", function() {
+      const local = { id: 5, categoryEN: "--unpublished--", unpublishReason: "never made it into the published post" };
+      const remote = { id: 5, categoryEN: "Community", unpublishReason: "" };
+      const plan = planArticleMerge([local], [remote], TRACKED);
+      should(plan.toPatch).eql([{
+        id: 5,
+        changes: { categoryEN: "--unpublished--", unpublishReason: "never made it into the published post" },
+        old: { categoryEN: "Community", unpublishReason: "" }
+      }]);
     });
 
     // Found via a real re-run of the same blog through the merger twice:
@@ -352,6 +370,62 @@ describe("merger/blogSyncMerger", function() {
       should(plan.eligible).eql(false);
       should(plan.blogPatch).eql(null);
     });
+
+    // Found via a real Hugo-export diff: render/Renderer.js skips a
+    // language's content entirely unless close<LANG> is true, so this
+    // needs to be its own trackable/patchable field - kept separate from
+    // trackedBlogFields since it's applied differently (see
+    // withReopenedBlog.js restoreOverrides).
+    it("should diff a tracked close<LANG> flag the same way as a blog field", function() {
+      const plan = planMerge({
+        localBlog: { categories: [], closeCZ: true },
+        localArticles: [],
+        remoteBlog: { name: "WN100", status: "closed", categories: [], closeCZ: false },
+        remoteArticles: [],
+        trackedFields: TRACKED,
+        trackedCloseFields: ["closeCZ"],
+        maxBlogNumber: 200
+      });
+      should(plan.closeFlagsPatch).eql({ changes: { closeCZ: true }, old: { closeCZ: false } });
+    });
+
+    it("should expose the full local close<LANG> snapshot separately, for the write endpoint to re-diff against live state", function() {
+      const plan = planMerge({
+        localBlog: { categories: [], closeCZ: true, closeDE: false },
+        localArticles: [],
+        remoteBlog: { name: "WN100", status: "closed", categories: [] },
+        remoteArticles: [],
+        trackedFields: TRACKED,
+        trackedCloseFields: ["closeCZ", "closeDE"],
+        maxBlogNumber: 200
+      });
+      should(plan.localCloseFlags).eql({ closeCZ: true, closeDE: false });
+    });
+
+    it("should return null closeFlagsPatch when already matching, and an empty localCloseFlags for an ineligible blog", function() {
+      const matching = planMerge({
+        localBlog: { categories: [], closeCZ: true },
+        localArticles: [],
+        remoteBlog: { name: "WN100", status: "closed", categories: [], closeCZ: true },
+        remoteArticles: [],
+        trackedFields: TRACKED,
+        trackedCloseFields: ["closeCZ"],
+        maxBlogNumber: 200
+      });
+      should(matching.closeFlagsPatch).eql(null);
+
+      const ineligible = planMerge({
+        localBlog: { categories: [], closeCZ: true },
+        localArticles: [],
+        remoteBlog: { name: "WN100", status: "edit", categories: [] },
+        remoteArticles: [],
+        trackedFields: TRACKED,
+        trackedCloseFields: ["closeCZ"],
+        maxBlogNumber: 200
+      });
+      should(ineligible.eligible).eql(false);
+      should(ineligible.localCloseFlags).eql({});
+    });
   });
 
   // Found via a real 100-blog Hugo-export byte-diff (WN300-399,
@@ -416,6 +490,71 @@ describe("merger/blogSyncMerger", function() {
     it("should treat missing/non-array categories as empty arrays", function() {
       const plan = planCategoriesMerge(undefined, undefined);
       should(plan).eql({ action: "none", localCategories: [], remoteCategories: [] });
+    });
+  });
+
+  describe("planReplace (old-era wholesale replace, WN001-WN271)", function() {
+    it("should short-circuit to an empty, ineligible plan when the blog is not eligible", function() {
+      const plan = planReplace({
+        localBlog: { categories: [] },
+        localArticles: [{ id: 1 }],
+        remoteBlog: { name: "WN005", status: "closed", categories: [] },
+        remoteArticles: [{ id: 246 }],
+        maxBlogNumber: 3
+      });
+      should(plan.eligible).eql(false);
+      should(plan.mode).eql("replace");
+      should(plan.toCreate).eql([]);
+      should(plan.toTrash).eql([]);
+      should(plan.reason).match(/above maxBlogNumber/);
+    });
+
+    it("should put every remote article in toTrash and every local article in toCreate, regardless of id overlap", function() {
+      const plan = planReplace({
+        localBlog: { categories: ["Talk, Forum, Wiki & Blog"] },
+        localArticles: [{ id: 35281, categoryEN: "Talk, Forum, Wiki & Blog" }, { id: 35282, categoryEN: "Talk, Forum, Wiki & Blog" }],
+        remoteBlog: { name: "WN005", status: "closed", categories: ["Not Translated"] },
+        remoteArticles: [{ id: 246, categoryEN: "Not Translated", title: "old stub" }],
+        maxBlogNumber: 900
+      });
+      should(plan.eligible).eql(true);
+      should(plan.mode).eql("replace");
+      should(plan.toTrash).eql([{ id: 246, categoryEN: "Not Translated", title: "old stub" }]);
+      should(plan.toCreate.map((a) => a.id)).eql([35281, 35282]);
+      should(plan.toPatch).eql([]);
+      should(plan.unchanged).eql([]);
+      should(plan.remoteOnly).eql([]);
+    });
+
+    it("should always force categoriesPlan to a wholesale replace, never review, even when it isn't a pure insertion", function() {
+      // Old-era remote categories ("Not Translated") are never an ordered
+      // subsequence of the rebuilt local ones - planCategoriesMerge alone
+      // would say "review" here; planReplace must not defer to it.
+      const plan = planReplace({
+        localBlog: { categories: ["Talk, Forum, Wiki & Blog", "Mapping"] },
+        localArticles: [],
+        remoteBlog: { name: "WN005", status: "closed", categories: ["Not Translated"] },
+        remoteArticles: [],
+        maxBlogNumber: 900
+      });
+      should(plan.categoriesPlan.action).eql("replace");
+      should(plan.categoriesPlan.categories).eql(["Talk, Forum, Wiki & Blog", "Mapping"]);
+      should(plan.categoriesPlan.old).eql(["Not Translated"]);
+    });
+
+    it("should diff blog-level fields (teamString<LANG>) and closeFlags the same way planMerge does", function() {
+      const plan = planReplace({
+        localBlog: { categories: [], teamStringDE: "Alice, Bob", closeDE: true },
+        localArticles: [],
+        remoteBlog: { name: "WN005", status: "closed", categories: [], teamStringDE: "", closeDE: false },
+        remoteArticles: [],
+        trackedBlogFields: ["teamStringDE"],
+        trackedCloseFields: ["closeDE"],
+        maxBlogNumber: 900
+      });
+      should(plan.blogPatch).eql({ changes: { teamStringDE: "Alice, Bob" }, old: { teamStringDE: "" } });
+      should(plan.closeFlagsPatch).eql({ changes: { closeDE: true }, old: { closeDE: false } });
+      should(plan.localCloseFlags).eql({ closeDE: true });
     });
   });
 });

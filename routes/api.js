@@ -238,6 +238,25 @@ function getOutstandingExportUser(req) {
   return { OSMUser: "apikey:" + (req.apiKey || "unknown") };
 }
 
+// Resolves the identity to attribute a Blog-Sync-Merger write to (see
+// applyBlogSync). KISS: a key's own `apiKeys` value IS its Blog-Sync-Merger
+// name - no second config map to keep in sync. The existing migration flow
+// (syncBlog.js/DevelopmentApiKey) keeps attributing to the synthetic
+// SYNTHETIC_MIGRATION_USER_NAME simply because that key's own `apiKeys`
+// value in config.development.yaml IS "wp-backport" - not because of any
+// special-casing here. A new data admin gets their own name in the log the
+// same way any other apiKeys entry gets a value: give their key a name-
+// shaped one. Deliberately its own function (not reused from
+// getOutstandingExportUser above, which prefixes with "apikey:" for a
+// different, unrelated purpose - see notification/migrationFilter.js for
+// why that distinction matters). Falls back to SYNTHETIC_MIGRATION_USER_NAME
+// only for a key checkApiKey accepted via the per-user OSMBC-login path
+// (not present in `apiKeys` at all) - never attributes a migration-style
+// write to a real editor's own name.
+function getBlogSyncUser(req) {
+  return { OSMUser: apiKeys[req.params.apiKey] || SYNTHETIC_MIGRATION_USER_NAME };
+}
+
 // Parses an optional minBlogNumber/maxBlogNumber query param into a
 // non-negative integer. Returns { value: undefined } when the param wasn't
 // given at all, or { error } (a ready-to-use API error) when it was given
@@ -658,6 +677,16 @@ function getSyncTrackedBlogFields() {
   return fields;
 }
 
+// close<LANG> flags - kept separate from getSyncTrackedBlogFields, see
+// blogSyncMerger.planMerge and withReopenedBlog.js for why these are
+// applied differently (as a withReopenedBlog restoreOverride, at the very
+// end of a write batch) rather than like a normal blog-field patch.
+function getSyncTrackedCloseFields() {
+  const fields = [];
+  for (const lang in language.getLanguages()) fields.push("close" + lang);
+  return fields;
+}
+
 /**
  * Blog-Sync-Merger read endpoint: returns one blog and all of its articles
  * as raw JSON (not rendered through any export profile) - the input the
@@ -673,6 +702,7 @@ function getBlogSync(req, res, next) {
   const blog = req.blog;
   const trackedFields = getSyncTrackedFields();
   const trackedBlogFields = getSyncTrackedBlogFields();
+  const trackedCloseFields = getSyncTrackedCloseFields();
 
   articleModule.find({ blog: blog.name }, function(err, articles) {
     if (err) return next(err);
@@ -681,13 +711,15 @@ function getBlogSync(req, res, next) {
       name: blog.name,
       status: blog.status,
       categories: blog.categories,
-      ...blogSyncMerger.serializeFieldsForSync(blog, trackedBlogFields)
+      ...blogSyncMerger.serializeFieldsForSync(blog, trackedBlogFields),
+      ...blogSyncMerger.serializeFieldsForSync(blog, trackedCloseFields)
     };
     res.set("content-type", "application/json");
     res.end(JSON.stringify({
       blog: blogData,
       trackedFields: trackedFields,
       trackedBlogFields: trackedBlogFields,
+      trackedCloseFields: trackedCloseFields,
       articles: articles.map((a) => blogSyncMerger.serializeArticleForSync(a, trackedFields))
     }));
   });
@@ -696,10 +728,11 @@ function getBlogSync(req, res, next) {
 /**
  * Blog-Sync-Merger write endpoint: applies a merge plan (as produced by
  * merger/blogSyncMerger.js against a client-side download of getBlogSync)
- * against this blog. Every write is attributed to the synthetic
- * `wp-backport` user (see notification/migrationFilter.js) so it stays out
- * of editor mail/Slack notifications while remaining fully visible in the
- * changes-log audit trail, which merger/rollback.js depends on.
+ * against this blog. Every write is attributed to a migration-style user
+ * (see getBlogSyncUser: the calling key's own `apiKeys` value) so it stays
+ * out of editor mail/Slack notifications (notification/migrationFilter.js
+ * recognizes every configured `apiKeys` value) while remaining fully
+ * visible in the changes-log audit trail.
  *
  * Route params: apiKey, blog_id - as getBlogSync.
  *
@@ -732,11 +765,29 @@ function getBlogSync(req, res, next) {
  *   for manual review, never auto-applied - see CLAUDE.md on why
  *   `categories` order is sensitive (heading order + lead-picture caption
  *   position).
+ * - closeFlags {{ closeDE, closeEN, ... }} optional - the local side's
+ *   close<LANG> values (see getSyncTrackedCloseFields); like `categories`,
+ *   always recomputed against live state (`blogSyncMerger.diffFields`),
+ *   never trusted precomputed. Applied as a `withReopenedBlog`
+ *   restoreOverride - i.e. only takes effect *after* every article
+ *   create/patch in this same request has already run - never at the
+ *   start like blogPatch, since setting e.g. closeCZ true before that
+ *   would lock this very batch's own markdownCZ patches (see
+ *   withReopenedBlog.js).
+ * - mode {"replace"} optional - old-era wholesale replace instead of a
+ *   merge (see merger/blogSyncMerger.js planReplace): every current live
+ *   article of this blog is moved to Trash first, then `creates` is applied
+ *   as the full replacement set, and `categories` is replaced
+ *   unconditionally (no subsequence check). Only valid for a blog at or
+ *   below the `blogSyncReplaceMaxBlogNumber` config value (default 271,
+ *   i.e. the old era `wp-oldimport` rebuilt from scratch with fresh ids) -
+ *   rejected with 409 otherwise, never trusted from the client's own mode
+ *   choice. `patches` is expected empty in this mode.
  *
- * Response: { created, patched, conflicts, errors, blogPatched,
- * blogConflicts, categoriesAction, categoriesConflict } - a conflict (409
- * from setAndSave, for an article or a blog/categories patch) or a
- * per-item error never aborts the rest of the batch.
+ * Response: { trashed, created, patched, conflicts, errors, blogPatched,
+ * blogConflicts, categoriesAction, categoriesConflict, closeFlagsPatched }
+ * - a conflict (409 from setAndSave, for an article or a blog/categories
+ * patch) or a per-item error never aborts the rest of the batch.
  */
 function applyBlogSync(req, res, next) {
   debug("applyBlogSync");
@@ -751,35 +802,79 @@ function applyBlogSync(req, res, next) {
     return next(error);
   }
 
+  // Old-era wholesale replace (body.mode === "replace", see
+  // blogSyncMerger.planReplace): trash every current article of this blog,
+  // then apply `creates` as the full replacement set, and replace
+  // `categories` unconditionally. Only ever valid for the from-scratch-
+  // rebuilt old era - refuse it above a configured WN ceiling (default
+  // 271), the same "re-check server-side, never trust the client" stance as
+  // maxBlogNumber. The CLI decides replace-vs-merge by the 0-shared-ids
+  // test; this is the backstop.
+  const replaceMode = body.mode === "replace";
+  if (replaceMode) {
+    const ceiling = config.getValue("blogSyncReplaceMaxBlogNumber", { default: 271 });
+    const number = blogSyncMerger.extractBlogNumber(blog.name);
+    if (number === null || number > ceiling) {
+      const error = new Error(`replace mode is only allowed for old-era blogs (WN number <= ${ceiling}); ${blog.name} is out of range`);
+      error.status = 409;
+      error.type = "API";
+      return next(error);
+    }
+  }
+
   const creates = Array.isArray(body.creates) ? body.creates : [];
   const patches = Array.isArray(body.patches) ? body.patches : [];
   const blogPatch = (body.blogPatch && typeof body.blogPatch.changes === "object") ? body.blogPatch : null;
-  const migrationUser = { OSMUser: SYNTHETIC_MIGRATION_USER_NAME };
+  const migrationUser = getBlogSyncUser(req);
+  const REPLACE_UNPUBLISH_REASON = "Blog-Sync-Merger old-era replace: superseded by the from-scratch rebuild (see CLAUDE.local.md)";
 
   // Always recomputed against the blog's current live categories - never
   // trust a client-precomputed "replace" decision for this, since it's the
   // one write here with no per-field optimistic-concurrency check to fall
-  // back on (a whole-array replace either happens or it doesn't).
-  const categoriesPlan = Array.isArray(body.categories)
-    ? blogSyncMerger.planCategoriesMerge(body.categories, blog.categories)
-    : { action: "none" };
+  // back on (a whole-array replace either happens or it doesn't). In
+  // replace mode the old era's remote categories are junk and never a
+  // subsequence of local's, so planCategoriesMerge would say "review" -
+  // force an unconditional wholesale replace instead.
+  const categoriesPlan = replaceMode
+    ? { action: "replace", categories: Array.isArray(body.categories) ? body.categories : blog.categories, old: blog.categories }
+    : (Array.isArray(body.categories)
+      ? blogSyncMerger.planCategoriesMerge(body.categories, blog.categories)
+      : { action: "none" });
+
+  // Same "never trust the client" principle as categories - diffed fresh
+  // against the blog's live close<LANG> values.
+  const closeFlagsDiff = (body.closeFlags && typeof body.closeFlags === "object")
+    ? blogSyncMerger.diffFields(body.closeFlags, blog, getSyncTrackedCloseFields())
+    : null;
 
   if (body.dryRun === true) {
-    res.set("content-type", "application/json");
-    return res.end(JSON.stringify({
-      blog: blog.name,
-      wouldCreate: creates.length,
-      wouldPatch: patches.length,
-      wouldPatchBlogFields: blogPatch ? Object.keys(blogPatch.changes) : [],
-      wouldPatchCategories: categoriesPlan.action
-    }));
+    const respondDryRun = (wouldTrash) => {
+      res.set("content-type", "application/json");
+      res.end(JSON.stringify({
+        blog: blog.name,
+        mode: replaceMode ? "replace" : "merge",
+        wouldTrash,
+        wouldCreate: creates.length,
+        wouldPatch: patches.length,
+        wouldPatchBlogFields: blogPatch ? Object.keys(blogPatch.changes) : [],
+        wouldPatchCategories: categoriesPlan.action,
+        wouldPatchCloseFlags: closeFlagsDiff ? Object.keys(closeFlagsDiff.changes) : []
+      }));
+    };
+    if (!replaceMode) return respondDryRun(0);
+    return articleModule.find({ blog: blog.name }, function(err, articles) {
+      if (err) return next(err);
+      respondDryRun(articles.length);
+    });
   }
 
   const createdIdMap = new Map(); // localId -> id actually assigned remotely
   const result = {
+    trashed: [],
     created: [], patched: [], conflicts: [], errors: [],
     blogPatched: [], blogConflicts: {},
-    categoriesAction: categoriesPlan.action, categoriesConflict: null
+    categoriesAction: categoriesPlan.action, categoriesConflict: null,
+    closeFlagsPatched: closeFlagsDiff ? Object.keys(closeFlagsDiff.changes) : []
   };
 
   // One single reopen/restore cycle around the whole batch (blog-level
@@ -787,8 +882,11 @@ function applyBlogSync(req, res, next) {
   // isChangeAllowed-style lock to work around) - simpler than a separate
   // open/close per concern, and keeps the changes-log audit trail to one
   // status edit->closed pair per migration run instead of one per step.
+  // close<LANG> changes are passed as a restoreOverride so they only take
+  // effect once every article patch below has already completed.
   withReopenedBlog(blog, migrationUser, function runBatch(done) {
     async.series([
+      doTrashExisting,
       doBlogPatch,
       doCategoriesPatch,
       doCreates,
@@ -799,7 +897,44 @@ function applyBlogSync(req, res, next) {
     if (err) return next(err);
     res.set("content-type", "application/json");
     res.end(JSON.stringify(result));
-  });
+  }, closeFlagsDiff ? closeFlagsDiff.changes : {});
+
+  // Replace mode only: moves every current live article of this blog to
+  // the Trash (see model/article.js setAndSave - a two-step transition,
+  // categoryEN -> "--unpublished--" THEN blog -> "Trash", each requiring an
+  // unpublishReason). Mirrors exactly what the original old-era rebuild did
+  // (see CLAUDE.local.md) - reversible (rollback.js rollbackReplace can
+  // replay the logged `from` values), never a hard delete. A per-article
+  // error here is recorded and does not stop the rest of the batch, same
+  // tolerance as doCreates/doPatches.
+  function doTrashExisting(cb) {
+    if (!replaceMode) return cb();
+    articleModule.find({ blog: blog.name }, function(err, articles) {
+      if (err) return cb(err);
+      async.eachSeries(articles, function(article, cbEach) {
+        article.setAndSave(migrationUser, { categoryEN: "--unpublished--", unpublishReason: REPLACE_UNPUBLISH_REASON, version: article.version }, function(err) {
+          if (err) {
+            result.errors.push({ id: article.id, error: "trash(unpublish): " + err.message });
+            return cbEach();
+          }
+          articleModule.findById(article.id, function(err, reloaded) {
+            if (err) {
+              result.errors.push({ id: article.id, error: "trash(reload): " + err.message });
+              return cbEach();
+            }
+            reloaded.setAndSave(migrationUser, { blog: "Trash", unpublishReason: REPLACE_UNPUBLISH_REASON, version: reloaded.version }, function(err) {
+              if (err) {
+                result.errors.push({ id: article.id, error: "trash(move): " + err.message });
+              } else {
+                result.trashed.push({ id: article.id });
+              }
+              cbEach();
+            });
+          });
+        });
+      }, cb);
+    });
+  }
 
   function doCategoriesPatch(cb) {
     if (categoriesPlan.action !== "replace") return cb();

@@ -29,7 +29,11 @@ ways (see `checkApiKey` in `routes/api.js`):
    ```
    The value (`monitor`, `TBC Collections`, ...) is a human-readable label,
    not a secret — it identifies *what the key is for*, not *who* is calling.
-   Requests authenticated this way do not carry a real OSM user identity.
+   Requests authenticated this way do not carry a real OSM user identity —
+   **except** for `POST /api/blogSync/:apiKey/:blog_id/apply`, which
+   attributes its writes using this same label as the OSMUser (see that
+   endpoint's own section below) - give a key meant for that endpoint a
+   name-shaped value rather than a free-text description.
 
 2. **Personal key** — a key stored on a `usert` record (`data->>'apiKey'`,
    manageable per-user in the web UI). Requests authenticated this way carry
@@ -445,11 +449,26 @@ merge tool needs to compute a diff against another OSMBC instance.
 
 Blog-Sync-Merger write endpoint. Applies a merge plan (as computed by
 `wp-reconcile/blog-sync-merger/blogSyncMerger.js` against a local copy and a prior `GET
-/blogSync` download) to this blog. Every write is attributed to the
-synthetic `wp-backport` user (`notification/migrationFilter.js`), which
-keeps it out of editor mail/Slack notifications while remaining fully
-visible in the Postgres changes-log audit trail (`wp-reconcile/blog-sync-merger/rollback.js`
-depends on that log to revert a run later).
+/blogSync` download) to this blog. Every write is attributed to a
+migration-style user: the calling API key's own `apiKeys` value
+(`routes/api.js` `getBlogSyncUser`) - KISS, that value is the identity,
+nothing else to configure. `notification/migrationFilter.js` recognizes
+every configured `apiKeys` value and keeps it out of editor mail/Slack
+notifications while it remains fully visible in the Postgres changes-log
+audit trail. This is how a different data admin's own automated-change
+script (see `wp-reconcile/blog-sync-merger/dataAdminTemplate.py` for a
+starting point) gets its own name in that audit trail instead of
+everything showing up as `wp-backport` - just give that admin their own
+entry in `apiKeys` (needed for authentication anyway) with a name-shaped
+value instead of a free-text description:
+```yaml
+apiKeys:
+  <a-fresh-random-key>: dataAdmin-Alice
+```
+The existing Blog-Sync-Merger flow (`syncBlog.js`) keeps attributing to
+the synthetic `wp-backport` user simply because ITS key
+(`DevelopmentApiKey` in `config.development.yaml`) is configured with that
+same value - not because of any special-casing here.
 
 ### Body (`application/json`)
 
@@ -459,13 +478,16 @@ depends on that log to revert a run later).
 | `dryRun` | no | `true` → only re-validates eligibility and reports counts (`wouldCreate`/`wouldPatch`); no write of any kind happens. |
 | `creates` | no | `Array<{ localId, fields }>`. `fields.predecessorId`, if present, may reference another entry's `localId` in the same batch — resolved once real ids are known (two-phase create, see `wp-reconcile/blog-sync-merger/blogSyncMerger.js` `remapPredecessorIds`). |
 | `patches` | no | `Array<{ id, changes, old }>`. `old` is passed straight through to `setAndSave`'s optimistic-concurrency check. |
+| `mode` | no | `"replace"` → old-era wholesale replace instead of a merge (see `blogSyncMerger.js` `planReplace`): every current live article of this blog is moved to `Trash` first, then `creates` is applied as the full replacement set, and `categories` is replaced unconditionally (no subsequence check). Only accepted for a blog at or below the `blogSyncReplaceMaxBlogNumber` config value (default `271`, i.e. the old era `wp-oldimport` rebuilt from scratch with fresh article ids so there is nothing to merge against) — rejected with `409` otherwise, never trusted from the client's own choice. `patches` is expected empty in this mode. |
 
 ### Eligibility (safety net a)
 
 Rejected with `409` unless the blog is a WeeklyNote blog, `status ===
 "closed"`, and its WN number is `<= maxBlogNumber` — i.e. this endpoint
 refuses to touch a blog that is still being worked on live, regardless of
-what the request body asks for.
+what the request body asks for. `mode: "replace"` is rejected with `409`
+above the separate `blogSyncReplaceMaxBlogNumber` ceiling, on top of that
+check.
 
 Because `categoryEN`/`predecessorId`/`title` are themselves locked by
 `Article.prototype.isChangeAllowed` while the blog is closed, applying a
@@ -474,10 +496,11 @@ non-dry-run batch temporarily reopens the blog and restores it (including
 
 ### Responses
 
-- `200` (dry run) — `application/json`: `{ "blog": "WN842", "wouldCreate": 2, "wouldPatch": 5 }`.
+- `200` (dry run) — `application/json`: `{ "blog": "WN842", "mode": "merge", "wouldTrash": 0, "wouldCreate": 2, "wouldPatch": 5 }`. `wouldTrash` is the blog's current live article count, only non-zero for `mode: "replace"`.
 - `200` (applied) — `application/json`:
   ```json
   {
+    "trashed": [{ "id": 246 }],
     "created": [{ "localId": "local-1", "id": 99999 }],
     "patched": [{ "id": 12345 }],
     "conflicts": [{ "id": 12346, "error": "Field markdownDE already changed in DB", "detail": { "oldValue": "...", "databaseValue": "...", "newValue": "..." } }],

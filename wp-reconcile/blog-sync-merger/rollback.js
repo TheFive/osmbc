@@ -26,6 +26,7 @@ import blogModule from "../../model/blog.js";
 import logModule from "../../model/logModule.js";
 import { withReopenedBlog } from "./withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../../notification/migrationFilter.js";
+import syncState from "./syncState.js";
 
 const migrationUser = { OSMUser: SYNTHETIC_MIGRATION_USER_NAME };
 
@@ -134,4 +135,93 @@ export function rollbackBlog(blogName, callback) {
   });
 }
 
-export default { rollbackArticle, rollbackBlog };
+// Moves one article to the Trash (see model/article.js setAndSave - a
+// two-step transition, categoryEN -> "--unpublished--" THEN blog ->
+// "Trash", same mechanism as routes/api.js applyBlogSync's doTrashExisting)
+// under the migration's synthetic user. Not a "revert" - a created article
+// has no meaningful prior value to replay - so this is a plain forward
+// write via `version`, not the `old`-replay pattern the rest of this file
+// uses. WITHOUT reopening the blog - callers must already be inside a
+// withReopenedBlog() window, like revertArticleFields.
+const ROLLBACK_REPLACE_UNPUBLISH_REASON = "Blog-Sync-Merger rollbackReplace: reverting an old-era replace run";
+
+function trashArticle(articleId, callback) {
+  articleModule.findById(articleId, function(err, article) {
+    if (err) return callback(err);
+    if (!article) return callback(null, { articleId, error: "Article not found" });
+    article.setAndSave({ OSMUser: SYNTHETIC_MIGRATION_USER_NAME }, { categoryEN: "--unpublished--", unpublishReason: ROLLBACK_REPLACE_UNPUBLISH_REASON, version: article.version }, function(err) {
+      if (err) return callback(null, { articleId, error: err.message });
+      articleModule.findById(articleId, function(err, reloaded) {
+        if (err) return callback(null, { articleId, error: err.message });
+        reloaded.setAndSave({ OSMUser: SYNTHETIC_MIGRATION_USER_NAME }, { blog: "Trash", unpublishReason: ROLLBACK_REPLACE_UNPUBLISH_REASON, version: reloaded.version }, function(err) {
+          if (err) return callback(null, { articleId, error: err.message });
+          callback(null, { articleId, trashed: true });
+        });
+      });
+    });
+  });
+}
+
+// Reverts an old-era "replace" run (routes/api.js applyBlogSync
+// mode:"replace", planned by merger/blogSyncMerger.js planReplace):
+// - every article this run moved to Trash is un-trashed by replaying the
+//   migration's own logged `categoryEN`/`blog` `from` values, via the same
+//   revertArticleFields() this file already uses for a normal merge patch
+//   (both properties were changed together by the migration, so one
+//   setAndSave call restores both).
+// - every article this run CREATED is trashed back out. These have no
+//   meaningful prior value to "revert" (their `from` is "nothing existed"),
+//   so they cannot be found via the changes-log the way the trashed
+//   originals are - instead this reads the local, disposable syncState
+//   marker (syncState.js loadReplacedCreatedIds) that routes/api.js's own
+//   client (syncBlog.js) wrote after a successful --commit.
+//
+// Like rollbackBlog, a single article's error/conflict does not stop the
+// rest of the batch from being processed. Scoped to article-level fields
+// only - like rollbackArticle/rollbackBlog, this does NOT revert blog-level
+// fields (categories, teamString<LANG>, close<LANG>) the replace run may
+// have changed; those would need their own blog-field revert, not yet
+// built for either rollback path.
+export function rollbackReplace(blogName, callback) {
+  const trashedQuery = " where data->>'blog' = 'Trash'" +
+    " and data->>'table' = 'article'" +
+    " and data->>'user' = '" + escapeForSql(SYNTHETIC_MIGRATION_USER_NAME) + "'" +
+    " and data->>'property' = 'blog'" +
+    " and data->>'from' = '" + escapeForSql(blogName) + "'";
+  logModule.find(trashedQuery, { column: "id", desc: false }, function(err, rows) {
+    if (err) return callback(err);
+    const trashedArticleIds = [...new Set(rows.map((r) => r.oid))];
+    const createdArticleIds = syncState.loadReplacedCreatedIds(blogName);
+    if (trashedArticleIds.length === 0 && createdArticleIds.length === 0) {
+      return callback(null, { untrashed: [], trashed: [] });
+    }
+    blogModule.findOne({ name: blogName }, function(err, blog) {
+      if (err) return callback(err);
+      if (!blog) return callback(new Error("Blog " + blogName + " not found"));
+      withReopenedBlog(blog, migrationUser, function(done) {
+        async.series({
+          untrashed: function(cb) {
+            const results = [];
+            async.eachSeries(trashedArticleIds, function(articleId, cbEach) {
+              revertArticleFields(articleId, function(err, result) {
+                results.push(result || { articleId, error: err && err.message });
+                cbEach();
+              });
+            }, function(err) { cb(err, results); });
+          },
+          trashed: function(cb) {
+            const results = [];
+            async.eachSeries(createdArticleIds, function(articleId, cbEach) {
+              trashArticle(articleId, function(err, result) {
+                results.push(result || { articleId, error: err && err.message });
+                cbEach();
+              });
+            }, function(err) { cb(err, results); });
+          }
+        }, function(err, results) { done(err, results); });
+      }, callback);
+    });
+  });
+}
+
+export default { rollbackArticle, rollbackBlog, rollbackReplace };

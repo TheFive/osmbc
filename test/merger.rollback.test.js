@@ -1,15 +1,44 @@
 import should from "should";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
-import { rollbackArticle, rollbackBlog } from "../wp-reconcile/blog-sync-merger/rollback.js";
+import { rollbackArticle, rollbackBlog, rollbackReplace } from "../wp-reconcile/blog-sync-merger/rollback.js";
 import { withReopenedBlog } from "../wp-reconcile/blog-sync-merger/withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../notification/migrationFilter.js";
+import syncState from "../wp-reconcile/blog-sync-merger/syncState.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const STATE_FILE = path.join(__dirname, "..", "wp-reconcile", "blog-sync-merger", ".sync-state.json");
 
 const migrationUser = { OSMUser: SYNTHETIC_MIGRATION_USER_NAME };
 
 describe("merger/rollback", function() {
+  // rollbackReplace reads the real, gitignored .sync-state.json (not a
+  // test-scoped file) via syncState.loadReplacedCreatedIds - preserve
+  // whatever a human running the actual tool has accumulated there, same
+  // precaution as test/merger.syncState.test.js.
+  let originalStateContent;
+  before(function() {
+    try {
+      originalStateContent = fs.readFileSync(STATE_FILE, "utf8");
+    } catch (err) {
+      if (err.code !== "ENOENT") throw err;
+      originalStateContent = null;
+    }
+  });
+  after(function() {
+    if (originalStateContent === null) {
+      try { fs.unlinkSync(STATE_FILE); } catch (err) { if (err.code !== "ENOENT") throw err; }
+    } else {
+      fs.writeFileSync(STATE_FILE, originalStateContent, "utf8");
+    }
+  });
+
   beforeEach(async function() {
+    fs.writeFileSync(STATE_FILE, "{}\n", "utf8"); // isolate from other tests; restored in the outer after()
     await testutil.importData({
       initialise: true,
       clear: true,
@@ -119,6 +148,80 @@ describe("merger/rollback", function() {
     it("should return an empty result for a blog the migration never touched", async function() {
       const results = await new Promise((resolve, reject) => rollbackBlog("WN100", (err, r) => (err ? reject(err) : resolve(r))));
       should(results).eql([]);
+    });
+  });
+
+  describe("rollbackReplace (old-era wholesale replace, see merger/blogSyncMerger.js planReplace)", function() {
+    // Mirrors exactly what routes/api.js applyBlogSync's doTrashExisting
+    // does for one article: categoryEN -> "--unpublished--", THEN
+    // blog -> "Trash", each a separate setAndSave (see model/article.js).
+    function trashLikeReplaceRun(blog, article, cb) {
+      withReopenedBlog(blog, migrationUser, function(done) {
+        article.setAndSave(migrationUser, { categoryEN: "--unpublished--", unpublishReason: "superseded by rebuild", version: article.version }, function(err) {
+          if (err) return done(err);
+          articleModule.findById(article.id, function(err, reloaded) {
+            if (err) return done(err);
+            reloaded.setAndSave(migrationUser, { blog: "Trash", unpublishReason: "superseded by rebuild", version: reloaded.version }, done);
+          });
+        });
+      }, cb);
+    }
+
+    // Mirrors routes/api.js applyBlogSync's doCreates for one article.
+    function createLikeReplaceRun(blog, fields, cb) {
+      withReopenedBlog(blog, migrationUser, function(done) {
+        articleModule.createNewArticle(function(err, article) {
+          if (err) return done(err);
+          article.setAndSave(migrationUser, { ...fields, version: article.version }, function(err) {
+            done(err, article);
+          });
+        });
+      }, cb);
+    }
+
+    it("should un-trash the original article and trash the article the replace run created", async function() {
+      const original = (await articleModule.find({ blog: "WN100" }))[0];
+      const blog = await blogModule.findOne({ name: "WN100" });
+
+      await new Promise((resolve, reject) => trashLikeReplaceRun(blog, original, (err) => (err ? reject(err) : resolve())));
+      const created = await new Promise((resolve, reject) => {
+        createLikeReplaceRun(blog, { blog: "WN100", categoryEN: "Mapping", title: "Rebuilt", markdownDE: "* rebuilt" }, (err, article) => (err ? reject(err) : resolve(article)));
+      });
+      syncState.markReplaced("WN100", [{ localId: "local-1", id: created.id }]);
+
+      const result = await new Promise((resolve, reject) => rollbackReplace("WN100", (err, r) => (err ? reject(err) : resolve(r))));
+      should(result.untrashed.length).eql(1);
+      should(result.untrashed[0].reverted).containEql("blog");
+      should(result.untrashed[0].reverted).containEql("categoryEN");
+      should(result.trashed).eql([{ articleId: created.id, trashed: true }]);
+
+      const revertedOriginal = await articleModule.findById(original.id);
+      should(revertedOriginal.blog).eql("WN100");
+      should(revertedOriginal.categoryEN).eql("Mapping");
+
+      const nowTrashedCreated = await articleModule.findById(created.id);
+      should(nowTrashedCreated.blog).eql("Trash");
+      should(nowTrashedCreated.categoryEN).eql("--unpublished--");
+    });
+
+    it("should be a no-op for a blog the migration never replaced", async function() {
+      const result = await new Promise((resolve, reject) => rollbackReplace("WN100", (err, r) => (err ? reject(err) : resolve(r))));
+      should(result).eql({ untrashed: [], trashed: [] });
+    });
+
+    it("should still un-trash the original even when the syncState marker for the created article is missing", async function() {
+      const original = (await articleModule.find({ blog: "WN100" }))[0];
+      const blog = await blogModule.findOne({ name: "WN100" });
+      await new Promise((resolve, reject) => trashLikeReplaceRun(blog, original, (err) => (err ? reject(err) : resolve())));
+      // deliberately no syncState.markReplaced call - simulates rolling
+      // back after the local .sync-state.json was lost/cleared
+
+      const result = await new Promise((resolve, reject) => rollbackReplace("WN100", (err, r) => (err ? reject(err) : resolve(r))));
+      should(result.untrashed.length).eql(1);
+      should(result.trashed).eql([]);
+
+      const revertedOriginal = await articleModule.findById(original.id);
+      should(revertedOriginal.blog).eql("WN100");
     });
   });
 });

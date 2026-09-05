@@ -64,3 +64,5 @@ WP Data
 dependency-maintenance-2026-07-26.md
 backport
 wp-reconcile/blog-sync-merger/.sync-state.json
+tempDB/
+__pycache__/

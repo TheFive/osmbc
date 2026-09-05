@@ -85,10 +85,16 @@ cookieMaxAge: 10000
 url: https://localhost:35043
 SMTP: {}
 
-# API key map: key => description/use-case
+# API key map: key => description/use-case. This value ALSO doubles as the
+# OSMUser a Blog-Sync-Merger write made with that key is attributed to
+# (routes/api.js getBlogSyncUser, notification/migrationFilter.js) - KISS,
+# no second config map. testapikey is the "existing migration flow" key in
+# these tests, so it's set to wp-backport directly, same as
+# config.development.yaml's DevelopmentApiKey.
 apiKeys:
-  testapikey: monitor
+  testapikey: wp-backport
   testapikey.TBC: TBC Collections
+  testapikey.dataadmin: dataAdmin-TestUser
 
 # Mail log writer settings.
 maillog_directory: .
