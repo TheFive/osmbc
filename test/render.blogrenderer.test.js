@@ -297,6 +297,38 @@ describe("render/blogrenderer", function() {
       bddone();
     });
 
+    it("should replace generic ^text^ superscript markup with a Hugo sup shortcode", function (bddone) {
+      const article = articleModule.create({ markdownEN: "Starting 1^er^ May and the 12^th^ of June" });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).containEql('1{{< sup "er" >}} May');
+      should(result).containEql('12{{< sup "th" >}} of June');
+      bddone();
+    });
+
+    it("should not merge two separate ^text^ spans across their inner carets", function (bddone) {
+      const article = articleModule.create({ markdownEN: "See ^a^ and then ^b^ too" });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).containEql('{{< sup "a" >}}');
+      should(result).containEql('{{< sup "b" >}}');
+      should(result).not.containEql('sup "a^ and then ^b"');
+      bddone();
+    });
+
+    it("should leave ^text with a space^ untouched, matching markdown-it-sup's own rule", function (bddone) {
+      const article = articleModule.create({ markdownEN: "This is ^not superscript^ here" });
+      const result = markdownRenderer.renderArticle("EN", article);
+      should(result).containEql("^not superscript^");
+      should(result).not.containEql("{{< sup");
+      bddone();
+    });
+
+    it("should fold uppercase to its lowercase Unicode superscript glyph in _replaceSuperscriptUnicode (front matter can't use shortcodes)", function (bddone) {
+      // Real content example: Italian "il^XII^ e il^XIII^ secolo" (WN801)
+      const result = markdownRenderer._replaceSuperscriptUnicode("il^XII^ secolo");
+      should(result).equal("ilˣⁱⁱ secolo");
+      bddone();
+    });
+
     it("should generate markdown for upcoming events", function (bddone) {
       const article = articleModule.create({
         markdownDE: "Event details in markdown",

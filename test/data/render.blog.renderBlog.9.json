@@ -1,0 +1,13 @@
+{
+  "blog":[{"name":"WN901","startDate":"2015-02-02","endDate":"2015-02-05","closeDE":true,"closeEN":false}],
+  "article":[{"blog":"WN901",
+              "markdownDE":"[^1^](#wn815_34170) verweist auf das Bild, geschrieben am 1^er^ Mai ![bild](https://bild.irgendwo/foto.png)",
+              "categoryEN":"Picture",
+              "title":"picture title"}],
+  "change":[{"blog":"WN901","user":"USER1","_oid":"2","property":"collection","to":"value"}],
+  "user":[{"OSMUser":"USER1","mdWeeklyAuthor":"user_1","WNPublicAuthor":"PaulTemple"}],
+  "testBlogName":"WN901",
+  "lang":"DE",
+  "asMarkdown":true,
+  "testBlogResultHtml":"render.blog.preview.9.md"
+}

@@ -10,6 +10,26 @@ const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
 const dateAdjust = Number(config.getValue("Hugo", "DateAdjust", { mustExist: true }));
 
+// ASCII -> Unicode superscript character, for places that can't use a Hugo
+// shortcode (front matter TOML strings never run shortcodes - see
+// _generateFrontText). Covers what the Unicode standard actually provides
+// across the "Superscripts and Subscripts", "Phonetic Extensions" and
+// "Spacing Modifier Letters" blocks: all 10 digits, lowercase a-z except
+// "q" (no standard codepoint exists for it), and a few symbols. Uppercase
+// has no standard superscript form of its own, so _replaceSuperscriptUnicode
+// looks it up case-insensitively and falls back to the lowercase glyph
+// (e.g. real content: Italian "^XII^" -> "ˣⁱⁱ") - a readable approximation
+// rather than a distinct rendering. Any character still unmapped after that
+// (e.g. the brackets in the "[^[1]^]" footnote variant) is left unchanged
+// rather than dropped.
+const SUPERSCRIPT_UNICODE_MAP = {
+  0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹",
+  "+": "⁺", "-": "⁻", "=": "⁼", "(": "⁽", ")": "⁾",
+  a: "ᵃ", b: "ᵇ", c: "ᶜ", d: "ᵈ", e: "ᵉ", f: "ᶠ", g: "ᵍ", h: "ʰ", i: "ⁱ", j: "ʲ",
+  k: "ᵏ", l: "ˡ", m: "ᵐ", n: "ⁿ", o: "ᵒ", p: "ᵖ", r: "ʳ", s: "ˢ", t: "ᵗ",
+  u: "ᵘ", v: "ᵛ", w: "ʷ", x: "ˣ", y: "ʸ", z: "ᶻ"
+};
+
 
 class HugoMarkdownRenderer extends MarkdownRenderer {
   /**
@@ -58,6 +78,7 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
    * @returns {string} The transformed markdown
    */
   _transformHugoMarkdown(markdown) {
+    if (!markdown) return markdown;
     let result = markdown;
 
     // Get emoji configuration from languageflags
@@ -113,10 +134,53 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
   }
 
   _renderMarkdownListItem(lang, article) {
-    let md = super._renderMarkdownListItem(lang, article).replaceAll("^1^", '{{< sup "1" >}}');
+    let md = super._renderMarkdownListItem(lang, article);
+    md = this._replaceSuperscriptShortcode(md);
     // Transform emoji shortcuts to Hugo icon shortcodes for markdown-level processing
     md = this._transformHugoMarkdown(md);
     return md;
+  }
+
+  /**
+   * Converts inline "^text^" superscript markdown (used editorially for
+   * footnote-style references like "^1^", ordinals like "1^er^"/"12^th^",
+   * link-language markers like "^en^", and exponents like "km^2^") into a
+   * Hugo "sup" shortcode. Hugo's own markdown engine (Goldmark) has no
+   * native superscript syntax, so this must run as a text pre-processing
+   * step before Hugo ever sees the markdown - only valid for regular
+   * content, never for front matter (TOML strings never run shortcodes,
+   * see _generateFrontText).
+   * Delimiter matching mirrors util/markdown-it-sup.js: a "^", then one or
+   * more characters that are neither whitespace nor "^", then the next
+   * "^". Excluding "^" itself from the captured run is what keeps a
+   * three-or-more-caret string ("^a^ ^b^") from being mis-paired across
+   * the wrong two carets - the match always closes at the very next "^".
+   * @param {string} text - Markdown text to transform
+   * @returns {string} The transformed markdown
+   */
+  _replaceSuperscriptShortcode(text) {
+    if (!text) return text;
+    return text.replace(/\^([^\s^]+)\^/g, (_match, content) => {
+      const escaped = content.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
+      return `{{< sup "${escaped}" >}}`;
+    });
+  }
+
+  /**
+   * Same "^text^" delimiter matching as _replaceSuperscriptShortcode, but
+   * resolves each character to its Unicode superscript equivalent
+   * (SUPERSCRIPT_UNICODE_MAP) instead of a Hugo shortcode - for use inside
+   * front matter (TOML strings), where shortcodes never run. A character
+   * with no superscript equivalent (uppercase letters, brackets, ...) is
+   * kept as-is rather than dropped.
+   * @param {string} text - Markdown text to transform
+   * @returns {string} The transformed text
+   */
+  _replaceSuperscriptUnicode(text) {
+    if (!text) return text;
+    return text.replace(/\^([^\s^]+)\^/g, (_match, content) => {
+      return content.replace(/./g, (ch) => SUPERSCRIPT_UNICODE_MAP[ch.toLowerCase()] || ch);
+    });
   }
 
   _renderArticleUnpublished(text, article) {
@@ -147,10 +211,16 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
     let pictureMd = null;
     if (pictureArticles && pictureArticles.length > 0) {
       const pictureArticle = pictureArticles[0];
-      const md = pictureArticle["markdown" + lang];
+      const rawMd = pictureArticle["markdown" + lang];
+      const md = (rawMd) ? this._transformHugoMarkdown(rawMd) : null;
+
       const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
       const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
-      pictureMd = (md) ? md.replaceAll("^1^", "1)") : null;
+      // "^text^" superscript markup can't use a Hugo shortcode here (front
+      // matter is raw TOML, never processed for shortcodes - unlike the
+      // content body, see _replaceSuperscriptShortcode), so it's resolved
+      // to plain Unicode superscript characters instead.
+      pictureMd = this._replaceSuperscriptUnicode(md);
       if (pictureMd) {
         pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
         const imageMatch = regexMarkdownImage.exec(pictureMd);
