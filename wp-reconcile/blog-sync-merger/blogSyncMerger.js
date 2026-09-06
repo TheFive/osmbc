@@ -366,11 +366,10 @@ export function planMerge({ localBlog, localArticles, remoteBlog, remoteArticles
   const remoteCategoryIds = new Set(remoteCategories.map(categoryIdentity));
   const missingCategories = localCategories.filter((c) => !remoteCategoryIds.has(categoryIdentity(c)));
   const categoriesPlan = planCategoriesMerge(localCategories, remoteCategories);
-  // teamString<LANG> is deliberately REPLACE-mode only (see planReplace /
-  // routes/api.js getSyncTrackedBlogFields): its old-era values in
-  // osmbc_prod_copie are curated (setLegacyTeamStrings/clearTeamStrings),
-  // but a merge-era blog on the remote may carry a fresher teamString than
-  // this possibly-staler local snapshot - never reconcile it here.
+  // teamString<LANG> is never touched on the merge path - only planReplace
+  // (old era) handles it, and it BLANKS it there (see planReplace). A
+  // merge-era blog's teamString is whatever OSMBC computed/an editor set,
+  // and this local snapshot has no better claim on it.
   const mergeBlogFields = trackedBlogFields.filter((f) => !/^teamString/.test(f));
   const blogPatch = diffFields(localBlog || {}, remoteBlog || {}, mergeBlogFields);
   const closeFlagsPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedCloseFields);
@@ -408,11 +407,33 @@ export function planReplace({ localBlog, localArticles, remoteBlog, remoteArticl
   }
   const localCategories = Array.isArray(localBlog && localBlog.categories) ? localBlog.categories : [];
   const remoteCategories = Array.isArray(remoteBlog && remoteBlog.categories) ? remoteBlog.categories : [];
-  // forceSetFields, not diffFields: a wholesale replace SETS blog-level
-  // fields to local's values (see forceSetFields for the teamString<LANG>
-  // "" vs unset reason). Dates ride along too - harmless, setAndSave drops
-  // the no-op on a re-run.
-  const blogPatch = forceSetFields(localBlog || {}, remoteBlog || {}, trackedBlogFields);
+  // Blog-level fields for a wholesale replace:
+  // - startDate/endDate: forceSet from local (prod_copie's WP-derived
+  //   values). forceSetFields, not diffFields, because the read endpoint
+  //   serializes an unset remote field as "" and diffFields would then miss
+  //   a real "value vs nothing" difference; setAndSave drops the no-op on a
+  //   re-run.
+  // - teamString<LANG>: BLANKED to "" for every tracked language, never
+  //   local's value. The WN009 canary showed the 2010 bylines wp-oldimport
+  //   captured are unreliable (WN009's is NOT in the actual 2010 post - the
+  //   grey box on the live page is the WP author widget, not content). And
+  //   an UNSET teamString makes model/blog.js createTeamString auto-
+  //   generate a "produced by ." credit from the synthetic-only changelog.
+  //   "" is what prod_copie's own 246 cleared old-era blogs have, and what
+  //   the original issues rendered (nothing). The explicit `old` claim
+  //   below is what makes Blog.setAndSave persist the "" over an undefined.
+  const dateFields = trackedBlogFields.filter((f) => !/^teamString/.test(f));
+  const teamStringFields = trackedBlogFields.filter((f) => /^teamString/.test(f));
+  let blogPatch = forceSetFields(localBlog || {}, remoteBlog || {}, dateFields);
+  if (teamStringFields.length > 0) {
+    const changes = (blogPatch && blogPatch.changes) || {};
+    const old = (blogPatch && blogPatch.old) || {};
+    for (const field of teamStringFields) {
+      changes[field] = "";
+      old[field] = (remoteBlog || {})[field];
+    }
+    blogPatch = { changes, old };
+  }
   const closeFlagsPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedCloseFields);
   const localCloseFlags = {};
   for (const field of trackedCloseFields) {

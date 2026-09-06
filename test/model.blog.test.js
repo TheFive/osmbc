@@ -334,6 +334,42 @@ describe("model/blog", function() {
         });
       });
     });
+
+    // Normally writing "" to a never-set field is a no-op (don't clutter
+    // the blog JSON). But an explicit data.old claim for that key means
+    // "persist the '' anyway" - the Blog-Sync-Merger needs this to blank
+    // teamString<LANG> on old-era blogs ("" makes createTeamString return
+    // "", undefined makes it auto-generate a bogus credit).
+    it("should persist an explicit empty-string write to a never-set field WHEN data.old claims that key", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "BlankViaOldBlog", status: "TEST" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        should(newBlog.teamStringDE).be.undefined();
+        newBlog.setAndSave({ OSMUser: "user" }, { teamStringDE: "", old: { teamStringDE: "" } }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", id, function(err, result) {
+            should.not.exist(err);
+            should(result.teamStringDE).eql("");
+            bddone();
+          });
+        });
+      });
+    });
+
+    it("should still skip an empty-string write to a never-set field when there is NO data.old claim for it (unchanged default)", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "SkipBlankBlog", status: "TEST" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", teamStringDE: "", old: { status: "TEST" } }, function(err) {
+          should.not.exist(err);
+          testutil.getJsonWithId("blog", id, function(err, result) {
+            should.not.exist(err);
+            should(result).not.have.property("teamStringDE");
+            bddone();
+          });
+        });
+      });
+    });
   });
   describe("closeBlog", function() {
     before(function (bddone) {
