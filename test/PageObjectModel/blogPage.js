@@ -109,17 +109,18 @@ class BlogPage extends StandardPage {
     await submitButton.click();
 
     // After submit we either return to "Start Personal Review" or the comment textarea disappears.
+    // A prior review round can leave its own (permanently hidden) comment textarea/button
+    // in the DOM, so we must look at the currently *visible* field/button, not just the
+    // first CSS match - otherwise a stale hidden element short-circuits the wait immediately.
     await this._driver.wait(async () => {
-      const commentFields = await this._driver.findElements(By.css(commentSelector));
-      if (commentFields.length === 0) return true;
+      const visibleField = await this.#findVisibleElement(commentSelector).catch(() => null);
+      if (!visibleField) return true;
+      if (!(await visibleField.isDisplayed().catch(() => false))) return true;
 
-      const isDisplayed = await commentFields[0].isDisplayed().catch(() => false);
-      if (!isDisplayed) return true;
+      const visibleButton = await this.#findVisibleElement(buttonSelector).catch(() => null);
+      if (!visibleButton) return false;
 
-      const buttons = await this._driver.findElements(By.css(buttonSelector));
-      if (buttons.length === 0) return false;
-
-      const buttonText = ((await buttons[0].getText()) || "").toLowerCase();
+      const buttonText = ((await visibleButton.getText()) || "").toLowerCase();
       return buttonText.includes("start personal review");
     }, 2000, `Review submit not completed for language ${lang}`);
   }
