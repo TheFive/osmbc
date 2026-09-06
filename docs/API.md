@@ -46,6 +46,22 @@ HTTP 401
 Not Authorised
 ```
 
+### Passing the key to the CLI runners
+
+The key sits in the request path, so it will show up in the target
+server's HTTP access logs. Keep it out of the *caller's* shell history and
+process list too: both `wp-reconcile/blog-sync-merger/syncBlog.js` and
+`wp-reconcile/blog-sync-merger/dataAdminTemplate.py` accept the key from
+the `OSMBC_BLOGSYNC_APIKEY` environment variable instead of `--api-key`:
+
+```sh
+read -rs OSMBC_BLOGSYNC_APIKEY && export OSMBC_BLOGSYNC_APIKEY
+NODE_ENV=prodcopie node wp-reconcile/blog-sync-merger/syncBlog.js WN300 \
+  --remote-url https://<host><htmlroot> --max-blog-number 271
+```
+
+An explicit `--api-key` still wins if both are set.
+
 ### Error response format
 
 Handlers that set `err.type = "API"` (all endpoints below) get their error

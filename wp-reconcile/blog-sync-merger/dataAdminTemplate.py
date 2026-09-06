@@ -41,6 +41,12 @@ Usage:
       --min-blog-number 300 --max-blog-number 320   # dry-run, prints the plan per blog
   python3 dataAdminTemplate.py ... --commit          # actually writes
 
+The API key may also come from the OSMBC_BLOGSYNC_APIKEY environment
+variable instead of --api-key, so it stays out of the shell history and
+the process list (ps / /proc):
+  read -rs OSMBC_BLOGSYNC_APIKEY && export OSMBC_BLOGSYNC_APIKEY
+then run without --api-key. An explicit --api-key still wins if both are set.
+
 Add --insecure ONLY when --remote-url points at a local dev server with a
 self-signed cert - never for a real remote, it disables TLS verification
 (mirrors syncBlog.js's own --insecure flag, same caveat).
@@ -48,6 +54,7 @@ self-signed cert - never for a real remote, it disables TLS verification
 
 import argparse
 import json
+import os
 import re
 import sys
 from urllib.parse import quote
@@ -189,12 +196,16 @@ def run(remote_url, api_key, min_blog_number, max_blog_number, commit, verify):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--remote-url", required=True, help="Base URL of the target OSMBC instance, e.g. https://osmbc.example.com")
-    parser.add_argument("--api-key", required=True, help="Your own API key (see module docstring for setup)")
+    parser.add_argument("--api-key", help="Your own API key (see module docstring for setup); or set OSMBC_BLOGSYNC_APIKEY")
     parser.add_argument("--min-blog-number", required=True, type=int, help="First WN issue number to check (inclusive)")
     parser.add_argument("--max-blog-number", required=True, type=int, help="Last WN issue number to check (inclusive) - also the safety ceiling sent with every write")
     parser.add_argument("--commit", action="store_true", help="Actually write to the remote (default: dry-run, only prints what each blog would need)")
     parser.add_argument("--insecure", action="store_true", help="Skip TLS certificate verification - ONLY for a local dev server with a self-signed cert, never for a real remote")
     args = parser.parse_args()
+
+    api_key = args.api_key or os.environ.get("OSMBC_BLOGSYNC_APIKEY")
+    if not api_key:
+        parser.error("no API key: pass --api-key <key> or set the OSMBC_BLOGSYNC_APIKEY environment variable")
 
     verify = not args.insecure
     if args.insecure:
@@ -202,7 +213,7 @@ def main():
         requests.packages.urllib3.disable_warnings()  # pylint: disable=no-member
 
     print(f"Remote side: {args.remote_url}, blogs WN{args.min_blog_number:03d}-WN{args.max_blog_number:03d}", file=sys.stderr)
-    run(args.remote_url, args.api_key, args.min_blog_number, args.max_blog_number, args.commit, verify)
+    run(args.remote_url, api_key, args.min_blog_number, args.max_blog_number, args.commit, verify)
     if not args.commit:
         print("Dry-run only (pass --commit to actually write).", file=sys.stderr)
 
