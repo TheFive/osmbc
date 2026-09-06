@@ -674,14 +674,14 @@ function getSyncTrackedFields() {
 // - teamString<LANG>: model/blog.js createTeamString auto-generates a
 //   "produced by <editors>" credit from the changes-log when this is
 //   unset - garbage ("erstellt von .") for a rebuilt old-era blog whose
-//   only editors are synthetic. `osmbc_prod_copie` deliberately curates
-//   it: "" for 246 old-era blogs (clearTeamStrings.js, suppresses the
-//   auto-credit), the real 2010 byline for the 25 earliest
-//   (setLegacyTeamStrings.js). Synced REPLACE-mode only (planMerge filters
-//   it out) - a merge-era blog may carry a fresher teamString than the
-//   local snapshot; and planReplace forceSetFields it rather than
-//   diffFields (the read endpoint serializes an unset remote field as "",
-//   which renders differently from a real "").
+//   only editors are synthetic. planReplace BLANKS it to "" for every
+//   language (planMerge never touches it) - "" is what the original 2010
+//   issues rendered (nothing; the grey "Wochennotizteam" box on the live
+//   pages is the WP author widget, not content) and what prod_copie's own
+//   246 cleared old-era blogs have. Listed here so the read endpoint
+//   serializes the current values (planReplace needs them as the `old`
+//   claim). The 2010 bylines wp-oldimport captured for the 25 earliest are
+//   NOT used - the WN009 canary showed they're unreliable.
 function getSyncTrackedBlogFields() {
   const fields = ["startDate", "endDate"];
   for (const lang in language.getLanguages()) fields.push("teamString" + lang);

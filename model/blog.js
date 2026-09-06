@@ -119,6 +119,12 @@ class Blog {
     util.requireTypes([user, data, callback], ["object", "object", "function"]);
     const self = this;
 
+    // Keys the caller makes an explicit `data.old` claim about - for those,
+    // an empty-string write is honored even when the field is currently
+    // undefined (see the copyDataToBlog skip below). Captured here because
+    // `data.old` is stripped before copyDataToBlog runs.
+    const explicitOldKeys = data.old ? Object.keys(data.old) : [];
+
     if (data.old) {
       for (const key in data) {
         if (key === "old") continue;
@@ -160,7 +166,16 @@ class Blog {
           const value = data[key];
           if (typeof (value) === "undefined") continue;
           if (value === self[key]) continue;
-          if (value === "" && typeof (self[key]) === "undefined") continue;
+          // Normally an empty-string write to a never-set field is a no-op
+          // (don't clutter the blog JSON with empty keys). But if the
+          // caller made an explicit `data.old` claim for this key, they
+          // mean it - persist the "". Needed for the Blog-Sync-Merger
+          // blanking teamString<LANG> on old-era blogs: "" makes
+          // createTeamString return "" (no footer), whereas undefined
+          // makes it auto-generate a "produced by ." credit from the
+          // synthetic-only changelog (see routes/api.js applyBlogSync,
+          // blogSyncMerger.planReplace, CLAUDE.local.md WN009 canary).
+          if (value === "" && typeof (self[key]) === "undefined" && !explicitOldKeys.includes(key)) continue;
           if (typeof (value) === "object") {
             if (JSON.stringify(value) === JSON.stringify(self[key])) continue;
           }
