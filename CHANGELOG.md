@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.4.7](https://github.com/TheFive/osmbc/tree/4.4.7) (2026-09-06)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.6...4.4.7)
+
+**Closed issues:**
+
+- Convert Language flags to markdown before exporting to hugo. [\#1101](https://github.com/TheFive/osmbc/issues/1101)
+- Add Footnote Check for Picture Link [\#1086](https://github.com/TheFive/osmbc/issues/1086)
+
+## [4.4.6](https://github.com/TheFive/osmbc/tree/4.4.6) (2026-09-01)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.5...4.4.6)
+
+**Merged pull requests:**
+
+- Add outstanding-export API endpoint for bulk blog delivery [\#1132](https://github.com/TheFive/osmbc/pull/1132) ([TheFive](https://github.com/TheFive))
+
 ## [4.4.5](https://github.com/TheFive/osmbc/tree/4.4.5) (2026-08-09)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.4...4.4.5)
