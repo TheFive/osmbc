@@ -320,15 +320,33 @@ describe("merger/blogSyncMerger", function() {
 
     it("should diff a tracked blog field and carry the remote value as `old` for the concurrency check", function() {
       const plan = planMerge({
-        localBlog: { categories: [], teamStringDE: "Alice, Bob" },
+        localBlog: { categories: [], startDate: "2010-09-05T00:00:00.000Z" },
         localArticles: [],
-        remoteBlog: { name: "WN100", status: "closed", categories: [], teamStringDE: "" },
+        remoteBlog: { name: "WN100", status: "closed", categories: [], startDate: "" },
         remoteArticles: [],
         trackedFields: TRACKED,
-        trackedBlogFields: ["teamStringDE", "teamStringEN"],
+        trackedBlogFields: ["startDate", "endDate"],
         maxBlogNumber: 200
       });
-      should(plan.blogPatch).eql({ changes: { teamStringDE: "Alice, Bob" }, old: { teamStringDE: "" } });
+      should(plan.blogPatch).eql({ changes: { startDate: "2010-09-05T00:00:00.000Z" }, old: { startDate: "" } });
+    });
+
+    // teamString<LANG> is REPLACE-mode only - planMerge filters it out even
+    // when it's in trackedBlogFields and genuinely differs (see
+    // blogSyncMerger.js planMerge / getSyncTrackedBlogFields, WN008/WN009
+    // canary). planReplace, by contrast, forceSetFields it.
+    it("should NOT put teamString<LANG> in the merge blogPatch even when it's tracked and differs", function() {
+      const plan = planMerge({
+        localBlog: { categories: [], teamStringDE: "curated byline", startDate: "2010-09-05T00:00:00.000Z" },
+        localArticles: [],
+        remoteBlog: { name: "WN100", status: "closed", categories: [], teamStringDE: "something else", startDate: "" },
+        remoteArticles: [],
+        trackedFields: TRACKED,
+        trackedBlogFields: ["startDate", "endDate", "teamStringDE"],
+        maxBlogNumber: 200
+      });
+      should(plan.blogPatch).eql({ changes: { startDate: "2010-09-05T00:00:00.000Z" }, old: { startDate: "" } });
+      should(plan.blogPatch.changes).not.have.property("teamStringDE");
     });
 
     it("should return null blogPatch when tracked blog fields already match", function() {
@@ -542,19 +560,39 @@ describe("merger/blogSyncMerger", function() {
       should(plan.categoriesPlan.old).eql(["Not Translated"]);
     });
 
-    it("should diff blog-level fields (teamString<LANG>) and closeFlags the same way planMerge does", function() {
+    it("should forceSet blog-level fields (startDate/endDate + teamString<LANG>) and diff closeFlags", function() {
       const plan = planReplace({
-        localBlog: { categories: [], teamStringDE: "Alice, Bob", closeDE: true },
+        localBlog: { categories: [], startDate: "2010-09-05T00:00:00.000Z", teamStringDE: "the 2010 byline", closeDE: true },
         localArticles: [],
-        remoteBlog: { name: "WN005", status: "closed", categories: [], teamStringDE: "", closeDE: false },
+        remoteBlog: { name: "WN005", status: "closed", categories: [], startDate: "2010-09-05T00:00:00.000Z", teamStringDE: "", closeDE: false },
         remoteArticles: [],
-        trackedBlogFields: ["teamStringDE"],
+        trackedBlogFields: ["startDate", "endDate", "teamStringDE"],
         trackedCloseFields: ["closeDE"],
         maxBlogNumber: 900
       });
-      should(plan.blogPatch).eql({ changes: { teamStringDE: "Alice, Bob" }, old: { teamStringDE: "" } });
+      // forceSetFields: startDate is included EVEN THOUGH it equals remote's
+      // (a wholesale replace sets, not diffs) - and teamStringDE (local's
+      // curated value) is carried with old = remote's "".
+      should(plan.blogPatch.changes).eql({ startDate: "2010-09-05T00:00:00.000Z", teamStringDE: "the 2010 byline" });
+      should(plan.blogPatch.old).eql({ startDate: "2010-09-05T00:00:00.000Z", teamStringDE: "" });
+      // closeFlags still a real diff, not a forceSet
       should(plan.closeFlagsPatch).eql({ changes: { closeDE: true }, old: { closeDE: false } });
       should(plan.localCloseFlags).eql({ closeDE: true });
+    });
+
+    it("should forceSet an old-era \"\" teamString<LANG> too (suppresses the auto-from-changelog credit that an unset field triggers)", function() {
+      const plan = planReplace({
+        localBlog: { categories: [], teamStringDE: "" }, // one of the 246 blank old-era blogs
+        localArticles: [],
+        remoteBlog: { name: "WN050", status: "closed", categories: [], teamStringDE: "" }, // read endpoint serialized prod's UNSET value as ""
+        remoteArticles: [],
+        trackedBlogFields: ["teamStringDE"],
+        maxBlogNumber: 900
+      });
+      // even though local "" and remote "" look equal, forceSetFields
+      // still sends it - on prod that "" is really UNSET, and "" vs unset
+      // render differently
+      should(plan.blogPatch).eql({ changes: { teamStringDE: "" }, old: { teamStringDE: "" } });
     });
   });
 });

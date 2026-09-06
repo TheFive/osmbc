@@ -664,22 +664,28 @@ function getSyncTrackedFields() {
 // Blog-level fields the Blog-Sync-Merger also diffs/patches, in addition
 // to categories/status (handled separately via eligibility/
 // missingCategories) and close<LANG> (getSyncTrackedCloseFields).
+// All found via the WN008/WN009 canary Hugo-export byte-diffs, 2026-09-06
+// (see CLAUDE.local.md).
 //
-// startDate/endDate: the old-era prod blog rows have neither (the WN008
-// canary, 2026-09-06, see CLAUDE.local.md - the Hugo renderer then falls
-// back to "now" + Hugo.DateAdjust, so every old issue renders dated
-// today). `osmbc_prod_copie` has correct values for all 271 old-era blogs
-// (extracted from WP by wp-oldimport's rebuild), stored as ISO strings
-// (model/blog.js `blog.startDate = ...toISOString()`) - plain scalar
-// fields, the same `diffFields` + Blog.setAndSave opt-in `data.old`
-// machinery as any other tracked field.
-//
-// teamString<LANG> was in here too but was REMOVED (same WN008 canary):
-// only 25 of 271 old-era blogs have a non-empty value (legacy 2010 bylines
-// from wp-reconcile's setLegacyTeamStrings.js) and the user's call was not
-// to sync it for now - just add "teamString" + lang back here to re-enable.
+// - startDate/endDate: the old-era prod blog rows have neither, so the
+//   Hugo renderer falls back to "now" + Hugo.DateAdjust (every old issue
+//   dated today). `osmbc_prod_copie` has correct ISO values for all 271
+//   (from wp-oldimport's WP rebuild).
+// - teamString<LANG>: model/blog.js createTeamString auto-generates a
+//   "produced by <editors>" credit from the changes-log when this is
+//   unset - garbage ("erstellt von .") for a rebuilt old-era blog whose
+//   only editors are synthetic. `osmbc_prod_copie` deliberately curates
+//   it: "" for 246 old-era blogs (clearTeamStrings.js, suppresses the
+//   auto-credit), the real 2010 byline for the 25 earliest
+//   (setLegacyTeamStrings.js). Synced REPLACE-mode only (planMerge filters
+//   it out) - a merge-era blog may carry a fresher teamString than the
+//   local snapshot; and planReplace forceSetFields it rather than
+//   diffFields (the read endpoint serializes an unset remote field as "",
+//   which renders differently from a real "").
 function getSyncTrackedBlogFields() {
-  return ["startDate", "endDate"];
+  const fields = ["startDate", "endDate"];
+  for (const lang in language.getLanguages()) fields.push("teamString" + lang);
+  return fields;
 }
 
 // close<LANG> flags - kept separate from getSyncTrackedBlogFields, see
@@ -756,7 +762,8 @@ function getBlogSync(req, res, next) {
  * - blogPatch {{changes, old}} optional - arbitrary blog-level fields to
  *   patch (whatever keys are in `changes`; not validated against a tracked
  *   list here - getSyncTrackedBlogFields only drives what planMerge/
- *   planReplace *produce* on their own, currently startDate/endDate).
+ *   planReplace *produce* on their own: startDate/endDate for both,
+ *   teamString<LANG> for planReplace only).
  *   `old` is passed straight through to
  *   Blog.prototype.setAndSave (model/blog.js), same
  *   as an article patch's `old` - its optimistic-concurrency check is

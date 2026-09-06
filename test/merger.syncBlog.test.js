@@ -175,30 +175,31 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
       should(nock.isDone()).be.True();
     });
 
-    it("should compute a blog-level field diff (e.g. teamStringDE) and include it in the apply body, reading the local blog as a live model instance", async function() {
+    it("should compute a blog-level field diff (e.g. startDate) on the merge path and include it in the apply body, reading the local blog as a live model instance", async function() {
       const localBlog = await blogModule.findOne({ name: "WN100" });
       await new Promise((resolve, reject) => {
-        localBlog.setAndSave({ OSMUser: "wp-backport" }, { teamStringDE: "Alice, Bob" }, (err) => (err ? reject(err) : resolve()));
+        localBlog.setAndSave({ OSMUser: "wp-backport" }, { startDate: "2010-09-05T00:00:00.000Z", endDate: "2010-09-11T00:00:00.000Z" }, (err) => (err ? reject(err) : resolve()));
       });
 
       nock(REMOTE)
         .get("/api/blogSync/testkey/WN100")
         .reply(200, {
-          blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"], teamStringDE: "" },
+          // endDate already matches - only startDate should end up in the patch
+          blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"], startDate: "", endDate: "2010-09-11T00:00:00.000Z" },
           trackedFields: [...blogSyncMerger.BASE_TRACKED_FIELDS, "markdownDE"],
-          trackedBlogFields: ["teamStringDE"],
+          trackedBlogFields: ["startDate", "endDate"],
           articles: []
         });
 
       let capturedBody;
       nock(REMOTE)
         .post("/api/blogSync/testkey/WN100/apply", (body) => { capturedBody = body; return true; })
-        .reply(200, { created: [], patched: [], conflicts: [], errors: [], blogPatched: ["teamStringDE"], blogConflicts: {} });
+        .reply(200, { created: [], patched: [], conflicts: [], errors: [], blogPatched: ["startDate"], blogConflicts: {} });
 
       const { plan } = await runSync({ blogName: "WN100", remoteUrl: REMOTE, apiKey: "testkey", maxBlogNumber: 500, commit: true });
 
-      should(plan.blogPatch).eql({ changes: { teamStringDE: "Alice, Bob" }, old: { teamStringDE: "" } });
-      should(capturedBody.blogPatch).eql({ changes: { teamStringDE: "Alice, Bob" }, old: { teamStringDE: "" } });
+      should(plan.blogPatch).eql({ changes: { startDate: "2010-09-05T00:00:00.000Z" }, old: { startDate: "" } });
+      should(capturedBody.blogPatch).eql({ changes: { startDate: "2010-09-05T00:00:00.000Z" }, old: { startDate: "" } });
     });
 
     it("should send dryRun:true in the apply body when commit is false", async function() {

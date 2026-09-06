@@ -53,11 +53,13 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
       should(response.data.blog.categories).eql(["Mapping"]);
       should(response.data.trackedFields).containEql("categoryEN");
       should(response.data.trackedFields).containEql("markdownDE");
-      // trackedBlogFields: startDate/endDate (teamString<LANG> was removed
-      // after the WN008 canary, see routes/api.js getSyncTrackedBlogFields).
-      should(response.data.trackedBlogFields).eql(["startDate", "endDate"]);
+      // trackedBlogFields: startDate/endDate + teamString<LANG> per
+      // language (see routes/api.js getSyncTrackedBlogFields).
+      should(response.data.trackedBlogFields).containEql("startDate");
+      should(response.data.trackedBlogFields).containEql("endDate");
+      should(response.data.trackedBlogFields).containEql("teamStringDE");
       should(response.data.blog).have.property("startDate");
-      should(response.data.blog).have.property("endDate");
+      should(response.data.blog).have.property("teamStringDE");
       should(response.data.articles.length).eql(1);
       const article = response.data.articles[0];
       should(article.categoryEN).eql("Mapping");
