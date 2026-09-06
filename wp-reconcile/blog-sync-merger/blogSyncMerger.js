@@ -103,6 +103,29 @@ export function diffFields(localArticle, remoteArticle, trackedFields) {
   return { changes, old };
 }
 
+// Like diffFields but SETS every field where local has a value, even one
+// that looks equal to remote's. planReplace uses this (not diffFields) for
+// blog-level fields because it is a WHOLESALE replace, and because the read
+// endpoint serializes an unset remote field as "" (setAndSave's old-value
+// sentinel) - so diffFields can't tell "remote already has ''" from
+// "remote has nothing", which for teamString<LANG> renders differently
+// (model/blog.js createTeamString: "" suppresses the auto-from-changelog
+// credit, unset triggers it - garbage "erstellt von ." for a rebuilt
+// old-era blog whose only editors are synthetic). setAndSave still drops a
+// genuine no-op (value === self[key]), so re-runs stay quiet.
+export function forceSetFields(localObj, remoteObj, trackedFields) {
+  const changes = {};
+  const old = {};
+  for (const field of trackedFields) {
+    const localValue = localObj[field];
+    if (typeof localValue === "undefined") continue;
+    changes[field] = localValue;
+    old[field] = remoteObj[field];
+  }
+  if (Object.keys(changes).length === 0) return null;
+  return { changes, old };
+}
+
 // Matches local and remote articles for one blog and produces a merge
 // plan: articles missing remotely (toCreate), articles present on both
 // sides with at least one tracked-field difference (toPatch, already
@@ -343,7 +366,13 @@ export function planMerge({ localBlog, localArticles, remoteBlog, remoteArticles
   const remoteCategoryIds = new Set(remoteCategories.map(categoryIdentity));
   const missingCategories = localCategories.filter((c) => !remoteCategoryIds.has(categoryIdentity(c)));
   const categoriesPlan = planCategoriesMerge(localCategories, remoteCategories);
-  const blogPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedBlogFields);
+  // teamString<LANG> is deliberately REPLACE-mode only (see planReplace /
+  // routes/api.js getSyncTrackedBlogFields): its old-era values in
+  // osmbc_prod_copie are curated (setLegacyTeamStrings/clearTeamStrings),
+  // but a merge-era blog on the remote may carry a fresher teamString than
+  // this possibly-staler local snapshot - never reconcile it here.
+  const mergeBlogFields = trackedBlogFields.filter((f) => !/^teamString/.test(f));
+  const blogPatch = diffFields(localBlog || {}, remoteBlog || {}, mergeBlogFields);
   const closeFlagsPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedCloseFields);
   // The full local snapshot (not just the diff) - like planCategoriesMerge's
   // localCategories, this is what syncBlog.js actually sends: the write
@@ -379,7 +408,11 @@ export function planReplace({ localBlog, localArticles, remoteBlog, remoteArticl
   }
   const localCategories = Array.isArray(localBlog && localBlog.categories) ? localBlog.categories : [];
   const remoteCategories = Array.isArray(remoteBlog && remoteBlog.categories) ? remoteBlog.categories : [];
-  const blogPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedBlogFields);
+  // forceSetFields, not diffFields: a wholesale replace SETS blog-level
+  // fields to local's values (see forceSetFields for the teamString<LANG>
+  // "" vs unset reason). Dates ride along too - harmless, setAndSave drops
+  // the no-op on a re-run.
+  const blogPatch = forceSetFields(localBlog || {}, remoteBlog || {}, trackedBlogFields);
   const closeFlagsPatch = diffFields(localBlog || {}, remoteBlog || {}, trackedCloseFields);
   const localCloseFlags = {};
   for (const field of trackedCloseFields) {
@@ -413,6 +446,7 @@ export default {
   extractBlogNumber,
   checkBlogEligibility,
   diffFields,
+  forceSetFields,
   serializeFieldsForSync,
   serializeArticleForSync,
   planArticleMerge,
