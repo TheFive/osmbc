@@ -663,18 +663,23 @@ function getSyncTrackedFields() {
 
 // Blog-level fields the Blog-Sync-Merger also diffs/patches, in addition
 // to categories/status (handled separately via eligibility/
-// missingCategories). Currently just teamString<LANG> ("who produced this
-// issue" credit line, feeds the Hugo footer) - found missing after a real
-// osmbc_prod_copie vs. osmbc Hugo-export byte-diff (see CLAUDE.local.md).
-// Deliberately opt-in and separate from article fields: Blog.setAndSave
-// (model/blog.js) has no isChangeAllowed-style lock (so, unlike article
-// patches, doesn't strictly need the reopen window below), but its
-// optimistic-concurrency check via `data.old` is opt-in per key rather
-// than required, since most other Blog callers never set it.
+// missingCategories) and close<LANG> (getSyncTrackedCloseFields).
+//
+// startDate/endDate: the old-era prod blog rows have neither (the WN008
+// canary, 2026-09-06, see CLAUDE.local.md - the Hugo renderer then falls
+// back to "now" + Hugo.DateAdjust, so every old issue renders dated
+// today). `osmbc_prod_copie` has correct values for all 271 old-era blogs
+// (extracted from WP by wp-oldimport's rebuild), stored as ISO strings
+// (model/blog.js `blog.startDate = ...toISOString()`) - plain scalar
+// fields, the same `diffFields` + Blog.setAndSave opt-in `data.old`
+// machinery as any other tracked field.
+//
+// teamString<LANG> was in here too but was REMOVED (same WN008 canary):
+// only 25 of 271 old-era blogs have a non-empty value (legacy 2010 bylines
+// from wp-reconcile's setLegacyTeamStrings.js) and the user's call was not
+// to sync it for now - just add "teamString" + lang back here to re-enable.
 function getSyncTrackedBlogFields() {
-  const fields = [];
-  for (const lang in language.getLanguages()) fields.push("teamString" + lang);
-  return fields;
+  return ["startDate", "endDate"];
 }
 
 // close<LANG> flags - kept separate from getSyncTrackedBlogFields, see
@@ -748,9 +753,12 @@ function getBlogSync(req, res, next) {
  * - patches {Array<{id, changes, old}>} optional - existing articles to
  *   patch; `old` is passed straight through to setAndSave for its
  *   optimistic-concurrency check.
- * - blogPatch {{changes, old}} optional - blog-level fields to patch (e.g.
- *   teamString<LANG>, see getSyncTrackedBlogFields). `old` is passed
- *   straight through to Blog.prototype.setAndSave (model/blog.js), same
+ * - blogPatch {{changes, old}} optional - arbitrary blog-level fields to
+ *   patch (whatever keys are in `changes`; not validated against a tracked
+ *   list here - getSyncTrackedBlogFields only drives what planMerge/
+ *   planReplace *produce* on their own, currently startDate/endDate).
+ *   `old` is passed straight through to
+ *   Blog.prototype.setAndSave (model/blog.js), same
  *   as an article patch's `old` - its optimistic-concurrency check is
  *   opt-in per key there specifically so this works without touching the
  *   many other Blog callers that never set `old`.

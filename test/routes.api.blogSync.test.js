@@ -53,10 +53,11 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
       should(response.data.blog.categories).eql(["Mapping"]);
       should(response.data.trackedFields).containEql("categoryEN");
       should(response.data.trackedFields).containEql("markdownDE");
-      should(response.data.trackedBlogFields).containEql("teamStringDE");
-      // teamString<LANG> never set on this fixture blog - must round-trip
-      // as "" (see routes/api.js serializeFieldsForSync), not be dropped
-      should(response.data.blog.teamStringDE).eql("");
+      // trackedBlogFields: startDate/endDate (teamString<LANG> was removed
+      // after the WN008 canary, see routes/api.js getSyncTrackedBlogFields).
+      should(response.data.trackedBlogFields).eql(["startDate", "endDate"]);
+      should(response.data.blog).have.property("startDate");
+      should(response.data.blog).have.property("endDate");
       should(response.data.articles.length).eql(1);
       const article = response.data.articles[0];
       should(article.categoryEN).eql("Mapping");
@@ -347,7 +348,11 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
     });
   });
 
-  describe("POST /blogSync/apply (write endpoint) - blog-level field patch (e.g. teamString<LANG>)", function() {
+  // The `blogPatch` mechanism is still live and used (e.g. a manual revert
+  // of a mistakenly-synced blog field), even though getSyncTrackedBlogFields
+  // currently returns [] so planMerge won't PRODUCE one on its own -
+  // teamStringDE is just a convenient real blog field to exercise it with.
+  describe("POST /blogSync/apply (write endpoint) - blog-level field patch via blogPatch", function() {
     beforeEach(function(bddone) {
       testutil.importData({
         clear: false,

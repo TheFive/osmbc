@@ -304,26 +304,42 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
         should(syncState.loadKnownRemoteIds("WN100").size).eql(0);
       });
 
-      it("should skip the /apply call entirely on a re-run once already marked replaced with a matching article count", async function() {
+      it("should skip the article trash+recreate on a re-run once already replaced, but still send a blog-level-only apply (no mode, empty creates/patches)", async function() {
         const localArticle = (await articleModule.find({ blog: "WN100" }))[0];
         syncState.markReplaced("WN100", [{ localId: localArticle.id, id: 555 }]);
+
+        // local blog has real dates (like an old-era prod_copie blog would)
+        const localBlog = await blogModule.findOne({ name: "WN100" });
+        await new Promise((resolve, reject) => {
+          localBlog.setAndSave({ OSMUser: "wp-backport" }, { startDate: "2010-01-04T00:00:00.000Z", endDate: "2010-01-10T00:00:00.000Z" }, (err) => (err ? reject(err) : resolve()));
+        });
 
         nock(REMOTE)
           .get("/api/blogSync/testkey/WN100")
           .reply(200, {
-            blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"] },
+            blog: { id: 999, name: "WN100", status: "closed", categories: ["Mapping"], startDate: "", endDate: "" },
             trackedFields: [...blogSyncMerger.BASE_TRACKED_FIELDS, "markdownDE"],
+            trackedBlogFields: ["startDate", "endDate"],
             // remote now has exactly 1 article (the earlier replace's own
             // creation) - same count as local, so the marker short-circuits.
             articles: [{ id: 555, categoryEN: "Mapping", predecessorId: "", title: "Existing article", markdownDE: "* local corrected text" }]
           });
-        // deliberately no POST .../apply interceptor - nock would throw if
-        // runSync tried to call it anyway.
+
+        let capturedBody;
+        nock(REMOTE)
+          .post("/api/blogSync/testkey/WN100/apply", (body) => { capturedBody = body; return true; })
+          .reply(200, { trashed: [], created: [], patched: [], conflicts: [], errors: [], blogPatched: [] });
 
         const { plan, applyResult } = await runSync({ blogName: "WN100", remoteUrl: REMOTE, apiKey: "testkey", maxBlogNumber: 500, commit: true });
 
         should(plan.mode).eql("replace");
-        should(applyResult.skipped).match(/already replaced/);
+        should(applyResult.skipped).match(/articles already replaced/);
+        // the apply body is blog-level only: no mode, no article work
+        should(capturedBody).not.have.property("mode");
+        should(capturedBody.creates).eql([]);
+        should(capturedBody.patches).eql([]);
+        // local blog has real dates, remote's are "" -> a blogPatch is sent
+        should(capturedBody.blogPatch.changes).have.property("startDate");
       });
 
       // Real full-range-run finding (see CLAUDE.local.md): after a replace,

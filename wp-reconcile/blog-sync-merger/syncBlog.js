@@ -20,6 +20,13 @@
 //     --remote-url https://osmbc.example.com --api-key <key> \
 //     --max-blog-number 500 [--commit]
 //
+// The API key may also be supplied via the OSMBC_BLOGSYNC_APIKEY
+// environment variable instead of --api-key, so it stays out of the
+// shell history and the process list (ps / /proc). Typical use:
+//   read -rs OSMBC_BLOGSYNC_APIKEY && export OSMBC_BLOGSYNC_APIKEY
+// then run without --api-key. An explicit --api-key still wins if both
+// are set.
+//
 // Add --insecure only when --remote-url points at a local dev server with
 // a self-signed cert (e.g. https://localhost:3002) - never for a real
 // remote, it disables TLS certificate verification.
@@ -192,13 +199,26 @@ export async function runSync({ blogName, remoteUrl, apiKey, maxBlogNumber, comm
   return { plan, applyResult };
 }
 
+// A merge-style apply body (NO `mode: "replace"` - so the server's
+// doTrashExisting stays off) carrying only blog-level work: blogPatch
+// (startDate/endDate/... - see routes/api.js getSyncTrackedBlogFields),
+// categories, close<LANG>. Used on the replace skip path below to keep
+// blog metadata in sync even when the article set is already replaced -
+// the server applies only what actually differs from live.
+function buildBlogLevelOnlyBody(plan, maxBlogNumber, dryRun) {
+  const body = { maxBlogNumber, dryRun, creates: [], patches: [] };
+  if (plan.blogPatch) body.blogPatch = plan.blogPatch;
+  if (plan.categoriesPlan && plan.categoriesPlan.localCategories) body.categories = plan.categoriesPlan.localCategories;
+  if (plan.localCloseFlags && Object.keys(plan.localCloseFlags).length > 0) body.closeFlags = plan.localCloseFlags;
+  return body;
+}
+
 // Old-era wholesale replace (see blogSyncMerger.planReplace). Separate from
 // the merge path because it is NOT idempotent by id-matching: once done,
 // the remote article ids are unrelated to the local ones, so the very same
 // 0-shared-ids test that selected replace mode would select it again on a
 // re-run. The local `syncState` marker is what stops a second
-// trash+recreate - a re-run with the marker set and a matching article
-// count is reported as already-done and never calls `/apply`.
+// trash+recreate.
 async function runReplace({ blogName, localBlog, localArticles, remoteData, trackedBlogFields, trackedCloseFields, maxBlogNumber, commit, remoteUrl, apiKey, httpsAgent }) {
   const plan = blogSyncMerger.planReplace({
     localBlog,
@@ -212,8 +232,15 @@ async function runReplace({ blogName, localBlog, localArticles, remoteData, trac
 
   if (!plan.eligible) return { plan, applyResult: null };
 
+  // Article set already replaced (marker + matching count): skip the
+  // expensive trash+recreate, but still reconcile blog-level fields
+  // (categories, dates via blogPatch, close<LANG>) - they can have drifted
+  // since, and "already replaced" should mean fully in sync, not just
+  // "articles in sync". The server applies only what still differs.
   if (syncState.isReplaced(blogName) && remoteData.articles.length === localArticles.length) {
-    return { plan, applyResult: { skipped: "already replaced (sync-state marker + matching article count)", replaced: true, created: [], trashed: [] } };
+    const blogBody = buildBlogLevelOnlyBody(plan, maxBlogNumber, !commit);
+    const applyResult = await applyRemote(remoteUrl, apiKey, blogName, blogBody, httpsAgent);
+    return { plan, applyResult: { ...applyResult, skipped: "articles already replaced (blog-level fields re-synced)", replaced: true } };
   }
 
   const body = buildApplyBody(plan, maxBlogNumber, !commit);
@@ -243,7 +270,7 @@ async function main() {
   program
     .argument("<blogName>", "WN issue to sync, e.g. WN300")
     .requiredOption("--remote-url <url>", "Base URL of the target OSMBC instance, e.g. https://osmbc.example.com")
-    .requiredOption("--api-key <key>", "API key for the remote instance's blogSync endpoint")
+    .option("--api-key <key>", "API key for the remote instance's blogSync endpoint (or set OSMBC_BLOGSYNC_APIKEY)")
     .requiredOption("--max-blog-number <n>", "Safety ceiling: refuse to touch a blog newer than this WN number", Number)
     .option("--commit", "Actually write to the remote (default: dry-run, only prints the plan)", false)
     .option("--mode <mode>", "auto (default) | merge | replace. 'auto' picks 'replace' (trash every remote article, recreate from local) only for an old-era blog whose local rebuild shares no article ids with the remote", "auto")
@@ -252,6 +279,13 @@ async function main() {
 
   const blogName = program.args[0];
   const options = program.opts();
+
+  const apiKey = options.apiKey || process.env.OSMBC_BLOGSYNC_APIKEY;
+  if (!apiKey) {
+    console.error("No API key: pass --api-key <key> or set the OSMBC_BLOGSYNC_APIKEY environment variable.");
+    process.exitCode = 1;
+    return;
+  }
 
   await new Promise((resolve, reject) => configModule.initialise((err) => (err ? reject(err) : resolve())));
 
@@ -264,7 +298,7 @@ async function main() {
   const { plan, applyResult } = await runSync({
     blogName,
     remoteUrl: options.remoteUrl,
-    apiKey: options.apiKey,
+    apiKey,
     maxBlogNumber: options.maxBlogNumber,
     commit: options.commit === true,
     mode: options.mode,
@@ -282,7 +316,8 @@ async function main() {
   if (plan.mode === "replace") {
     console.warn(`REPLACE MODE: ${(plan.toTrash || []).length} remote article(s) will be trashed and ${plan.toCreate.length} recreated from local; categories replaced wholesale. (old-era rebuild - no shared article ids)`);
     if (applyResult && applyResult.skipped) {
-      console.info(`Skipped: ${applyResult.skipped}`);
+      console.info(`Articles skipped: ${applyResult.skipped}`);
+      console.info("Blog-level re-sync result:", JSON.stringify(applyResult, null, 2));
       return;
     }
   }

@@ -66,3 +66,4 @@ backport
 wp-reconcile/blog-sync-merger/.sync-state.json
 tempDB/
 __pycache__/
+osmbc-blogsync-key
