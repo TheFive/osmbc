@@ -396,6 +396,43 @@ describe("render/blogrenderer", function() {
     });
   });
 
+  describe("hugoMarkdownFrontMatterAliases", function() {
+    it("should emit both the prefix-less and /en/ weeklyosm.eu archive alias for English", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN219" });
+      should(renderer._archiveAliases("EN")).eql(["/archives/214", "/en/archives/214"]);
+    });
+
+    it("should prefix a non-default language with its weeklyosm.eu URL segment", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN219" });
+      should(renderer._archiveAliases("DE")).eql(["/de/archives/214"]);
+    });
+
+    it("should map Brazilian Portuguese to the /pb/ segment weeklyosm.eu used", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN219" });
+      should(renderer._archiveAliases("BR")).eql(["/pb/archives/214"]);
+    });
+
+    it("should return no aliases for an issue before the weeklyosm.eu era", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN100" });
+      should(renderer._archiveAliases("EN")).eql([]);
+    });
+
+    it("should return no aliases for a non-WN blog", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "YiR2016" });
+      should(renderer._archiveAliases("EN")).eql([]);
+    });
+
+    it("should render the aliases line into the TOML front matter", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN219", endDate: "2014-10-07" });
+      should(renderer._generateFrontText("DE")).containEql("aliases = ['/de/archives/214']");
+    });
+
+    it("should not render an aliases line for an issue that is not mapped", function () {
+      const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN901", endDate: "2015-02-05" });
+      should(renderer._generateFrontText("DE")).not.containEql("aliases =");
+    });
+  });
+
   describe("markdownArticle", function() {
     let markdownRenderer;
     before(function() {

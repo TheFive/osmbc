@@ -52,7 +52,9 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   editorial source of truth; Hugo export is one of several render targets
   generated from it, not a separate data source. See
   `docs/export-profiles.md` for the field-by-field meaning of a profile
-  entry, and `docs/API.md` for the caller-facing API that consumes it.
+  entry, `docs/hugo-export.md` for the Hugo front matter (including the
+  `slugalias.json` old-URL redirect mechanism), and `docs/API.md` for the
+  caller-facing API that consumes it.
 
 ## Notifications (`setAndSave` → `messageCenter`)
 

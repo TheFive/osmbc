@@ -2,6 +2,7 @@
 date = 2015-02-10
 draft = false
 title = '''Wochennotiz 823'''
+aliases = ['/de/archives/18550']
 featureImage = '''https://bild.irgendwo/foto.png'''
 featureImageCap = '''[¹](#wn815_34170) verweist auf das bild'''
 +++

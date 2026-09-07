@@ -58,6 +58,9 @@ table instead of re-guessing next time.
 
 ## See also
 
+- [docs/hugo-export.md](hugo-export.md) — the TOML front matter the `HUGO`
+  renderer prepends to each issue (`date`/`title`/`aliases`/`featureImage`),
+  including the `slugalias.json` old-URL redirect mechanism.
 - [docs/API.md](API.md) — caller-facing documentation of the routes that
   consume `ExportProfiles` (`blogPreviewDownload/:blog_id`,
   `blogPreviewDownload/outstanding` and `blogPreviewDownload/closedSince`),

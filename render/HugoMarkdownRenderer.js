@@ -1,14 +1,36 @@
 import _debug from "debug";
+import { readFileSync } from "fs";
+import path from "path";
 import moment from "moment-timezone";
 import MarkdownRenderer from "./MarkdownRenderer.js";
 import util from "../util/util.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
+import language from "../model/language.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
 const wpExpressTitle = config.getValue("Blog Title For Export", { mustExist: true });
 const dateAdjust = Number(config.getValue("Hugo", "DateAdjust", { mustExist: true }));
+
+// Old weeklyosm.eu (WordPress) permalinks were /<lang>/archives/<postId>; the
+// default language English also answered without a prefix (/archives/<postId>).
+// After the Hugo migration each issue's URL is derived from its number, so the
+// old URLs are emitted as Hugo `aliases` in the front matter to keep external
+// links working. data/slugalias.json (supplied by the WP admin) maps the WN
+// number -> WP post id and only covers the weeklyosm.eu era (WN 219+). A WN
+// that is missing here simply gets no alias.
+let slugAliasMap = {};
+try {
+  slugAliasMap = JSON.parse(readFileSync(path.resolve(config.getDirName(), "data", "slugalias.json"), "UTF8"));
+} catch (err) {
+  debug("no usable data/slugalias.json: %s", err.message);
+}
+
+// OSMBC language id -> old weeklyosm.eu URL segment, for the cases where they
+// differ. Only Brazilian Portuguese is off: weeklyosm.eu served it under /pb/,
+// while OSMBC exports it as /br/.
+const WP_ARCHIVE_LANG_SEGMENT = { BR: "pb" };
 
 // ASCII -> Unicode superscript character, for places that can't use a Hugo
 // shortcode (front matter TOML strings never run shortcodes - see
@@ -200,6 +222,25 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
     return super._formatTeamString(teamstring);
   }
 
+  /**
+   * Hugo `aliases` for one issue/language: the old weeklyosm.eu WordPress
+   * permalinks that must keep redirecting to this page.
+   * @param {string} lang - OSMBC language id (e.g. "EN", "DE", "BR").
+   * @returns {string[]} Site-relative alias paths, or [] when the issue is not
+   * in slugalias.json (pre-weeklyosm.eu era, or a non-WN blog).
+   */
+  _archiveAliases(lang) {
+    const match = /^WN0*(\d+)$/.exec((this.blog && this.blog.name) || "");
+    if (!match) return [];
+    const postId = slugAliasMap[match[1]];
+    if (postId === undefined || postId === null) return [];
+    const segment = WP_ARCHIVE_LANG_SEGMENT[lang] || language.wpExportName(lang).toLowerCase();
+    const aliases = ["/" + segment + "/archives/" + postId];
+    // English was the default language and also answered without a prefix.
+    if (lang === "EN") aliases.unshift("/archives/" + postId);
+    return aliases;
+  }
+
   _generateFrontText(lang, pictureArticles) {
     // generate TOML header for Hugo front matter
     debug("HugoMarkdownRenderer.prototype._generateFrontText %s", lang);
@@ -240,16 +281,18 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
       }
     }
     const title = (blogNames[lang] + " " + this.blog.name.substring(2,10));
+    const aliases = this._archiveAliases(lang);
 
     const text = [
       "+++",
       "date = " + date,
       "draft = false",
       "title = '''" + title + "'''",
+      (aliases.length) ? "aliases = [" + aliases.map((a) => { return "'" + a + "'"; }).join(", ") + "]" : "",
       (pictureLink) ? "featureImage = '''" + pictureLink + "'''" : "",
       (pictureMd) ? "featureImageCap = '''" + pictureMd + "'''" : "",
       "+++"
-    ].join("\n");
+    ].filter((line) => { return line !== ""; }).join("\n");
 
     return text + "\n\n";
   }
