@@ -6,7 +6,6 @@ import MarkdownRenderer from "./MarkdownRenderer.js";
 import util from "../util/util.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
-import language from "../model/language.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
@@ -22,21 +21,10 @@ const dateAdjust = Number(config.getValue("Hugo", "DateAdjust", { mustExist: tru
 // that is missing here simply gets no alias.
 let slugAliasMap = {};
 try {
-  slugAliasMap = JSON.parse(readFileSync(path.resolve(config.getDirName(), "data", "slugalias.json"), "UTF8"));
+    slugAliasMap = JSON.parse(readFileSync(path.resolve(config.getDirName(), "data", "slugalias.json"), "UTF8"));
 } catch (err) {
-  debug("no usable data/slugalias.json: %s", err.message);
+    debug("no usable data/slugalias.json: %s", err.message);
 }
-
-// OSMBC language id -> extra historical weeklyosm.eu URL segments to alias on
-// top of the default one (language.wpExportName(lang).toLowerCase()).
-//
-// Brazilian Portuguese: weeklyosm.eu served it under /pb/ from the start
-// (qtranslate language code "pb", roughly WN 219 - 735). Around mid-2024 the
-// code was renamed to "br" (matching OSMBC's own id) and qtranslate recomputes
-// every permalink from the current config, so today the whole archive answers
-// under /br/archives/<id> too. Emit both so links from either era keep working
-// after the Hugo migration.
-const WP_ARCHIVE_EXTRA_SEGMENTS = { BR: ["pb"] };
 
 // ASCII -> Unicode superscript character, for places that can't use a Hugo
 // shortcode (front matter TOML strings never run shortcodes - see
@@ -51,265 +39,301 @@ const WP_ARCHIVE_EXTRA_SEGMENTS = { BR: ["pb"] };
 // (e.g. the brackets in the "[^[1]^]" footnote variant) is left unchanged
 // rather than dropped.
 const SUPERSCRIPT_UNICODE_MAP = {
-  0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹",
-  "+": "⁺", "-": "⁻", "=": "⁼", "(": "⁽", ")": "⁾",
-  a: "ᵃ", b: "ᵇ", c: "ᶜ", d: "ᵈ", e: "ᵉ", f: "ᶠ", g: "ᵍ", h: "ʰ", i: "ⁱ", j: "ʲ",
-  k: "ᵏ", l: "ˡ", m: "ᵐ", n: "ⁿ", o: "ᵒ", p: "ᵖ", r: "ʳ", s: "ˢ", t: "ᵗ",
-  u: "ᵘ", v: "ᵛ", w: "ʷ", x: "ˣ", y: "ʸ", z: "ᶻ"
+    0: "⁰",
+    1: "¹",
+    2: "²",
+    3: "³",
+    4: "⁴",
+    5: "⁵",
+    6: "⁶",
+    7: "⁷",
+    8: "⁸",
+    9: "⁹",
+    "+": "⁺",
+    "-": "⁻",
+    "=": "⁼",
+    "(": "⁽",
+    ")": "⁾",
+    a: "ᵃ",
+    b: "ᵇ",
+    c: "ᶜ",
+    d: "ᵈ",
+    e: "ᵉ",
+    f: "ᶠ",
+    g: "ᵍ",
+    h: "ʰ",
+    i: "ⁱ",
+    j: "ʲ",
+    k: "ᵏ",
+    l: "ˡ",
+    m: "ᵐ",
+    n: "ⁿ",
+    o: "ᵒ",
+    p: "ᵖ",
+    r: "ʳ",
+    s: "ˢ",
+    t: "ᵗ",
+    u: "ᵘ",
+    v: "ᵛ",
+    w: "ʷ",
+    x: "ˣ",
+    y: "ʸ",
+    z: "ᶻ",
 };
 
-
 class HugoMarkdownRenderer extends MarkdownRenderer {
-  /**
-   * Creates a new HugoMarkdownRenderer instance.
-   * Current implementation delegates all behavior to MarkdownRenderer.
-   * @param {object} blog - The blog object to render.
-  * @param {object} [options] - Optional renderer options.
-  * Currently accepted for API consistency and forwarded to MarkdownRenderer,
-  * but not used by HugoMarkdownRenderer-specific behavior.
-   */
-  constructor(blog, options) {
-    super(blog, options);
-  }
-
-  subtitle(lang) {
-    debug("HugoMarkdownRenderer.prototype.subtitle %s", lang);
-    return super.subtitle(lang);
-  }
-
-  _containsEmptyArticlesWarning(lang) {
-    debug("HugoMarkdownRenderer.prototype._containsEmptyArticlesWarning %s", lang);
-    return super._containsEmptyArticlesWarning(lang);
-  }
-
-  categoryTitle(lang, category) {
-    debug("HugoMarkdownRenderer.prototype.categoryTitle");
-    return super.categoryTitle(lang, category);
-  }
-
-  _renderArticleStandard(lang, article) {
-    let blogRef = article.blog;
-    if (!blogRef) blogRef = "undefined";
-    const pageLink = util.linkify(blogRef + "_" + article.id);
-
-    const md = this._renderMarkdownListItem(lang, article);
-
-    return `* {{< anchor "${pageLink}" >}} ${md}`;
-  }
-
-  /**
-   * Post-processes Hugo markdown to transform emoji shortcuts to Hugo icon shortcodes.
-   * Used when markdown is already in text form (not converted via HTML/Turndown).
-   * Semantik: Replaces markdown-level emoji shortcuts with Hugo icon shortcodes,
-   * similar to how the HTML-level emoji plugin works.
-   * @param {string} markdown - The markdown text to transform
-   * @returns {string} The transformed markdown
-   */
-  _transformHugoMarkdown(markdown) {
-    if (!markdown) return markdown;
-    let result = markdown;
-
-    // Get emoji configuration from languageflags
-    const languageFlags = configModule.getConfig("languageflags");
-    const shortcut = languageFlags.shortcut || {};
-    const emoji = languageFlags.emoji || {};
-
-    const toHugoEmoji = function(value) {
-      if (!value) return null;
-      // markdown-it-emoji defs may return an <img ...> snippet; extract src.
-      const imgMatch = String(value).match(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/i);
-      const src = imgMatch && imgMatch[1] ? imgMatch[1] : null;
-      const raw = src || String(value);
-
-      // Treat path-like or URL-like values as Hugo icon shortcodes.
-      if (raw.startsWith("/") || raw.startsWith("http://") || raw.startsWith("https://")) {
-        return `{{< icon "${raw}" >}}`;
-      }
-
-      // Otherwise keep as plain markdown text so Hugo can render unicode emojis.
-      return raw;
-    };
-
-    // Transform all configured emoji shortcuts.
-    Object.entries(shortcut).forEach(([emojiName, shortcutString]) => {
-      if (shortcutString && emoji[emojiName]) {
-        const replacement = toHugoEmoji(emoji[emojiName]);
-        if (replacement) {
-          result = result.replaceAll(shortcutString, replacement);
-        }
-      }
-    });
-
-    // Also support :emoji_name: style from markdown-it-emoji semantics.
-    Object.keys(emoji).forEach((emojiName) => {
-      const replacement = toHugoEmoji(emoji[emojiName]);
-      if (replacement) {
-        result = result.replaceAll(`:${emojiName}:`, replacement);
-      }
-    });
-
-    return result;
-  }
-
-  _renderArticlePicture(lang, article) {
-    return "";
-  }
-
-  _renderArticleUpcomingEvents(lang, article) {
-    let md = super._renderArticleUpcomingEvents(lang, article);
-    md = md.replaceAll("![flag](", "![](");
-    return md;
-  }
-
-  _renderMarkdownListItem(lang, article) {
-    let md = super._renderMarkdownListItem(lang, article);
-    md = this._replaceSuperscriptShortcode(md);
-    // Transform emoji shortcuts to Hugo icon shortcodes for markdown-level processing
-    md = this._transformHugoMarkdown(md);
-    return md;
-  }
-
-  /**
-   * Converts inline "^text^" superscript markdown (used editorially for
-   * footnote-style references like "^1^", ordinals like "1^er^"/"12^th^",
-   * link-language markers like "^en^", and exponents like "km^2^") into a
-   * Hugo "sup" shortcode. Hugo's own markdown engine (Goldmark) has no
-   * native superscript syntax, so this must run as a text pre-processing
-   * step before Hugo ever sees the markdown - only valid for regular
-   * content, never for front matter (TOML strings never run shortcodes,
-   * see _generateFrontText).
-   * Delimiter matching mirrors util/markdown-it-sup.js: a "^", then one or
-   * more characters that are neither whitespace nor "^", then the next
-   * "^". Excluding "^" itself from the captured run is what keeps a
-   * three-or-more-caret string ("^a^ ^b^") from being mis-paired across
-   * the wrong two carets - the match always closes at the very next "^".
-   * @param {string} text - Markdown text to transform
-   * @returns {string} The transformed markdown
-   */
-  _replaceSuperscriptShortcode(text) {
-    if (!text) return text;
-    return text.replace(/\^([^\s^]+)\^/g, (_match, content) => {
-      const escaped = content.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
-      return `{{< sup "${escaped}" >}}`;
-    });
-  }
-
-  /**
-   * Same "^text^" delimiter matching as _replaceSuperscriptShortcode, but
-   * resolves each character to its Unicode superscript equivalent
-   * (SUPERSCRIPT_UNICODE_MAP) instead of a Hugo shortcode - for use inside
-   * front matter (TOML strings), where shortcodes never run. A character
-   * with no superscript equivalent (uppercase letters, brackets, ...) is
-   * kept as-is rather than dropped.
-   * @param {string} text - Markdown text to transform
-   * @returns {string} The transformed text
-   */
-  _replaceSuperscriptUnicode(text) {
-    if (!text) return text;
-    return text.replace(/\^([^\s^]+)\^/g, (_match, content) => {
-      return content.replace(/./g, (ch) => SUPERSCRIPT_UNICODE_MAP[ch.toLowerCase()] || ch);
-    });
-  }
-
-  _renderArticleUnpublished(text, article) {
-    return super._renderArticleUnpublished(text, article);
-  }
-
-  articleTitle(lang, article) {
-    debug("HugoMarkdownRenderer.prototype.articleTitle");
-    return super.articleTitle(lang, article);
-  }
-
-  _listAroundArticles(categoryString) {
-    return super._listAroundArticles(categoryString);
-  }
-
-  _formatTeamString(teamstring) {
-    return super._formatTeamString(teamstring);
-  }
-
-  /**
-   * Hugo `aliases` for one issue/language: the old weeklyosm.eu WordPress
-   * permalinks that must keep redirecting to this page.
-   * @param {string} lang - OSMBC language id (e.g. "EN", "DE", "BR").
-   * @returns {string[]} Site-relative alias paths, or [] when the issue is not
-   * in slugalias.json (pre-weeklyosm.eu era, or a non-WN blog).
-   */
-  _archiveAliases(lang) {
-    const match = /^WN0*(\d+)$/.exec((this.blog && this.blog.name) || "");
-    if (!match) return [];
-    const postId = slugAliasMap[match[1]];
-    if (postId === undefined || postId === null) return [];
-    const segments = [language.wpExportName(lang).toLowerCase()].concat(WP_ARCHIVE_EXTRA_SEGMENTS[lang] || []);
-    const aliases = segments.map((segment) => { return "/" + segment + "/archives/" + postId; });
-    // English was the default language and also answered without a prefix.
-    if (lang === "EN") aliases.unshift("/archives/" + postId);
-    return aliases;
-  }
-
-  _generateFrontText(lang, pictureArticles) {
-    // generate TOML header for Hugo front matter
-    debug("HugoMarkdownRenderer.prototype._generateFrontText %s", lang);
-    const categoryTranslation = configModule.getConfig("categorytranslation");
-
-    const blogNames = (categoryTranslation.filter((category) => { return (category.EN === wpExpressTitle); }))[0];
-    const date = moment(this.blog.endDate).tz("Europe/Berlin").add(dateAdjust, "days").format("YYYY-MM-DD");
-    let pictureLink = null;
-    let pictureMd = null;
-    if (pictureArticles && pictureArticles.length > 0) {
-      const pictureArticle = pictureArticles[0];
-      const rawMd = pictureArticle["markdown" + lang];
-      const md = (rawMd) ? this._transformHugoMarkdown(rawMd) : null;
-
-      const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
-      const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
-      // "^text^" superscript markup can't use a Hugo shortcode here (front
-      // matter is raw TOML, never processed for shortcodes - unlike the
-      // content body, see _replaceSuperscriptShortcode), so it's resolved
-      // to plain Unicode superscript characters instead.
-      pictureMd = this._replaceSuperscriptUnicode(md);
-      if (pictureMd) {
-        pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
-        const imageMatch = regexMarkdownImage.exec(pictureMd);
-        if (imageMatch && imageMatch.length >= 3) {
-          pictureLink = imageMatch[2];
-          pictureMd = pictureMd.replace(regexMarkdownImage, "").trim();
-        } else {
-          const link = regexUrlFromCollection.exec(pictureMd);
-          if (link && link.length > 0) {
-            pictureLink = link[0];
-            pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
-            if (pictureMd.includes(link[0])) {
-              pictureMd = pictureMd.replace(link[0], "").trim();
-            }
-          }
-        }
-      }
+    /**
+     * Creates a new HugoMarkdownRenderer instance.
+     * Current implementation delegates all behavior to MarkdownRenderer.
+     * @param {object} blog - The blog object to render.
+     * @param {object} [options] - Optional renderer options.
+     * Currently accepted for API consistency and forwarded to MarkdownRenderer,
+     * but not used by HugoMarkdownRenderer-specific behavior.
+     */
+    constructor(blog, options) {
+        super(blog, options);
     }
-    const title = (blogNames[lang] + " " + this.blog.name.substring(2,10));
-    const aliases = this._archiveAliases(lang);
 
-    const text = [
-      "+++",
-      "date = " + date,
-      "draft = false",
-      "title = '''" + title + "'''",
-      (aliases.length) ? "aliases = [" + aliases.map((a) => { return "'" + a + "'"; }).join(", ") + "]" : "",
-      (pictureLink) ? "featureImage = '''" + pictureLink + "'''" : "",
-      (pictureMd) ? "featureImageCap = '''" + pictureMd + "'''" : "",
-      "+++"
-    ].filter((line) => { return line !== ""; }).join("\n");
+    subtitle(lang) {
+        debug("HugoMarkdownRenderer.prototype.subtitle %s", lang);
+        return super.subtitle(lang);
+    }
 
-    return text + "\n\n";
-  }
+    _containsEmptyArticlesWarning(lang) {
+        debug("HugoMarkdownRenderer.prototype._containsEmptyArticlesWarning %s", lang);
+        return super._containsEmptyArticlesWarning(lang);
+    }
 
-  _renderMissingCategory(name, articles) {
-    return super._renderMissingCategory(name, articles);
-  }
+    categoryTitle(lang, category) {
+        debug("HugoMarkdownRenderer.prototype.categoryTitle");
+        return super.categoryTitle(lang, category);
+    }
 
-  renderBlog(lang, articleData, onlyClosed = false) {
-    return super.renderBlog(lang, articleData, onlyClosed);
-  }
+    _renderArticleStandard(lang, article) {
+        let blogRef = article.blog;
+        if (!blogRef) blogRef = "undefined";
+        const pageLink = util.linkify(blogRef + "_" + article.id);
+
+        const md = this._renderMarkdownListItem(lang, article);
+
+        return `* {{< anchor "${pageLink}" >}} ${md}`;
+    }
+
+    /**
+     * Post-processes Hugo markdown to transform emoji shortcuts to Hugo icon shortcodes.
+     * Used when markdown is already in text form (not converted via HTML/Turndown).
+     * Semantik: Replaces markdown-level emoji shortcuts with Hugo icon shortcodes,
+     * similar to how the HTML-level emoji plugin works.
+     * @param {string} markdown - The markdown text to transform
+     * @returns {string} The transformed markdown
+     */
+    _transformHugoMarkdown(markdown) {
+        if (!markdown) return markdown;
+        let result = markdown;
+
+        // Get emoji configuration from languageflags
+        const languageFlags = configModule.getConfig("languageflags");
+        const shortcut = languageFlags.shortcut || {};
+        const emoji = languageFlags.emoji || {};
+
+        const toHugoEmoji = function (value) {
+            if (!value) return null;
+            // markdown-it-emoji defs may return an <img ...> snippet; extract src.
+            const imgMatch = String(value).match(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/i);
+            const src = imgMatch && imgMatch[1] ? imgMatch[1] : null;
+            const raw = src || String(value);
+
+            // Treat path-like or URL-like values as Hugo icon shortcodes.
+            if (raw.startsWith("/") || raw.startsWith("http://") || raw.startsWith("https://")) {
+                return `{{< icon "${raw}" >}}`;
+            }
+
+            // Otherwise keep as plain markdown text so Hugo can render unicode emojis.
+            return raw;
+        };
+
+        // Transform all configured emoji shortcuts.
+        Object.entries(shortcut).forEach(([emojiName, shortcutString]) => {
+            if (shortcutString && emoji[emojiName]) {
+                const replacement = toHugoEmoji(emoji[emojiName]);
+                if (replacement) {
+                    result = result.replaceAll(shortcutString, replacement);
+                }
+            }
+        });
+
+        // Also support :emoji_name: style from markdown-it-emoji semantics.
+        Object.keys(emoji).forEach((emojiName) => {
+            const replacement = toHugoEmoji(emoji[emojiName]);
+            if (replacement) {
+                result = result.replaceAll(`:${emojiName}:`, replacement);
+            }
+        });
+
+        return result;
+    }
+
+    _renderArticlePicture(lang, article) {
+        return "";
+    }
+
+    _renderArticleUpcomingEvents(lang, article) {
+        let md = super._renderArticleUpcomingEvents(lang, article);
+        md = md.replaceAll("![flag](", "![](");
+        return md;
+    }
+
+    _renderMarkdownListItem(lang, article) {
+        let md = super._renderMarkdownListItem(lang, article);
+        md = this._replaceSuperscriptShortcode(md);
+        // Transform emoji shortcuts to Hugo icon shortcodes for markdown-level processing
+        md = this._transformHugoMarkdown(md);
+        return md;
+    }
+
+    /**
+     * Converts inline "^text^" superscript markdown (used editorially for
+     * footnote-style references like "^1^", ordinals like "1^er^"/"12^th^",
+     * link-language markers like "^en^", and exponents like "km^2^") into a
+     * Hugo "sup" shortcode. Hugo's own markdown engine (Goldmark) has no
+     * native superscript syntax, so this must run as a text pre-processing
+     * step before Hugo ever sees the markdown - only valid for regular
+     * content, never for front matter (TOML strings never run shortcodes,
+     * see _generateFrontText).
+     * Delimiter matching mirrors util/markdown-it-sup.js: a "^", then one or
+     * more characters that are neither whitespace nor "^", then the next
+     * "^". Excluding "^" itself from the captured run is what keeps a
+     * three-or-more-caret string ("^a^ ^b^") from being mis-paired across
+     * the wrong two carets - the match always closes at the very next "^".
+     * @param {string} text - Markdown text to transform
+     * @returns {string} The transformed markdown
+     */
+    _replaceSuperscriptShortcode(text) {
+        if (!text) return text;
+        return text.replace(/\^([^\s^]+)\^/g, (_match, content) => {
+            const escaped = content.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+            return `{{< sup "${escaped}" >}}`;
+        });
+    }
+
+    /**
+     * Same "^text^" delimiter matching as _replaceSuperscriptShortcode, but
+     * resolves each character to its Unicode superscript equivalent
+     * (SUPERSCRIPT_UNICODE_MAP) instead of a Hugo shortcode - for use inside
+     * front matter (TOML strings), where shortcodes never run. A character
+     * with no superscript equivalent (uppercase letters, brackets, ...) is
+     * kept as-is rather than dropped.
+     * @param {string} text - Markdown text to transform
+     * @returns {string} The transformed text
+     */
+    _replaceSuperscriptUnicode(text) {
+        if (!text) return text;
+        return text.replace(/\^([^\s^]+)\^/g, (_match, content) => {
+            return content.replace(/./g, (ch) => SUPERSCRIPT_UNICODE_MAP[ch.toLowerCase()] || ch);
+        });
+    }
+
+    _renderArticleUnpublished(text, article) {
+        return super._renderArticleUnpublished(text, article);
+    }
+
+    articleTitle(lang, article) {
+        debug("HugoMarkdownRenderer.prototype.articleTitle");
+        return super.articleTitle(lang, article);
+    }
+
+    _listAroundArticles(categoryString) {
+        return super._listAroundArticles(categoryString);
+    }
+
+    _formatTeamString(teamstring) {
+        return super._formatTeamString(teamstring);
+    }
+
+    /**
+     * Hugo `aliases` for one issue: the old weeklyosm.eu WordPress
+     * permalinks that must keep redirecting to this page.
+     * @returns {string[]} Site-relative alias paths, or [] when the issue is not
+     * in slugalias.json (pre-weeklyosm.eu era, or a non-WN blog).
+     */
+    _archiveAliases() {
+        const match = /^WN0*(\d+)$/.exec((this.blog && this.blog.name) || "");
+        if (!match) return [];
+        const postId = slugAliasMap[match[1]];
+        if (postId === undefined || postId === null) return [];
+        const aliases = "/archives/" + postId;
+        return aliases;
+    }
+
+    _generateFrontText(lang, pictureArticles) {
+        // generate TOML header for Hugo front matter
+        debug("HugoMarkdownRenderer.prototype._generateFrontText %s", lang);
+        const categoryTranslation = configModule.getConfig("categorytranslation");
+
+        const blogNames = categoryTranslation.filter((category) => {
+            return category.EN === wpExpressTitle;
+        })[0];
+        const date = moment(this.blog.endDate).tz("Europe/Berlin").add(dateAdjust, "days").format("YYYY-MM-DD");
+        let pictureLink = null;
+        let pictureMd = null;
+        if (pictureArticles && pictureArticles.length > 0) {
+            const pictureArticle = pictureArticles[0];
+            const rawMd = pictureArticle["markdown" + lang];
+            const md = rawMd ? this._transformHugoMarkdown(rawMd) : null;
+
+            const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
+            const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
+            // "^text^" superscript markup can't use a Hugo shortcode here (front
+            // matter is raw TOML, never processed for shortcodes - unlike the
+            // content body, see _replaceSuperscriptShortcode), so it's resolved
+            // to plain Unicode superscript characters instead.
+            pictureMd = this._replaceSuperscriptUnicode(md);
+            if (pictureMd) {
+                pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
+                const imageMatch = regexMarkdownImage.exec(pictureMd);
+                if (imageMatch && imageMatch.length >= 3) {
+                    pictureLink = imageMatch[2];
+                    pictureMd = pictureMd.replace(regexMarkdownImage, "").trim();
+                } else {
+                    const link = regexUrlFromCollection.exec(pictureMd);
+                    if (link && link.length > 0) {
+                        pictureLink = link[0];
+                        pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
+                        if (pictureMd.includes(link[0])) {
+                            pictureMd = pictureMd.replace(link[0], "").trim();
+                        }
+                    }
+                }
+            }
+        }
+        const title = blogNames[lang] + " " + this.blog.name.substring(2, 10);
+        const alias = this._archiveAliases();
+
+        const text = [
+            "+++",
+            "date = " + date,
+            "draft = false",
+            "title = '''" + title + "'''",
+            alias ? "aliases = ['" + alias + "']" : "",
+            pictureLink ? "featureImage = '''" + pictureLink + "'''" : "",
+            pictureMd ? "featureImageCap = '''" + pictureMd + "'''" : "",
+            "+++",
+        ]
+            .filter((line) => {
+                return line !== "";
+            })
+            .join("\n");
+
+        return text + "\n\n";
+    }
+
+    _renderMissingCategory(name, articles) {
+        return super._renderMissingCategory(name, articles);
+    }
+
+    renderBlog(lang, articleData, onlyClosed = false) {
+        return super.renderBlog(lang, articleData, onlyClosed);
+    }
 }
 
 export default HugoMarkdownRenderer;

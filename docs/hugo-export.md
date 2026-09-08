@@ -10,20 +10,20 @@ looks like this:
 date = 2024-01-07
 draft = false
 title = '''weeklyOSM 703'''
-aliases = ['/archives/16247', '/en/archives/16247']
+aliases = ['/archives/16247']
 featureImage = '''https://example.com/lead.png'''
 featureImageCap = '''[¹](#wn703_12345) the lead picture'''
 +++
 ```
 
-| Field | Source | Notes |
-|---|---|---|
-| `date` | `blog.endDate` + `Hugo.DateAdjust` days, in `Europe/Berlin`, as `YYYY-MM-DD` | `DateAdjust` is a config knob (see [docs/config.md](config.md)); it shifts the collection end date forward to the intended publication date. |
-| `draft` | always `false` | |
-| `title` | `"<blog title for export> <issue number>"` | Blog title per language from `categorytranslation` (the row whose `EN` equals `"Blog Title For Export"`), issue number from `blog.name.substring(2,10)`. |
-| `aliases` | `slugalias.json` — see below | Omitted entirely when the issue has no mapping. |
-| `featureImage` | first Picture-category article's image URL | Omitted when there is no lead picture. |
-| `featureImageCap` | that article's caption markdown | `^text^` superscript is folded to Unicode characters here — front matter runs no shortcodes, unlike the content body. Omitted when empty. |
+| Field             | Source                                                                       | Notes                                                                                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `date`            | `blog.endDate` + `Hugo.DateAdjust` days, in `Europe/Berlin`, as `YYYY-MM-DD` | `DateAdjust` is a config knob (see [docs/config.md](config.md)); it shifts the collection end date forward to the intended publication date.             |
+| `draft`           | always `false`                                                               |                                                                                                                                                          |
+| `title`           | `"<blog title for export> <issue number>"`                                   | Blog title per language from `categorytranslation` (the row whose `EN` equals `"Blog Title For Export"`), issue number from `blog.name.substring(2,10)`. |
+| `aliases`         | `slugalias.json` — see below                                                 | Omitted entirely when the issue has no mapping.                                                                                                          |
+| `featureImage`    | first Picture-category article's image URL                                   | Omitted when there is no lead picture.                                                                                                                   |
+| `featureImageCap` | that article's caption markdown                                              | `^text^` superscript is folded to Unicode characters here — front matter runs no shortcodes, unlike the content body. Omitted when empty.                |
 
 Empty optional lines are dropped, not emitted as blank lines.
 
@@ -52,13 +52,13 @@ WordPress post id:
 
 ```json
 {
-  "219": 214,
-  "703": 16247,
-  "841": 18849
+    "219": 214,
+    "703": 16247,
+    "841": 18849
 }
 ```
 
-- Covers the **weeklyosm.eu era only** (WN 219–841 at the time of writing).
+- Covers the **wordpress era only** (WN 219–841 at the time of writing).
   Gaps exist for issue numbers that were never published on weeklyosm.eu.
 - Issues **before** WN 219 (the old `blog.openstreetmap.de` era, slug-based
   URLs on a different domain) are deliberately **out of scope** — those
@@ -69,19 +69,7 @@ WordPress post id:
 
 ### What gets emitted
 
-For an issue in the map with post id `P`, rendered in language `L`:
-
-| Language | `aliases` line |
-|---|---|
-| `EN` | `aliases = ['/archives/P', '/en/archives/P']` |
-| any other | `aliases = ['/<segment>/archives/P']` |
-
-`<segment>` is `language.wpExportName(L).toLowerCase()`. Brazilian Portuguese
-gets a **second** alias for a historical segment:
-
-| OSMBC language id | URL segments | why |
-|---|---|---|
-| `BR` | `br`, `pb` | weeklyosm.eu served Brazilian Portuguese under `/pb/` until the qtranslate language code was renamed to `br` (~mid-2024, matching OSMBC's id). qtranslate recomputes every permalink from the current config, so the whole archive now also answers under `/br/`. Both forms exist in old newsletters / external links, so both are aliased. |
+For an issue in the map with post id `P`: `aliases = ['/archives/P']`
 
 The alias is emitted for **every language OSMBC exports for the issue**.
 If a language did not exist on weeklyosm.eu back then, its alias simply
