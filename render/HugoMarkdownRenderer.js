@@ -27,10 +27,16 @@ try {
   debug("no usable data/slugalias.json: %s", err.message);
 }
 
-// OSMBC language id -> old weeklyosm.eu URL segment, for the cases where they
-// differ. Only Brazilian Portuguese is off: weeklyosm.eu served it under /pb/,
-// while OSMBC exports it as /br/.
-const WP_ARCHIVE_LANG_SEGMENT = { BR: "pb" };
+// OSMBC language id -> extra historical weeklyosm.eu URL segments to alias on
+// top of the default one (language.wpExportName(lang).toLowerCase()).
+//
+// Brazilian Portuguese: weeklyosm.eu served it under /pb/ from the start
+// (qtranslate language code "pb", roughly WN 219 - 735). Around mid-2024 the
+// code was renamed to "br" (matching OSMBC's own id) and qtranslate recomputes
+// every permalink from the current config, so today the whole archive answers
+// under /br/archives/<id> too. Emit both so links from either era keep working
+// after the Hugo migration.
+const WP_ARCHIVE_EXTRA_SEGMENTS = { BR: ["pb"] };
 
 // ASCII -> Unicode superscript character, for places that can't use a Hugo
 // shortcode (front matter TOML strings never run shortcodes - see
@@ -234,8 +240,8 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
     if (!match) return [];
     const postId = slugAliasMap[match[1]];
     if (postId === undefined || postId === null) return [];
-    const segment = WP_ARCHIVE_LANG_SEGMENT[lang] || language.wpExportName(lang).toLowerCase();
-    const aliases = ["/" + segment + "/archives/" + postId];
+    const segments = [language.wpExportName(lang).toLowerCase()].concat(WP_ARCHIVE_EXTRA_SEGMENTS[lang] || []);
+    const aliases = segments.map((segment) => { return "/" + segment + "/archives/" + postId; });
     // English was the default language and also answered without a prefix.
     if (lang === "EN") aliases.unshift("/archives/" + postId);
     return aliases;

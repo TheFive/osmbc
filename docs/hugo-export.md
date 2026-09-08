@@ -76,11 +76,12 @@ For an issue in the map with post id `P`, rendered in language `L`:
 | `EN` | `aliases = ['/archives/P', '/en/archives/P']` |
 | any other | `aliases = ['/<segment>/archives/P']` |
 
-`<segment>` is `language.wpExportName(L).toLowerCase()`, with one override:
+`<segment>` is `language.wpExportName(L).toLowerCase()`. Brazilian Portuguese
+gets a **second** alias for a historical segment:
 
-| OSMBC language id | URL segment | why |
+| OSMBC language id | URL segments | why |
 |---|---|---|
-| `BR` | `pb` | weeklyosm.eu served Brazilian Portuguese under `/pb/`, not `/br/` |
+| `BR` | `br`, `pb` | weeklyosm.eu served Brazilian Portuguese under `/pb/` until the qtranslate language code was renamed to `br` (~mid-2024, matching OSMBC's id). qtranslate recomputes every permalink from the current config, so the whole archive now also answers under `/br/`. Both forms exist in old newsletters / external links, so both are aliased. |
 
 The alias is emitted for **every language OSMBC exports for the issue**.
 If a language did not exist on weeklyosm.eu back then, its alias simply
@@ -90,7 +91,7 @@ points at a page nobody requests — harmless.
 
 - New issues: extend `data/slugalias.json` with the new `"<WN>": <postId>`
   pair (get the post id from the WordPress admin) and re-export.
-- The override table lives in `WP_ARCHIVE_LANG_SEGMENT` in
+- The extra-segment table lives in `WP_ARCHIVE_EXTRA_SEGMENTS` in
   [render/HugoMarkdownRenderer.js](../render/HugoMarkdownRenderer.js).
 - Tests: `test/render.blogrenderer.test.js`, `describe("hugoMarkdownFrontMatterAliases")`,
   plus fixture `test/data/render.blog.preview.6.md` (WN823).
