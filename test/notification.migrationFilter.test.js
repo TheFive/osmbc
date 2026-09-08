@@ -45,27 +45,40 @@ describe("notification/migrationFilter", function() {
     });
   });
 
-  it("should not filter methods outside its scope (sendInfo, comments, review/close status)", function(done) {
+  it("should suppress comments and review/close status for the migration user (addComment flood on the WN219 prod run)", function(done) {
     const spy = makeSpyReceiver();
     const filtered = suppressMigrationNotifications(spy);
     const migrationUser = { OSMUser: SYNTHETIC_MIGRATION_USER_NAME };
-    filtered.sendInfo({}, function() {
-      filtered.sendReviewStatus(migrationUser, {}, "DE", "ready", function() {
-        filtered.sendCloseStatus(migrationUser, {}, "DE", true, function() {
-          filtered.addComment(migrationUser, {}, "text", function() {
-            filtered.editComment(migrationUser, {}, 0, "text", function() {
-              should(spy.calls).eql([
-                ["sendInfo"],
-                ["sendReviewStatus", migrationUser],
-                ["sendCloseStatus", migrationUser],
-                ["addComment", migrationUser],
-                ["editComment", migrationUser]
-              ]);
-              done();
-            });
+    filtered.sendReviewStatus(migrationUser, {}, "DE", "ready", function() {
+      filtered.sendCloseStatus(migrationUser, {}, "DE", true, function() {
+        filtered.addComment(migrationUser, {}, "text", function() {
+          filtered.editComment(migrationUser, {}, 0, "text", function() {
+            should(spy.calls).eql([]);
+            done();
           });
         });
       });
+    });
+  });
+
+  it("should still forward comments and review/close status for a real editor", function(done) {
+    const spy = makeSpyReceiver();
+    const filtered = suppressMigrationNotifications(spy);
+    const editor = { OSMUser: "TheFive" };
+    filtered.addComment(editor, {}, "text", function() {
+      filtered.sendCloseStatus(editor, {}, "DE", true, function() {
+        should(spy.calls).eql([["addComment", editor], ["sendCloseStatus", editor]]);
+        done();
+      });
+    });
+  });
+
+  it("should leave sendInfo alone (its first arg is an object, not a user; not on the migration path)", function(done) {
+    const spy = makeSpyReceiver();
+    const filtered = suppressMigrationNotifications(spy);
+    filtered.sendInfo({ user: SYNTHETIC_MIGRATION_USER_NAME }, function() {
+      should(spy.calls).eql([["sendInfo"]]);
+      done();
     });
   });
 

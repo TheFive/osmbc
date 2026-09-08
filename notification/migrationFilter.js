@@ -36,10 +36,24 @@ function isNotMigrationUser(user) {
   return !(user && getKnownMigrationUserNames().has(user.OSMUser));
 }
 
+// Every messageCenter method whose first argument is the acting `user`
+// object. All of them can be reached by a Blog-Sync-Merger run:
+// updateArticle/updateBlog on every create/patch and on withReopenedBlog's
+// status flips; addComment via model/article.js's addCommentWhenUnpublished
+// (the two-step trash in replace mode writes a "#solved ... Reason: ..."
+// comment on every article it moves to Trash - found the hard way, a real
+// editor-mail flood on the WN219 prod run); sendReviewStatus/sendCloseStatus
+// are not on the migration path today but cost nothing to guard. sendInfo
+// is deliberately absent - its first argument is a plain object, not a
+// user, and nothing on the migration path emits it.
 export function suppressMigrationNotifications(receiver) {
   return new FilterReceiver(receiver, {
     updateArticle: isNotMigrationUser,
-    updateBlog: isNotMigrationUser
+    updateBlog: isNotMigrationUser,
+    addComment: isNotMigrationUser,
+    editComment: isNotMigrationUser,
+    sendReviewStatus: isNotMigrationUser,
+    sendCloseStatus: isNotMigrationUser
   });
 }
 
