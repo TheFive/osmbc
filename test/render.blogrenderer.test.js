@@ -407,9 +407,9 @@ describe("render/blogrenderer", function() {
       should(renderer._archiveAliases("DE")).eql(["/de/archives/214"]);
     });
 
-    it("should map Brazilian Portuguese to the /pb/ segment weeklyosm.eu used", function () {
+    it("should alias Brazilian Portuguese under both /br/ (current) and /pb/ (historical) segments", function () {
       const renderer = BlogRenderer.createRenderer("HUGO", { name: "WN219" });
-      should(renderer._archiveAliases("BR")).eql(["/pb/archives/214"]);
+      should(renderer._archiveAliases("BR")).eql(["/br/archives/214", "/pb/archives/214"]);
     });
 
     it("should return no aliases for an issue before the weeklyosm.eu era", function () {
