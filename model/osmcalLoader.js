@@ -159,7 +159,7 @@ function enrichData(json, lang) {
     event.country_flag = event.country_code;
     if (cf[event.country_code]) {
       const mdFlag = cf[event.country_code];
-      if (mdFlag.substr(0, 8) === "https://") {
+      if (mdFlag.substr(0, 8) === "https://" || mdFlag.substr(0, 7) === "http://" || mdFlag.substr(0, 1) === "/") {
         event.country_flag = `![](${mdFlag})`;
       } else {
         event.country_flag = mdFlag;
@@ -248,6 +248,7 @@ function getEventMdCb(lang, blogStartDate, cb) {
 
 export const forTestOnly = {};
 forTestOnly.filterEvent = filterEvent;
+forTestOnly.enrichData = enrichData;
 
 const osmcalLoader = {
   getEventMd: getEventMd,
