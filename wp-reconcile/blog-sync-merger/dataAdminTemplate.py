@@ -147,6 +147,74 @@ def compute_patches(remote_data):
     return patches
 
 
+def fetch_changelog(remote_url, api_key, article_id, property_name, verify):
+    """GET the full changes-log history for one tracked field of one
+    article, plus its current live value. See docs/API.md
+    `GET /api/blogSync/:apiKey/:articleId/:property/changelog`. `log` is
+    unfiltered across every writer, ascending by time; `current` is a
+    fresh read of the live value at call time.
+    """
+    url = (f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/"
+           f"{article_id}/{quote(property_name, safe='')}/changelog")
+    response = requests.get(url, verify=verify, timeout=30)
+    if response.status_code != 200:
+        raise RuntimeError(f"GET {url} -> HTTP {response.status_code}: {response.text}")
+    return response.json()
+
+
+def rollback_property(remote_url, api_key, blog_id, max_blog_number, article_id,
+                       property_name, attributed_as, steps_back, commit, verify):
+    """*** Self-service rollback - undo your own write(s) to one field. ***
+
+    This is the flow the changelog endpoint exists for: a data admin's own
+    script made a bad automated change and needs to revert it without
+    anyone with direct DB access running rollback.js for them.
+
+    Walks this article's full changelog (fetch_changelog() above) backwards
+    from the end, skipping any entry NOT attributed to `attributed_as`
+    (your own `apiKeys` name - see the module docstring) until it has
+    counted back `steps_back` of YOUR OWN writes to this field, then
+    reverts it to that entry's `from` value via the same apply endpoint
+    used for every other write. `changelog["current"]` (read fresh, right
+    before building the patch) is passed straight through as the patch's
+    `old` claim, so if something else touched the field since you read the
+    log, `apply`'s own optimistic-concurrency check (setAndSave) reports a
+    conflict instead of clobbering it - same protection rollback.js relies
+    on, just scoped to your own attribution instead of hardcoded to
+    wp-backport.
+
+    `blog_id` and `max_blog_number` are the same values you'd pass to any
+    other `apply` call on this blog (see build_apply_body) - a rollback is
+    not exempt from the eligibility check (safety net a), and normally
+    isn't: you're fixing a write you already made to a closed blog.
+
+    Copy this shape for your own recovery need - e.g. reverting to a
+    specific timestamp instead of the Nth-own-write back only changes the
+    selection loop below; fetch/build/apply stays the same.
+    """
+    changelog = fetch_changelog(remote_url, api_key, article_id, property_name, verify)
+    own_entries = [e for e in changelog["log"] if e["user"] == attributed_as]
+    if steps_back > len(own_entries):
+        raise RuntimeError(
+            f"only {len(own_entries)} of your own change(s) recorded for "
+            f"article {article_id}'s {property_name}, cannot go back {steps_back}"
+        )
+    target = own_entries[-steps_back]
+    body = {
+        "maxBlogNumber": max_blog_number,
+        "dryRun": not commit,
+        "patches": [{
+            "id": article_id,
+            "changes": {property_name: target["from"]},
+            "old": {property_name: changelog["current"]}
+        }]
+    }
+    action = "Reverting" if commit else "Would revert"
+    print(f"{action} article {article_id}'s {property_name} to its value "
+          f"before the write recorded at {target['timestamp']}...", file=sys.stderr)
+    return apply_remote(remote_url, api_key, blog_id, body, verify)
+
+
 def build_apply_body(max_blog_number, dry_run, patches, creates=None):
     """Mirrors syncBlog.js's buildApplyBody() shape - see docs/API.md for
     the full field list (creates/patches/blogPatch/categories/closeFlags/

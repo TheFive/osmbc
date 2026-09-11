@@ -531,12 +531,15 @@ non-dry-run batch temporarily reopens the blog and restores it (including
 
 Blog-Sync-Merger changelog endpoint: the full changes-log history for one
 tracked field of one article, plus its current live value. Built for a
-client-side correction/rollback script (e.g. `dataAdminTemplate.py`, or any
-other data admin's own automation against the `apply` endpoint above) that
-needs to pick its own revert point — by timestamp, by user, or by whatever
-the problem at hand calls for — rather than relying on a fixed server-side
-heuristic. One call also covers what a subsequent `apply` patch needs for
-its `old` claim, no separate `GET /blogSync` round-trip required.
+client-side correction/rollback script that needs to pick its own revert
+point — by timestamp, by user, or by whatever the problem at hand calls
+for — rather than relying on a fixed server-side heuristic. One call also
+covers what a subsequent `apply` patch needs for its `old` claim, no
+separate `GET /blogSync` round-trip required. See
+`wp-reconcile/blog-sync-merger/dataAdminTemplate.py` `rollback_property()`
+for a full runnable example of the fetch-changelog → pick-revert-point →
+apply flow (or any other data admin's own automation against the `apply`
+endpoint above).
 
 ### Route parameters
 
