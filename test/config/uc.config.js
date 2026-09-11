@@ -4,6 +4,7 @@
 
 import should from "should";
 import userModule from "../../model/user.js";
+import configModule from "../../model/config.js";
 
 import testutil from "../testutil.js";
 import util from "../../util/util.js";
@@ -65,6 +66,20 @@ describe("uc/config", function() {
     await driver.get(osmbcLink("/config/eventsfilter"));
     const textElement = await driver.findElement(By.css("table#resulttable"));
     should(await textElement.getText()).eql("Value DE\ndaysAfterBlogStart 4\nduration 14\nbig_duration 21\nenableCountryFlags\nUSA");
+  });
+
+  it("should render calendarflags preview images for https, wp-content and legacy wp-uploads paths", async function() {
+    const cf = await configModule.getConfigObject("calendarflags");
+    await cf.setAndSave({ OSMUser: "TheFive" }, {
+      version: cf.version,
+      yaml: cf.yaml + "\ntest_https: https://example.org/xx.svg\ntest_content: /wp-content/uploads/2024/01/xx.svg\ntest_uploads: /wp-uploads/2016/01/xx.svg\n"
+    });
+    await driver.get(osmbcLink("/config/calendarflags"));
+    const images = await driver.findElements(By.css("img.img-thumbnail"));
+    const srcs = await Promise.all(images.map((img) => img.getAttribute("src")));
+    should(srcs).containEql("https://example.org/xx.svg");
+    should(srcs).containEql("https://weeklyosm.eu/wp-content/uploads/2024/01/xx.svg");
+    should(srcs).containEql("https://weeklyosm.eu/wp-content/uploads/2016/01/xx.svg");
   });
 });
 
