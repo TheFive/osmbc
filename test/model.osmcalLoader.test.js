@@ -9,6 +9,7 @@ import mockdate from "mockdate";
 
 import testutil from "../test/testutil.js";
 
+import configModule from "../model/config.js";
 import osmcalLoader from "../model/osmcalLoader.js";
 
 
@@ -203,6 +204,35 @@ describe("model/osmcalLoader", function () {
       should(filterTest({ date: { start: "2015-12-20" }, big: true }, option, blogStartDate)).be.False();
       should(filterTest({ date: { start: "2016-01-01" }, big: false }, option, blogStartDate)).be.True();
       should(filterTest({ date: { start: "2016-12-31" }, big: true }, option, blogStartDate)).be.True();
+    });
+  });
+  describe("enrichData (country_flag)", function () {
+    before(async function () {
+      const cf = await configModule.getConfigObject("calendarflags");
+      await cf.setAndSave({ OSMUser: "test" }, {
+        version: cf.version,
+        yaml: cf.yaml + "\nxx_url: https://example.org/xx.svg\nxx_path: /wp-uploads/2020/01/xx.svg\nxx_emoji: 🇩🇪\n"
+      });
+    });
+    it("should wrap a full https:// URL as a markdown image (unchanged behaviour)", function () {
+      const events = [{ country_code: "xx_url" }];
+      osmcalLoader.forTestOnly.enrichData(events, "EN");
+      should(events[0].country_flag).eql("![](https://example.org/xx.svg)");
+    });
+    it("should wrap a relative path as a markdown image", function () {
+      const events = [{ country_code: "xx_path" }];
+      osmcalLoader.forTestOnly.enrichData(events, "EN");
+      should(events[0].country_flag).eql("![](/wp-uploads/2020/01/xx.svg)");
+    });
+    it("should keep a raw value (e.g. an emoji flag) as-is, not as a markdown image", function () {
+      const events = [{ country_code: "xx_emoji" }];
+      osmcalLoader.forTestOnly.enrichData(events, "EN");
+      should(events[0].country_flag).eql("🇩🇪");
+    });
+    it("should fall back to the plain country_code when nothing is configured", function () {
+      const events = [{ country_code: "not_configured" }];
+      osmcalLoader.forTestOnly.enrichData(events, "EN");
+      should(events[0].country_flag).eql("not_configured");
     });
   });
 });
