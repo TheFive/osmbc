@@ -5,20 +5,30 @@ block showContentOfConfig
   if config.json
     - all = [];i=0;
     for val,key in config.json
-      if (key === "emoji") 
+      if (key === "emoji")
         - break
-      if (key === "shortcut") 
+      if (key === "shortcut")
         - break
       - all[i]= {val:val,key:key}
       - i++
+
+    -
+      function isImagePath(v) {
+        return v.substr(0,8) === "https://" || v.substr(0,7) === "http://" || v.substr(0,1) === "/";
+      }
+      function resolveImageSrc(v) {
+        if (v.substr(0,8) === "https://" || v.substr(0,7) === "http://") return v;
+        if (v.substr(0,12) === "/wp-uploads/") return "https://weeklyosm.eu/wp-content/uploads/" + v.substr(12);
+        return "https://weeklyosm.eu" + v;
+      }
 
     - for (i =0;i*6<=(all.length);i++)
       .row
         - for (j=i*6;j<Math.min(all.length,(i+1)*6);j++)
           .col-sm-2
             span=all[j].key
-            if (all[j].val.substr(0,8) === "https://")
-              img(src= all[j].val, class="img-thumbnail" ,width = 30)
+            if (isImagePath(all[j].val))
+              img(src= resolveImageSrc(all[j].val), class="img-thumbnail" ,width = 30)
             else
               span=all[j].val
     
