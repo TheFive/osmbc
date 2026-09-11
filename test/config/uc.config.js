@@ -81,6 +81,20 @@ describe("uc/config", function() {
     should(srcs).containEql("https://weeklyosm.eu/wp-content/uploads/2024/01/xx.svg");
     should(srcs).containEql("https://weeklyosm.eu/wp-content/uploads/2016/01/xx.svg");
   });
+
+  it("should render calendarflags preview without crashing on a null flag value", async function() {
+    const cf = await configModule.getConfigObject("calendarflags");
+    await cf.setAndSave({ OSMUser: "TheFive" }, {
+      version: cf.version,
+      yaml: cf.yaml + "\ntest_null:\n"
+    });
+    await driver.get(osmbcLink("/config/calendarflags"));
+    const source = await driver.getPageSource();
+    should(source).not.containEql("Cannot read properties of null");
+    should(source).containEql("Flag Preview");
+    const keys = await Promise.all((await driver.findElements(By.css(".col-sm-2 span"))).map((s) => s.getText()));
+    should(keys).containEql("test_null");
+  });
 });
 
 
