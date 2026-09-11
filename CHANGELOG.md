@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.4.8](https://github.com/TheFive/osmbc/tree/4.4.8) (2026-09-11)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.7...4.4.8)
+
+**Closed issues:**
+
+- Blog-Sync-Merger: self-service changelog endpoint for data-admin rollback [\#1140](https://github.com/TheFive/osmbc/issues/1140)
+
 ## [4.4.7](https://github.com/TheFive/osmbc/tree/4.4.7) (2026-09-06)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.6...4.4.7)
