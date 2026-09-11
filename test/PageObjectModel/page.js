@@ -10,7 +10,10 @@ export default class Page {
   }
 
   async assertPage() {
-    this._navbarBrand = await this._driver.findElement(By.css("a.navbar-brand"));
+    // A preceding action may still be mid-navigation (old DOM gone, new one
+    // not rendered yet) - poll instead of a single findElement, or a slow
+    // page load races this into a spurious NoSuchElementError.
+    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 5000);
   }
 
   async waitForPageReload() {

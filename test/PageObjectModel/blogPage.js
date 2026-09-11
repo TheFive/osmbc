@@ -102,26 +102,21 @@ class BlogPage extends StandardPage {
 
   async clickStoreReviewText(lang) {
     await this.assertPage();
-    const commentSelector = `textarea[id^='reviewComment${lang}']`;
     const buttonSelector = `button[id^='reviewButton${lang}']`;
 
+    // reviewButton<lang> is type="submit" inside a plain <form method="post">
+    // (see views/blog/blogheader.pug) - this is a real full-page navigation,
+    // not an AJAX update. Polling the live DOM for a post-submit content
+    // change (as this used to) races the navigation itself: the old DOM can
+    // report "gone" while the browser is still mid-navigation, well before
+    // the new page has actually loaded - exactly the kind of gap that made
+    // the immediately-following page-source comparison in uc.blog.test.js
+    // flaky. Wait for staleness of the button instead, the same pattern
+    // already used for every other form-submit action in this file.
     const submitButton = await this.#findVisibleElement(buttonSelector);
     await submitButton.click();
-
-    // After submit we either return to "Start Personal Review" or the comment textarea disappears.
-    await this._driver.wait(async () => {
-      const commentFields = await this._driver.findElements(By.css(commentSelector));
-      if (commentFields.length === 0) return true;
-
-      const isDisplayed = await commentFields[0].isDisplayed().catch(() => false);
-      if (!isDisplayed) return true;
-
-      const buttons = await this._driver.findElements(By.css(buttonSelector));
-      if (buttons.length === 0) return false;
-
-      const buttonText = ((await buttons[0].getText()) || "").toLowerCase();
-      return buttonText.includes("start personal review");
-    }, 2000, `Review submit not completed for language ${lang}`);
+    await this._driver.wait(until.stalenessOf(submitButton));
+    await this.assertPage();
   }
 
   async clickDidExport(lang) {
