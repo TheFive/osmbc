@@ -684,4 +684,92 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
       should(response.data.created).eql([]);
     });
   });
+
+  describe("GET /blogSync/:articleId/:property/changelog (changelog endpoint)", function() {
+    let articleId;
+
+    beforeEach(function(bddone) {
+      async.series([
+        function(cb) {
+          testutil.importData({
+            clear: false,
+            blog: [{ name: "WN100", status: "closed", categories: ["Mapping"] }],
+            article: [{ blog: "WN100", title: "Existing article", categoryEN: "Mapping", markdownDE: "* original" }]
+          }, cb);
+        },
+        function(cb) {
+          articleModule.find({ blog: "WN100" }, function(err, articles) {
+            if (err) return cb(err);
+            articleId = articles[0].id;
+            cb();
+          });
+        }
+      ], bddone);
+    });
+
+    it("should reject an incorrect apiKey", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/incorrecttestapikey/" + articleId + "/markdownDE/changelog", { validateStatus: () => true });
+      should(response.status).eql(401);
+    });
+
+    it("should 404 for a non-existing article", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/testapikey/999999999/markdownDE/changelog", { validateStatus: () => true });
+      should(response.status).eql(404);
+    });
+
+    it("should 422 for a property that isn't tracked", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/testapikey/" + articleId + "/notAField/changelog", { validateStatus: () => true });
+      should(response.status).eql(422);
+    });
+
+    it("should return the current value and an empty log for a field never changed via setAndSave", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/testapikey/" + articleId + "/markdownDE/changelog", { validateStatus: () => true });
+      should(response.status).eql(200);
+      should(response.data.articleId).eql(articleId);
+      should(response.data.property).eql("markdownDE");
+      should(response.data.current).eql("* original");
+      // importData seeds the row directly, not via setAndSave - no log entries yet
+      should(response.data.log).eql([]);
+    });
+
+    // config.test.yaml: testapikey -> wp-backport, testapikey.dataadmin ->
+    // dataAdmin-TestUser - two different writers touching the same field,
+    // to prove the log is unfiltered (every user, not just the caller's
+    // own) and ordered so a client can pick its own revert point.
+    it("should return every writer's history for the field, ascending by time, plus the fresh current value", async function() {
+      await axios.post(
+        baseLink + "/api/blogSync/testapikey/WN100/apply",
+        { maxBlogNumber: 1000, creates: [], patches: [{ id: articleId, changes: { markdownDE: "* first fix" }, old: { markdownDE: "* original" } }] },
+        { validateStatus: () => true }
+      );
+      await axios.post(
+        baseLink + "/api/blogSync/testapikey.dataadmin/WN100/apply",
+        { maxBlogNumber: 1000, creates: [], patches: [{ id: articleId, changes: { markdownDE: "* second fix" }, old: { markdownDE: "* first fix" } }] },
+        { validateStatus: () => true }
+      );
+
+      const response = await axios.get(baseLink + "/api/blogSync/testapikey/" + articleId + "/markdownDE/changelog", { validateStatus: () => true });
+      should(response.status).eql(200);
+      should(response.data.current).eql("* second fix");
+      should(response.data.log.length).eql(2);
+      should(response.data.log[0].user).eql("wp-backport");
+      should(response.data.log[0].from).eql("* original");
+      should(response.data.log[0].to).eql("* first fix");
+      should(response.data.log[1].user).eql("dataAdmin-TestUser");
+      should(response.data.log[1].from).eql("* first fix");
+      should(response.data.log[1].to).eql("* second fix");
+      should(response.data.log[0]).have.property("timestamp");
+    });
+
+    it("should not mix in log rows for a different property on the same article", async function() {
+      await axios.post(
+        baseLink + "/api/blogSync/testapikey/WN100/apply",
+        { maxBlogNumber: 1000, creates: [], patches: [{ id: articleId, changes: { markdownDE: "* changed" }, old: { markdownDE: "* original" } }] },
+        { validateStatus: () => true }
+      );
+      const response = await axios.get(baseLink + "/api/blogSync/testapikey/" + articleId + "/markdownEN/changelog", { validateStatus: () => true });
+      should(response.status).eql(200);
+      should(response.data.log).eql([]);
+    });
+  });
 });

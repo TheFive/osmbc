@@ -526,3 +526,48 @@ non-dry-run batch temporarily reopens the blog and restores it (including
   A conflict (someone changed that field since the plan was computed) or a
   per-item error never aborts the rest of the batch.
 - `409` — blog not eligible (see above).
+
+## `GET /api/blogSync/:apiKey/:articleId/:property/changelog`
+
+Blog-Sync-Merger changelog endpoint: the full changes-log history for one
+tracked field of one article, plus its current live value. Built for a
+client-side correction/rollback script (e.g. `dataAdminTemplate.py`, or any
+other data admin's own automation against the `apply` endpoint above) that
+needs to pick its own revert point — by timestamp, by user, or by whatever
+the problem at hand calls for — rather than relying on a fixed server-side
+heuristic. One call also covers what a subsequent `apply` patch needs for
+its `old` claim, no separate `GET /blogSync` round-trip required.
+
+### Route parameters
+
+| Param | Description |
+|---|---|
+| `articleId` | Numeric article id. `404` if it doesn't exist. |
+| `property` | One of the fields `GET /blogSync` calls out under `trackedFields` (`categoryEN`, `predecessorId`, `title`, `unpublishReason`, `markdown<LANG>`) — `422` for anything else. |
+
+### Responses
+
+- `200` — `application/json`:
+  ```json
+  {
+    "articleId": 12345,
+    "property": "markdownDE",
+    "current": "* second fix",
+    "log": [
+      { "timestamp": "2026-09-05T10:00:00.000Z", "user": "wp-backport", "from": "* original", "to": "* first fix" },
+      { "timestamp": "2026-09-05T10:05:00.000Z", "user": "dataAdmin-Alice", "from": "* first fix", "to": "* second fix" }
+    ]
+  }
+  ```
+  `log` is **unfiltered across all users** (not just the caller's own
+  `apiKeys` attribution) and ascending by time — the point is giving the
+  caller the full picture, the same judgement call `rollback.js`'s own
+  earliest-from/latest-to heuristic makes internally, just exposed instead
+  of hardcoded to one synthetic user. `current` is a fresh read of the live
+  value: pass it straight through as the `old` half of a later `apply`
+  patch, and if it's gone stale by write time, that patch's own
+  optimistic-concurrency check (`setAndSave`) catches it — same protection
+  `rollback.js` relies on.
+- `401` — invalid `apiKey`.
+- `404` — no such article.
+- `422` — `property` isn't one of the tracked fields.

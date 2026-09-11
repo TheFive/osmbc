@@ -10,6 +10,7 @@ import articleModule from "../model/article.js";
 import config from "../config.js";
 import language from "../model/language.js";
 import blogModule from "../model/blog.js";
+import logModule from "../model/logModule.js";
 import { ZipArchive } from "archiver";
 import { CONFLICT } from "http-status-codes";
 import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
@@ -217,6 +218,21 @@ function checkBlogId(req, res, next, id) {
       return next(notFound);
     }
     req.blog = blog;
+    return next();
+  });
+}
+
+function checkArticleId(req, res, next, id) {
+  debug("checkArticleId");
+  articleModule.findById(id, function(err, article) {
+    if (err) return next(err);
+    if (!article) {
+      const notFound = new Error("Article not found");
+      notFound.status = 404;
+      notFound.type = "API";
+      return next(notFound);
+    }
+    req.article = article;
     return next();
   });
 }
@@ -1058,8 +1074,67 @@ function applyBlogSync(req, res, next) {
   }
 }
 
+/**
+ * Blog-Sync-Merger changelog endpoint: the full changes-log history for one
+ * tracked field of one article, plus its current live value - what a
+ * client-side correction/rollback script (e.g. dataAdminTemplate.py) needs
+ * to pick its own revert point (by timestamp/user/problem at hand) and
+ * build a POST /apply patch, without a second call to getBlogSync just to
+ * learn the current value for that patch's `old` claim.
+ *
+ * Route params:
+ * - apiKey {string} API key used by middleware `checkApiKey`
+ * - articleId {string} numeric article id, resolved by `checkArticleId`
+ * - property {string} one of getSyncTrackedFields()'s tracked fields
+ *   (categoryEN, predecessorId, title, unpublishReason, markdown<LANG>) -
+ *   422 for anything else.
+ *
+ * Response: `{ articleId, property, current, log: [{timestamp,user,from,to}] }`.
+ * `log` is deliberately unfiltered (every user who ever touched this
+ * property, not just the caller's own) and ascending by time - the whole
+ * point is letting the caller see the full sequence and decide where to
+ * revert to, the same judgement call rollback.js's own earliest-from/
+ * latest-to heuristic makes internally today, just exposed instead of
+ * baked in. `current` is a fresh read of the live value, safe to pass
+ * straight through as the `old` half of a later /apply patch - if it's
+ * gone stale by write time, that patch's own optimistic-concurrency check
+ * (setAndSave) catches it, same protection rollback.js relies on.
+ */
+function getArticleChangelog(req, res, next) {
+  debug("getArticleChangelog");
+  const article = req.article;
+  const property = req.params.property;
+  const trackedFields = getSyncTrackedFields();
+  if (!trackedFields.includes(property)) {
+    const error = new Error("Unknown property for changelog: " + property);
+    error.status = 422;
+    error.type = "API";
+    return next(error);
+  }
+  logModule.find(
+    { oid: String(article.id), table: "article", property: property },
+    { column: "id", desc: false },
+    function(err, rows) {
+      if (err) return next(err);
+      res.set("content-type", "application/json");
+      res.end(JSON.stringify({
+        articleId: article.id,
+        property: property,
+        current: blogSyncMerger.serializeFieldsForSync(article, [property])[property],
+        log: rows.map((r) => ({
+          timestamp: r.timestamp,
+          user: r.user,
+          from: (typeof r.from === "undefined") ? "" : r.from,
+          to: (typeof r.to === "undefined") ? "" : r.to
+        }))
+      }));
+    }
+  );
+}
+
 publicApiRouter.param("apiKey", checkApiKey);
 publicApiRouter.param("blog_id", checkBlogId);
+publicApiRouter.param("articleId", checkArticleId);
 
 publicApiRouter.get("/monitor/:apiKey", isServerUp);
 publicApiRouter.get("/monitorPostgres/:apiKey", isPostgresUp);
@@ -1071,5 +1146,6 @@ publicApiRouter.get("/blogPreviewDownload/:apiKey/closedSince", getBlogPreviewDo
 publicApiRouter.get("/blogPreviewDownload/:apiKey/:blog_id", getBlogPreviewDownload);
 publicApiRouter.get("/blogSync/:apiKey/:blog_id", getBlogSync);
 publicApiRouter.post("/blogSync/:apiKey/:blog_id/apply", applyBlogSync);
+publicApiRouter.get("/blogSync/:apiKey/:articleId/:property/changelog", getArticleChangelog);
 
 export default publicApiRouter;
