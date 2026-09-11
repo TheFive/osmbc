@@ -14,6 +14,7 @@ block showContentOfConfig
 
     -
       function isImagePath(v) {
+        if (!v) return false;
         return v.substr(0,8) === "https://" || v.substr(0,7) === "http://" || v.substr(0,1) === "/";
       }
       function resolveImageSrc(v) {
