@@ -46,6 +46,18 @@ describe("notification/slackReceiver", function() {
     nock.cleanAll();
     bddone();
   });
+  it("should not crash on a null channel or a null list entry in slacknotification config", function (bddone) {
+    configModule.getConfigObject("slacknotification", function(err, cf) {
+      should.not.exist(err);
+      cf.setAndSave({ OSMUser: "TheFive" }, {
+        version: cf.version,
+        yaml: cf.yaml + "\n- slack: osmde\n  channel:\n\n- \n"
+      }, function(err) {
+        should.not.exist(err);
+        bddone();
+      });
+    });
+  });
   describe("articles", function() {
     it("should slack message, when collecting article", function (bddone) {
       const slack = nock("https://missingmattermost.example.com")
