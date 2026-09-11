@@ -25,26 +25,30 @@ block showContentOfConfig
       tbody
 
         each c in config.json
-          tr
-            td=c.slack
-            if c.channel.substring(0,1)==="#"
-              td=c.channel
-            else
-              td.danger=c.channel
+          if c
+            tr
+              td=c.slack
+              if c.channel && c.channel.substring(0,1)==="#"
+                td=c.channel
+              else
+                td.danger=c.channel
 
-            td=c.notifyNewCollection
-            td=c.notifyAllComment
-            td
-              if c.notifyComment
-                for t in c.notifyComment
-                  span='"'+t+'"'
-                  span=" "
-            td=c.notifyBlogStatusChange
-            td
-              if c.notifyBlogLanguageStatusChange
-                for t in c.notifyBlogLanguageStatusChange
-                  span='"' + t + '"'
-                  span=" "
+              td=c.notifyNewCollection
+              td=c.notifyAllComment
+              td
+                if c.notifyComment
+                  for t in c.notifyComment
+                    span='"'+t+'"'
+                    span=" "
+              td=c.notifyBlogStatusChange
+              td
+                if c.notifyBlogLanguageStatusChange
+                  for t in c.notifyBlogLanguageStatusChange
+                    span='"' + t + '"'
+                    span=" "
+          else
+            tr
+              td.danger(colspan="7")="(invalid entry)"
 
 
 

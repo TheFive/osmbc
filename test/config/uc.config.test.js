@@ -95,6 +95,30 @@ describe("uc/config", function() {
     const keys = await Promise.all((await driver.findElements(By.css(".col-sm-2 span"))).map((s) => s.getText()));
     should(keys).containEql("test_null");
   });
+
+  it("should render slacknotification preview without crashing on a null channel or null entry", async function() {
+    const cf = await configModule.getConfigObject("slacknotification");
+    await cf.setAndSave({ OSMUser: "TheFive" }, {
+      version: cf.version,
+      yaml: cf.yaml + "\n- slack: osmde\n  channel:\n\n- \n"
+    });
+    await driver.get(osmbcLink("/config/slacknotification"));
+    const source = await driver.getPageSource();
+    should(source).not.containEql("Cannot read properties of null");
+    should(source).containEql("(invalid entry)");
+  });
+
+  it("should render the site header without crashing on a null helpmenu entry", async function() {
+    const cf = await configModule.getConfigObject("helpmenu");
+    await cf.setAndSave({ OSMUser: "TheFive" }, {
+      version: cf.version,
+      yaml: cf.yaml + "\n- \n"
+    });
+    await driver.get(osmbcLink("/osmbc.html"));
+    const source = await driver.getPageSource();
+    should(source).not.containEql("Cannot read properties of null");
+    should(await driver.findElement(By.id("helpDropdown"))).ok();
+  });
 });
 
 
