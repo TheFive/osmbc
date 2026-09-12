@@ -100,6 +100,13 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
 - Run tests with `npm test` (`test:model`, `test:router`, `test:ui` for
   narrower layers). See "Configuration" above for the shared-test-DB
   caveat when multiple worktrees are in play.
+- New feature/fix work (e.g. implementing a GitHub issue) belongs on its
+  own branch created off `master`, not committed directly to `master` —
+  part of the GitHub-Flow model being adopted (see
+  `RELEASE_PROCESS_CHECKLIST.md`). Small, purely internal process/tooling
+  changes the user is actively directing turn-by-turn (like the
+  Conventional Commits rollout itself) are the exception and can go
+  straight to `master`.
 - Commit messages must follow the Conventional Commits format described in
   `CONTRIBUTING.md` (`type(scope): subject`, types from
   `@commitlint/config-conventional`, `Closes #123`/`Refs #123` footer for
