@@ -261,8 +261,7 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
         if (!match) return [];
         const postId = slugAliasMap[match[1]];
         if (postId === undefined || postId === null) return [];
-        const aliases = "/archives/" + postId;
-        return aliases;
+        return ["/archives/" + postId];
     }
 
     _generateFrontText(lang, pictureArticles) {
@@ -307,14 +306,22 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
             }
         }
         const title = blogNames[lang] + " " + this.blog.name.substring(2, 10);
-        const alias = this._archiveAliases();
+        const aliases = this._archiveAliases();
 
         const text = [
             "+++",
             "date = " + date,
             "draft = false",
             "title = '''" + title + "'''",
-            alias ? "aliases = ['" + alias + "']" : "",
+            aliases.length
+                ? "aliases = [" +
+                  aliases
+                      .map((a) => {
+                          return "'" + a + "'";
+                      })
+                      .join(", ") +
+                  "]"
+                : "",
             pictureLink ? "featureImage = '''" + pictureLink + "'''" : "",
             pictureMd ? "featureImageCap = '''" + pictureMd + "'''" : "",
             "+++",
