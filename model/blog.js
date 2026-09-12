@@ -1810,7 +1810,8 @@ function convertLogsToTeamString(logs, lang, users) {
           continue;
         }
         // default the link with the OSM Profile
-        editors[i] = '<a href="https://www.openstreetmap.org/user/' + editors[i] + '">' + editors[i] + "</a>";
+        editors[i] =
+          '<a href="https://www.openstreetmap.org/user/' + encodeURIComponent(editors[i]) + '">' + editors[i] + "</a>";
       }
     }
   }
