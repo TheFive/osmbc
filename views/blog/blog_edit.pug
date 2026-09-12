@@ -123,23 +123,22 @@ block content
                   div.badge.rounded-pill.osmbc-label-editblog=blog.getUnEdited(lang)
               //- Review Start Column
               td
-                if (!blog["close" + lang] && blog.isReviewStarted(lang) && blog["reviewComment"+lang].length>0)
+                if (blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
                   span.badge.small-margin(class="osmbc-label-reviewblog")= blog["reviewComment"+lang][0].user
-                
+
               //- Review Start time
               td
-                if (!blog["close" + lang]) 
-                  if (blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
-                    if (layout.moment().diff(blog["reviewComment" + lang][0].timestamp,'days') < 7)
-                      //- display detail time format
-                      div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("ddd LT")
-                    else 
-                      //- display simple time format
-                      div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("L")    
-                  
+                if (blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                  if (layout.moment().diff(blog["reviewComment" + lang][0].timestamp,'days') < 7)
+                    //- display detail time format
+                    div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("ddd LT")
+                  else
+                    //- display simple time format
+                    div=layout.moment(blog["reviewComment" + lang][0].timestamp).format("L")
+
               //- Review by Column
               td
-                if (!blog["close" + lang] && blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
+                if (blog["reviewComment"+lang] && blog["reviewComment"+lang].length>0)
                   each val in blog["reviewComment"+lang]
                     if ((val.text != "startreview") && (val.text != "reviewing..."))
                       span.badge.small-margin(class="osmbc-label-reviewblog")=val.user
