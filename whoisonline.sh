@@ -14,12 +14,22 @@
 #      show here, so section 2 is the one that matters for Hugo pulls.
 #
 # DB connection is read from the postgres: block of a config file
-# (default config.development.yaml; override with $1 or $OSMBC_CONFIG).
+# (override with $1 or $OSMBC_CONFIG; otherwise config.production.yaml if
+# present - the production/beta server case - else config.development.yaml
+# for local dev).
 
 set -e
 cd "$(dirname "$0")"
 
-CONFIG="${1:-${OSMBC_CONFIG:-config.development.yaml}}"
+if [ -n "${1:-}" ]; then
+  CONFIG="$1"
+elif [ -n "${OSMBC_CONFIG:-}" ]; then
+  CONFIG="$OSMBC_CONFIG"
+elif [ -f config.production.yaml ]; then
+  CONFIG="config.production.yaml"
+else
+  CONFIG="config.development.yaml"
+fi
 [ -f "$CONFIG" ] || { echo "config not found: $CONFIG" >&2; exit 1; }
 
 # Parse the top-level postgres: block (2-space-indented key: value pairs).
