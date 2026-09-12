@@ -82,6 +82,14 @@ class Blog {
     return "?";
   }
 
+  getWritten(l) {
+    if (this.#statusCount !== null) {
+      const s = this.#statusCount[l];
+      return s.expected - s.unedited - s.noTranslate;
+    }
+    return "?";
+  }
+
   getTable() {
     return "blog";
   }

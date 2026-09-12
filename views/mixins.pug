@@ -304,12 +304,19 @@ mixin blogStatusTable(blogWithLink, compactView)
               - autoTranslate = openBlog.getAutoTranslate(l)
               if (autoTranslate > 0)
                 div.badge.osmbc-automated-translation=autoTranslate
+              - written = openBlog.getWritten(l)
+              if (written > 0)
+                if (layout.user.access === "full")
+                  a(href=layout.htmlroot+'/article/list?blog=' + openBlog.name + '&writtenLang=' + l)
+                    div.badge.osmbc-label-closedblog=written
+                else
+                  div.badge.osmbc-label-closedblog=written
           for editBlog in editBlogs
             td.text-center.blog-status-value
               if (editBlog["close" + l])
                 div.badge.osmbc-label-closedblog
                   i.fa.fa-check
-              else 
+              else
                 - showUneditedFrom = 0
                 if (editBlog.isReviewStarted(l))
                   div.badge.osmbc-label-reviewblog=(editBlog.getClosedReviewCount(l))
@@ -320,7 +327,14 @@ mixin blogStatusTable(blogWithLink, compactView)
                 - autoTranslate = editBlog.getAutoTranslate(l)
                 if (autoTranslate > 0)
                   div.badge.osmbc-automated-translation=autoTranslate
-              
+                - written = editBlog.getWritten(l)
+                if (written > 0)
+                  if (layout.user.access === "full")
+                    a(href=layout.htmlroot+'/article/list?blog=' + editBlog.name + '&writtenLang=' + l)
+                      div.badge.osmbc-label-closedblog=written
+                  else
+                    div.badge.osmbc-label-closedblog=written
+
 mixin helpMenu(configarray)
   li.dropdown.nav-item
     a.nav-link.dropdown-toggle#helpDropdown(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")

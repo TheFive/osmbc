@@ -1006,6 +1006,7 @@ function renderList(req, res, next) {
   const user = req.query.user;
   const property = req.query.property;
   const myArticles = (req.query.myArticles === "true");
+  const writtenLang = req.query.writtenLang;
   const listOfChanges = (typeof (user) === "string" && typeof (property) === "string");
   const simpleFind = !(listOfChanges || myArticles);
 
@@ -1025,6 +1026,11 @@ function renderList(req, res, next) {
       articleModule.find(query, order, function(err, result) {
         debug("renderList->findArticleFunction->find");
         if (err) return callback(err);
+        if (typeof (writtenLang) === "string") {
+          result = result.filter(function(article) {
+            return article.categoryEN !== "--unpublished--" && article.isFormulated(writtenLang);
+          });
+        }
         articles = result;
         callback();
       });
