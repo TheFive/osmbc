@@ -102,6 +102,14 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   changes the user is actively directing turn-by-turn (like the
   Conventional Commits rollout itself) are the exception and can go
   straight to `master`.
+- This is a one-person project — the user is the only reviewer there ever
+  is, so a GitHub pull request is pure ceremony for the user's own
+  branches and must not be opened for them. Branch → commit → merge
+  straight into `master` locally and push (see "Closing out a finished
+  feature/fix branch" below); do not run `gh pr create`. PRs (and their
+  squash-merge handling from `RELEASE_PROCESS_CHECKLIST.md`) are reserved
+  for actual external contributors, who are a different situation
+  entirely (someone else's branch, not yours to merge unilaterally).
 - That feature/fix branch gets its **own new worktree/folder** — never
   check it out inside an existing worktree that's meant to track a stable
   branch (e.g. `osmbc-master` tracking `master`, `osmbc-develop` tracking
