@@ -1007,6 +1007,7 @@ function renderList(req, res, next) {
   const property = req.query.property;
   const myArticles = (req.query.myArticles === "true");
   const writtenLang = req.query.writtenLang;
+  const unwrittenLang = req.query.unwrittenLang;
   const listOfChanges = (typeof (user) === "string" && typeof (property) === "string");
   const simpleFind = !(listOfChanges || myArticles);
 
@@ -1029,6 +1030,17 @@ function renderList(req, res, next) {
         if (typeof (writtenLang) === "string") {
           result = result.filter(function(article) {
             return article.categoryEN !== "--unpublished--" && article.isFormulated(writtenLang);
+          });
+        }
+        if (typeof (unwrittenLang) === "string") {
+          // Mirrors the "unedited" count in Blog.prototype.calculateDerived:
+          // not unpublished, not deliberately left untranslated, and either
+          // no markdown yet or still sitting in the placeholder category.
+          result = result.filter(function(article) {
+            if (article.categoryEN === "--unpublished--") return false;
+            const m = article["markdown" + unwrittenLang];
+            if (m === "no translation") return false;
+            return !m || m === "" || article.categoryEN === "-- no category yet --";
           });
         }
         articles = result;

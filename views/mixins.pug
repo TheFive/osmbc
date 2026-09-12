@@ -300,7 +300,11 @@ mixin blogStatusTable(blogWithLink, compactView)
           td.text-center.blog-status-lang-head=l
           for openBlog in openBlogs
             td.text-center.blog-status-value
-              div.badge.osmbc-label-openblog=openBlog.getUnEdited(l)
+              if (layout.user.access === "full")
+                a(href=layout.htmlroot+'/article/list?blog=' + openBlog.name + '&unwrittenLang=' + l)
+                  div.badge.osmbc-label-openblog=openBlog.getUnEdited(l)
+              else
+                div.badge.osmbc-label-openblog=openBlog.getUnEdited(l)
               - autoTranslate = openBlog.getAutoTranslate(l)
               if (autoTranslate > 0)
                 div.badge.osmbc-automated-translation=autoTranslate
@@ -323,7 +327,11 @@ mixin blogStatusTable(blogWithLink, compactView)
                   - showUneditedFrom = 1
                 - unedited = editBlog.getUnEdited(l)
                 if (unedited >= showUneditedFrom )
-                  div.badge.osmbc-not-formulated=unedited
+                  if (layout.user.access === "full")
+                    a(href=layout.htmlroot+'/article/list?blog=' + editBlog.name + '&unwrittenLang=' + l)
+                      div.badge.osmbc-not-formulated=unedited
+                  else
+                    div.badge.osmbc-not-formulated=unedited
                 - autoTranslate = editBlog.getAutoTranslate(l)
                 if (autoTranslate > 0)
                   div.badge.osmbc-automated-translation=autoTranslate
