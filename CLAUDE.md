@@ -117,5 +117,14 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   (`git-hooks/CommitMsg.sh`) can enforce this locally once installed (see
   `README Developer.md`), but don't rely on the hook being installed —
   write commit messages in this format regardless.
+- **Closing out a finished feature/fix branch:** merge into `master` and
+  push first, then — before removing anything — check the worktree for
+  untracked files (`git status --short --untracked-files=all`), especially
+  stray `.md` notes, that might hold content that should have been folded
+  into a commit instead of left on disk. Only after that's clean: remove
+  the worktree (`git worktree remove`), delete the local branch
+  (`git branch -d`, safe-delete — refuses unless it's actually merged),
+  and delete the remote branch if it was pushed
+  (`git push origin --delete <branch>`). Don't skip straight to deleting.
 
 @CLAUDE.local.md
