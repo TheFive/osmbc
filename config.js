@@ -5,7 +5,6 @@ import fs from "fs";
 import { strict as assert } from "assert";
 import winston from "winston";
 import _debug from "debug";
-import { execSync } from "child_process";
 import { load as yamlLoad } from "js-yaml";
 import packageJson from "./package.json" with { type: "json" };
 
@@ -115,13 +114,6 @@ function getPostgresDBString() {
 
 
 
-function getCurrentGitBranch() {
-  return execSync("git rev-parse --abbrev-ref HEAD").toString().trim();
-}
-
-
-
-
 function initialise(callback) {
   if (typeof configuration !== "undefined") {
     if (callback) callback();
@@ -135,26 +127,6 @@ function initialise(callback) {
   }
   logger.info("Reading Config from: " + baseConfig.fileName);
   configuration = baseConfig.data;
-
-  // add or exchange some branch dependent configs
-  if (env === "development") {
-    let gitBranch = getCurrentGitBranch();
-    console.log("Git Branch " + gitBranch);
-    gitBranch = gitBranch.replace("/", "_");
-    if (typeof gitBranch === "string") {
-      try {
-        const configBranchData = readConfigByBaseName("config." + gitBranch, process.cwd());
-        if (!configBranchData) throw new Error("Branch config not found");
-        const configBranch = configBranchData.data;
-        for (const k in configBranch) {
-          configuration[k] = configBranch[k];
-        }
-      } catch (err) {
-        logger.info("No additional file config." + gitBranch + ".{yaml,yml,json}");
-      }
-    }
-  }
-
 
   // Do some tests with the types
 

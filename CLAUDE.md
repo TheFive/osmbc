@@ -30,16 +30,11 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   work), `test` (CI/local test runs), `wpreconcile`, `production`.
 - `config.development.yaml` and other environment-secret files are
   gitignored — they hold local DB credentials and are per-machine, not
-  shared via git.
-- **Branch overlay:** when `NODE_ENV=development`, `config.js` also reads
-  the current git branch name (`/` → `_`) and, if a matching
-  `config.<branch>.yaml` exists in the current working directory, merges it
-  on top of `config.development.yaml`. The merge is a **shallow, top-level
-  replace** (e.g. supplying `postgres` replaces the whole object, not just
-  one sub-key) — not a deep merge. This is how parallel worktrees/branches
-  can point at different local databases/ports without touching the shared
-  base config.
-- `NODE_ENV=test` has no such branch overlay. `config.test.yaml` always
+  shared via git. Each worktree has its own copy: since every branch now
+  gets its own dedicated worktree (see "Development workflow" below), a
+  worktree's `config.development.yaml` can just directly hold whatever
+  DB/port that branch needs — no per-branch overlay/switching required.
+- `NODE_ENV=test` has no branch overlay of any kind. `config.test.yaml` always
   points at the same fixed database/table names, and the test bootstrap
   (`test/testutil.js` `clearDB`) drops/recreates those fixed tables on
   (almost) every test file. Running test suites from two worktrees against
@@ -107,6 +102,13 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   changes the user is actively directing turn-by-turn (like the
   Conventional Commits rollout itself) are the exception and can go
   straight to `master`.
+- That feature/fix branch gets its **own new worktree/folder** — never
+  check it out inside an existing worktree that's meant to track a stable
+  branch (e.g. `osmbc-master` tracking `master`, `osmbc-develop` tracking
+  `develop`). Checking out a feature branch inside one of those pulls the
+  branch out from under any other session still using that directory —
+  confirmed painful in practice once multiple concurrent Claude Code
+  sessions share a machine.
 - Commit messages must follow the Conventional Commits format described in
   `CONTRIBUTING.md` (`type(scope): subject`, types from
   `@commitlint/config-conventional`, `Closes #123`/`Refs #123` footer for
@@ -115,5 +117,14 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   (`git-hooks/CommitMsg.sh`) can enforce this locally once installed (see
   `README Developer.md`), but don't rely on the hook being installed —
   write commit messages in this format regardless.
+- **Closing out a finished feature/fix branch:** merge into `master` and
+  push first, then — before removing anything — check the worktree for
+  untracked files (`git status --short --untracked-files=all`), especially
+  stray `.md` notes, that might hold content that should have been folded
+  into a commit instead of left on disk. Only after that's clean: remove
+  the worktree (`git worktree remove`), delete the local branch
+  (`git branch -d`, safe-delete — refuses unless it's actually merged),
+  and delete the remote branch if it was pushed
+  (`git push origin --delete <branch>`). Don't skip straight to deleting.
 
 @CLAUDE.local.md
