@@ -493,7 +493,10 @@ function cacheOSMAvatarAll(callback) {
   find({}, function(err, users) {
     if (err) return callback(err);
     eachLimit(users, 4, function (item, cb) {
-      cacheOSMAvatar(item.OSMUser, cb);
+      cacheOSMAvatar(item.OSMUser, function(err) {
+        if (err) config.logger.info("Error during Cache of User Avatar " + err.message);
+        return cb();
+      });
     }, function(err) {
       return callback(err);
     });
