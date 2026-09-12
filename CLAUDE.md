@@ -100,5 +100,13 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
 - Run tests with `npm test` (`test:model`, `test:router`, `test:ui` for
   narrower layers). See "Configuration" above for the shared-test-DB
   caveat when multiple worktrees are in play.
+- Commit messages must follow the Conventional Commits format described in
+  `CONTRIBUTING.md` (`type(scope): subject`, types from
+  `@commitlint/config-conventional`, `Closes #123`/`Refs #123` footer for
+  issue links) — applies to every commit made in this repo, including ones
+  Claude makes on the user's behalf. A `commit-msg` hook
+  (`git-hooks/CommitMsg.sh`) can enforce this locally once installed (see
+  `README Developer.md`), but don't rely on the hook being installed —
+  write commit messages in this format regardless.
 
 @CLAUDE.local.md

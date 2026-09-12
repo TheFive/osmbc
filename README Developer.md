@@ -14,4 +14,19 @@ Following development tools are required
 
 More info in the [Installation Guide](Install_Guide.md).
 
+## Commit messages
+
+Please follow the Conventional Commits format described in
+[CONTRIBUTING.md](CONTRIBUTING.md) — the project is moving its changelog
+generation to read directly from commit history.
+
+To check your commit messages locally before pushing, install the
+commit-msg hook once per clone/worktree:
+
+```
+cp git-hooks/CommitMsg.sh .git/hooks/commit-msg
+```
+
+(requires `npm install` to have run, so `commitlint` is available).
+
 
