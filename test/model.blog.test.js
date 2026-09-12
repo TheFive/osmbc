@@ -10,6 +10,7 @@ import testutil from "./testutil.js";
 import config from "../config.js";
 import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
+import userModule from "../model/user.js";
 import articleModule from "../model/article.js";
 import blogRenderer from "../render/BlogRenderer.js";
 import { ExportLogWriterForTestOnly } from "../notification/exportLogWriter.js";
@@ -934,6 +935,43 @@ describe("model/blog", function() {
             result.should.containEql("Alice");
             result.should.not.containEql("wp-backport");
             result.should.not.containEql("wp-oldimport");
+            bddone();
+          });
+        });
+      });
+    });
+    it("URL-encodes spaces in the OSM username instead of leaving them literal in the href", function(bddone) {
+      userModule.createNewUser({ OSMUser: "Laura Barroso" }, function(err) {
+        should.not.exist(err);
+        logModule.log({ user: "Laura Barroso", blog: "WN1", oid: "1", property: "reviewCommentEN" }, function(err) {
+          should.not.exist(err);
+          blogModule.findOne({ name: "WN1" }, function(err, blog) {
+            should.not.exist(err);
+            blog.createTeamString("EN", function(err, result) {
+              should.not.exist(err);
+              result.should.containEql("https://www.openstreetmap.org/user/Laura%20Barroso");
+              result.should.not.containEql("https://www.openstreetmap.org/user/Laura Barroso");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it("excludes any configured apiKeys user (not just the hardcoded wp-backport) from the credit sentence", function(bddone) {
+      // config.test.yaml's apiKeys.testapikey.dataadmin maps to "dataAdmin-TestUser" -
+      // same mechanism notification/migrationFilter.js already uses to keep
+      // API-key-attributed writers out of mail/Slack notifications.
+      async.parallel([
+        function writeAlice(cb) { logModule.log({ user: "Alice", blog: "WN1", oid: "1", property: "reviewCommentEN" }, cb); },
+        function writeDataAdmin(cb) { logModule.log({ user: "dataAdmin-TestUser", blog: "WN1", oid: "2", property: "reviewCommentEN" }, cb); }
+      ], function(err) {
+        should.not.exist(err);
+        blogModule.findOne({ name: "WN1" }, function(err, blog) {
+          should.not.exist(err);
+          blog.createTeamString("EN", function(err, result) {
+            should.not.exist(err);
+            result.should.containEql("Alice");
+            result.should.not.containEql("dataAdmin-TestUser");
             bddone();
           });
         });

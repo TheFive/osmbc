@@ -27,7 +27,12 @@ import config from "../config.js";
 
 export const SYNTHETIC_MIGRATION_USER_NAME = "wp-backport";
 
-function getKnownMigrationUserNames() {
+// Exported so other consumers that need to recognize/exclude migration-style
+// users (e.g. model/blog.js's credit-line byline) build the same set instead
+// of hardcoding their own copy of "which users are migration/API users" -
+// that duplication is exactly how wp-backport once leaked into a byline
+// while already being suppressed here for notifications.
+export function getKnownMigrationUserNames() {
   const apiKeys = config.getValue("apiKeys", { default: {} });
   return new Set([SYNTHETIC_MIGRATION_USER_NAME, ...Object.values(apiKeys)]);
 }
@@ -57,4 +62,4 @@ export function suppressMigrationNotifications(receiver) {
   });
 }
 
-export default { SYNTHETIC_MIGRATION_USER_NAME, suppressMigrationNotifications };
+export default { SYNTHETIC_MIGRATION_USER_NAME, getKnownMigrationUserNames, suppressMigrationNotifications };
