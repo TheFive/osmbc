@@ -76,6 +76,22 @@ Not currently expected in this project (no external API consumers), but if
 one ever occurs, mark it with a `BREAKING CHANGE:` footer describing the
 impact.
 
+## Branch naming
+
+Feature/fix branches use the same `type` vocabulary as commit messages
+(see the table above), as `<type>/<short-description>`, optionally with
+the issue number:
+
+```
+feat/1135-blog-status-written
+fix/calendarflags-null-preview
+chore/remove-branch-config-overlay
+```
+
+This isn't part of the Conventional Commits spec itself (which only
+covers commit messages) — it's a separate, commonly-paired convention,
+adopted here for consistency with the commit `type`s.
+
 ## Everything else
 
 See `README Developer.md` for local setup and general development
