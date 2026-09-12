@@ -957,6 +957,26 @@ describe("model/blog", function() {
         });
       });
     });
+    it("excludes any configured apiKeys user (not just the hardcoded wp-backport) from the credit sentence", function(bddone) {
+      // config.test.yaml's apiKeys.testapikey.dataadmin maps to "dataAdmin-TestUser" -
+      // same mechanism notification/migrationFilter.js already uses to keep
+      // API-key-attributed writers out of mail/Slack notifications.
+      async.parallel([
+        function writeAlice(cb) { logModule.log({ user: "Alice", blog: "WN1", oid: "1", property: "reviewCommentEN" }, cb); },
+        function writeDataAdmin(cb) { logModule.log({ user: "dataAdmin-TestUser", blog: "WN1", oid: "2", property: "reviewCommentEN" }, cb); }
+      ], function(err) {
+        should.not.exist(err);
+        blogModule.findOne({ name: "WN1" }, function(err, blog) {
+          should.not.exist(err);
+          blog.createTeamString("EN", function(err, result) {
+            should.not.exist(err);
+            result.should.containEql("Alice");
+            result.should.not.containEql("dataAdmin-TestUser");
+            bddone();
+          });
+        });
+      });
+    });
   });
 
   describe("Helper Functions", function() {
