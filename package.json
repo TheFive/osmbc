@@ -75,7 +75,7 @@
     "markdown-it-link-attributes": "4.0.x",
     "markdown-it-sup": "2.0.x",
     "markdown-link-extractor": "4.0.3",
-    "moment": "2.30.x",
+    "moment": "2.31.x",
     "moment-timezone": "0.6.3",
     "morgan": "1.12.1",
     "node-cache": "5.1.x",
