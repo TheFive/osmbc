@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.4.9](https://github.com/TheFive/osmbc/tree/4.4.9) (2026-09-30)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.8...4.4.9)
+
+**Fixed bugs:**
+
+- Calendar country flags render as raw path text instead of images [\#1141](https://github.com/TheFive/osmbc/issues/1141)
+
+**Closed issues:**
+
+- URLencode OSM users in the footnote [\#1142](https://github.com/TheFive/osmbc/issues/1142)
+- Transform calendar flags as icons for Hugo exports [\#1139](https://github.com/TheFive/osmbc/issues/1139)
+- Blog Status View [\#1135](https://github.com/TheFive/osmbc/issues/1135)
+- Show reviewers also for closed languages [\#1131](https://github.com/TheFive/osmbc/issues/1131)
+
+**Merged pull requests:**
+
+- fix\(blog\): credit-sentence fixes — URL-encoded links, apiKeys users excluded [\#1143](https://github.com/TheFive/osmbc/pull/1143) ([TheFive](https://github.com/TheFive))
+- fix: remove language code from hugo aliases [\#1136](https://github.com/TheFive/osmbc/pull/1136) ([call-me-matt](https://github.com/call-me-matt))
+
 ## [4.4.8](https://github.com/TheFive/osmbc/tree/4.4.8) (2026-09-11)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.7...4.4.8)
