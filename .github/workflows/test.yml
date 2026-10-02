@@ -1,0 +1,49 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+      - "feature/**"
+      - "fix/**"
+      - "ci/**"
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Chrome + chromedriver are preinstalled on ubuntu-latest (Selenium UI tests)
+      - run: npm test
+      - name: Upload test diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-actual-files
+          path: |
+            test/**/*_actual.*
+          if-no-files-found: ignore

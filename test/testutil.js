@@ -423,6 +423,18 @@ function normalizeVersionedStaticAssets(html) {
 }
 
 
+// FitToContent (article_view.js) sets an inline textarea height only when the
+// content overflows, which depends on the platform's font metrics (set on
+// macOS, not on Linux/GitHub Actions) - ignore it when comparing pages.
+function normalizeAutoFitHeight(html) {
+  return html.replace(/ style="height: [0-9.]+px;"/g, "");
+}
+
+function normalizeHtmlForCompare(html) {
+  return normalizeAutoFitHeight(normalizeVersionedStaticAssets(html));
+}
+
+
 function normalizeTextLineEndings(text) {
   return text.replace(/\r\n/g, "\n");
 }
@@ -430,7 +442,7 @@ function normalizeTextLineEndings(text) {
 
 async function expectHtml(driver, errorList, givenPath, name) {
   const sourcePretty = pretty(await driver.getPageSource());
-  const sourceForCompare = normalizeVersionedStaticAssets(sourcePretty);
+  const sourceForCompare = normalizeHtmlForCompare(sourcePretty);
   let stopOnError = false;
   if (!Array.isArray(errorList)) {
     stopOnError = true;
@@ -446,7 +458,7 @@ async function expectHtml(driver, errorList, givenPath, name) {
   try {
     expected = fs.readFileSync(expectedFile, "UTF8");
     expectedPretty = pretty(expected);
-    expectedForCompare = normalizeVersionedStaticAssets(expectedPretty);
+    expectedForCompare = normalizeHtmlForCompare(expectedPretty);
     if (expectedForCompare !== expected) {
       if (process.env.TEST_HTML_PRETTY === "TRUE") {
         fs.writeFileSync(expectedFile, expectedForCompare, "UTF8");
@@ -653,7 +665,6 @@ async function getNewDriver(username) {
   }
   if (isHeadless && isLinux) {
     chromeOptions.addArguments("disable-gpu");
-    chromeOptions.addArguments("single-process");
   }
 
   // Disable popup dialogs
