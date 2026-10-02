@@ -5,9 +5,6 @@ import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
 import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
-import { URL } from "url";
-import http from "http";
-import https from "https";
 import { renderFile } from "pug";
 import ssrfFilter from "ssrf-req-filter";
 
@@ -33,7 +30,8 @@ import translator from "../model/translator.js";
 
 import auth from "../routes/auth.js";
 
-import InternalCache from "../util/internalCache.js";
+import linkCheck from "../util/linkCheck.js";
+import featureImage from "../util/featureImage.js";
 
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
@@ -50,17 +48,6 @@ const slackrouter = Router();
 
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
-
-const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
-
-// SSRF-filtered agents for urlExist's link check, one per protocol. axios
-// needs both httpAgent and httpsAgent to be of the matching type, or
-// following a redirect that switches protocol (very common: plain http://
-// links in old WN issues now redirect to https://) makes Node throw
-// `Protocol "https:" not supported. Expected "http:"` and the link gets
-// reported as broken even though it's perfectly reachable.
-const httpLinkAgent = ssrfFilter.requestFilterHandler(new http.Agent());
-const httpsLinkAgent = ssrfFilter.requestFilterHandler(new https.Agent());
 
 
 
@@ -473,7 +460,12 @@ function postArticle(req, res, next) {
   let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
-  parallel([
+  series([
+    function checkFeatureImage(cb) {
+      // a new article is checked against an empty one, so nothing is
+      // created when the check fails
+      (article || articleModule.create()).checkFeatureImageChanges(changes, cb);
+    },
     function createArticle(cb) {
       debug("postArticle->createArticle");
 
@@ -591,7 +583,12 @@ function postArticleWithOldValues(req, res, next) {
   let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
-  parallel([
+  series([
+    function checkFeatureImage(cb) {
+      // a new article is checked against an empty one, so nothing is
+      // created when the check fails
+      (article || articleModule.create()).checkFeatureImageChanges(changes, cb);
+    },
     function createArticle(cb) {
       debug("postArticle->createArticle");
 
@@ -680,7 +677,10 @@ function postSetMarkdown(req, res, next) {
   change["markdown" + lang] = markdown;
   change.old = {};
   change.old["markdown" + lang] = oldMarkdown;
-  article.setAndSave(req.user, change, function(err) {
+  series([
+    (cb) => article.checkFeatureImageChanges(change, cb),
+    (cb) => article.setAndSave(req.user, change, cb)
+  ], function(err) {
     if (err) return next(err);
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
@@ -945,7 +945,7 @@ function urlExist(req, res) {
           return callback();
         });
       }
-      if ((linkCache.get(url) === "OK") || (req.user.access === "guest")) {
+      if (req.user.access === "guest") {
         result[url] = "OK";
         return callback();
       }
@@ -955,40 +955,10 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }
-      // check wether url is valid
-      try {
-        // eslint-disable-next-line no-unused-vars
-        const testurl = new URL(url);
-      } catch (error) {
-        result[url] = `Invalid URI "${url}"`;
+      linkCheck.checkUrl(url, function(err, status) {
+        if (err) return callback(err);
+        result[url] = status;
         return callback();
-      }
-
-      axios.head(url, {
-        httpAgent: httpLinkAgent,
-        httpsAgent: httpsLinkAgent,
-        headers: { "User-Agent": userAgent }
-      }).then(function() {
-        linkCache.set(url, "OK");
-        result[url] = "OK";
-        return callback();
-      }).catch(function(err) {
-        if (err.code && err.code === "HPE_UNEXPECTED_CONTENT_LENGTH") {
-          // www.openstreetmap.com is delivering content_length and transfer encoding, which
-          // results node in throwing this error.
-          // as the existanc of the url is approved by this error, everything is fine.
-          result[url] = "OK";
-          return callback();
-        }
-        if (err.response && err.response.status >= 300) {
-          result[url] = err.response.status;
-          return callback();
-        } else {
-          let m = "NOK";
-          if (typeof err.message === "string") m = err.message;
-          result[url] = m;
-          return callback();
-        }
       });
     },
     function final(err) {
@@ -996,6 +966,17 @@ function urlExist(req, res) {
       else res.json(result);
     }
   );
+}
+
+
+// Lets the editor check a Picture article's feature image before saving,
+// so a rejected save does not throw away the typed text.
+function checkFeatureImage(req, res, next) {
+  debug("checkFeatureImage");
+  featureImage.checkFeatureImage(req.body.markdown, function(err, result) {
+    if (err) return next(err);
+    res.json({ result: result });
+  });
 }
 
 
@@ -1147,6 +1128,7 @@ router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 router.post("/urlexist", allowGuestAccess, urlExist);
+router.post("/checkfeatureimage", allowFullAccess, checkFeatureImage);
 router.get("/readability", allowFullAccess, getExternalText);
 
 router.param("article_id", getArticleFromID);
@@ -1175,7 +1157,7 @@ const _router = router;
 export { _router as router };
 
 function cacheFlushAll() {
-  linkCache.flushAll();
+  linkCheck.cacheFlushAll();
 }
 
 const fortestonly = {};

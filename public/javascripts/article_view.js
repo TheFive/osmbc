@@ -102,7 +102,41 @@ function init() {
   window.getEventTable = getEventTable;
 }
 
+// Picture articles: the server rejects a save with a broken feature image,
+// so check it before submitting, to keep the typed text in the editor.
+function checkFeatureImageBeforeSave(callback) {
+  if ($("#categoryEN").val() !== "Picture") return callback(true);
+  const categoryChanged = $("#categoryEN").val() !== $("#old_categoryEN").val();
+  const toCheck = window.activeLanguages.filter(function(lang) {
+    return categoryChanged || $("#markdown" + lang).val() !== $("#old_markdown" + lang).val();
+  });
+  let allOk = true;
+  function next() {
+    if (toCheck.length === 0) return callback(allOk);
+    const lang = toCheck.shift();
+    $.post(window.htmlroot + "/article/checkfeatureimage", { markdown: $("#markdown" + lang).val() }, function(data) {
+      if (data.result !== "OK") {
+        allOk = false;
+        const text = $(".markdownMessage[lang=" + lang + "]");
+        text.show(400);
+        text.text(data.result);
+      }
+      next();
+    }, "json").fail(function(err) {
+      console.error(err);
+      callback(false);
+    });
+  }
+  next();
+}
+
 function saveButton() {
+  checkFeatureImageBeforeSave(function(ok) {
+    if (ok) saveWithComment();
+  });
+}
+
+function saveWithComment() {
   function save() {
     disableUnchanged(); document.getElementById("input").submit();
   }
@@ -388,6 +422,17 @@ function checkMarkdownError() {
     text.show(400);
     text.html("Link " + errorLinkTwice + " is used twice in markdown");
     errorOccured = true;
+  }
+
+  // Picture article: the feature image has to be a relative path,
+  // its existence is checked by the server on save.
+  if ($("#categoryEN").val() === "Picture") {
+    const image = /!\[[^\]]*\]\(([^)\s]+)/.exec(md);
+    if (image && (image[1].charAt(0) !== "/" || image[1].charAt(1) === "/")) {
+      text.show(400);
+      text.text("Feature image \"" + image[1] + "\" must be a relative path starting with /");
+      errorOccured = true;
+    }
   }
 
   if (!errorOccured) {

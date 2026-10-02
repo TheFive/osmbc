@@ -155,6 +155,10 @@ auth:
   remote: https://extern.site
   externally mirrored: true
 
+# Required. Base url the relative feature image path of a Picture article
+# ("/wp-content/...") is checked against on save (issue #1145).
+"Feature Image Base URL": https://featureimage.site
+
 "Blog Title For Export": weeklyOSM
 
 Hugo:
