@@ -653,7 +653,6 @@ async function getNewDriver(username) {
   }
   if (isHeadless && isLinux) {
     chromeOptions.addArguments("disable-gpu");
-    chromeOptions.addArguments("single-process");
   }
 
   // Disable popup dialogs
