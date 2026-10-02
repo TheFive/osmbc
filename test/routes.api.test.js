@@ -536,7 +536,7 @@ describe("router/api", function() {
         await waitUntilExported("WN3001", "HugoDownload", "DE");
       });
 
-      it("should skip a blog that fails to render, report it via a header and still export/mark the other", async function() {
+      it("should skip a blog that fails to render, report it inside the zip and still export/mark the other", async function() {
         const originalCreateRenderer = blogRenderer.createRenderer;
         const stub = sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
           if (blog.name === "WN3000") throw new Error("Simulated render failure");
@@ -550,10 +550,15 @@ describe("router/api", function() {
           );
 
           should(response.status).eql(200);
-          should(response.headers["x-outstanding-export-warnings"]).eql("WN3000:DE");
+          // No response header any more - the archive starts streaming
+          // before rendering (and thus failures) are known, so the failure
+          // list travels inside the zip itself instead (see
+          // buildExportZipForBlogLangs / "_export-warnings.txt").
+          should(response.headers["x-outstanding-export-warnings"]).be.undefined();
           const zipText = Buffer.from(response.data).toString("latin1");
           zipText.should.not.containEql("de/archives/3000.md");
           zipText.should.containEql("de/archives/3001.md");
+          zipText.should.containEql("_export-warnings.txt");
 
           const blog3001 = await waitUntilExported("WN3001", "HugoDownload", "DE");
           should.exist(blog3001.exportedBy.HugoDownload.DE);
@@ -764,7 +769,7 @@ describe("router/api", function() {
         zipText.should.not.containEql("de/archives/3100.md");
       });
 
-      it("should skip a blog that fails to render and report it via a header", async function() {
+      it("should skip a blog that fails to render and report it inside the zip", async function() {
         const originalCreateRenderer = blogRenderer.createRenderer;
         const stub = sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
           if (blog.name === "WN3100") throw new Error("Simulated render failure");
@@ -778,10 +783,13 @@ describe("router/api", function() {
           );
 
           should(response.status).eql(200);
-          should(response.headers["x-closedsince-export-warnings"]).eql("WN3100:DE");
+          // No response header any more - see the "outstanding" test above
+          // for why (streaming starts before failures are known).
+          should(response.headers["x-closedsince-export-warnings"]).be.undefined();
           const zipText = Buffer.from(response.data).toString("latin1");
           zipText.should.not.containEql("de/archives/3100.md");
           zipText.should.containEql("de/archives/3101.md");
+          zipText.should.containEql("_export-warnings.txt");
         } finally {
           stub.restore();
         }

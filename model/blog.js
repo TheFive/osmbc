@@ -1409,24 +1409,46 @@ export function findBlogsForOutstandingExport(exportProfile, langs, options, cal
   });
 }
 
-// buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback)
+// buildExportZipForBlogLangs(blogsWithLangs, profileConfig, onArchiveReady, callback)
 // blogsWithLangs: [{ blog, langs: ["DE","EN"] }, ...] - the blog/lang
 // selection is entirely up to the caller (outstanding and closedSince use
 // different selection rules, see findBlogsForOutstandingExport resp.
 // findBlogsClosedSince); this only renders and zips what it is given.
-// Returns { archive: ZipArchive|null, toMark: [{blog, lang}], failures: [{blog, lang, error}] }
-// archive is null when there is nothing to export.
+// onArchiveReady is optional (3-arg call form keeps the old behavior). When
+// given, it is called ONCE, synchronously, with the ZipArchive as soon as it
+// exists (or `null` when there is nothing to export) - i.e. before any
+// blog/lang has been rendered. This lets a caller start `archive.pipe(res)`
+// and send response headers immediately, instead of waiting for the whole
+// (potentially slow) render loop below to finish, which is what previously
+// made large outstanding/closedSince downloads sit silent long enough for
+// nginx's upstream read-timeout to kill the connection.
+// Returns (via callback, once rendering is fully done) { archive: ZipArchive|null,
+// toMark: [{blog, lang}], failures: [{blog, lang, error}] }. archive is null
+// when there is nothing to export.
 // A rendering failure for one blog/lang does NOT abort the whole batch: it is
-// recorded in `failures` and skipped, so the other blogs/langs still get exported.
-function buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback) {
+// recorded in `failures` and skipped, so the other blogs/langs still get
+// exported. If there are any failures, they are additionally embedded as a
+// human-readable "_export-warnings.txt" entry in the zip itself - once
+// streaming has started early via onArchiveReady, response headers are long
+// gone by the time failures are known, so a response header can no longer
+// carry this information.
+function buildExportZipForBlogLangs(blogsWithLangs, profileConfig, onArchiveReady, callback) {
+  if (typeof callback === "undefined") {
+    callback = onArchiveReady;
+    onArchiveReady = null;
+  }
   const rendererType = profileConfig.renderer || "HTML";
   const rendererOptions = profileConfig.rendererOptions;
   const pathTemplate = profileConfig.pathTemplate;
 
   const hasAnyLang = blogsWithLangs.some(function(entry) { return entry.langs && entry.langs.length > 0; });
-  if (!hasAnyLang) return callback(null, { archive: null, toMark: [], failures: [] });
+  if (!hasAnyLang) {
+    if (onArchiveReady) onArchiveReady(null);
+    return callback(null, { archive: null, toMark: [], failures: [] });
+  }
 
   const archive = new ZipArchive("zip", { zlib: { level: 9 } });
+  if (onArchiveReady) onArchiveReady(archive);
   const toMark = [];
   const failures = [];
 
@@ -1462,23 +1484,34 @@ function buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback) {
     }, blogCb);
   }, function(err) {
     if (err) return callback(err);
+    if (failures.length > 0) {
+      const warningsText = failures.map(function(f) {
+        return `${f.blog.name}:${f.lang}: ${f.error.message}`;
+      }).join("\n") + "\n";
+      archive.append(warningsText, { name: "_export-warnings.txt" });
+    }
     archive.finalize();
     return callback(null, { archive, toMark, failures });
   });
 }
 
-// buildOutstandingExportZip(exportProfile, langs, options, callback)
+// buildOutstandingExportZip(exportProfile, langs, options, [onArchiveReady,] callback)
 // options is optional: { minBlogNumber, maxBlogNumber }, see
 // findBlogsForOutstandingExport.
+// onArchiveReady is optional - see buildExportZipForBlogLangs for what it's for.
 // Renders all eligible blogs (from findBlogsForOutstandingExport) into a single combined ZIP.
 // Returns { archive: ZipArchive|null, toMark: [{blog, lang}], failures: [{blog, lang, error}] }
 // archive is null when no eligible blogs exist.
 // A rendering failure for one blog/lang does NOT abort the whole batch: it is
 // recorded in `failures` and skipped, so the other blogs/langs still get exported.
-export function buildOutstandingExportZip(exportProfile, langs, options, callback) {
+export function buildOutstandingExportZip(exportProfile, langs, options, onArchiveReady, callback) {
   if (typeof options === "function") {
     callback = options;
+    onArchiveReady = null;
     options = null;
+  } else if (typeof onArchiveReady === "function" && typeof callback !== "function") {
+    callback = onArchiveReady;
+    onArchiveReady = null;
   }
   function _buildOutstandingExportZip(callback) {
     debug("buildOutstandingExportZip");
@@ -1496,7 +1529,7 @@ export function buildOutstandingExportZip(exportProfile, langs, options, callbac
       const blogsWithLangs = blogs.map(function(blog) {
         return { blog, langs: getOutstandingLangsForBlog(blog, exportProfile, langs) };
       });
-      buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback);
+      buildExportZipForBlogLangs(blogsWithLangs, profileConfig, onArchiveReady, callback);
     });
   }
 
@@ -1583,17 +1616,22 @@ export function findBlogsClosedSince(since, langs, options, callback) {
   });
 }
 
-// buildClosedSinceExportZip(exportProfile, since, langs, options, callback)
+// buildClosedSinceExportZip(exportProfile, since, langs, options, [onArchiveReady,] callback)
 // options is optional: { minBlogNumber, maxBlogNumber }, see
 // findBlogsClosedSince.
+// onArchiveReady is optional - see buildExportZipForBlogLangs for what it's for.
 // Renders every blog+lang returned by findBlogsClosedSince into a single
 // combined ZIP, same shape as buildOutstandingExportZip. Read-only: it does
 // NOT call markAsExported / touch exportedBy, so re-running it for the same
 // (or an overlapping) date range is safe and has no effect on `outstanding`.
-export function buildClosedSinceExportZip(exportProfile, since, langs, options, callback) {
+export function buildClosedSinceExportZip(exportProfile, since, langs, options, onArchiveReady, callback) {
   if (typeof options === "function") {
     callback = options;
+    onArchiveReady = null;
     options = null;
+  } else if (typeof onArchiveReady === "function" && typeof callback !== "function") {
+    callback = onArchiveReady;
+    onArchiveReady = null;
   }
   function _buildClosedSinceExportZip(callback) {
     debug("buildClosedSinceExportZip");
@@ -1608,7 +1646,7 @@ export function buildClosedSinceExportZip(exportProfile, since, langs, options, 
 
     findBlogsClosedSince(since, langs, options, function(err, blogsWithLangs) {
       if (err) return callback(err);
-      buildExportZipForBlogLangs(blogsWithLangs, profileConfig, callback);
+      buildExportZipForBlogLangs(blogsWithLangs, profileConfig, onArchiveReady, callback);
     });
   }
 

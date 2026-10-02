@@ -306,10 +306,17 @@ function parseBlogNumberBound(raw, fieldName) {
  * Behavior:
  * - Finds all WeeklyNote blogs that are closed for the requested lang(s) and not yet exported,
  *   optionally narrowed to [minBlogNumber, maxBlogNumber] to page through a large backlog
+ * - Response headers are sent and the ZIP starts streaming as soon as there is at least one
+ *   eligible blog - BEFORE any blog/lang has actually been rendered - so a large batch keeps
+ *   sending bytes throughout rendering instead of going silent until everything is done (which
+ *   is long enough for nginx's upstream read-timeout to kill the connection)
  * - Returns a combined ZIP with one file per blog+lang
- * - A rendering failure for one blog/lang is skipped and reported via the
- *   `X-Outstanding-Export-Warnings` response header, it does not abort the whole batch
- * - Sets exportedBy markers (with a change-log entry) after the response is fully sent
+ * - A rendering failure for one blog/lang is skipped, not aborting the whole batch; if there are
+ *   any, they are listed in a "_export-warnings.txt" entry inside the zip (a response header is
+ *   no longer possible once streaming has already started)
+ * - Sets exportedBy markers (with a change-log entry) only after the response has been
+ *   completely and successfully sent (`res` "finish"); a client/connection that goes away first
+ *   leaves the affected blogs "outstanding" so they are re-offered next time
  * - If no eligible blogs: respects `noContentBehavior` in the ExportProfile config
  *   ("404" = default, "emptyZip" = return empty ZIP with HTTP 200)
  * - Rejects with 409 if another outstanding export for the same exportProfile is in flight
@@ -393,10 +400,61 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
   }
   outstandingExportLocks.add(exportProfile);
   let markingStarted = false;
+  // Set as soon as the client connection goes away - whether that happens
+  // mid-render (now that streaming starts before rendering is done, see
+  // onArchiveReady below) or during the final flush. Either way, nothing can
+  // be marked as exported and the lock must not stay held.
+  let clientGone = false;
   function releaseLock() { outstandingExportLocks.delete(exportProfile); }
 
-  blogModule.buildOutstandingExportZip(exportProfile, langs, blogNumberOptions, function(err, result) {
+  let streamingStarted = false;
+
+  // Called as soon as the ZipArchive exists, i.e. BEFORE any blog/lang has
+  // actually been rendered. Attaching headers and piping here - instead of
+  // waiting for the whole (potentially slow) render loop to finish first -
+  // means nginx sees the first response bytes almost immediately and then a
+  // steady trickle while rendering continues, instead of total silence for
+  // the whole batch followed by one burst. That silence is what previously
+  // let nginx's upstream read-timeout kill large outstanding exports.
+  function onArchiveReady(archive) {
+    if (!archive) return; // nothing to export - the completion callback below handles 404/emptyZip
+    streamingStarted = true;
+
+    let zipFileName = "outstanding.zip";
+    if (profileConfig.fileNameTemplate) {
+      const templated = profileConfig.fileNameTemplate.replace(/##[^#]+##/g, "outstanding");
+      if (templated && templated.trim()) {
+        zipFileName = templated.toLowerCase().endsWith(".zip") ? templated : `${templated}.zip`;
+      }
+    }
+
+    res.set("content-type", "application/zip");
+    res.attachment(zipFileName);
+
+    archive.on("error", function(archiveErr) {
+      debug("Archive error during outstanding export of %s: %s", exportProfile, archiveErr.message);
+      res.destroy(archiveErr);
+    });
+
+    // Safety net: release the lock the moment the connection goes away,
+    // however early that happens - even well before the completion callback
+    // below ever runs. Without this, a client that vanishes mid-render would
+    // leak the lock forever: "finish" never fires for a dead connection, and
+    // a "close" listener attached only later (after the render loop
+    // finishes) would never see a "close" that already happened.
+    res.on("close", function() {
+      if (!markingStarted) {
+        clientGone = true;
+        releaseLock();
+      }
+    });
+
+    archive.pipe(res);
+  }
+
+  blogModule.buildOutstandingExportZip(exportProfile, langs, blogNumberOptions, onArchiveReady, function(err, result) {
     if (err) {
+      if (streamingStarted) return res.destroy(err);
       releaseLock();
       return next(err);
     }
@@ -404,9 +462,12 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
     const { archive, toMark, failures } = result;
 
     if (failures && failures.length > 0) {
-      const failureList = failures.map((f) => `${f.blog.name}:${f.lang}`).join(",");
-      debug("Skipped %d blog/lang exports due to render errors: %s", failures.length, failureList);
-      res.set("X-Outstanding-Export-Warnings", failureList);
+      // No response header any more - headers went out as soon as streaming
+      // started, long before failures were known. The list travels inside
+      // the zip itself instead, as "_export-warnings.txt" (see
+      // buildExportZipForBlogLangs).
+      debug("Skipped %d blog/lang exports due to render errors: %s", failures.length,
+        failures.map((f) => `${f.blog.name}:${f.lang}`).join(","));
     }
 
     if (!archive) {
@@ -426,16 +487,7 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
       return next(notFound);
     }
 
-    let zipFileName = "outstanding.zip";
-    if (profileConfig.fileNameTemplate) {
-      const templated = profileConfig.fileNameTemplate.replace(/##[^#]+##/g, "outstanding");
-      if (templated && templated.trim()) {
-        zipFileName = templated.toLowerCase().endsWith(".zip") ? templated : `${templated}.zip`;
-      }
-    }
-
-    res.set("content-type", "application/zip");
-    res.attachment(zipFileName);
+    if (clientGone) return; // already released above, nothing left to mark
 
     const user = getOutstandingExportUser(req);
 
@@ -457,13 +509,6 @@ function getBlogPreviewDownloadOutstanding(req, res, next) {
         releaseLock();
       });
     });
-    // Safety net: if the client disconnects before "finish" fires, marking
-    // never starts, so release the lock here instead of leaving it stuck.
-    res.on("close", function() {
-      if (!markingStarted) releaseLock();
-    });
-
-    archive.pipe(res);
   });
 }
 
@@ -506,9 +551,14 @@ function parseSinceParam(raw) {
  * Behavior:
  * - Finds all WeeklyNote blogs that were closed for the requested lang(s) on/after
  *   `since` AND are still closed now (a later reopen excludes them again)
+ * - Response headers are sent and the ZIP starts streaming as soon as there is at least one
+ *   eligible blog - BEFORE any blog/lang has actually been rendered - so a large batch keeps
+ *   sending bytes throughout rendering instead of going silent until everything is done (which
+ *   is long enough for nginx's upstream read-timeout to kill the connection)
  * - Returns a combined ZIP with one file per blog+lang, same shape as `outstanding`
- * - A rendering failure for one blog/lang is skipped and reported via the
- *   `X-ClosedSince-Export-Warnings` response header, it does not abort the whole batch
+ * - A rendering failure for one blog/lang is skipped, not aborting the whole batch; if there are
+ *   any, they are listed in a "_export-warnings.txt" entry inside the zip (a response header is
+ *   no longer possible once streaming has already started)
  * - Read-only: unlike `outstanding`, it never sets exportedBy markers, so re-running it
  *   for the same (or an overlapping) date range is safe and does not affect `outstanding`
  * - If no eligible blogs: respects `noContentBehavior` in the ExportProfile config
@@ -586,15 +636,48 @@ function getBlogPreviewDownloadClosedSince(req, res, next) {
     });
   }
 
-  blogModule.buildClosedSinceExportZip(exportProfile, since.value, langs, blogNumberOptions, function(err, result) {
-    if (err) return next(err);
+  let streamingStarted = false;
+
+  // See getBlogPreviewDownloadOutstanding's onArchiveReady for why this
+  // fires before rendering (not after): it lets nginx see bytes right away
+  // instead of sitting silent for the whole (potentially slow) batch.
+  function onArchiveReady(archive) {
+    if (!archive) return; // nothing to export - the completion callback below handles 404/emptyZip
+    streamingStarted = true;
+
+    let zipFileName = "closedSince.zip";
+    if (profileConfig.fileNameTemplate) {
+      const templated = profileConfig.fileNameTemplate.replace(/##[^#]+##/g, "closedsince");
+      if (templated && templated.trim()) {
+        zipFileName = templated.toLowerCase().endsWith(".zip") ? templated : `${templated}.zip`;
+      }
+    }
+
+    res.set("content-type", "application/zip");
+    res.attachment(zipFileName);
+
+    archive.on("error", function(archiveErr) {
+      debug("Archive error during closedSince export of %s: %s", exportProfile, archiveErr.message);
+      res.destroy(archiveErr);
+    });
+
+    archive.pipe(res);
+  }
+
+  blogModule.buildClosedSinceExportZip(exportProfile, since.value, langs, blogNumberOptions, onArchiveReady, function(err, result) {
+    if (err) {
+      if (streamingStarted) return res.destroy(err);
+      return next(err);
+    }
 
     const { archive, failures } = result;
 
     if (failures && failures.length > 0) {
-      const failureList = failures.map((f) => `${f.blog.name}:${f.lang}`).join(",");
-      debug("Skipped %d blog/lang exports due to render errors: %s", failures.length, failureList);
-      res.set("X-ClosedSince-Export-Warnings", failureList);
+      // No response header any more - see onArchiveReady above. The list
+      // travels inside the zip itself instead, as "_export-warnings.txt"
+      // (see buildExportZipForBlogLangs).
+      debug("Skipped %d blog/lang exports due to render errors: %s", failures.length,
+        failures.map((f) => `${f.blog.name}:${f.lang}`).join(","));
     }
 
     if (!archive) {
@@ -612,19 +695,7 @@ function getBlogPreviewDownloadClosedSince(req, res, next) {
       notFound.type = "API";
       return next(notFound);
     }
-
-    let zipFileName = "closedSince.zip";
-    if (profileConfig.fileNameTemplate) {
-      const templated = profileConfig.fileNameTemplate.replace(/##[^#]+##/g, "closedsince");
-      if (templated && templated.trim()) {
-        zipFileName = templated.toLowerCase().endsWith(".zip") ? templated : `${templated}.zip`;
-      }
-    }
-
-    res.set("content-type", "application/zip");
-    res.attachment(zipFileName);
-
-    archive.pipe(res);
+    // archive is already piping to res (started in onArchiveReady above).
   });
 }
 
