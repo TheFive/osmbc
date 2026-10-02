@@ -130,6 +130,7 @@ a map of *where to look*, not a restatement of every field.
 | `blogTranslationVisibleFor` | Restricts the blog-translation feature to specific OSM usernames. |
 | `ReviewInWP`, `urlWoErrorWhileEdit` | Misc per-language/per-URL editorial-workflow exceptions. |
 | `"media folder"` | Local-vs-published media path mapping used by markdown/export sanitizing (note the key needs quoting — it contains a space). |
+| `"Feature Image Base URL"` | **Required** (OSMBC refuses to start without it), e.g. `https://weeklyosm.eu`. When an editor saves a `Picture` article, its feature image must be a relative path (`/wp-content/...`) and must exist under this base url, otherwise the save is rejected. This keeps a broken `featureImage` out of the Hugo export. Migration/sync writes (API, `wp-reconcile`) are not checked. |
 | `"Blog Title For Export"`, `Hugo.DateAdjust` | Export-time title/date-offset knobs. |
 | `"link-attributes"` | Per-render-target (`editor`/`production`) HTML attributes markdown-it adds to links. |
 | `ExportProfiles` | Full renderer/bundling/GUI-menu definition per export profile — see [docs/export-profiles.md](export-profiles.md), the dedicated reference for this one. |

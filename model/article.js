@@ -2,7 +2,7 @@
 // Exported Functions and prototypes are defined at end of file
 
 
-import { series, each } from "async";
+import { series, each, eachSeries } from "async";
 import { strict as assert } from "assert";
 import { CONFLICT } from "http-status-codes";
 import _debug from "debug";
@@ -13,6 +13,7 @@ import config from "../config.js";
 import language from "../model/language.js";
 
 import util from "../util/util.js";
+import featureImage from "../util/featureImage.js";
 
 import messageCenter from "../notification/messageCenter.js";
 import { findOne as __findOne } from "../model/blog.js";
@@ -259,6 +260,42 @@ class Article {
           });
         });
     });
+  }
+
+  // Validates the feature image of a Picture article before an editor saves
+  // (the Hugo export takes its featureImage from it, a broken one breaks the
+  // Hugo build). Checks every markdown that changes, or every language if
+  // the article is just becoming a Picture article.
+  // Deliberately NOT part of setAndSave: migration/sync code (api.js,
+  // wp-reconcile) has to be able to write old issues with long dead links.
+  // callback(err) with err.message as the editor facing explanation.
+  checkFeatureImageChanges(changes, callback) {
+    debug("checkFeatureImageChanges");
+    const self = this;
+    const category = changes.categoryEN || self.categoryEN;
+    if (category !== "Picture") return callback();
+    const categoryChanged = (category !== self.categoryEN);
+
+    function normalise(md) {
+      return (typeof md === "string") ? md.replace(/(\r\n)/gm, "\n").trim() : "";
+    }
+    const langsToCheck = [];
+    for (const lang in language.getLanguages()) {
+      const changed = changes["markdown" + lang];
+      if (typeof changed === "undefined") {
+        if (categoryChanged) langsToCheck.push({ lang: lang, md: self["markdown" + lang] });
+        continue;
+      }
+      if (!categoryChanged && normalise(changed) === normalise(self["markdown" + lang])) continue;
+      langsToCheck.push({ lang: lang, md: changed });
+    }
+    eachSeries(langsToCheck, function(item, cb) {
+      featureImage.checkFeatureImage(item.md, function(err, result) {
+        if (err) return cb(err);
+        if (result !== "OK") return cb(new Error(item.lang + ": " + result));
+        return cb();
+      });
+    }, callback);
   }
 
   reviewChanges(user, data, callback) {

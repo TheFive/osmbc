@@ -6,6 +6,7 @@ import MarkdownRenderer from "./MarkdownRenderer.js";
 import util from "../util/util.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
+import featureImage from "../util/featureImage.js";
 
 const debug = _debug("OSMBC:render:HugoMarkdownRenderer");
 
@@ -280,30 +281,13 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
             const rawMd = pictureArticle["markdown" + lang];
             const md = rawMd ? this._transformHugoMarkdown(rawMd) : null;
 
-            const regexMarkdownImage = /!\[([^\]]*)\]\(([^)]+)\)/;
-            const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
             // "^text^" superscript markup can't use a Hugo shortcode here (front
             // matter is raw TOML, never processed for shortcodes - unlike the
             // content body, see _replaceSuperscriptShortcode), so it's resolved
             // to plain Unicode superscript characters instead.
-            pictureMd = this._replaceSuperscriptUnicode(md);
-            if (pictureMd) {
-                pictureMd = pictureMd.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
-                const imageMatch = regexMarkdownImage.exec(pictureMd);
-                if (imageMatch && imageMatch.length >= 3) {
-                    pictureLink = imageMatch[2];
-                    pictureMd = pictureMd.replace(regexMarkdownImage, "").trim();
-                } else {
-                    const link = regexUrlFromCollection.exec(pictureMd);
-                    if (link && link.length > 0) {
-                        pictureLink = link[0];
-                        pictureMd = pictureMd.replace(/!\[([^\]]*)\]\s*\(\s*[^)]*\)/g, "").trim();
-                        if (pictureMd.includes(link[0])) {
-                            pictureMd = pictureMd.replace(link[0], "").trim();
-                        }
-                    }
-                }
-            }
+            const split = featureImage.splitFeatureImage(this._replaceSuperscriptUnicode(md));
+            pictureLink = split.link;
+            pictureMd = split.text;
         }
         const title = blogNames[lang] + " " + this.blog.name.substring(2, 10);
         const aliases = this._archiveAliases();

@@ -618,6 +618,93 @@ describe("router/article", function() {
         expectedMessage: "This article is not allowed for guests"
       }));
   });
+  describe("feature image check on save (#1145)", function() {
+    let pictureId;
+    const validMd = "![lead](/wp-content/ok.jpg =800x500) Caption";
+    beforeEach(async function () {
+      const article = await articleModule.createNewArticle({ blog: "BLOG", categoryEN: "Picture", markdownDE: validMd });
+      pictureId = article.id;
+    });
+    afterEach(function() {
+      nock.cleanAll();
+      articleRouterForTestOnly.cacheFlushAll();
+    });
+    async function login() {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return client;
+    }
+    it("should reject an absolute feature image (witholdvalues)", async function () {
+      const client = await login();
+      const body = await client.post(baseLink + "/article/" + pictureId + "/witholdvalues", {
+        markdownDE: "![lead](https://example.com/a.jpg) Caption",
+        old_markdownDE: validMd
+      });
+      should(body.status).eql(HttpStatus.INTERNAL_SERVER_ERROR);
+      body.data.should.containEql("must be a relative path starting with /");
+      const article = await articleModule.findById(pictureId);
+      should(article.markdownDE).eql(validMd);
+    });
+    it("should reject a missing feature image (setMarkdown)", async function () {
+      const sitecall = nock("https://featureimage.site")
+        .head("/wp-content/missing.jpg")
+        .reply(404, "Not Found");
+      const client = await login();
+      const body = await client.post(baseLink + "/article/" + pictureId + "/setMarkdown/DE", {
+        markdown: "![lead](/wp-content/missing.jpg) Caption",
+        oldMarkdown: validMd
+      });
+      should(body.status).eql(HttpStatus.INTERNAL_SERVER_ERROR);
+      body.data.should.containEql("does not exist (404)");
+      should(sitecall.isDone()).be.true();
+      const article = await articleModule.findById(pictureId);
+      should(article.markdownDE).eql(validMd);
+    });
+    it("should save an existing feature image", async function () {
+      const sitecall = nock("https://featureimage.site")
+        .head("/wp-content/new.jpg")
+        .reply(200, "OK");
+      const client = await login();
+      const newMd = "![lead](/wp-content/new.jpg) New Caption";
+      const body = await client.post(baseLink + "/article/" + pictureId + "/witholdvalues", {
+        markdownDE: newMd,
+        old_markdownDE: validMd
+      });
+      should(body.status).eql(HttpStatus.OK);
+      should(sitecall.isDone()).be.true();
+      const article = await articleModule.findById(pictureId);
+      should(article.markdownDE).eql(newMd);
+    });
+    it("should check all languages when the category becomes Picture", async function () {
+      const client = await login();
+      const body = await client.post(baseLink + "/article/2/witholdvalues", {
+        categoryEN: "Picture",
+        old_categoryEN: ""
+      });
+      should(body.status).eql(HttpStatus.INTERNAL_SERVER_ERROR);
+      body.data.should.containEql("DE: Picture article needs a feature image");
+      const article = await articleModule.findById(2);
+      should(article.categoryEN).be.undefined();
+    });
+    it("should not check articles of other categories", async function () {
+      const client = await login();
+      const body = await client.post(baseLink + "/article/2/setMarkdown/DE", {
+        markdown: "![image](https://example.com/a.jpg) Text",
+        oldMarkdown: "* Dies ist ein grosser Testartikel."
+      });
+      should(body.status).eql(HttpStatus.OK);
+      const article = await articleModule.findById(2);
+      should(article.markdownDE).eql("![image](https://example.com/a.jpg) Text");
+    });
+    it("should answer the editor's pre check", async function () {
+      const client = await login();
+      const body = await client.post(baseLink + "/article/checkfeatureimage", {
+        markdown: "![lead](https://example.com/a.jpg) Caption"
+      });
+      should(body.status).eql(HttpStatus.OK);
+      should(body.data).eql({ result: "Feature image \"https://example.com/a.jpg\" must be a relative path starting with /" });
+    });
+  });
   describe("route POST /:article_id/setMarkdown/:lang", function() {
     const url = baseLink + "/article/2/setMarkdown/DE";
     const params = {
