@@ -10,6 +10,7 @@ import userModule from "../../model/user.js";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
+import { cmdCtrl } from "../../test/PageObjectModel/page.js";
 import { Key } from "selenium-webdriver";
 
 import util from "../../util/util.js";
@@ -87,20 +88,20 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "Text to be inserted.");
         await ap.fillMarkdownInput("EN", ap.getCtrlA());
-        await ap.fillMarkdownInput("EN", Key.chord(Key.COMMAND, "x"));
+        await ap.fillMarkdownInput("EN", Key.chord(cmdCtrl, "x"));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(cmdCtrl, "v"));
 
         should(await ap.getMarkdownInput("EN")).eql("Text to be inserted.the origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(cmdCtrl, "v"));
 
         should(await ap.getMarkdownInput("EN")).eql("the origin text.Text to be inserted.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 11, 11, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 11, 11, Key.chord(cmdCtrl, "v"));
 
         should(await ap.getMarkdownInput("EN")).eql("the origin Text to be inserted.text.");
       });
@@ -109,20 +110,20 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "Text with replace");
         await ap.fillMarkdownInput("EN", ap.getCtrlA());
-        await ap.fillMarkdownInput("EN", Key.chord(Key.COMMAND, "x"));
+        await ap.fillMarkdownInput("EN", Key.chord(cmdCtrl, "x"));
 
         await ap.fillMarkdownInput("EN", "ex the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 0, 2, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 0, 2, Key.chord(cmdCtrl, "v"));
 
         should(await ap.getMarkdownInput("EN")).eql("Text with replace the origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text. TheEnd");
-        await ap.selectAndPasteTextInMarkdown("EN", 17, 23, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 17, 23, Key.chord(cmdCtrl, "v"));
 
         should(await ap.getMarkdownInput("EN")).eql("the origin text. Text with replace");
 
         await ap.fillMarkdownInput("EN", "the origin --change here -- text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 11, 27, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 11, 27, Key.chord(cmdCtrl, "v"));
 
         should(await ap.getMarkdownInput("EN")).eql("the origin Text with replace text.");
       });
@@ -131,22 +132,22 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "https://Link-to-be-insert.ed");
         await ap.fillMarkdownInput("EN", ap.getCtrlA());
-        await ap.fillMarkdownInput("EN", Key.chord(Key.COMMAND, "x"));
+        await ap.fillMarkdownInput("EN", Key.chord(cmdCtrl, "x"));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(cmdCtrl, "v"));
         // should be replaced to a wait on reaction on Browser, unclear what to wait for
 
         should(await ap.waitMarkdownInputToBe("EN", "[](https://Link-to-be-insert.ed)the origin text."));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(cmdCtrl, "v"));
         // should be replaced to a wait on reaction on Browser, unclear what to wait for
 
         should(await ap.waitMarkdownInputToBe("EN", "the origin text.[](https://Link-to-be-insert.ed)"));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 4, 4, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 4, 4, Key.chord(cmdCtrl, "v"));
 
         should(await ap.waitMarkdownInputToBe("EN", "the [](https://Link-to-be-insert.ed)origin text."));
       });
@@ -155,21 +156,21 @@ describe("uc.article", function() {
 
         await ap.fillMarkdownInput("EN", "https://Link-to-be-insert.ed");
         await ap.fillMarkdownInput("EN", ap.getCtrlA());
-        await ap.fillMarkdownInput("EN", Key.chord(Key.COMMAND, "x"));
+        await ap.fillMarkdownInput("EN", Key.chord(cmdCtrl, "x"));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 0, 3, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 0, 3, Key.chord(cmdCtrl, "v"));
 
         should(await ap.waitMarkdownInputToBe("EN", "[the](https://Link-to-be-insert.ed) origin text."));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 4, 10, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 4, 10, Key.chord(cmdCtrl, "v"));
         // await ap.waitMarkdownInputToBe("EN", "the [origin](https://Link-to-be-insert.ed) text.");
         // was: by waiting error occurs due to timing isshue
         should(await ap.waitMarkdownInputToBe("EN", "the [origin](https://Link-to-be-insert.ed) text."));
 
         await ap.fillMarkdownInput("EN", "the origin text.");
-        await ap.selectAndPasteTextInMarkdown("EN", 11, 16, Key.chord(Key.COMMAND, "v"));
+        await ap.selectAndPasteTextInMarkdown("EN", 11, 16, Key.chord(cmdCtrl, "v"));
 
         should(await ap.waitMarkdownInputToBe("EN", "the origin [text.](https://Link-to-be-insert.ed)"));
       });

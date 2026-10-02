@@ -3,6 +3,11 @@ import assert from "node:assert/strict";
 
 import { Key, By, until } from "selenium-webdriver";
 
+// Modifier for clipboard/select-all shortcuts: Command on macOS, Control
+// elsewhere (e.g. Linux on GitHub Actions). The browser runs on the same
+// machine as the tests, so the Node platform decides.
+export const cmdCtrl = process.platform === "darwin" ? Key.COMMAND : Key.CONTROL;
+
 export default class Page {
   constructor(driver) {
     this._driver = driver;
@@ -52,11 +57,6 @@ export default class Page {
   }
 
   async getCtrlA() {
-    // await this._driver.getCapabilities().getPlatform().toString());
-    // const cmdCtrl = await this._driver.getCapabilities().platformName.contains('mac') ? Key.COMMAND : Key.CONTROL;
-
-    // Use Command for Mac, get decision based on platform with a similar solution than in the above comment.
-    const cmdCtrl = Key.COMMAND;
     return Key.chord(cmdCtrl, "a");
   }
 
