@@ -57,7 +57,12 @@ feat(export): emit weeklyosm.eu archive aliases in TOML front matter
 
 ### Referencing issues
 
-Add a footer to link and optionally close an issue. This works unchanged
+If a commit belongs to an existing issue, it **must** reference that
+issue in a footer. Small changes without an issue are fine and need no
+footer — the changelog is generated from commits, not from issues, so
+they still show up there, just without an issue link.
+
+The footer links and optionally closes the issue. This works unchanged
 on GitHub and (once the repo moves) on GitLab, since both autolink `#123`
 and recognize the same closing keywords:
 

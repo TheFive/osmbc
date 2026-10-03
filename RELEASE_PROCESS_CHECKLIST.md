@@ -62,16 +62,26 @@ kann dann gelöscht werden.
 
 ## Phase 3 — Beobachtungszeitraum
 
-- [ ] Ein paar Releases (Richtwert: 3–5) unter der neuen Konvention
+- [x] Ein paar Releases (Richtwert: 3–5) unter der neuen Konvention
       sammeln, bevor Phase 4 startet — reales Testmaterial für git-cliff.
-- [ ] Stichprobe: reichen die Commit-Messages, um daraus einen brauchbaren
+      (2026-10-03 vorzeitig für ausreichend erklärt: 4.4.9 + Folgecommits,
+      23 Commits seit Einführung, genug Material für den Probelauf.)
+- [x] Stichprobe: reichen die Commit-Messages, um daraus einen brauchbaren
       Changelog-Eintrag zu bauen (Type/Scope sinnvoll genutzt)?
+      Ergebnis: 22/23 konform, Types/Scopes konsistent, Subjects taugen
+      direkt als Changelog-Zeile. Lücke: Issue-Footer fehlten teils (z. B.
+      Fix zu #1142). Entscheidung: Issue ist keine Pflicht, aber wenn es
+      eins gibt, muss der Commit es per `Closes #`/`Refs #` verlinken
+      (in `CONTRIBUTING.md` ergänzt).
 
 ## Phase 4 — Changelog-Tool tauschen
 
 - [ ] `cliff.toml` konfigurieren, Issue-Link-Pattern erstmal auf GitHub.
 - [ ] Testlauf: Changelog für die letzten 2–3 Releases parallel generieren,
       mit bestehender `CHANGELOG.md` vergleichen.
+- [ ] Alten gcl-Changelog archivieren, danach `gcl.sh` löschen (lokal,
+      gitignored) und das darin enthaltene GitHub-Token bei GitHub
+      widerrufen (macht der User selbst).
 - [ ] `.github_changelog_generator` und `github-changelog-http-cache`
       entfernen.
 - [ ] `package.json`: `"changelog"`-Script auf git-cliff umstellen.
