@@ -37,17 +37,13 @@ describe("uc/config", function() {
     await driver.get(osmbcLink("/config/calendartranslation"));
     const textElement = await driver.findElement(By.css("table#resulttable"));
     should(await textElement.getText()).eql("Wo Was Wann Land\nMunich OpenStreetMap Default Meeting online 2015-12-15 Germany");
-    try {
-      await (await driver.findElement(By.id("yaml"))).clear();
-      await (await driver.findElement(By.id("yaml"))).sendKeys('"town":\n  "DE": "WW"\n"title":\n  "DE": "WA"\n"date":\n  "DE": "WNN"\n  "country":\n  "DE": "LL"');
-      const inputOK = await driver.findElement(By.css("input[name='OK']"));
-      await (inputOK).click();
-      await driver.wait(until.stalenessOf(inputOK));
-    } catch (err) {
-      should(err.message).eql("Server returned status code 500 from http://localhost:35043/config/calendartranslation");
-    }
-    const source = await driver.getPageSource();
-    should(source).containEql("YAMLException: duplicated mapping key (8:4)");
+    await (await driver.findElement(By.id("yaml"))).clear();
+    await (await driver.findElement(By.id("yaml"))).sendKeys('"town":\n  "DE": "WW"\n"title":\n  "DE": "WA"\n"date":\n  "DE": "WNN"\n  "country":\n  "DE": "LL"');
+    await (await driver.findElement(By.css("input[name='OK']"))).click();
+    // wait for the error page itself instead of the old page going stale:
+    // depending on timing, Chrome reports the reload with different errors
+    const errorText = "YAMLException: duplicated mapping key (8:4)";
+    await driver.wait(async () => (await driver.getPageSource()).includes(errorText), maxTimer);
   });
 
   it("should open and save calendartranslation", async function() {
