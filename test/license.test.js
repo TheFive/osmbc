@@ -100,7 +100,8 @@ const allowedLicensesProd = [
   "BlueOak-1.0.0"];
 
 const allowedLicensesDev = allowedLicensesProd.concat([
-  "LGPL-2.1+", "CC-BY-3.0", "LGPL", "CC-BY-4.0", "(MIT OR GPL-3.0-or-later)", "(MIT AND Zlib)"
+  "LGPL-2.1+", "CC-BY-3.0", "LGPL", "CC-BY-4.0", "(MIT OR GPL-3.0-or-later)", "(MIT AND Zlib)",
+  "MIT OR Apache-2.0"
 ]);
 
 function shouldNotUseGPL(usedLicenses) {
