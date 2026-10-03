@@ -2,9 +2,9 @@
 
 ## Commit messages (Conventional Commits)
 
-OSMBC is moving its changelog generation from GitHub-API-based tooling to
-one that reads directly from `git log` ([git-cliff](https://git-cliff.org/)).
-For that to produce a useful changelog, commit messages need to follow the
+OSMBC generates its changelog directly from `git log`
+([git-cliff](https://git-cliff.org/), configured in `cliff.toml`). For that
+to produce a useful changelog, commit messages need to follow the
 [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ```
@@ -79,6 +79,25 @@ issue without resolving it.
 Not currently expected in this project (no external API consumers), but if
 one ever occurs, mark it with a `BREAKING CHANGE:` footer describing the
 impact.
+
+### What ends up in the changelog
+
+Only `feat`, `fix` and `perf` commits (and anything with a
+`BREAKING CHANGE:` footer) appear in `CHANGELOG.md`, each as one line
+built from scope and subject, linked to the issue from its
+`Closes`/`Refs` footer. All other types are filtered out.
+
+### Multi-commit features
+
+A larger change built up over several commits on a feature branch is
+merged as-is (no squash), so every commit stays in the history — and
+every `feat`/`fix` commit becomes its own changelog line. Type the
+intermediate steps for what they really are (`refactor`, `test`,
+`chore`, `build`, …) and reserve `feat`/`fix`/`perf` for the commit(s)
+that make the change visible to users, carrying the issue footer. A
+purely internal change (e.g. a storage-format migration editors never
+see) may well have no `feat` commit at all; if operators need to know
+about it, mark the relevant commit with a `BREAKING CHANGE:` footer.
 
 ## Branch naming
 

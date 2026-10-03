@@ -1,0 +1,66 @@
+# git-cliff configuration, see https://git-cliff.org/docs/configuration
+#
+# Only user-relevant commit types end up in the changelog (feat, fix,
+# perf, plus anything marked as a breaking change). Everything else
+# (refactor, test, ci, docs, build, chore, style, revert) is filtered,
+# see "Multi-commit features" in CONTRIBUTING.md.
+#
+# CHANGELOG.md is fully regenerated from the 4.4.9 tag onwards
+# (`npm run changelog`); everything before that is the static
+# CHANGELOG-ARCHIVE.md from the old github_changelog_generator setup.
+
+[changelog]
+header = """
+# Changelog
+
+"""
+body = """
+{% if version %}\
+## [{{ version }}](https://github.com/TheFive/osmbc/tree/{{ version }}) ({{ timestamp | date(format="%Y-%m-%d") }})
+{% if previous.version %}
+[Full Changelog](https://github.com/TheFive/osmbc/compare/{{ previous.version }}...{{ version }})
+{% endif %}\
+{% else %}\
+## Unreleased
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+**{{ group | striptags | trim }}:**
+{% for commit in commits %}
+- {% if commit.breaking %}**BREAKING** {% endif %}\
+{% if commit.scope %}{{ commit.scope }}: {% endif %}\
+{{ commit.message }}\
+{% for footer in commit.footers %}\
+{% if footer.token == "Closes" or footer.token == "Refs" or footer.token == "Fixes" %} \
+[#{{ footer.value }}](https://github.com/TheFive/osmbc/issues/{{ footer.value }})\
+{% endif %}\
+{% endfor %}\
+{% if commit.breaking and commit.breaking_description != commit.message %}
+  {{ commit.breaking_description }}\
+{% endif %}\
+{% endfor %}
+{% endfor %}\n
+"""
+footer = """
+Older releases (up to 4.4.9, generated from GitHub issues/PRs by the
+previous tool): see [CHANGELOG-ARCHIVE.md](CHANGELOG-ARCHIVE.md).
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+protect_breaking_commits = true
+filter_commits = true
+tag_pattern = "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+topo_order = false
+sort_commits = "oldest"
+
+commit_preprocessors = []
+
+commit_parsers = [
+  { message = "^feat", group = "<!-- 0 -->Features" },
+  { message = "^fix", group = "<!-- 1 -->Fixed bugs" },
+  { message = "^perf", group = "<!-- 2 -->Performance" },
+  { message = ".*", group = "<!-- 9 -->Other", skip = true },
+]
