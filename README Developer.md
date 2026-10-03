@@ -21,7 +21,8 @@ Please follow the Conventional Commits format described in
 generation to read directly from commit history.
 
 To check your commit messages locally before pushing, install the
-commit-msg hook once per clone/worktree:
+commit-msg hook once per clone (all worktrees of a clone share its
+`.git/hooks`, so it applies to them automatically):
 
 ```
 cp git-hooks/CommitMsg.sh .git/hooks/commit-msg

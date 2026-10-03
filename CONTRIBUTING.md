@@ -15,10 +15,9 @@ For that to produce a useful changelog, commit messages need to follow the
 [optional footer(s)]
 ```
 
-A commit-msg hook enforcing this is planned but not yet installed — please
-follow the format voluntarily starting now, so the commit history is usable
-once the changelog tool switches over. See `RELEASE_PROCESS_CHECKLIST.md`
-for the full rollout plan.
+A commit-msg hook (`git-hooks/CommitMsg.sh`, running `commitlint`) checks
+the format locally; see `README Developer.md` for how to install it. See
+`RELEASE_PROCESS_CHECKLIST.md` for the full rollout plan.
 
 ### Type
 
