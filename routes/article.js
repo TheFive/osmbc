@@ -804,14 +804,14 @@ function getExternalText(req, res, next) {
       if (article && article.content) {
         res.json(article);
       } else {
-        res.end("Readability Failed for " + link);
+        res.type("text/plain").end("Readability Failed for " + link);
       };
     }).catch(function(err) {
       axios.interceptors.response.eject(responseInterseptor);
-      res.end(err.message);
+      res.type("text/plain").end(err.message);
     });
   } else {
-    res.end("No Link Found");
+    res.type("text/plain").end("No Link Found");
   }
 }
 

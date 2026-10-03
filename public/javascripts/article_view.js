@@ -560,13 +560,13 @@ function clickAndLoadLinktext(object, field, link) {
   }
 
   $.get(window.htmlroot + "/article/readability", { link: link }, function(json) {
-    if (typeof json === "string") {
-      json = { content: json, textContent: json };
-    }
     const linkTextPlain = $("#linkTextPlain");
     LinkTextPlainRow.removeClass("invisible");
-    if (field === "textContent") {
-      linkTextPlain.html("<pre>" + json[field] + "</pre>");
+    if (typeof json === "string") {
+      // error message from server, show as plain text
+      linkTextPlain.text(json);
+    } else if (field === "textContent") {
+      linkTextPlain.empty().append($("<pre>").text(json[field]));
     } else {
       linkTextPlain.html(json[field]);
     }
