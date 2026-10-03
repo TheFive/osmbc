@@ -23,6 +23,7 @@
     "nanoid": "^3.3.18"
   },
   "scripts": {
+    "changelog": "git-cliff 4.4.9..HEAD --tag $npm_package_version --output CHANGELOG.md",
     "lint": "eslint --no-error-on-unmatched-pattern app.js staticFileServer.js config.js postinstall.js bin/**/*.js export/**/*.js genstaticpage/**/*.js import/**/*.js model/**/*.js notification/**/*.js render/**/*.js routes/**/*.js scripts/**/*.js test/**/*.js util/**/*.js wp-reconcile/**/*.js",
     "start": "NODE_ENV=development node ./bin/www.js",
     "test": "NODE_ENV=test TEST_HEADLESS=TRUE sh -c 'start=$(date +%s); npx nyc mocha \"$@\"; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status' --",
@@ -39,7 +40,8 @@
     "test:layers": "npm run test:model && npm run test:router && npm run test:ui",
     "test-github": "NODE_ENV=test TEST_HEADLESS=TRUE mocha -f eslint",
     "staticHtmlServerd": "NODE_ENV=development node ./staticFileServer.js",
-    "postinstall": "node ./postinstall.js"
+    "postinstall": "node ./postinstall.js",
+    "version": "npm run changelog && git add CHANGELOG.md"
   },
   "dependencies": {
     "@mozilla/readability": "0.6.x",
@@ -105,6 +107,7 @@
     "c8": "12.0.0",
     "eslint": "10.2.1",
     "eslint-plugin-mocha": "^11.2.0",
+    "git-cliff": "2.14.2",
     "globals": "17.7.0",
     "mocha": "11.7.6",
     "mockdate": "3.0.x",

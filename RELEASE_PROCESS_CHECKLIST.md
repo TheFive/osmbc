@@ -76,17 +76,37 @@ kann dann gelöscht werden.
 
 ## Phase 4 — Changelog-Tool tauschen
 
-- [ ] `cliff.toml` konfigurieren, Issue-Link-Pattern erstmal auf GitHub.
-- [ ] Testlauf: Changelog für die letzten 2–3 Releases parallel generieren,
-      mit bestehender `CHANGELOG.md` vergleichen.
-- [ ] Alten gcl-Changelog archivieren, danach `gcl.sh` löschen (lokal,
-      gitignored) und das darin enthaltene GitHub-Token bei GitHub
-      widerrufen (macht der User selbst).
-- [ ] `.github_changelog_generator` und `github-changelog-http-cache`
-      entfernen.
-- [ ] `package.json`: `"changelog"`-Script auf git-cliff umstellen.
-- [ ] Alte `CHANGELOG.md`-Einträge (vor Cutover) unangetastet als
-      statischer Block belassen, ab Cutover-Tag automatisch generieren.
+Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
+
+- [x] git-cliff installiert — entgegen Phase-0-Annahme gibt es ein
+      npm-Paket (`git-cliff`, Binaries pro Plattform), daher exakt
+      gepinnte devDependency (2.14.2), kein brew/Ruby nötig.
+- [x] `cliff.toml` konfiguriert: nur `feat`/`fix`/`perf` + Breaking
+      Changes, Issue-Links aus `Closes`/`Refs`/`Fixes`-Footern (GitHub-URL),
+      Kopfzeile/„Full Changelog“-Link im bisherigen Format.
+- [x] Testlauf über `4.4.8..HEAD`: 4.4.9 ergibt 2 Features + 5 Fixes,
+      3 davon mit Issue-Link (der Fix zu #1142 ohne, fehlender Footer).
+      Nicht konventionelle Commits (z. B. `5faccda7`, ZIP-Streaming)
+      fallen still raus.
+- [x] `package.json`: `"changelog"`-Script neu angelegt (gab es vorher
+      nicht): `git-cliff 4.4.9..HEAD --tag $npm_package_version`.
+- [x] Alter gcl-Changelog als `CHANGELOG-ARCHIVE.md` archiviert
+      (unverändert bis 4.4.9); `CHANGELOG.md` wird ab 4.4.9 jedes Mal
+      komplett neu generiert (statt `--prepend`, das die `# Changelog`-
+      Überschrift falsch einsortiert).
+- [x] `.github_changelog_generator` entfernt. `github-changelog-http-cache`
+      war nie getrackt (gitignored), nur lokal im Haupt-Clone löschen.
+- [x] Release-Ablauf über npm-`version`-Lifecycle (`"version"`-Script +
+      `.npmrc` `tag-version-prefix=""`): `npm version <x.y.z> -m
+      "chore(release): %s"` erzeugt Changelog, Release-Commit und Tag auf
+      genau diesem Commit (bei 4.4.9 saß er einen Commit davor). In einem
+      Wegwerf-Clone getestet, inkl. Hook-Ablehnung bei falscher Message.
+      Doku in `README Developer.md`.
+- [x] „Multi-commit features“ + „What ends up in the changelog“ in
+      `CONTRIBUTING.md`.
+- [ ] Nach dem Merge: `gcl.sh` (lokal, gitignored) löschen und das
+      darin enthaltene GitHub-Token bei GitHub widerrufen (macht der
+      User selbst).
 
 ## Phase 5 — develop-Branch auflösen
 
@@ -108,7 +128,8 @@ kann dann gelöscht werden.
 ## Phase 6 — Cutover / Abschluss
 
 - [ ] Migrations-Tag setzen (z. B. `4.5.0`), Changelog-Eintrag dazu.
-- [ ] Ruby-Erwähnungen in Doku/Install-Guide entfernen, falls vorhanden.
+- [x] Ruby-Erwähnungen in Doku/Install-Guide entfernen, falls vorhanden.
+      (Geprüft 2026-10-03: keine vorhanden.)
 - [ ] Diese Datei (`RELEASE_PROCESS_CHECKLIST.md`) auflösen, Endzustand in
       `CONTRIBUTING.md`/`README Developer.md` überführt.
 
