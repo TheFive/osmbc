@@ -35,6 +35,7 @@ import featureImage from "../util/featureImage.js";
 
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
+import createDOMPurify from "dompurify";
 
 
 
@@ -802,6 +803,9 @@ function getExternalText(req, res, next) {
       const article = reader.parse();
       axios.interceptors.response.eject(responseInterseptor);
       if (article && article.content) {
+        // Readability does not sanitize, external pages could inject
+        // event handlers (e.g. onerror) into the editor's OSMBC session
+        article.content = createDOMPurify(doc.window).sanitize(article.content);
         res.json(article);
       } else {
         res.type("text/plain").end("Readability Failed for " + link);
