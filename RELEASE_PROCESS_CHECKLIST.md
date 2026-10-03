@@ -96,8 +96,12 @@ Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
       Überschrift falsch einsortiert).
 - [x] `.github_changelog_generator` entfernt. `github-changelog-http-cache`
       war nie getrackt (gitignored), nur lokal im Haupt-Clone löschen.
-- [x] Release-Ablauf in `README Developer.md` dokumentiert, Tag kommt
-      jetzt auf den Release-Commit (bei 4.4.9 saß er einen Commit davor).
+- [x] Release-Ablauf über npm-`version`-Lifecycle (`"version"`-Script +
+      `.npmrc` `tag-version-prefix=""`): `npm version <x.y.z> -m
+      "chore(release): %s"` erzeugt Changelog, Release-Commit und Tag auf
+      genau diesem Commit (bei 4.4.9 saß er einen Commit davor). In einem
+      Wegwerf-Clone getestet, inkl. Hook-Ablehnung bei falscher Message.
+      Doku in `README Developer.md`.
 - [x] „Multi-commit features“ + „What ends up in the changelog“ in
       `CONTRIBUTING.md`.
 - [ ] Nach dem Merge: `gcl.sh` (lokal, gitignored) löschen und das

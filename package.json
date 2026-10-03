@@ -40,7 +40,8 @@
     "test:layers": "npm run test:model && npm run test:router && npm run test:ui",
     "test-github": "NODE_ENV=test TEST_HEADLESS=TRUE mocha -f eslint",
     "staticHtmlServerd": "NODE_ENV=development node ./staticFileServer.js",
-    "postinstall": "node ./postinstall.js"
+    "postinstall": "node ./postinstall.js",
+    "version": "npm run changelog && git add CHANGELOG.md"
   },
   "dependencies": {
     "@mozilla/readability": "0.6.x",
