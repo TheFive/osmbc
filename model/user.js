@@ -1,7 +1,7 @@
 import pgMap from "./pgMap.js";
 import util from "../util/util.js";
 import { strict as assert } from "assert";
-import { eachLimit, series, eachOfSeries } from "async";
+import { series, eachOfSeries } from "async";
 import messageCenter from "../notification/messageCenter.js";
 import { mailReceiverUpdateUser as _updateUser, MailReceiver } from "../notification/mailReceiver.js";
 import { generate } from "randomstring";
@@ -499,30 +499,6 @@ function cacheOSMAvatar(osmuser, callback) {
     return callback();
   });
 }
-
-function cacheOSMAvatarAll(callback) {
-  debug("cacheOSMAvatarAll");
-  find({}, function(err, users) {
-    if (err) return callback(err);
-    // sequential, openstreetmap.org answers parallel requests with 503
-    eachLimit(users, 1, function (item, cb) {
-      cacheOSMAvatar(item.OSMUser, function(err) {
-        if (err) config.logger.info("Error during Cache of User Avatar " + err.message);
-        return cb();
-      });
-    }, function(err) {
-      return callback(err);
-    });
-  });
-}
-
-if (process.env.NODE_ENV !== "test") {
-  cacheOSMAvatarAll(function(err) {
-    if (err) config.logger.info("Error during Cache of User Avatar " + err.message);
-  });
-}
-
-
 
 function getAvatar(osmuser) {
   debug("getAvatar");
