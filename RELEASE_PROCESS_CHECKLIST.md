@@ -104,9 +104,8 @@ Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
       Doku in `README Developer.md`.
 - [x] „Multi-commit features“ + „What ends up in the changelog“ in
       `CONTRIBUTING.md`.
-- [ ] Nach dem Merge: `gcl.sh` (lokal, gitignored) löschen und das
-      darin enthaltene GitHub-Token bei GitHub widerrufen (macht der
-      User selbst).
+- [x] Nach dem Merge: `gcl.sh` + `github-changelog-http-cache` (lokal,
+      gitignored) gelöscht, GitHub-Token widerrufen (User, 2026-10-03).
 
 ## Phase 5 — develop-Branch auflösen
 
