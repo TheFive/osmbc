@@ -41,7 +41,7 @@ const scriptFilePath = config.getValue("scripts").scriptFilePath;
 const logFileFilter = config.getValue("scripts").logFileFilter;
 const scriptFileFilter = config.getValue("scripts").scriptFileFilter;
 
-async function renderScriptLogs(req, res) {
+async function renderScriptLogs(req, res, next) {
   try {
     const data = await globApi.match(logFilePath + "/" + logFileFilter);
     if (data) data.sort();
@@ -51,7 +51,7 @@ async function renderScriptLogs(req, res) {
         layout: res.rendervar.layout
       });
   } catch (error) {
-    res.status(500).send(error);
+    next(error);
   }
 }
 
@@ -132,14 +132,14 @@ function renderScriptLog(req, res) {
 }
 
 
-async function renderScripts(req, res) {
+async function renderScripts(req, res, next) {
   debug("renderScripts");
   let data;
   try {
     data = await globApi.match(scriptFilePath + "/" + scriptFileFilter);
     if (data) data.sort();
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 
   if (!data) data = [];
@@ -154,7 +154,7 @@ async function renderScripts(req, res) {
       });
     },
     function(err) {
-      if (err) return res.status(500).send(err.message);
+      if (err) return next(err);
       res.render("script_execute",
         {
           layout: res.rendervar.layout,
