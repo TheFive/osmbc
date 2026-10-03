@@ -455,17 +455,26 @@ function createNewUser (proto, callback) {
 }
 
 const avatarCache = {};
+// OSM users whose avatar lookup is running or failed recently (value: timestamp),
+// so that a page rendering many avatars does not hammer openstreetmap.org
+const avatarPending = {};
+const AVATAR_TIMEOUT = 10000;
+const AVATAR_RETRY_AFTER = 10 * 60 * 1000;
+const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
   if (osmuser === undefined) return callback();
   if (process.env.NODE_ENV === "test") return callback();
   if (avatarCache[osmuser]) return callback();
+  if (avatarPending[osmuser] && Date.now() - avatarPending[osmuser] < AVATAR_RETRY_AFTER) return callback();
+  avatarPending[osmuser] = Date.now();
   const requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   axios({
     method: "GET",
     url: requestString,
-    timeout: 1000
+    timeout: AVATAR_TIMEOUT,
+    headers: { "User-Agent": userAgent }
   }).then(function(response) {
     if (response.data) {
       const c = load(response.data);
@@ -477,11 +486,14 @@ function cacheOSMAvatar(osmuser, callback) {
       }
       if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
       avatarCache[osmuser] = avatarLink;
+      delete avatarPending[osmuser];
     }
     return callback();
   }).catch(function(err) {
-    if (err.message !== "ETIMEDOUT") {
-      const error = new Error("User " + osmuser + " avatar could not be loaded.");
+    // deleted / unknown OSM user, no avatar to show
+    if (err.response && err.response.status === 404) return callback();
+    if (err.code !== "ECONNABORTED" && err.code !== "ETIMEDOUT") {
+      const error = new Error("User " + osmuser + " avatar could not be loaded (" + ((err.response && err.response.status) || err.code) + ").");
       return callback(error, null);
     }
     return callback();
@@ -492,7 +504,8 @@ function cacheOSMAvatarAll(callback) {
   debug("cacheOSMAvatarAll");
   find({}, function(err, users) {
     if (err) return callback(err);
-    eachLimit(users, 4, function (item, cb) {
+    // sequential, openstreetmap.org answers parallel requests with 503
+    eachLimit(users, 1, function (item, cb) {
       cacheOSMAvatar(item.OSMUser, function(err) {
         if (err) config.logger.info("Error during Cache of User Avatar " + err.message);
         return cb();
