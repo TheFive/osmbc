@@ -79,15 +79,23 @@ function stripTrailingSlash(url) {
   return url.replace(/\/$/, "");
 }
 
+// The API key is part of the URL path. `url` is for the request,
+// `shownUrl` (key masked as ***) for anything printed, so error output
+// can be shared without leaking the key.
+function blogSyncUrls(remoteUrl, apiKey, rest) {
+  const base = `${stripTrailingSlash(remoteUrl)}/api/blogSync/`;
+  return { url: base + encodeURIComponent(apiKey) + rest, shownUrl: base + "***" + rest };
+}
+
 // Downloads one blog + its articles from a remote OSMBC instance's
 // GET /api/blogSync/:apiKey/:blog_id endpoint. `httpsAgent` is only ever
 // non-default for local smoke-testing against a self-signed dev cert
 // (--insecure on the CLI) - never used for a real remote.
 export async function fetchRemoteBlog(remoteUrl, apiKey, blogName, httpsAgent) {
-  const url = `${stripTrailingSlash(remoteUrl)}/api/blogSync/${apiKey}/${encodeURIComponent(blogName)}`;
+  const { url, shownUrl } = blogSyncUrls(remoteUrl, apiKey, `/${encodeURIComponent(blogName)}`);
   const response = await axios.get(url, { validateStatus: () => true, httpsAgent });
   if (response.status !== 200) {
-    throw new Error(`GET ${url} -> HTTP ${response.status}: ${typeof response.data === "string" ? response.data : JSON.stringify(response.data)}`);
+    throw new Error(`GET ${shownUrl} -> HTTP ${response.status}: ${typeof response.data === "string" ? response.data : JSON.stringify(response.data)}`);
   }
   return response.data;
 }
@@ -96,10 +104,10 @@ export async function fetchRemoteBlog(remoteUrl, apiKey, blogName, httpsAgent) {
 // POST /api/blogSync/:apiKey/:blog_id/apply endpoint. See fetchRemoteBlog
 // for `httpsAgent`.
 export async function applyRemote(remoteUrl, apiKey, blogName, body, httpsAgent) {
-  const url = `${stripTrailingSlash(remoteUrl)}/api/blogSync/${apiKey}/${encodeURIComponent(blogName)}/apply`;
+  const { url, shownUrl } = blogSyncUrls(remoteUrl, apiKey, `/${encodeURIComponent(blogName)}/apply`);
   const response = await axios.post(url, body, { validateStatus: () => true, httpsAgent });
   if (response.status !== 200) {
-    throw new Error(`POST ${url} -> HTTP ${response.status}: ${typeof response.data === "string" ? response.data : JSON.stringify(response.data)}`);
+    throw new Error(`POST ${shownUrl} -> HTTP ${response.status}: ${typeof response.data === "string" ? response.data : JSON.stringify(response.data)}`);
   }
   return response.data;
 }

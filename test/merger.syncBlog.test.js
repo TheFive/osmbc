@@ -280,6 +280,8 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
       }
       should.exist(caught);
       should(caught.message).match(/HTTP 401/);
+      should(caught.message).not.match(/testkey/);
+      should(caught.message).match(/\/api\/blogSync\/\*\*\*\/WN100/);
     });
 
     describe("old-era replace mode (auto-detect + idempotency, see CLAUDE.local.md)", function() {

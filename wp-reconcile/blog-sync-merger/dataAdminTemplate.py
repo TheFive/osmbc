@@ -82,6 +82,14 @@ def fix_double_paren_links(markdown):
     return new_text, new_text != markdown
 
 
+def blog_sync_urls(remote_url, api_key, rest):
+    """The API key is part of the URL path. Returns (url, shown_url): url
+    for the request, shown_url (key masked as ***) for anything printed or
+    raised, so error output can be shared without leaking the key."""
+    base = f"{remote_url.rstrip('/')}/api/blogSync/"
+    return base + quote(api_key, safe='') + rest, base + "***" + rest
+
+
 def fetch_remote_blog(remote_url, api_key, blog_name, verify):
     """GET one blog + all its articles as raw JSON - EVERY article already
     carries every configured language's markdown<LANG> field, so this is
@@ -95,12 +103,12 @@ def fetch_remote_blog(remote_url, api_key, blog_name, verify):
     as "caller correctly believes there is no prior value", so treat a
     missing/empty field as "" too when building `old`, not None/absent.
     """
-    url = f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/{quote(blog_name, safe='')}"
+    url, shown_url = blog_sync_urls(remote_url, api_key, f"/{quote(blog_name, safe='')}")
     response = requests.get(url, verify=verify, timeout=30)
     if response.status_code == 404:
         return None  # no such blog - the range below is generated numerically, gaps are expected
     if response.status_code != 200:
-        raise RuntimeError(f"GET {url} -> HTTP {response.status_code}: {response.text}")
+        raise RuntimeError(f"GET {shown_url} -> HTTP {response.status_code}: {response.text}")
     return response.json()
 
 
@@ -116,10 +124,10 @@ def apply_remote(remote_url, api_key, blog_name, body, verify):
       (see wp-reconcile/blog-sync-merger/withReopenedBlog.js) - normal,
       expected, nothing your script needs to handle.
     """
-    url = f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/{quote(blog_name, safe='')}/apply"
+    url, shown_url = blog_sync_urls(remote_url, api_key, f"/{quote(blog_name, safe='')}/apply")
     response = requests.post(url, json=body, verify=verify, timeout=120)
     if response.status_code != 200:
-        raise RuntimeError(f"POST {url} -> HTTP {response.status_code}: {response.text}")
+        raise RuntimeError(f"POST {shown_url} -> HTTP {response.status_code}: {response.text}")
     return response.json()
 
 
@@ -159,11 +167,11 @@ def fetch_changelog(remote_url, api_key, article_id, property_name, verify):
     unfiltered across every writer, ascending by time; `current` is a
     fresh read of the live value at call time.
     """
-    url = (f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/"
-           f"{article_id}/{quote(property_name, safe='')}/changelog")
+    url, shown_url = blog_sync_urls(remote_url, api_key,
+                                    f"/{article_id}/{quote(property_name, safe='')}/changelog")
     response = requests.get(url, verify=verify, timeout=30)
     if response.status_code != 200:
-        raise RuntimeError(f"GET {url} -> HTTP {response.status_code}: {response.text}")
+        raise RuntimeError(f"GET {shown_url} -> HTTP {response.status_code}: {response.text}")
     return response.json()
 
 
