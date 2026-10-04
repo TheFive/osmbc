@@ -21,7 +21,9 @@ const regexUrlFromCollection = /\b(https?:\/\/[^\[\]() \n\r]*)\b/g;
 function splitFeatureImage(md) {
   let link = null;
   if (!md) return { link: link, text: md };
-  md = md.replace(/\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
+  // (?<!\s) lets a match start only at the beginning of a whitespace run,
+  // otherwise long runs of whitespace are scanned quadratically (ReDoS)
+  md = md.replace(/(?<!\s)\s*=\d+\s*[xX]\s*\d+(?=\))/g, "");
   const imageMatch = regexMarkdownImage.exec(md);
   if (imageMatch && imageMatch.length >= 3) {
     link = imageMatch[2];

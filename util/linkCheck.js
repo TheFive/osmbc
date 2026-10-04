@@ -1,26 +1,15 @@
-import http from "http";
-import https from "https";
-import ssrfFilter from "ssrf-req-filter";
 import axios from "axios";
 import _debug from "debug";
 
 import config from "../config.js";
 import InternalCache from "../util/internalCache.js";
+import ssrfAgents from "../util/ssrfAgents.js";
 
 const debug = _debug("OSMBC:util:linkCheck");
 
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
-
-// SSRF-filtered agents for the link check, one per protocol. axios
-// needs both httpAgent and httpsAgent to be of the matching type, or
-// following a redirect that switches protocol (very common: plain http://
-// links in old WN issues now redirect to https://) makes Node throw
-// `Protocol "https:" not supported. Expected "http:"` and the link gets
-// reported as broken even though it's perfectly reachable.
-const httpLinkAgent = ssrfFilter.requestFilterHandler(new http.Agent());
-const httpsLinkAgent = ssrfFilter.requestFilterHandler(new https.Agent());
 
 
 // Checks the existence of an absolute url with a HEAD request.
@@ -39,8 +28,8 @@ function checkUrl(url, callback) {
   }
 
   axios.head(url, {
-    httpAgent: httpLinkAgent,
-    httpsAgent: httpsLinkAgent,
+    httpAgent: ssrfAgents.httpAgent,
+    httpsAgent: ssrfAgents.httpsAgent,
     headers: { "User-Agent": userAgent }
   }).then(function() {
     linkCache.set(url, "OK");

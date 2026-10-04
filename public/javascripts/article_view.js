@@ -2,8 +2,8 @@
 
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
-/* exported dragstart, myclick, ondragstartflag, ondragstartLangLabel, showRL */
-/* exported callAndRedraw, setNoTranslation, translate, clickAndLoadLinktext */
+/* exported myclick, ondragstartflag, ondragstartLangLabel, showRL */
+/* exported callAndRedraw, setNoTranslation, translate */
 
 
 // Init This Window with jQuery ready Callback
@@ -481,9 +481,11 @@ function generateGoogleTranslateLink(link, lang) {
   gtlMarkdown = gtlMarkdown.replace("#ORIGIN#", origin);
   gtlMarkdown = gtlMarkdown.replace("#PATHNAME#", pathnameWithSearch);
 
-  const dragstartFunction = "dragstart(event,'" + gtlMarkdown + "');";
-
-  return '<a href="' + gtl + '" target="_blank" ondragstart="' + dragstartFunction + '" >' + lang + "</a>";
+  // build DOM elements instead of an HTML string, the link comes from
+  // the collection field and must not be interpreted as HTML or JavaScript
+  return $("<a>", { href: gtl, target: "_blank" })
+    .text(lang)
+    .on("dragstart", function(event) { dragstart(event.originalEvent, gtlMarkdown); });
 }
 
 
@@ -502,10 +504,18 @@ function onchangeCollection() {
   const regexToken = regexUrlFromCollection;
   let linkList;
   window.linklist = [];
-  let result = "";
+  const result = $("<p>");
   function linkShortener(link) {
     if (link.length < 50) return link;
     return link.substr(0, 40) + " . . . " + link.substr(link.length - 5, 5);
+  }
+  function text(t) {
+    return document.createTextNode(t);
+  }
+  function linkTextLoader(link, field, icon) {
+    return $("<a>", { href: "#" })
+      .append($("<i>", { class: icon }), text("  "))
+      .on("click", function() { clickAndLoadLinktext(this, field, link); });
   }
 
 
@@ -519,23 +529,22 @@ function onchangeCollection() {
     });
     if (found) continue;
     window.linklist.push(link);
-    result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'textContent\',\'' + link + '\')"><i class="fa fa-file-text"></i>  </a>';
-    result += ' <a href = "#" onclick="javascript:clickAndLoadLinktext(this,\'content\',\'' + link + '\')"><i class="fa fa-file-text-o"></i>  </a>';
+    result.append(text(" "), linkTextLoader(link, "textContent", "fa fa-file-text"));
+    result.append(text(" "), linkTextLoader(link, "content", "fa fa-file-text-o"));
 
-    if (window.articleReferences[link] && (window.articleReferences[link]).length > 0) {
-      result += '<a class="badge text-bg-danger" href="' + link + '" target="_blank" >' + linkShortener(link) + " #(Check for Doublette)</a>\n";
-    } else result += '<a class="badge text-bg-secondary" href="' + link + '" target="_blank" >' + linkShortener(link) + "</a>\n";
+    const isDoublette = window.articleReferences[link] && (window.articleReferences[link]).length > 0;
+    result.append($("<a>", { class: "badge " + (isDoublette ? "text-bg-danger" : "text-bg-secondary"), href: link, target: "_blank" })
+      .text(linkShortener(link) + (isDoublette ? " #(Check for Doublette)" : "")), text("\n"));
 
     window.userLanguages.forEach(function(lang) {
-      result += " " + generateGoogleTranslateLink(link, lang);
+      result.append(text(" "), generateGoogleTranslateLink(link, lang));
     });
 
-    result += "<br>\n";
+    result.append($("<br>"), text("\n"));
   }
-  result = "<p>" + result + "</p>";
 
   if (linkArea) {
-    linkArea.html(result);
+    linkArea.empty().append(result);
     linkArea.trigger("change");
   }
 }
@@ -560,13 +569,13 @@ function clickAndLoadLinktext(object, field, link) {
   }
 
   $.get(window.htmlroot + "/article/readability", { link: link }, function(json) {
-    if (typeof json === "string") {
-      json = { content: json, textContent: json };
-    }
     const linkTextPlain = $("#linkTextPlain");
     LinkTextPlainRow.removeClass("invisible");
-    if (field === "textContent") {
-      linkTextPlain.html("<pre>" + json[field] + "</pre>");
+    if (typeof json === "string") {
+      // error message from server, show as plain text
+      linkTextPlain.text(json);
+    } else if (field === "textContent") {
+      linkTextPlain.empty().append($("<pre>").text(json[field]));
     } else {
       linkTextPlain.html(json[field]);
     }

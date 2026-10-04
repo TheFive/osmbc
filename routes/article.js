@@ -6,7 +6,6 @@ import { strict as assert } from "assert";
 import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
 import { renderFile } from "pug";
-import ssrfFilter from "ssrf-req-filter";
 
 
 
@@ -32,9 +31,11 @@ import auth from "../routes/auth.js";
 
 import linkCheck from "../util/linkCheck.js";
 import featureImage from "../util/featureImage.js";
+import ssrfAgents from "../util/ssrfAgents.js";
 
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
+import createDOMPurify from "dompurify";
 
 
 
@@ -790,8 +791,8 @@ function getExternalText(req, res, next) {
   const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   if (link) {
     axios.get(link, {
-      httpAgent: ssrfFilter(link),
-      httpsAgent: ssrfFilter(link),
+      httpAgent: ssrfAgents.httpAgent,
+      httpsAgent: ssrfAgents.httpsAgent,
       headers:
       { "User-Agent": userAgent },
       responseType: "arraybuffer",
@@ -802,16 +803,19 @@ function getExternalText(req, res, next) {
       const article = reader.parse();
       axios.interceptors.response.eject(responseInterseptor);
       if (article && article.content) {
+        // Readability does not sanitize, external pages could inject
+        // event handlers (e.g. onerror) into the editor's OSMBC session
+        article.content = createDOMPurify(doc.window).sanitize(article.content);
         res.json(article);
       } else {
-        res.end("Readability Failed for " + link);
+        res.type("text/plain").end("Readability Failed for " + link);
       };
     }).catch(function(err) {
       axios.interceptors.response.eject(responseInterseptor);
-      res.end(err.message);
+      res.type("text/plain").end(err.message);
     });
   } else {
-    res.end("No Link Found");
+    res.type("text/plain").end("No Link Found");
   }
 }
 

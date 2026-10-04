@@ -28,6 +28,11 @@ describe("model/config", function() {
     should(c.brasil).eql("https://blog.openstreetmap.de/wp-uploads/2016/03/br.svg");
     bddone();
   });
+  it("should not resolve inherited object properties as config name", function () {
+    for (const name of ["__proto__", "constructor", "toString"]) {
+      should.throws(() => configModule.getConfigObject(name, () => {}));
+    }
+  });
   it("should have stored initialised value", async function () {
     const result = await testutil.findJSON("config", { name: "calendarflags" });
     should.exist(result);

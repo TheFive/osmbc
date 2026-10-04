@@ -424,7 +424,9 @@ function initialise(callback) {
     debug("initialise");
     assert(callback);
     if (configMap) return callback();
-    configMap = {};
+    // no prototype, so names like __proto__ or constructor from a
+    // request never resolve to inherited Object properties
+    configMap = Object.create(null);
     series([
       initConfigElement.bind(null, "formulation_tipEN"),
       initConfigElement.bind(null, "formulation_tipDE"),

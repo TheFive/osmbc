@@ -2,9 +2,8 @@
 
 import { load } from "cheerio";
 import axios from "axios";
-import ssrfFilter from "ssrf-req-filter";
-
 import util from "../util/util.js";
+import ssrfAgents from "../util/ssrfAgents.js";
 
 import _debug from "debug";
 const debug = _debug("OSMBC:model:htmltitle");
@@ -66,8 +65,8 @@ async function getTitle(url) {
   const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   try {
     const response = await axios.get(url, {
-      httpAgent: ssrfFilter(url),
-      httpsAgent: ssrfFilter(url),
+      httpAgent: ssrfAgents.httpAgent,
+      httpsAgent: ssrfAgents.httpsAgent,
       timeout: 2000,
       responseType: "arraybuffer",
       responseEncoding: "binary"

@@ -49,15 +49,20 @@ then run without --api-key. An explicit --api-key still wins if both are set.
 
 Add --insecure ONLY when --remote-url points at a local dev server with a
 self-signed cert - never for a real remote, it disables TLS verification
-(mirrors syncBlog.js's own --insecure flag, same caveat).
+(mirrors syncBlog.js's own --insecure flag, same caveat). The script refuses
+--insecure unless the remote host resolves to a loopback or private LAN
+address only. For a locally generated CA (e.g. mkcert), prefer
+REQUESTS_CA_BUNDLE=<rootCA.pem> over --insecure.
 """
 
 import argparse
+import ipaddress
 import json
 import os
 import re
+import socket
 import sys
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 import requests
 
@@ -77,6 +82,14 @@ def fix_double_paren_links(markdown):
     return new_text, new_text != markdown
 
 
+def blog_sync_urls(remote_url, api_key, rest):
+    """The API key is part of the URL path. Returns (url, shown_url): url
+    for the request, shown_url (key masked as ***) for anything printed or
+    raised, so error output can be shared without leaking the key."""
+    base = f"{remote_url.rstrip('/')}/api/blogSync/"
+    return base + quote(api_key, safe='') + rest, base + "***" + rest
+
+
 def fetch_remote_blog(remote_url, api_key, blog_name, verify):
     """GET one blog + all its articles as raw JSON - EVERY article already
     carries every configured language's markdown<LANG> field, so this is
@@ -90,12 +103,12 @@ def fetch_remote_blog(remote_url, api_key, blog_name, verify):
     as "caller correctly believes there is no prior value", so treat a
     missing/empty field as "" too when building `old`, not None/absent.
     """
-    url = f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/{quote(blog_name, safe='')}"
+    url, shown_url = blog_sync_urls(remote_url, api_key, f"/{quote(blog_name, safe='')}")
     response = requests.get(url, verify=verify, timeout=30)
     if response.status_code == 404:
         return None  # no such blog - the range below is generated numerically, gaps are expected
     if response.status_code != 200:
-        raise RuntimeError(f"GET {url} -> HTTP {response.status_code}: {response.text}")
+        raise RuntimeError(f"GET {shown_url} -> HTTP {response.status_code}: {response.text}")
     return response.json()
 
 
@@ -111,10 +124,10 @@ def apply_remote(remote_url, api_key, blog_name, body, verify):
       (see wp-reconcile/blog-sync-merger/withReopenedBlog.js) - normal,
       expected, nothing your script needs to handle.
     """
-    url = f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/{quote(blog_name, safe='')}/apply"
+    url, shown_url = blog_sync_urls(remote_url, api_key, f"/{quote(blog_name, safe='')}/apply")
     response = requests.post(url, json=body, verify=verify, timeout=120)
     if response.status_code != 200:
-        raise RuntimeError(f"POST {url} -> HTTP {response.status_code}: {response.text}")
+        raise RuntimeError(f"POST {shown_url} -> HTTP {response.status_code}: {response.text}")
     return response.json()
 
 
@@ -154,11 +167,11 @@ def fetch_changelog(remote_url, api_key, article_id, property_name, verify):
     unfiltered across every writer, ascending by time; `current` is a
     fresh read of the live value at call time.
     """
-    url = (f"{remote_url.rstrip('/')}/api/blogSync/{quote(api_key, safe='')}/"
-           f"{article_id}/{quote(property_name, safe='')}/changelog")
+    url, shown_url = blog_sync_urls(remote_url, api_key,
+                                    f"/{article_id}/{quote(property_name, safe='')}/changelog")
     response = requests.get(url, verify=verify, timeout=30)
     if response.status_code != 200:
-        raise RuntimeError(f"GET {url} -> HTTP {response.status_code}: {response.text}")
+        raise RuntimeError(f"GET {shown_url} -> HTTP {response.status_code}: {response.text}")
     return response.json()
 
 
@@ -261,6 +274,21 @@ def run(remote_url, api_key, min_blog_number, max_blog_number, commit, verify):
             print(f"  {blog_name}: {len(result['conflicts'])} conflict(s) - NOT overwritten, review manually.", file=sys.stderr)
 
 
+def is_local_remote(remote_url):
+    """True if the host of remote_url resolves to loopback / private LAN
+    addresses only. Guards --insecure, so TLS verification can't be turned
+    off (and the API key sent unverified) against a real remote."""
+    host = urlparse(remote_url).hostname
+    if not host:
+        return False
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror:
+        return False
+    addresses = {ipaddress.ip_address(info[4][0].split("%")[0]) for info in infos}
+    return bool(addresses) and all(a.is_loopback or a.is_private for a in addresses)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--remote-url", required=True, help="Base URL of the target OSMBC instance, e.g. https://osmbc.example.com")
@@ -274,6 +302,9 @@ def main():
     api_key = args.api_key or os.environ.get("OSMBC_BLOGSYNC_APIKEY")
     if not api_key:
         parser.error("no API key: pass --api-key <key> or set the OSMBC_BLOGSYNC_APIKEY environment variable")
+
+    if args.insecure and not is_local_remote(args.remote_url):
+        parser.error(f"--insecure is only allowed for a remote resolving to a loopback or private LAN address, not {args.remote_url}")
 
     verify = not args.insecure
     if args.insecure:

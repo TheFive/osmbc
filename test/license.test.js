@@ -92,6 +92,7 @@ const allowedLicensesProd = [
   "(LGPL-2.0 OR MIT)",
   "Python-2.0",
   "(Unlicense OR Apache-2.0)",
+  "(MPL-2.0 OR Apache-2.0)",
   "(OFL-1.1 AND MIT)",
   "(MIT OR EUPL-1.1+)",
   "(AFL-2.1 OR BSD-3-Clause)",
