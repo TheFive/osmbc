@@ -6,7 +6,6 @@ import { strict as assert } from "assert";
 import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
 import { renderFile } from "pug";
-import ssrfFilter from "ssrf-req-filter";
 
 
 
@@ -32,6 +31,7 @@ import auth from "../routes/auth.js";
 
 import linkCheck from "../util/linkCheck.js";
 import featureImage from "../util/featureImage.js";
+import ssrfAgents from "../util/ssrfAgents.js";
 
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
@@ -791,8 +791,8 @@ function getExternalText(req, res, next) {
   const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   if (link) {
     axios.get(link, {
-      httpAgent: ssrfFilter(link),
-      httpsAgent: ssrfFilter(link),
+      httpAgent: ssrfAgents.httpAgent,
+      httpsAgent: ssrfAgents.httpsAgent,
       headers:
       { "User-Agent": userAgent },
       responseType: "arraybuffer",
