@@ -29,11 +29,17 @@
 //
 // Add --insecure only when --remote-url points at a local dev server with
 // a self-signed cert (e.g. https://localhost:3002) - never for a real
-// remote, it disables TLS certificate verification.
+// remote, it disables TLS certificate verification. The script refuses
+// --insecure unless the remote host resolves to a loopback or private LAN
+// address only (a /etc/hosts alias like osmbc.example.com -> 127.0.0.1 is
+// fine). For a locally generated CA (e.g. mkcert), prefer
+// NODE_EXTRA_CA_CERTS=<rootCA.pem> over --insecure.
 
 import { program } from "commander";
 import axios from "axios";
 import https from "https";
+import dns from "dns/promises";
+import net from "net";
 
 import configModule from "../../model/config.js";
 import articleModule from "../../model/article.js";
@@ -41,6 +47,33 @@ import blogModule from "../../model/blog.js";
 
 import blogSyncMerger from "./blogSyncMerger.js";
 import syncState from "./syncState.js";
+
+const localNetworks = new net.BlockList();
+localNetworks.addSubnet("127.0.0.0", 8, "ipv4");
+localNetworks.addSubnet("10.0.0.0", 8, "ipv4");
+localNetworks.addSubnet("172.16.0.0", 12, "ipv4");
+localNetworks.addSubnet("192.168.0.0", 16, "ipv4");
+localNetworks.addAddress("::1", "ipv6");
+localNetworks.addSubnet("fc00::", 7, "ipv6");
+
+// True if the host of remoteUrl resolves to loopback / private LAN
+// addresses only. Guards --insecure, so TLS verification can't be turned
+// off (and the API key sent unverified) against a real remote.
+export async function isLocalRemote(remoteUrl) {
+  const host = new URL(remoteUrl).hostname.replace(/^\[|\]$/g, "");
+  let addresses;
+  if (net.isIP(host)) {
+    addresses = [{ address: host, family: net.isIP(host) }];
+  } else {
+    try {
+      addresses = await dns.lookup(host, { all: true });
+    } catch {
+      return false;
+    }
+  }
+  return addresses.length > 0 &&
+    addresses.every((a) => localNetworks.check(a.address, a.family === 6 ? "ipv6" : "ipv4"));
+}
 
 function stripTrailingSlash(url) {
   return url.replace(/\/$/, "");
@@ -283,6 +316,12 @@ async function main() {
   const apiKey = options.apiKey || process.env.OSMBC_BLOGSYNC_APIKEY;
   if (!apiKey) {
     console.error("No API key: pass --api-key <key> or set the OSMBC_BLOGSYNC_APIKEY environment variable.");
+    process.exitCode = 1;
+    return;
+  }
+
+  if (options.insecure && !(await isLocalRemote(options.remoteUrl))) {
+    console.error(`--insecure is only allowed for a remote resolving to a loopback or private LAN address, not ${options.remoteUrl}.`);
     process.exitCode = 1;
     return;
   }

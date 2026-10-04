@@ -7,7 +7,7 @@ import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
-import { buildApplyBody, runSync, resolveMode } from "../wp-reconcile/blog-sync-merger/syncBlog.js";
+import { buildApplyBody, runSync, resolveMode, isLocalRemote } from "../wp-reconcile/blog-sync-merger/syncBlog.js";
 import syncState from "../wp-reconcile/blog-sync-merger/syncState.js";
 
 const REMOTE = "http://fake-remote.test";
@@ -57,6 +57,19 @@ describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
     it("should honor an explicit mode regardless of id overlap", function() {
       should(resolveMode("merge", [{ id: 1 }], [{ id: 2 }])).eql("merge");
       should(resolveMode("replace", [{ id: 1 }], [{ id: 1 }])).eql("replace");
+    });
+  });
+
+  describe("isLocalRemote (guard for --insecure)", function() {
+    it("should accept loopback and private LAN remotes", async function() {
+      for (const url of ["https://localhost:3000", "https://127.0.0.1:3000", "https://[::1]:3000", "https://192.168.1.20", "https://10.0.0.5:3000"]) {
+        should(await isLocalRemote(url)).eql(true, url);
+      }
+    });
+    it("should reject public addresses and unresolvable hosts", async function() {
+      for (const url of ["https://8.8.8.8", "https://[2001:4860:4860::8888]", "https://does-not-exist.invalid"]) {
+        should(await isLocalRemote(url)).eql(false, url);
+      }
     });
   });
 
