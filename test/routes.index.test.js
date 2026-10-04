@@ -57,6 +57,28 @@ describe("routes/index", function() {
     return bddone();
   });
 
+  describe("session cookie", function() {
+    function sessionCookie(response) {
+      const name = config.getValue("SessionName");
+      return (response.headers["set-cookie"] || []).find((c) => c.startsWith(name + "="));
+    }
+    it("should be SameSite=Lax and not Secure over plain http", async function () {
+      const response = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const cookie = sessionCookie(response);
+      should.exist(cookie);
+      cookie.should.match(/SameSite=Lax/i);
+      cookie.should.not.match(/Secure/i);
+    });
+    it("should be Secure behind an https proxy", async function () {
+      const response = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" },
+        { headers: { "X-Forwarded-Proto": "https" } });
+      const cookie = sessionCookie(response);
+      should.exist(cookie);
+      cookie.should.match(/; Secure/i);
+      cookie.should.match(/SameSite=Lax/i);
+    });
+  });
+
   describe("route GET /", function() {
     const url = baseLink + "/";
     it("should show home page", async function () {

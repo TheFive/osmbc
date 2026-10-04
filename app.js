@@ -191,11 +191,13 @@ config.logger.info("Set Max Age of cookies to " + ((!cookieMaxAge) ? "default" :
 const sessionstore = createSessionStore(session);
 
 
-// only work with secure cookies, but it looks there are problems in production with it
-// TheFive April 2023.
-let secure = false;
-if (process.env.NODE_ENV === "test") secure = false;
-
+// secure: "auto" marks the cookie Secure whenever the request came in via
+// https. Behind nginx this needs `trust proxy` (limitValues.trustProxy) and
+// nginx sending X-Forwarded-Proto - missing that header made a hard-coded
+// secure: true drop the session cookie in production (April 2023); with
+// "auto" it just falls back to a non-Secure cookie instead of breaking login.
+// sameSite "lax" keeps cross-site POSTs (CSRF) from carrying the session
+// cookie, while the top-level GET back from the OSM OAuth login still does.
 app.use(session(
   {
     store: sessionstore,
@@ -203,7 +205,7 @@ app.use(session(
     secret: config.getValue("SessionSecret", { mustExist: true }),
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: cookieMaxAge, secure: secure }
+    cookie: { maxAge: cookieMaxAge, secure: "auto", sameSite: "lax" }
   }
 ));
 
