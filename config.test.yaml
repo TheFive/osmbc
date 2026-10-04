@@ -135,6 +135,8 @@ Transition:
 limitValues:
   limitWindowsMs: 1000
   limitMaxCount: 2000
+  # like production behind nginx, so tests can simulate an https proxy
+  trustProxy: 1
 
 # Authentication provider settings.
 auth:
