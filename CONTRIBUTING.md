@@ -74,6 +74,12 @@ Closes #1141
 Use `Refs #123` instead of `Closes #123` when the commit relates to an
 issue without resolving it.
 
+Use one footer per issue, with nothing but the number after `#`
+(`Refs #123`, not `Refs #123, #124 (some note)`) — only a plain number
+becomes a changelog link. `#` footers are for GitHub issues only: code
+scanning (CodeQL) alerts have their own numbering, so mention them in
+the commit body instead (e.g. "CodeQL alert 221, js/reflected-xss").
+
 ### Breaking changes
 
 Not currently expected in this project (no external API consumers), but if
