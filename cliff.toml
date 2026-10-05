@@ -5,6 +5,10 @@
 # (refactor, test, ci, docs, build, chore, style, revert) is filtered,
 # see "Multi-commit features" in CONTRIBUTING.md.
 #
+# Only a footer value that is a plain issue number (`Refs #123`) becomes
+# an issue link; anything else (e.g. `Refs #221, #219 (CodeQL ...)`, which
+# are code scanning alert numbers, not issues) is left out.
+#
 # CHANGELOG.md is fully regenerated from the 4.4.9 tag onwards
 # (`npm run changelog`); everything before that is the static
 # CHANGELOG-ARCHIVE.md from the old github_changelog_generator setup.
@@ -30,7 +34,7 @@ body = """
 {% if commit.scope %}{{ commit.scope }}: {% endif %}\
 {{ commit.message }}\
 {% for footer in commit.footers %}\
-{% if footer.token == "Closes" or footer.token == "Refs" or footer.token == "Fixes" %} \
+{% if (footer.token == "Closes" or footer.token == "Refs" or footer.token == "Fixes") and footer.value is matching("^[0-9]+$") %} \
 [#{{ footer.value }}](https://github.com/TheFive/osmbc/issues/{{ footer.value }})\
 {% endif %}\
 {% endfor %}\
