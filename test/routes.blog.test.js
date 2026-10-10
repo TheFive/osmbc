@@ -514,6 +514,24 @@ describe("routes/blog", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
+  describe("route GET /blog/:blog_id translate menu", function () {
+    beforeEach(function (bddone) {
+      testutil.importData({
+        blog: [{ name: "WN444", status: "edit", closeEN: true }],
+        user: [{ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", translationServices: ["deeplPro"] }],
+        clear: true
+      }, bddone);
+    });
+    it("should not offer a translation into a closed language", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 5 });
+      await client.post(baseLink + "/login", { username: "TheFive", password: "TheFive" });
+      const body = await client.get(baseLink + "/blog/WN444");
+
+      body.data.should.containEql("Translate Blog");
+      body.data.should.containEql("name=\"translateENDE\"");
+      body.data.should.not.containEql("name=\"translateDEEN\"");
+    });
+  });
   describe("route GET /blog/:blog_id/stat", function () {
     const url = baseLink + "/blog/WN333/stat";
     it("should get the blog", async function () {

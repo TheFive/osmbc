@@ -115,7 +115,7 @@ mixin reviewBlog(reviewComments,lang)
 
 
 mixin blogTranslateMenu(langFrom,langTo,service)
-  if (!blog["closed"+langTo])
+  if (!blog["close"+langTo])
     a.dropdown-item(
         class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
         onClick =`window.translate('${langFrom}','${langTo}','${service}');return false;`
