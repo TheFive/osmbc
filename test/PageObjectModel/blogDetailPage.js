@@ -24,7 +24,7 @@ class BlogDetailPage extends StandardPage {
   async selectStatus(status) {
     await this.assertPage();
     await (await this._driver.findElement(By.id("status"))).click();
-    await (await this._driver.findElement(By.css("option[value='edit']"))).click();
+    await (await this._driver.findElement(By.css(`option[value='${status}']`))).click();
   }
 
   async clickOK() {

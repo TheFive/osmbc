@@ -495,6 +495,7 @@ function editBlogId(req, res) {
     params: params,
     reviewInWP: reviewInWP,
     copyLanguageFromAnother: copyLanguageFromAnother,
+    statusList: blogModule.statusList,
     categories: blog.getCategories()
   });
 }

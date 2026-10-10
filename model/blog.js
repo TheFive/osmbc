@@ -4,7 +4,7 @@
 import { series, eachOfSeries, each, eachLimit, eachSeries } from "async";
 import language from "../model/language.js";
 import util from "../util/util.js";
-import { FORBIDDEN, CONFLICT } from "http-status-codes";
+import { FORBIDDEN, CONFLICT, BAD_REQUEST } from "http-status-codes";
 import config from "../config.js";
 
 
@@ -28,6 +28,13 @@ import { ZipArchive } from "archiver";
 import blogRenderer from "../render/BlogRenderer.js";
 const markdown = _markdownIt();
 const debug = _debug("OSMBC:model:blog");
+
+// The only values blog.status may take. Code all over checks for these exact
+// strings (e.g. "closed" in isEditable / findBlogsForOutstandingExport and the
+// article SQL filters), so an unknown value silently behaves like an open blog.
+// setAndSave rejects anything else; views/blog/blog_edit.pug builds its
+// dropdown from this list.
+export const BLOG_STATUS = ["open", "edit", "closed", "trash"];
 
 
 
@@ -133,6 +140,14 @@ class Blog {
     // undefined (see the copyDataToBlog skip below). Captured here because
     // `data.old` is stripped before copyDataToBlog runs.
     const explicitOldKeys = data.old ? Object.keys(data.old) : [];
+
+    // Reject unknown status values. Re-submitting a blog's current (legacy)
+    // status unchanged is allowed, so other fields stay editable.
+    if (typeof data.status !== "undefined" && data.status !== self.status && !BLOG_STATUS.includes(data.status)) {
+      const error = new Error("Unknown blog status >" + data.status + "<, allowed: " + BLOG_STATUS.join(", "));
+      error.status = BAD_REQUEST;
+      return callback(error);
+    }
 
     if (data.old) {
       for (const key in data) {
@@ -2029,6 +2044,7 @@ const blogModule = {
   autoCloseBlog: autoCloseBlog,
   createNewBlog: createNewBlog,
   getCategories: getGlobalCategories,
+  statusList: BLOG_STATUS,
   pg: pg,
   Class: Blog
 

@@ -129,7 +129,7 @@ describe("routes/blog", function() {
   });
   describe("route POST /blog/edit/:blog_id", function () {
     const url = baseLink + "/blog/edit/WN333";
-    const form = { name: "WNNew", status: "undefinedstate" };
+    const form = { name: "WNNew", status: "closed" };
     it("should post data on edit blog", async function () {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
@@ -138,7 +138,26 @@ describe("routes/blog", function() {
       body.data.should.containEql("<h2>WNNew</h2>");
       const blog = await blogModule.findById(1);
       should(blog.name).eql("WNNew");
-      should(blog.status).eql("undefinedstate");
+      should(blog.status).eql("closed");
+    });
+    it("should offer exactly the valid status values with matching labels", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/blog/edit/WN333?edit=true");
+
+      for (const s of blogModule.statusList) {
+        body.data.should.match(new RegExp("<option value=\"" + s + "\"( selected(=\"selected\")?)?>" + s + "</option>"));
+      }
+      body.data.should.not.containEql("value=\"close\"");
+    });
+    it("should reject an unknown status", async function () {
+      const client = testutil.getWrappedAxiosClient({ validateStatus: () => true });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const response = await client.post(url, { name: "WNNew", status: "close" });
+
+      should(response.status).eql(HttpStatus.BAD_REQUEST);
+      const blog = await blogModule.findById(1);
+      should(blog.status).not.eql("close");
     });
     it("should deny denied access user",
       testutil.checkPostUrlWithUser({

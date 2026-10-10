@@ -235,7 +235,7 @@ describe("model/blog", function() {
         should.exist(newBlog);
         const id = newBlog.id;
         newBlog.name = "New Title";
-        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", field: "test" }, function(err) {
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "edit", field: "test" }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", id, function(err, result) {
             should.not.exist(err);
@@ -243,7 +243,7 @@ describe("model/blog", function() {
             delete result.categories;
             delete result.startDate;
             delete result.endDate;
-            should(result).eql({ id: id, name: "New Title", status: "published", field: "test", version: 2 });
+            should(result).eql({ id: id, name: "New Title", status: "edit", field: "test", version: 2 });
             logModule.find({ oid: id }, { column: "property" }, function (err, result) {
               should.not.exist(err);
               should.exist(result);
@@ -252,8 +252,44 @@ describe("model/blog", function() {
                 delete result[i].id;
                 delete result[i].timestamp;
               }
-              should(result).containEql(logModule.create({ oid: id, blog: "New Title", user: "user", table: "blog", property: "status", from: "TEST", to: "published" }));
+              should(result).containEql(logModule.create({ oid: id, blog: "New Title", user: "user", table: "blog", property: "status", from: "TEST", to: "edit" }));
               should(result).containEql(logModule.create({ oid: id, blog: "New Title", user: "user", table: "blog", property: "field", to: "test" }));
+              bddone();
+            });
+          });
+        });
+      });
+    });
+
+    it("should reject an unknown status without writing anything", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "BadStatusBlog", status: "edit" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "close", name: "Changed" }, function(err) {
+          should.exist(err);
+          should(err.status).eql(400);
+          should(err.message).eql("Unknown blog status >close<, allowed: open, edit, closed, trash");
+          testutil.getJsonWithId("blog", id, function(err, result) {
+            should.not.exist(err);
+            should(result.status).eql("edit");
+            should(result.name).eql("BadStatusBlog");
+            bddone();
+          });
+        });
+      });
+    });
+    it("should accept an unchanged legacy status so other fields stay editable", function (bddone) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "LegacyStatusBlog", status: "close" }, function(err, newBlog) {
+        should.not.exist(err);
+        const id = newBlog.id;
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "close", name: "Renamed" }, function(err) {
+          should.not.exist(err);
+          newBlog.setAndSave({ OSMUser: "user" }, { status: "closed" }, function(err) {
+            should.not.exist(err);
+            testutil.getJsonWithId("blog", id, function(err, result) {
+              should.not.exist(err);
+              should(result.name).eql("Renamed");
+              should(result.status).eql("closed");
               bddone();
             });
           });
@@ -270,11 +306,11 @@ describe("model/blog", function() {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "TeamStringBlog", status: "TEST" }, function(err, newBlog) {
         should.not.exist(err);
         const id = newBlog.id;
-        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", old: { status: "TEST" } }, function(err) {
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "edit", old: { status: "TEST" } }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", id, function(err, result) {
             should.not.exist(err);
-            should(result.status).eql("published");
+            should(result.status).eql("edit");
             should(result.old).be.undefined();
             bddone();
           });
@@ -289,11 +325,11 @@ describe("model/blog", function() {
         newBlog.setAndSave({ OSMUser: "someone-else" }, { status: "closed" }, function(err) {
           should.not.exist(err);
           // newBlog's in-memory status is now "closed"; claim a stale "TEST" old-value
-          newBlog.setAndSave({ OSMUser: "user" }, { status: "published", old: { status: "TEST" } }, function(err) {
+          newBlog.setAndSave({ OSMUser: "user" }, { status: "edit", old: { status: "TEST" } }, function(err) {
             should.exist(err);
             should(err.message).eql("Field status already changed in DB");
             should(err.status).eql(409);
-            should(err.detail).eql({ oldValue: "TEST", databaseValue: "closed", newValue: "published" });
+            should(err.detail).eql({ oldValue: "TEST", databaseValue: "closed", newValue: "edit" });
             testutil.getJsonWithId("blog", id, function(err, result) {
               should.not.exist(err);
               should(result.status).eql("closed"); // unchanged by the rejected call
@@ -324,11 +360,11 @@ describe("model/blog", function() {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "PartialOldBlog", status: "TEST" }, function(err, newBlog) {
         should.not.exist(err);
         const id = newBlog.id;
-        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", teamStringDE: "Alice", old: { status: "TEST" } }, function(err) {
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "edit", teamStringDE: "Alice", old: { status: "TEST" } }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", id, function(err, result) {
             should.not.exist(err);
-            should(result.status).eql("published");
+            should(result.status).eql("edit");
             should(result.teamStringDE).eql("Alice");
             bddone();
           });
@@ -361,7 +397,7 @@ describe("model/blog", function() {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "SkipBlankBlog", status: "TEST" }, function(err, newBlog) {
         should.not.exist(err);
         const id = newBlog.id;
-        newBlog.setAndSave({ OSMUser: "user" }, { status: "published", teamStringDE: "", old: { status: "TEST" } }, function(err) {
+        newBlog.setAndSave({ OSMUser: "user" }, { status: "edit", teamStringDE: "", old: { status: "TEST" } }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", id, function(err, result) {
             should.not.exist(err);
