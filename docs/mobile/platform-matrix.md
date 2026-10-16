@@ -18,17 +18,22 @@ Desktop (≥ 992 px) stays the reference for **all** use cases.
 ## Cross-cutting prerequisites
 
 Most use cases depend on a few shared changes. They come first.
+Order agreed 2026-10-16: X5 → X3 → X1, then the rest.
 
-| ID | Change | Fixes |
-|---|---|---|
-| X1 | Navbar: does not cover content (height, scrolling inside, closes after an action), works in the browser's "desktop view" (~980 px) | B, G – every use case |
-| X2 | One reachable primary action per edit screen (e.g. Save bar at the bottom of the article view) | C – ART-02/03/05/06/07 |
-| X3 | Blog inline editors get an explicit Save (and visible feedback), not only save-on-blur. **Done 2026-10-16:** Save/Cancel buttons in Overview, Review and Full; saving in the background without page reload (`keepalive`, so leaving the page right away does not lose it); leaving the field still saves; status "saved" / "not saved". Mobile test `test/blog/uc.blog.mobile.test.js`. | H – BLOG-02/03/08 |
-| X4 | Language switching designed for "one language at a time": per article and per blog, all actions of the chosen language available (review, close, comments, progress) | A – ART-03, BLOG-01/03/05–09 |
-| X5 | Replace the Bootstrap 3 class `hidden` in `public/javascripts/article_view.js` with `d-none`. Confirmed 2026-10-16: after a translation the menu entry stayed and the done mark never appeared (all platforms, since 2020-12, `6e5e23e2`). `showRL` uses it too, but is dead code: the article page only renders `article_all_column`. **Done.** | ART-03 on all platforms |
-| X6 | `td.d-none.d-md-block` → `d-md-table-cell` (`blog/blog_overview.pug`); align hidden `th`/`td` in `collect.pug` | E – BLOG-02/04, COL-01/02, also desktop |
-| X7 | Tap alternative for drag-only actions (copy full language text) | F – ART-02/04 |
-| X8 | Article page layout: `article_all_column.pug` puts every language of the user side by side, each column `min-width: 400px` → wider than a phone screen. One language at a time on phones (fits X4). | E – ART-01/02/03 |
+| ID | Change | Fixes | Status |
+|---|---|---|---|
+| X1 | Navbar: does not cover content (height, scrolling inside, closes after an action), works in the browser's "desktop view" (~980 px). Below `lg` the menu is a side panel (offcanvas) that closes after choosing an entry; the content padding follows the real navbar height. Desktop unchanged. Language dropdowns stay until X4. | B, G – every use case | **done** 2026-10-16 (see commit `feat(layout)`). Test `test/layout/uc.navbar.mobile.test.js` (#1155 case). |
+| X2 | One reachable primary action per edit screen (e.g. Save bar at the bottom of the article view) | C – ART-02/03/05/06/07 | open |
+| X3 | Blog inline editors get an explicit Save (and visible feedback), not only save-on-blur. Save/Cancel in Overview, Review and Full; saving in the background without page reload (`keepalive`, so leaving the page right away does not lose it); leaving the field still saves; status "saved" / "not saved". | H – BLOG-02/03/08 | **done** 2026-10-16, `aa7eeb2d`. Test `test/blog/uc.blog.mobile.test.js`. |
+| X4 | "One language at a time" on phones: a separate mobile language on the user (see Decisions 6), one language display and one language choice; per article and per blog all actions of that language available (review, close, comments, progress) | A – ART-03, BLOG-01/03/05–09 | open – design decided 2026-10-16 |
+| X5 | Replace the Bootstrap 3 class `hidden` in `public/javascripts/article_view.js` with `d-none`: after a translation the menu entry stayed and the done mark never appeared (all platforms, since 2020-12, `6e5e23e2`). | ART-03 on all platforms | **done** 2026-10-16, `9de97811` |
+| X6 | `td.d-none.d-md-block` → `d-md-table-cell` (`blog/blog_overview.pug`); align hidden `th`/`td` in `collect.pug` | E – BLOG-02/04, COL-01/02, also desktop | open |
+| X7 | Tap alternative for drag-only actions (copy full language text) | F – ART-02/04 | open |
+| X8 | Article page layout: `article_all_column.pug` puts every language of the user side by side, each column `min-width: 400px` → wider than a phone screen. One language at a time on phones. | E – ART-01/02/03 | open – together with X4 |
+
+Related cleanups (dead code removed while working in the area):
+`208bd271` (unused article column templates, `showRL`),
+`c1d3552b` (unused blog templates, TBC editor script).
 
 ## Measured usage (access log 2026-09-10 – 2026-10-11)
 
@@ -125,6 +130,15 @@ Based on the polls (5 participants), the access log and the analysis:
 3. **Admin is desktop only**: ADM-01 to ADM-05 = D.
 4. **Order:** X5 first (also a desktop bug), then X3, then X1.
 5. All other use cases: the proposed level is accepted.
+
+6. **X4 detail (2026-10-16): a separate mobile language.** On a phone the
+   user works in exactly one language. It is stored separately on the user,
+   so switching it on the phone does not change the desktop language pair
+   and vice versa. Mobile mode is detected by screen width (a small script
+   stores it in a cookie; the browser's "desktop view" counts as desktop).
+   Default: the user's main language. Choice: all active languages (e.g. for
+   reviewers checking several languages). The phone UI then needs only one
+   language display and one language choice.
 
 Feedback that is not in the catalogue yet: be notified when someone submits a
 link, and discuss the submission with its author (esp. guests) on the phone.

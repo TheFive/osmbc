@@ -124,24 +124,29 @@ block all
             - listall = listall.concat(layout.listOfOpenBlog)
 
           
-          button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+          button.navbar-toggler(type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation")
             span.navbar-toggler-icon
           +homeButton("navbar-brand")  
-          div.collapse.navbar-collapse#navbarSupportedContent
-            ul.navbar-nav
-              +collectMenu
-              +inboxMenu
-              
-              +tbcMenu
-              +myGuestArticleMenu
-              +firstBlogOfList(listall,2)
-              +articleMenu    
-              +toolMenu
-              block additionalMenuMain    
-            ul.navbar-nav.ms-auto
-              +helpMenu(layout.helpMenu)
-              block additionalMenuRight
-              +userAvatar
+          //- below lg the menu is a side panel (offcanvas), from lg on a normal menu bar
+          div.offcanvas.offcanvas-end#navbarSupportedContent(tabindex="-1" aria-labelledby="navbarSupportedContentLabel")
+            div.offcanvas-header
+              h5.offcanvas-title#navbarSupportedContentLabel=appName
+              button.btn-close(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+            div.offcanvas-body.flex-grow-1
+              ul.navbar-nav
+                +collectMenu
+                +inboxMenu
+                
+                +tbcMenu
+                +myGuestArticleMenu
+                +firstBlogOfList(listall,2)
+                +articleMenu    
+                +toolMenu
+                block additionalMenuMain    
+              ul.navbar-nav.ms-auto
+                +helpMenu(layout.helpMenu)
+                block additionalMenuRight
+                +userAvatar
 
 
       .container-fluid
@@ -177,6 +182,28 @@ block all
 
         // Init This Window with jQuery ready Callback
         window.htmlroot = "!{layout.htmlroot}";
+
+      script(nonce=cspNonce).
+        // keep the content below the fixed navbar, whatever its height
+        (function () {
+          // an adopted style sheet does not change the DOM (style.css has a fallback)
+          var navbar = document.getElementById("fixedNavbar");
+          if (window.CSSStyleSheet && document.adoptedStyleSheets && window.ResizeObserver) {
+            var sheet = new CSSStyleSheet();
+            document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
+            var fit = function () { sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; }"); };
+            fit();
+            new ResizeObserver(fit).observe(navbar);
+          }
+          // close the side panel after choosing an entry (also for script actions)
+          var panel = document.getElementById("navbarSupportedContent");
+          panel.addEventListener("click", function (event) {
+            var entry = event.target.closest(".dropdown-item, .nav-link:not(.dropdown-toggle)");
+            if (!entry) return;
+            var instance = window.bootstrap.Offcanvas.getInstance(panel);
+            if (instance) instance.hide();
+          });
+        })();
 
       block scripts_to_load 
 
