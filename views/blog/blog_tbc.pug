@@ -81,12 +81,8 @@ block content
 
 
 
-block append scripts_to_load
-  script(src=layout.htmlroot + "/javascripts/markdown-it.min.js?osmbc_v=" + layout.osmbc_version)
-
 block append scripts_to_execute
   script(nonce=cspNonce).
-    var openEditor = null;
     window.onload = function() {
       
       if (typeof(Storage)!=="undefined") {
@@ -109,11 +105,3 @@ block append scripts_to_execute
         window.sessionStorage.blogY = s.y;
       }
     };
-
-    function onLeaveText(id) {
-
-      var oldValue = document.getElementById("oldMarkdown"+id).value;
-      var newValue = document.getElementById("markdown"+id).value;
-      if (oldValue === newValue) return;
-      document.getElementById('EditArticle'+id).submit();
-    }
