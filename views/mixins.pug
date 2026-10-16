@@ -117,14 +117,14 @@ mixin languageDisplay(article,options)
       - if (!article.isChangeAllowed("markdown"+lang)) style="color:black"
       if (article && article["markdown" + lang])
           if (article["markdown" + lang] !== "no translation")
-              span.badge.osmbc-label-markdown(onclick=onClick style=style)=lang
+              span.badge.osmbc-label-markdown(onclick=(onClick || undefined) style=style)=lang
           else
-              span.badge.osmbc-label-no-translation(onclick=onClick style=style)=lang
+              span.badge.osmbc-label-no-translation(onclick=(onClick || undefined) style=style)=lang
       else
         if (article && article.collection)
-          span.badge.osmbc-label-collect(onclick=onClick style=style)=lang
+          span.badge.osmbc-label-collect(onclick=(onClick || undefined) style=style)=lang
         else
-          span.badge.osmbc-not-formulated(onclick=onClick style=style)=lang
+          span.badge.osmbc-not-formulated(onclick=(onClick || undefined) style=style)=lang
 
 mixin voteDisplay(article,options)
   div.d-flex.flex-nowrap

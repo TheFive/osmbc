@@ -2,7 +2,7 @@
 
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
-/* exported myclick, ondragstartflag, ondragstartLangLabel, showRL */
+/* exported myclick, ondragstartflag, ondragstartLangLabel */
 /* exported callAndRedraw, setNoTranslation, translate */
 
 
@@ -607,16 +607,6 @@ function FitToContent() {
     textfield.style.height = adjustedHeight + "px";
   }
 }
-
-// Enable & Disable the different languages
-function showRL(what) {
-  $(".RL").addClass("d-none");
-  $(".RLOFF").removeClass("d-none");
-  if (what === window.leftLang) what = window.rightLang;
-  $(".RL-" + what).removeClass("d-none");
-  $(".RLOFF-" + what).addClass("d-none");
-}
-
 
 function syncPlaceholder() {
   const c = $("#categoryEN").val();
