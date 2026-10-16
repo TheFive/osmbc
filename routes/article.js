@@ -681,6 +681,8 @@ function postSetMarkdown(req, res, next) {
     (cb) => article.setAndSave(req.user, change, cb)
   ], function(err) {
     if (err) return next(err);
+    // inline editors in the blog views save in the background
+    if (req.xhr) return res.json({ markdown: markdown });
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);

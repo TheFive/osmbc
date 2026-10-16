@@ -183,7 +183,9 @@ while layout.user["blogSetting"+v]
                   <ul class="preview" id="preview2"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea></form>
+                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
+                    <div class="d-flex gap-2 my-2"><button class="btn btn-primary" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Save</button><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button></div>
+                  </form>
                   <p></p>
                 </div>
               </div>
@@ -228,7 +230,9 @@ while layout.user["blogSetting"+v]
                 <div class="card-body">
                   <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Venue|Wo|Was|Online|Wann|Land|
-|-----|--|---|------|----|----|</textarea></form>
+|-----|--|---|------|----|----|</textarea>
+                    <div class="d-flex gap-2 my-2"><button class="btn btn-primary" type="button" id="inlineSave1" onmousedown="event.preventDefault();" onclick="saveInlineEditor(1,'',true);">Save</button><button class="btn btn-secondary" type="button" id="inlineCancel1" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(1,'');">Cancel</button></div>
+                  </form>
                   <p><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
                 </div>
               </div>
@@ -375,14 +379,81 @@ while layout.user["blogSetting"+v]
 
 
 
-      function onLeaveText(id, column) {
-        if (!column) column = "";
+      // Inline editors save in the background, without reloading the page.
+      // Leaving the text field saves (desktop habit), Save also closes the
+      // editor, Cancel goes back to the last saved text.
+      var inlineSaves = {};
 
-        var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
-        var newValue = document.getElementById(column + "markdown" + id).value;
-        if (oldValue === newValue) return;
-        form = document.getElementById(column + 'EditArticle' + id);
-        form.submit();
+      function onLeaveText(id, column) {
+        saveInlineEditor(id, column, false);
+      }
+
+      function inlineStatus(id, column, text, cls) {
+        var editor = document.getElementById(column + "div" + id);
+        var status = document.getElementById(column + "saveStatus" + id);
+        if (!status) {
+          status = document.createElement("span");
+          status.id = column + "saveStatus" + id;
+          editor.insertAdjacentElement("afterend", status);
+        }
+        status.className = "badge " + cls;
+        status.textContent = text;
+        if (cls === "text-bg-success") {
+          setTimeout(function() {
+            if (status.textContent === text) status.className = "d-none";
+          }, 4000);
+        }
+      }
+
+      function closeInlineEditor(id, column) {
+        var editor = document.getElementById(column + "div" + id);
+        editor.classList.add("d-none");
+        if (openEditor === editor) openEditor = null;
+      }
+
+      function saveInlineEditor(id, column, close) {
+        if (!column) column = "";
+        var key = column + id;
+        if (inlineSaves[key]) return inlineSaves[key].then(function() {
+          return saveInlineEditor(id, column, close);
+        });
+        var form = document.getElementById(column + "EditArticle" + id);
+        var oldField = document.getElementById(column + "oldMarkdown" + id);
+        var field = document.getElementById(column + "markdown" + id);
+        if (oldField.value === field.value) {
+          if (close) closeInlineEditor(id, column);
+          return Promise.resolve();
+        }
+        var value = field.value;
+        inlineStatus(id, column, "saving …", "text-bg-secondary");
+        // keepalive: the save completes even if the user leaves the page right away
+        inlineSaves[key] = fetch(form.action, {
+          method: "POST",
+          keepalive: true,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json"
+          },
+          body: new URLSearchParams(new FormData(form))
+        }).then(function(res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          oldField.value = value;
+          inlineStatus(id, column, "saved", "text-bg-success");
+          if (close) closeInlineEditor(id, column);
+        }).catch(function(err) {
+          console.error(err);
+          inlineStatus(id, column, "not saved – please reload the page", "text-bg-danger");
+        }).finally(function() {
+          delete inlineSaves[key];
+        });
+        return inlineSaves[key];
+      }
+
+      function cancelInlineEditor(id, column) {
+        if (!column) column = "";
+        document.getElementById(column + "markdown" + id).value = document.getElementById(column + "oldMarkdown" + id).value;
+        onchangeMarkdown(id, column);
+        closeInlineEditor(id, column);
       }
 
 

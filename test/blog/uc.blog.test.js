@@ -214,6 +214,9 @@ describe("uc/blog", function() {
 
         await blogPage.typeEditForm(previousText, "Changed Text in full review");
         await blogPage.clickOnArticle("Digitalcourage suggests");
+        // saved in the background, reload to see what the server stored
+        await blogPage.waitForInlineSaved();
+        await driver.navigate().refresh();
         should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in full review");
       });
       it("should show Overview and Edit Article", async function() {
@@ -249,6 +252,7 @@ describe("uc/blog", function() {
 
 
         await blogPage.clickOnArticle("jeden Tag...");
+        await blogPage.waitForInlineSaved();
 
 
         await blogPage.clickBlogMenu("WN290");
@@ -277,6 +281,9 @@ describe("uc/blog", function() {
 
         await blogPage.typeEditForm(previousText, "Changed Text in Review review");
         await blogPage.clickOnArticle("Im Forum wird darüber");
+        // saved in the background, reload to see what the server stored
+        await blogPage.waitForInlineSaved();
+        await driver.navigate().refresh();
 
         should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in Review review");
         should(errors).eql([]);

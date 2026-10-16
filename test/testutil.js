@@ -643,13 +643,28 @@ function getWrappedAxiosClient(options) {
   };
 }
 
-async function getNewDriver(username) {
+// Devices for getNewDriver(username, { device }). "phone" emulates a
+// typical Android phone (most editors use Firefox on Android, the layout
+// is the same in Chrome's emulation).
+const testDevices = {
+  phone: {
+    deviceMetrics: { width: 390, height: 844, pixelRatio: 3, touch: true },
+    userAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36"
+  }
+};
+
+async function getNewDriver(username, options = {}) {
   const chromeOptions = new chrome.Options();
   const isHeadless = process.env.TEST_HEADLESS === "TRUE";
   const isLinux = process.platform === "linux";
 
   if (isHeadless) chromeOptions.addArguments("headless=new");
-  chromeOptions.addArguments("window-size=1920,1080");
+  if (options.device) {
+    if (!testDevices[options.device]) throw new Error("Unknown test device " + options.device);
+    chromeOptions.setMobileEmulation(testDevices[options.device]);
+  } else {
+    chromeOptions.addArguments("window-size=1920,1080");
+  }
   chromeOptions.addArguments("disable-search-engine-choice-screen");
   chromeOptions.addArguments("disable-infobars");
 

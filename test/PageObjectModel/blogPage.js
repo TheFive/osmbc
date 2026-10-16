@@ -216,6 +216,11 @@ class BlogPage extends StandardPage {
     return editForm;
   }
 
+  // inline editors save in the background and show "saved" when done
+  async waitForInlineSaved() {
+    await this._driver.wait(until.elementLocated(By.xpath("//span[contains(@id,'saveStatus') and normalize-space(.)='saved']")), 5000);
+  }
+
   async getEditFormContent(articleShown) {
     await this.assertPage();
     const editForm = await this.getEditForm(articleShown);
