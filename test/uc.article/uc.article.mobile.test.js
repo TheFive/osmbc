@@ -64,6 +64,16 @@ describe("uc.article save bar", function() {
     await barSave.click();
     await driver.wait(async () => (await articleModule.findById(articleId)).markdownEN === "Text EN", 5000, "text not saved");
   });
+  it("should copy the full text of a language by tapping its label (X7)", async function() {
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    await driver.get(osmbcLink("/article/" + articleId));
+    // headless Chrome has no real clipboard: record what is written to it
+    await driver.executeScript("window.copied = null; navigator.clipboard.writeText = (t) => { window.copied = t; return Promise.resolve(); };");
+    const label = await driver.findElement(By.xpath("//span[starts-with(@onclick, \"copyLanguageText('DE'\")]"));
+    await label.click();
+    await driver.wait(async () => (await label.getText()) === "copied", 3000, "no feedback on the label");
+    should(await driver.executeScript("return window.copied;")).eql("Text DE");
+  });
   it("should not show the bar on a desktop", async function() {
     driver = await testutil.getNewDriver("TheFive");
     await driver.get(osmbcLink("/article/" + articleId));

@@ -57,7 +57,8 @@ block content
                   td
                     a(href=layout.htmlroot+"/article/" + article.id)=((article.title)?article.title:"No Title")
                   td.d-none.d-sm-table-cell=article.categoryEN
-                  td.pre=article.collection
+                  //- hidden on phones like its column header
+                  td.pre.d-none.d-sm-table-cell=article.collection
                 tr.d-none(class="class_" + article.id)
                   td
                   td(colspan=1)

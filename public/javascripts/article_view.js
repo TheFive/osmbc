@@ -2,7 +2,7 @@
 
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
-/* exported myclick, ondragstartflag, ondragstartLangLabel */
+/* exported myclick, ondragstartflag, ondragstartLangLabel, copyLanguageText */
 /* exported callAndRedraw, setNoTranslation, translate */
 
 
@@ -593,6 +593,22 @@ function ondragstartflag (event, id) {
 function ondragstartLangLabel(event, lang) {
   const v = $("#markdown" + lang).val();
   event.dataTransfer.setData("TEXT", v);
+}
+
+// Tap alternative to dragging a language label: copy the full text of that
+// language to the clipboard and show it briefly on the label.
+function copyLanguageText(lang, label) {
+  const text = $("#markdown" + lang).val();
+  const original = label.textContent;
+  function feedback(message) {
+    label.textContent = message;
+    setTimeout(function () { label.textContent = original; }, 1500);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { feedback(" copied "); }, function () { feedback(" not copied "); });
+  } else {
+    feedback(" not copied ");
+  }
 }
 
 

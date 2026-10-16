@@ -68,6 +68,10 @@ describe("uc/blog mobile inline editor", function() {
     beforeEach(async function() {
       driver = await testutil.getNewDriver("TheFive", { device: "phone" });
     });
+    it("should hide the optional overview columns", async function() {
+      await driver.get(osmbcLink("/blog/WN1/overview"));
+      should(new Set(await overviewCellDisplays())).eql(new Set(["none"]));
+    });
     it("should save with the Save button without reloading the page", async function() {
       const field = await openEditor();
       await replaceText(field, "Neuer Text");
@@ -93,9 +97,20 @@ describe("uc/blog mobile inline editor", function() {
       should(await storedMarkdown()).eql("Alter Text");
     });
   });
+  // cells hidden on phones must still be table cells on a desktop (X6)
+  async function overviewCellDisplays() {
+    return driver.executeScript("return Array.from(document.querySelectorAll('td.d-md-table-cell')).map(td => getComputedStyle(td).display);");
+  }
+
   describe("on a desktop", function() {
     beforeEach(async function() {
       driver = await testutil.getNewDriver("TheFive");
+    });
+    it("should show the optional overview columns as table cells", async function() {
+      await driver.get(osmbcLink("/blog/WN1/overview"));
+      const displays = await overviewCellDisplays();
+      should(displays.length).be.above(0);
+      should(new Set(displays)).eql(new Set(["table-cell"]));
     });
     it("should still save when leaving the text field, without reloading", async function() {
       const field = await openEditor();

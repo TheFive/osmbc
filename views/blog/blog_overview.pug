@@ -13,7 +13,7 @@ mixin displayOverviewRow(a)
       td
         +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
         - predecessorId = a.id
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
         div.d-flex.flex-nowrap
           if showVisibleLanguages
             +languageDisplay(a,{short: true})
@@ -26,7 +26,7 @@ mixin displayOverviewRow(a)
           +previewDiv(a, lang)
             ul.no-margin
               |!{renderer.articleTitle(lang,a)}
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
         if (showCollector && a.author && a.author.collection)
           each b in a.author.collection.split(",")
             +userLabel(b,"osmbc-label-collect")
@@ -34,7 +34,7 @@ mixin displayOverviewRow(a)
           each b in a.author["markdown"+lang].split(",")
             +userLabel(b,"osmbc-label-markdown")
 
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
         if (showLanguages)
           +languageDisplay(a)
 
@@ -42,7 +42,7 @@ mixin displayOverviewRow(a)
 
     tr
       td
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
       td
         div.card.d-none(id="div" + a.id)
           div.card-header
@@ -123,11 +123,11 @@ block blogcontent
       if (articles[c.EN])
         tr
           td
-          td.d-none.d-md-block
+          td.d-none.d-md-table-cell
           td
             |!{renderer.categoryTitle(lang,c)}
-          td.d-none.d-md-block
-          td.d-none.d-md-block
+          td.d-none.d-md-table-cell
+          td.d-none.d-md-table-cell
         for a in articles[c.EN]
           +displayOverviewRow(a)
         - delete articles[c.EN]
@@ -135,7 +135,7 @@ block blogcontent
     - for(c in articles)
       tr
         td
-        td.d-none.d-md-block
+        td.d-none.d-md-table-cell
           h1="Wrong Categorie "+c
       for a in articles[c]
         +displayOverviewRow(a)
@@ -143,14 +143,14 @@ block blogcontent
     if futureArticles
       tr
         td
-        td.d-none.d-md-block
+        td.d-none.d-md-table-cell
         td
           h1="Future Articles"
       for c,k in futureArticles
 
         tr
           td
-          td.d-none.d-md-block
+          td.d-none.d-md-table-cell
           td
             h4(style="color:grey")=k
         each a in futureArticles[k]
