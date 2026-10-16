@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.5.0-beta.1](https://github.com/TheFive/osmbc/tree/4.5.0-beta.1) (2026-10-16)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.10...4.5.0-beta.1)
+
+**Features:**
+
+- blog: add save and cancel buttons to the blog inline editors
+- layout: open the menu as a side panel on small screens [#1155](https://github.com/TheFive/osmbc/issues/1155)
+- article: keep save reachable in a bar at the bottom on small screens [#1155](https://github.com/TheFive/osmbc/issues/1155)
+- mobile: work in one language on small screens [#1154](https://github.com/TheFive/osmbc/issues/1154)
+
+**Fixed bugs:**
+
+- blog: store "closed" instead of "close" from the blog edit form
+- views: hide translate menu entries for closed target languages
+- article: show translate progress and done mark again
+- views: table cells in the blog overview and tap to copy a language text
+
 ## [4.4.10](https://github.com/TheFive/osmbc/tree/4.4.10) (2026-10-05)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.9...4.4.10)
