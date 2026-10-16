@@ -10,10 +10,6 @@
 //   OSMBC_SYNC_STATE_FILE to the command (read by config.js and syncState.js)
 // - drops the database and temp directory afterwards, also on Ctrl-C
 //   (--keep leaves both for debugging)
-// - prints a progress line about every 20 s, e.g.
-//   "[ progress: 412/903 tests · 46 % of time · 2:10 of ~4:40 ]". It counts the
-//   mocha spec reporter's result lines; the totals come from the last
-//   successful run of the same command (.test-stats.json, gitignored)
 //
 // config.test.yaml stays untouched; its postgres section is only used for the
 // admin connection that creates and drops the run's database.
@@ -105,51 +101,10 @@ async function cleanup() {
   }
 }
 
-const statsFile = path.join(rootDir, ".test-stats.json");
-const statsKey = args.join(" ");
-function readStats() {
-  try {
-    return JSON.parse(fs.readFileSync(statsFile, "utf8"));
-  } catch (err) {
-    return {};
-  }
-}
-const lastRun = readStats()[statsKey];
-
-function minutes(ms) {
-  const s = Math.round(ms / 1000);
-  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
-}
-
-const startTime = Date.now();
-let testsDone = 0;
-let summaryReached = false; // after "N passing" the failures are listed again
-function countLine(line) {
-  // eslint-disable-next-line no-control-regex
-  line = line.replace(/\x1b\[[0-9;]*m/g, "");
-  if (summaryReached) return;
-  if (/^\s+\d+ passing/.test(line)) summaryReached = true;
-  else if (/^\s+(✔|✓|- |\d+\) )/.test(line)) testsDone++;
-}
-function progressLine() {
-  const elapsed = Date.now() - startTime;
-  let text = "[ progress: " + testsDone;
-  if (lastRun) {
-    text += "/" + lastRun.tests + " tests · " +
-      Math.min(99, Math.round(100 * elapsed / lastRun.ms)) + " % of time · " +
-      minutes(elapsed) + " of ~" + minutes(lastRun.ms);
-  } else {
-    text += " tests · " + minutes(elapsed) + " (no earlier run to compare)";
-  }
-  return text + " ]\n";
-}
-
 const child = spawn(args[0], args.slice(1), {
-  stdio: ["inherit", "pipe", "inherit"],
+  stdio: "inherit",
   env: {
     ...process.env,
-    // stdout is a pipe now: keep mocha's colours when the terminal has them
-    ...(process.stdout.isTTY ? { MOCHA_COLORS: "1" } : {}),
     OSMBC_TEST_PORT: String(port),
     OSMBC_TEST_DB: dbName,
     OSMBC_TEST_TMPDIR: tmpDir,
@@ -157,45 +112,12 @@ const child = spawn(args[0], args.slice(1), {
   }
 });
 
-// pass the output through and insert the progress line between lines
-let partial = "";
-let progressDue = false;
-child.stdout.on("data", (chunk) => {
-  process.stdout.write(chunk);
-  const lines = (partial + chunk.toString()).split("\n");
-  partial = lines.pop();
-  lines.forEach(countLine);
-  if (progressDue && partial === "" && !summaryReached) {
-    progressDue = false;
-    process.stdout.write(progressLine());
-  }
-});
-const progressTimer = setInterval(() => {
-  if (summaryReached) return;
-  if (partial === "") process.stdout.write(progressLine());
-  else progressDue = true;
-}, 20000);
-
-function saveStats(code) {
-  if (code !== 0 || testsDone === 0) return;
-  const stats = readStats();
-  stats[statsKey] = { tests: testsDone, ms: Date.now() - startTime };
-  try {
-    fs.writeFileSync(statsFile, JSON.stringify(stats, null, 2) + "\n");
-  } catch (err) {
-    console.error("Could not write " + statsFile + ": " + err.message);
-  }
-}
-
 // Ctrl-C reaches the child via the process group, SIGTERM is forwarded;
 // either way wait for the child to exit, then clean up
 process.on("SIGINT", () => {});
 process.on("SIGTERM", () => child.kill("SIGTERM"));
 
-// "close" waits until all output is read, "exit" may come earlier
-child.on("close", async (code, signal) => {
-  clearInterval(progressTimer);
-  saveStats(code);
+child.on("exit", async (code, signal) => {
   await cleanup();
   process.exit(code ?? (signal ? 1 : 0));
 });
