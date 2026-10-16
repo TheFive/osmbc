@@ -610,11 +610,11 @@ function FitToContent() {
 
 // Enable & Disable the different languages
 function showRL(what) {
-  $(".RL").addClass("hidden");
-  $(".RLOFF").removeClass("hidden");
+  $(".RL").addClass("d-none");
+  $(".RLOFF").removeClass("d-none");
   if (what === window.leftLang) what = window.rightLang;
-  $(".RL-" + what).removeClass("hidden");
-  $(".RLOFF-" + what).addClass("hidden");
+  $(".RL-" + what).removeClass("d-none");
+  $(".RLOFF-" + what).addClass("d-none");
 }
 
 
@@ -752,8 +752,8 @@ function setNoTranslation() {
 function translate(langFrom, langToParam, service) {
   if (!Array.isArray(langToParam)) langToParam = [langToParam];
   langToParam.forEach(function(langTo) {
-    $(".translate" + langFrom + langTo).addClass("hidden");
-    $(".translateWait" + langFrom + langTo).removeClass("hidden");
+    $(".translate" + langFrom + langTo).addClass("d-none");
+    $(".translateWait" + langFrom + langTo).removeClass("d-none");
     const from =  langFrom.toLowerCase();
     const to = langTo.toLowerCase();
     let originalText = document.getElementById("preview" + langFrom).innerText;
@@ -763,18 +763,18 @@ function translate(langFrom, langToParam, service) {
     if (service !== "deepl") {
       jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
         // data = data.replace(/] \(/g, "](");
-        $(".translateWait" + langFrom + langTo).addClass("hidden");
-        $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
+        $(".translateWait" + langFrom + langTo).addClass("d-none");
+        $(".translateDone" + langFrom + langTo + "." + service).removeClass("d-none");
         $("#markdown" + langTo).val(data).trigger("change");
       }).fail(function () {
-        $(".translateWait" + langFrom + langTo).addClass("hidden");
-        $(".translateError" + langFrom + langTo).removeClass("hidden");
+        $(".translateWait" + langFrom + langTo).addClass("d-none");
+        $(".translateError" + langFrom + langTo).removeClass("d-none");
       });
     } else {
       // service is deepl unpaid, just open the window
       window.open("https://www.deepl.com/translator#" + langFrom + "/" + langTo + "/" + originalText, "_blank");
-      $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
+      $(".translateWait" + langFrom + langTo).addClass("d-none");
+      $(".translateDone" + langFrom + langTo + "." + service).removeClass("d-none");
     }
   });
 }

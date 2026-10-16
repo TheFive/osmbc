@@ -11,7 +11,7 @@ import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 import { cmdCtrl } from "../../test/PageObjectModel/page.js";
-import { Key } from "selenium-webdriver";
+import { By, Key } from "selenium-webdriver";
 
 import util from "../../util/util.js";
 import config from "../../config.js";
@@ -50,7 +50,7 @@ describe("uc.article", function() {
     testutil.startServerSync();
     await testutil.clearDB();
 
-    await userModule.createNewUser({ OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", secondLang: "EN", email: "a@b.c" });
+    await userModule.createNewUser({ OSMUser: "TheFive", access: "full", language: "DE", mainLang: "DE", secondLang: "EN", email: "a@b.c", translationServices: ["copy"] });
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "blog" });
     await articleModule.createNewArticle({ blog: "blog", collection: "https://www.test.de/holla", markdownDE: "[Text](https://www.test.de/holla) lorem ipsum dolores.", markdownEN: "[Text](https://www.test.de/holla) lerom upsim deloros." });
     await articleModule.createNewArticle({ blog: "blog", collection: "https://www.tst.äd/holla", markdownDE: "[Text](https://www.tst.äd/holla) ist eine gute Referenz." });
@@ -333,6 +333,22 @@ describe("uc.article", function() {
       should(article.commentList.length).eql(1);
       should(article.commentList[0].text).eql("And Change It");
       should(article.commentList[0].user).eql("TheFive");
+    });
+  });
+  describe("Translate feedback", function() {
+    this.timeout(maxTimer);
+    it("should replace the menu entry with a done mark after translating", async function() {
+      const article = await articleModule.createNewArticle({ blog: "blog", markdownDE: "Text DE" });
+      await driver.get(osmbcLink("/article/" + article.id));
+      const entry = await driver.findElement(By.css(".translateDEEN"));
+      const done = await driver.findElement(By.css(".translateDoneDEEN.copy"));
+
+      await driver.findElement(By.id("articleTranslateMenu")).click();
+      await entry.click();
+      await osmbcApp.getArticlePage().waitMarkdownInputToBe("EN", "Text DE");
+
+      should(await entry.getAttribute("class")).match(/\bd-none\b/);
+      should(await done.getAttribute("class")).not.match(/\bd-none\b/);
     });
   });
   describe("Translate", function() {
