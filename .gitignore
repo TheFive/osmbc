@@ -24,7 +24,6 @@ data.json
 !package-lock.json
 profile_logs
 .nyc_output
-.test-stats.json
 *_actual.md
 
 coverage/
