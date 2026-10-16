@@ -1,11 +1,7 @@
 import should from "should";
 import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { loadKnownRemoteIds, recordCreated, isReplaced, markReplaced, loadReplacedCreatedIds } from "../wp-reconcile/blog-sync-merger/syncState.js";
+import { loadKnownRemoteIds, recordCreated, isReplaced, markReplaced, loadReplacedCreatedIds, STATE_FILE } from "../wp-reconcile/blog-sync-merger/syncState.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STATE_FILE = path.join(__dirname, "..", "wp-reconcile", "blog-sync-merger", ".sync-state.json");
 
 describe("wp-reconcile/blog-sync-merger/syncState", function() {
   let originalContent;

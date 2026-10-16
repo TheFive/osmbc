@@ -1,17 +1,13 @@
 import should from "should";
 import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import { rollbackArticle, rollbackBlog, rollbackReplace } from "../wp-reconcile/blog-sync-merger/rollback.js";
 import { withReopenedBlog } from "../wp-reconcile/blog-sync-merger/withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../notification/migrationFilter.js";
-import syncState from "../wp-reconcile/blog-sync-merger/syncState.js";
+import syncState, { STATE_FILE } from "../wp-reconcile/blog-sync-merger/syncState.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STATE_FILE = path.join(__dirname, "..", "wp-reconcile", "blog-sync-merger", ".sync-state.json");
 
 const migrationUser = { OSMUser: SYNTHETIC_MIGRATION_USER_NAME };
 

@@ -1,18 +1,14 @@
 import should from "should";
 import nock from "nock";
 import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
 import { buildApplyBody, runSync, resolveMode, isLocalRemote } from "../wp-reconcile/blog-sync-merger/syncBlog.js";
-import syncState from "../wp-reconcile/blog-sync-merger/syncState.js";
+import syncState, { STATE_FILE } from "../wp-reconcile/blog-sync-merger/syncState.js";
 
 const REMOTE = "http://fake-remote.test";
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STATE_FILE = path.join(__dirname, "..", "wp-reconcile", "blog-sync-merger", ".sync-state.json");
 
 describe("wp-reconcile/blog-sync-merger/syncBlog", function() {
   // resolveMode/runReplace read+write the real, gitignored .sync-state.json

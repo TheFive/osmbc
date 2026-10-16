@@ -14,6 +14,83 @@ Following development tools are required
 
 More info in the [Installation Guide](Install_Guide.md).
 
+## Tests
+
+Tests use mocha; the files are in `test/`. Requirements:
+
+* a local Postgres server. `config.test.yaml` holds the connection (user
+  `postgres`/`postgres` on `localhost:5432`); the `POSTGRES_HOST`,
+  `POSTGRES_PORT`, `POSTGRES_USER` and `POSTGRES_PASSWORD` environment
+  variables override it. The user must be allowed to create databases.
+* Chrome for the Selenium UI tests (`uc.*.test.js`); selenium-webdriver
+  finds the matching chromedriver itself.
+
+| Command | What runs |
+|---|---|
+| `npm test` | everything, with coverage (`nyc`) |
+| `npm run test:fast` | everything, without coverage |
+| `npm run test:model` | model, notification, render, util and merger tests |
+| `npm run test:router` | `test/routes.*.test.js` |
+| `npm run test:ui` | Selenium use case tests `test/**/uc.*.test.js` |
+| `npm run test:coverage` | everything, coverage with `c8` |
+
+Single files: `npm run test:fast -- test/model.blog.test.js`
+(add `-g "<name part>"` for single tests).
+
+### Parallel test runs
+
+The `npm` scripts run through `scripts/run-tests.mjs`. For every run it
+
+1. picks a free port for the test server,
+2. creates the database `osmbc_test_<port>`,
+3. creates a temp directory for the mail log and the blog sync state file,
+4. starts the tests with these values in `OSMBC_TEST_PORT`,
+   `OSMBC_TEST_DB`, `OSMBC_TEST_TMPDIR` and `OSMBC_SYNC_STATE_FILE`
+   (`config.js` and `syncState.js` read them; `config.test.yaml` is not
+   changed),
+5. drops the database and deletes the temp directory afterwards, also
+   after Ctrl-C.
+
+So several test runs can run at the same time, in different worktrees or
+in the same one. CI uses the same scripts. Two `npm test` runs in the same
+worktree still share `.nyc_output`, so one coverage report can be wrong;
+the tests themselves are not affected.
+
+To look at the database after a run, start the wrapper with `--keep`:
+
+```
+NODE_ENV=test node scripts/run-tests.mjs --keep npx mocha test/model.blog.test.js
+```
+
+The first output line names port, database and temp directory. Drop the
+database by hand afterwards (`DROP DATABASE osmbc_test_<port>`); a run
+killed with `kill -9` leaves its database as well:
+
+```
+psql -U postgres -h localhost -c "SELECT datname FROM pg_database WHERE datname LIKE 'osmbc_test_%'"
+```
+
+Calling `mocha` directly with `NODE_ENV=test` (without the wrapper) uses
+the fixed port 35043 and the database from `config.test.yaml`; such runs
+must not run in parallel.
+
+### Environment variables
+
+* `TEST_HEADLESS=TRUE` runs Chrome without a window (set by all `npm`
+  scripts). Without it you can watch the UI tests.
+* `TEST_LOG=TRUE` shows the application log during tests.
+* `TEST_HTML_PRETTY=TRUE` reformats expected HTML files that are not
+  pretty-printed.
+
+### HTML comparison
+
+Many UI tests compare the rendered page with an expected file
+`test/<area>/<name>.html`. On a difference the test writes
+`<name>_actual.html` next to it (CI uploads these as artifact
+`test-actual-files`). If the new page is correct, rename the
+`_actual` file to the expected one; `test/mv_actual2test.sh` does that for
+all `_actual.html` files in the current directory.
+
 ## Commit messages
 
 Please follow the Conventional Commits format described in

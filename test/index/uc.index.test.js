@@ -1,6 +1,7 @@
 
 
 import testutil from "../testutil.js";
+import config from "../../config.js";
 import should from "should";
 import nock from "nock";
 
@@ -92,7 +93,7 @@ describe("uc/index", function() {
         try {
           await driver.get(osmbcLink("/notdefined.html"));
         } catch (err) {
-          should(err.message).eql("Server returned status code 404 from http://localhost:35043/notdefined.html");
+          should(err.message).eql("Server returned status code 404 from http://localhost:" + config.getServerPort() + "/notdefined.html");
         }
         const header = await driver.findElement(By.xpath("//h1"));
         should(await header.getText()).eql("Page Not Found /notdefined.html");
