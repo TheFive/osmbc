@@ -34,11 +34,16 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   gets its own dedicated worktree (see "Development workflow" below), a
   worktree's `config.development.yaml` can just directly hold whatever
   DB/port that branch needs — no per-branch overlay/switching required.
-- `NODE_ENV=test` has no branch overlay of any kind. `config.test.yaml` always
-  points at the same fixed database/table names, and the test bootstrap
-  (`test/testutil.js` `clearDB`) drops/recreates those fixed tables on
-  (almost) every test file. Running test suites from two worktrees against
-  the same local Postgres server at the same time is not safe.
+- The `npm test*` scripts run through `scripts/run-tests.mjs`: each run
+  gets a free port, its own database `osmbc_test_<port>` and a temp
+  directory (mail log, `.sync-state.json`), passed via `OSMBC_TEST_*` env
+  variables that `config.js` lays over `config.test.yaml` (the file itself
+  never changes). The database is dropped afterwards (`--keep` to inspect
+  it). So parallel runs in different or the same worktree don't collide.
+  Calling `mocha` directly (without the wrapper, e.g. `test-github`/CI)
+  still uses the fixed values from `config.test.yaml` and is not safe to
+  run in parallel. Two `nyc` runs in the same worktree still share
+  `.nyc_output` (coverage report only).
 
 ## Export
 
@@ -93,8 +98,8 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   in a single checkout — keeps configs, local DB pointers, and in-progress
   edits from bleeding into each other.
 - Run tests with `npm test` (`test:model`, `test:router`, `test:ui` for
-  narrower layers). See "Configuration" above for the shared-test-DB
-  caveat when multiple worktrees are in play.
+  narrower layers). See "Configuration" above for how parallel
+  runs are isolated.
 - New feature/fix work (e.g. implementing a GitHub issue) belongs on its
   own branch created off `master`, not committed directly to `master` —
   part of the GitHub-Flow model being adopted (see

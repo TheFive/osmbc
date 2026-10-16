@@ -128,6 +128,14 @@ function initialise(callback) {
   logger.info("Reading Config from: " + baseConfig.fileName);
   configuration = baseConfig.data;
 
+  // per test run overrides, set by scripts/run-tests.mjs so that several
+  // test runs (worktrees) can run in parallel without sharing port, DB or files
+  if (env === "test") {
+    if (process.env.OSMBC_TEST_PORT) configuration.serverport = Number(process.env.OSMBC_TEST_PORT);
+    if (process.env.OSMBC_TEST_DB) configuration.postgres.database = process.env.OSMBC_TEST_DB;
+    if (process.env.OSMBC_TEST_TMPDIR) configuration.maillog_directory = process.env.OSMBC_TEST_TMPDIR;
+  }
+
   // Do some tests with the types
 
   configuration.languages.forEach(function(lang) {

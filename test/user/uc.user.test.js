@@ -2,6 +2,7 @@
 
 
 import testutil from "../testutil.js";
+import config from "../../config.js";
 import should from "should";
 import sinon from "sinon";
 import mockdate from "mockdate";
@@ -219,9 +220,10 @@ describe("views/user", function() {
     const mail = mailChecker.getCall(0).args[0].text;
     let link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
     // link should be https, but for test cases use http
+    // and the port of this test run (config "url" is fixed to 35043)
 
     should(link).startWith("https://");
-    link = link.replace("https://", "http://");
+    link = link.replace(/^https:\/\/localhost:\d+/, "http://localhost:" + config.getServerPort());
 
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();

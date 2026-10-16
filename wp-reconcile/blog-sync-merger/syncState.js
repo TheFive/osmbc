@@ -17,7 +17,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STATE_FILE = path.join(__dirname, ".sync-state.json");
+export const STATE_FILE = process.env.OSMBC_SYNC_STATE_FILE || path.join(__dirname, ".sync-state.json");
 
 function readState() {
   try {

@@ -4,6 +4,9 @@ import config from "../config.js";
 import async from "async";
 import should from "should";
 
+// scripts/run-tests.mjs assigns a free port per test run
+const expectedPort = process.env.OSMBC_TEST_PORT ? Number(process.env.OSMBC_TEST_PORT) : 35043;
+
 describe("config", function() {
   describe("initialise", function() {
     it("should initialise twice", function(bddone) {
@@ -15,13 +18,13 @@ describe("config", function() {
   });
   describe("get*", function() {
     it("should return standard values", function(bddone) {
-      should((config.getServerPort())).equal(35043);
+      should((config.getServerPort())).equal(expectedPort);
       bddone();
     });
   });
   describe("getValue", function() {
     it("should return Standard Values", function(bddone) {
-      should((config.getValue("serverport"))).equal(35043);
+      should((config.getValue("serverport"))).equal(expectedPort);
       bddone();
     });
   });
