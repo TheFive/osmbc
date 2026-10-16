@@ -21,6 +21,8 @@ The use cases given to you (IDs from `docs/mobile/use-cases.md`).
   Put scripts and screenshots in `docs/mobile/screens/` only if they are
   small and free of personal data; otherwise in a scratch directory.
 - If you cannot render, reason from the pug/CSS and say so in the finding.
+  First check which template the route really renders (`res.render` in
+  `routes/*.js`) — unused templates may still exist and look plausible.
 - The test suites share one Postgres test DB — never run them while another
   worktree is running tests.
 

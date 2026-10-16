@@ -96,7 +96,7 @@ is several screens.
 - **Correction 2026-10-16:** the article page always renders
   `article/article_all_column.pug` (`routes/article.js`). The other column
   templates (`article_onecolumn/twocolumn/threecolumn/fourcolumn.pug`) and
-  `showRL` are dead code. In `article_all_column.pug` every language of the
+  `showRL` were dead code (removed 2026-10-16). In `article_all_column.pug` every language of the
   user gets a column with `min-width: 400px` → wider than a phone screen (E,
   major, X8 in the matrix). Clicking a language badge does nothing.
 - `btn-sm` in the article translate buttons, `blog_full`, `blog_review` (D, minor).

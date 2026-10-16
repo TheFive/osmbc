@@ -36,6 +36,9 @@ conflict, the options, cost and affected use cases. The user decides.
 
 - Keep desktop behaviour unchanged unless the decision says otherwise.
 - Match the surrounding pug/JS style.
+- Remove dead code in the area you touch (unrendered templates, functions
+  nobody calls, page variables nobody reads) in a separate `refactor` commit
+  — but only after proving with grep that nothing references it.
 - Add a Selenium regression test with Chrome `mobileEmulation` for the fixed
   use case.
 - Commit messages in Conventional Commits (`fix(views): …`, footer
