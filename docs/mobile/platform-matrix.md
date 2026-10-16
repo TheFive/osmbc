@@ -25,9 +25,10 @@ Most use cases depend on a few shared changes. They come first.
 | X2 | One reachable primary action per edit screen (e.g. Save bar at the bottom of the article view) | C – ART-02/03/05/06/07 |
 | X3 | Blog inline editors get an explicit Save (and visible feedback), not only save-on-blur | H – BLOG-02/03/08 |
 | X4 | Language switching designed for "one language at a time": per article and per blog, all actions of the chosen language available (review, close, comments, progress) | A – ART-03, BLOG-01/03/05–09 |
-| X5 | Replace the Bootstrap 3 class `hidden` in `public/javascripts/article_view.js` with `d-none` (`showRL`, translate wait/done/error). Probably broken on desktop since 2020-12 (`6e5e23e2`). Verify first. | ART-01/02/03 on all platforms |
+| X5 | Replace the Bootstrap 3 class `hidden` in `public/javascripts/article_view.js` with `d-none`. Confirmed 2026-10-16: after a translation the menu entry stayed and the done mark never appeared (all platforms, since 2020-12, `6e5e23e2`). `showRL` uses it too, but is dead code: the article page only renders `article_all_column`. **Done.** | ART-03 on all platforms |
 | X6 | `td.d-none.d-md-block` → `d-md-table-cell` (`blog/blog_overview.pug`); align hidden `th`/`td` in `collect.pug` | E – BLOG-02/04, COL-01/02, also desktop |
 | X7 | Tap alternative for drag-only actions (copy full language text) | F – ART-02/04 |
+| X8 | Article page layout: `article_all_column.pug` puts every language of the user side by side, each column `min-width: 400px` → wider than a phone screen. One language at a time on phones (fits X4). | E – ART-01/02/03 |
 
 ## Measured usage (access log 2026-09-10 – 2026-10-11)
 
@@ -57,8 +58,8 @@ they are at a desktop. So:
 
 | UC | Goal | Freq. | Proposal | Needs | Mobile flow idea | Measured mobile | Decision |
 |---|---|---|---|---|---|---|---|
-| ART-01 | Open article, see status | very high | M | X1, X5 | | 6.7 % (21) | M |
-| ART-02 | Write/fix text, save | very high | M\* | X1, X2, X7 | One language per screen, Save always visible | 4.5 % (11) ⚠C | M\* |
+| ART-01 | Open article, see status | very high | M | X1, X8 | | 6.7 % (21) | M |
+| ART-02 | Write/fix text, save | very high | M\* | X1, X2, X7, X8 | One language per screen, Save always visible | 4.5 % (11) ⚠C | M\* |
 | ART-03 | Translate with a service | very high | M\* | X1, X2, X4, X5 | "Translate into …" as a button at the empty target language, result in place, then Save | 0 % of 262 ⚠A | M\* |
 | ART-04 | Markdown links | high | M | – | Paste on selection is enough; drag stays desktop | – | M |
 | ART-05 | Move blog/category/position | several/issue | R | X2 | | – | R |

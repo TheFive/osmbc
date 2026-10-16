@@ -77,8 +77,8 @@ comes from Bootstrap grid classes in the views.
 
 ### 5. Desktop-only interactions (class F)
 
-- Language badges in the article view (`article_twocolumn.pug` and the other
-  column variants): "Drag me for copy full text" (`ondragstartLangLabel`).
+- Language badges in the article view (`mixin markdownWithPreview` in
+  `article/article_mixin.pug`): "Drag me for copy full text" (`ondragstartLangLabel`).
   No tap alternative → copying a full language text is impossible on touch.
 - Tooltips (`data-bs-toggle="tooltip"`) carry the only explanation for several
   badges; tooltips need hover.
@@ -93,7 +93,12 @@ is several screens.
 
 ### 7. Small things
 
-- `article_all_column.pug`: `min-width: 400px` → horizontal overflow on phones (E).
+- **Correction 2026-10-16:** the article page always renders
+  `article/article_all_column.pug` (`routes/article.js`). The other column
+  templates (`article_onecolumn/twocolumn/threecolumn/fourcolumn.pug`) and
+  `showRL` are dead code. In `article_all_column.pug` every language of the
+  user gets a column with `min-width: 400px` → wider than a phone screen (E,
+  major, X8 in the matrix). Clicking a language badge does nothing.
 - `btn-sm` in the article translate buttons, `blog_full`, `blog_review` (D, minor).
 - 18 of the ~40 tables use `table-responsive`; admin/config and history tables
   mostly do not (E, mostly desktop-only use cases anyway).
