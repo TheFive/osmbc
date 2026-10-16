@@ -38,7 +38,15 @@ conflict, the options, cost and affected use cases. The user decides.
 - Match the surrounding pug/JS style.
 - Remove dead code in the area you touch (unrendered templates, functions
   nobody calls, page variables nobody reads) in a separate `refactor` commit
-  — but only after proving with grep that nothing references it.
+  — but only after proving with grep that nothing references it. Check
+  all three ways a template is used: literal names (`res.render`,
+  `renderFile`, `extends`/`include`), names built from an allowlist in the
+  route (e.g. `"blog/blog_" + tab` in `routes/blog.js`, the `jadeFile`
+  mapping in `routes/config.js`), and direct `pug.renderFile` calls (mails
+  in `notification/`).
+- Template names must be literal strings or come from an allowlist in the
+  code — never from config or unchecked request data. That keeps dead code
+  findable and prevents rendering arbitrary templates.
 - Add a Selenium regression test with Chrome `mobileEmulation` for the fixed
   use case.
 - Commit messages in Conventional Commits (`fix(views): …`, footer
