@@ -3,6 +3,7 @@
 /* exported highlightWrongLinks */
 /* exported chooseLanguage */
 /* exported chooseLanguageSet */
+/* exported chooseMobileLanguage */
 /* exported setUserConfig */
 /* exported addSpinnerAndSubmit */
 
@@ -80,6 +81,16 @@ function chooseLanguage(number, lang) {
     console.error(err);
   });
 }
+// small screens work in one language, stored separately from the desktop ones
+function chooseMobileLanguage(lang) {
+  jQuery.post(window.htmlroot + "/mobilelanguage", { lang: lang }, function () {
+    location.reload();
+  }).fail(function (err) {
+    console.error("Problem changing mobile language " + lang);
+    console.error(err);
+  });
+}
+
 function chooseLanguageSet(set, action) {
   const data = {};
 

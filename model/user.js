@@ -311,6 +311,14 @@ class User {
     return "EN";
   }
 
+  // The one language a user works in on a small screen. Kept separately
+  // from the desktop languages, so switching it on the phone does not
+  // change the desktop language pair and vice versa.
+  getMobileLang() {
+    if (this.mobileLang) return this.mobileLang;
+    return this.getMainLang();
+  }
+
   getSecondLang() {
     debug("User.prototype.getMainLang");
     if (this.langArray && this.langArray[1]) return this.langArray[1];

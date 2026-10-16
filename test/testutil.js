@@ -724,6 +724,9 @@ async function getNewDriver(username, options = {}) {
     await loginPage.typeUsername(username);
     await loginPage.typePassword(username);
     await loginPage.clickOK();
+    // small test devices work in mobile mode (one language), set the cookie
+    // the layout script would set, so no test waits for its reload
+    if (options.device) await driver.manage().addCookie({ name: "osmbc_view", value: "mobile", path: "/" });
   } catch (err) {
     console.error(err);
     // Ensure driver is properly closed on error

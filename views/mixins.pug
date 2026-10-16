@@ -405,40 +405,42 @@ mixin deleteLangSet
 
 
 mixin langMenu(size)
-  - const u = layout.user
-  if (u.languageSet)
-    li.dropdown.nav-item
-      a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
-        span.badge.rounded-pill.osmbc-badge-lang=u.getLang(0)
-        if (u.getLang(1))
-          span.badge.rounded-pill.osmbc-badge-lang2=u.getLang(1)
-        span.p-1=layout.user.languageSet
-      div.dropdown-menu(aria-labelledby="languageSetMenu")
+  //- small screens: the mobile language is chosen in the header (layout.pug)
+  if !layout.mobileView
+    - const u = layout.user
+    if (u.languageSet)
+      li.dropdown.nav-item
+        a.nav-link.dropdown-toggle(id="languageSetMenu", href='#',  data-bs-toggle='dropdown',aria-haspopup="true",aria-expanded="false")
+          span.badge.rounded-pill.osmbc-badge-lang=u.getLang(0)
+          if (u.getLang(1))
+            span.badge.rounded-pill.osmbc-badge-lang2=u.getLang(1)
+          span.p-1=layout.user.languageSet
+        div.dropdown-menu(aria-labelledby="languageSetMenu")
+          +langSetDropdownList(layout.user.getLanguageSets())
+          div.dropdown-divider
+          +langSetDropdownList("Individual")
+          +deleteLangSet
+
+
+    else
+      - let languages = layout.activeLanguages.slice()
+      - let i = 0
+      - let choosenLangs = []
+      - choosenLangs.push(u.getLang(0))
+      +langChooser((u.getLang(0)) ? u.getLang(0):"--","osmbc-badge-lang","lang",languages,choosenLangs)
+        .dropdown-divider 
         +langSetDropdownList(layout.user.getLanguageSets())
-        div.dropdown-divider
-        +langSetDropdownList("Individual")
-        +deleteLangSet
-
-
-  else
-    - let languages = layout.activeLanguages.slice()
-    - let i = 0
-    - let choosenLangs = []
-    - choosenLangs.push(u.getLang(0))
-    +langChooser((u.getLang(0)) ? u.getLang(0):"--","osmbc-badge-lang","lang",languages,choosenLangs)
-      .dropdown-divider 
-      +langSetDropdownList(layout.user.getLanguageSets())
       
-    - languages.unshift("none")       
-    - for (i = 1;  u.getLang(i) && i < size ; i++)
-      - choosenLangs.push(u.getLang(i))
-      +langChooser((u.getLang(i)),(i == 1) ? "osmbc-badge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
-        if (size === 2)
-            + saveLangSet
+      - languages.unshift("none")       
+      - for (i = 1;  u.getLang(i) && i < size ; i++)
+        - choosenLangs.push(u.getLang(i))
+        +langChooser((u.getLang(i)),(i == 1) ? "osmbc-badge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
+          if (size === 2)
+              + saveLangSet
       
-    if (i < size)  
-      +langChooser( "--",(i == 1) ? "osmbc-badge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
-        + saveLangSet
+      if (i < size)  
+        +langChooser( "--",(i == 1) ? "osmbc-badge-lang2" : "bg-secondary","lang"+(i+1),languages,choosenLangs)
+          + saveLangSet
 
 
           

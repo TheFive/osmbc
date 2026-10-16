@@ -6,7 +6,27 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>TESTBC</title><!-- Bootstrap core CSS-->
+    <title>TESTBC</title>
+    <script nonce="">
+      // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
+      // the save bar. The server reads the cookie; if it rendered the other
+      // mode, reload once (not again if the cookie does not stick).
+      (function() {
+        var rendered = "desktop";
+        var wanted = window.matchMedia("(max-width: 991.98px)").matches ? "mobile" : "desktop";
+        if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
+          document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
+        }
+        if (wanted === rendered || document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+        try {
+          if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
+          window.sessionStorage.setItem("osmbcViewReload", location.href);
+        } catch (e) {
+          return;
+        }
+        location.reload();
+      })();
+    </script><!-- Bootstrap core CSS-->
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/bootstrap-select.min.css" rel="stylesheet">
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet">
@@ -108,11 +128,21 @@
           var sheet = new CSSStyleSheet();
           document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
           var fit = function() {
-            sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; }");
+            sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }");
           };
           fit();
           new ResizeObserver(fit).observe(navbar);
         }
+        // small screens: hide the bar when scrolling down, show it when scrolling up
+        var lastY = window.scrollY;
+        window.addEventListener("scroll", function() {
+          var y = window.scrollY;
+          var hide = window.matchMedia("(max-width: 991.98px)").matches && y > lastY && y > navbar.offsetHeight;
+          navbar.classList.toggle("osmbc-navbar-hidden", hide);
+          lastY = y;
+        }, {
+          passive: true
+        });
         // close the side panel after choosing an entry (also for script actions)
         var panel = document.getElementById("navbarSupportedContent");
         panel.addEventListener("click", function(event) {

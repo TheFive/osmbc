@@ -404,3 +404,12 @@ table {
     min-width: 400px;
   }
 }
+
+/* Small screens: the fixed navbar slides out when scrolling down (layout.pug).
+   Moved with top, not transform: a transform would move the menu panel too. */
+#fixedNavbar {
+  transition: top 0.2s;
+}
+#fixedNavbar.osmbc-navbar-hidden {
+  top: calc(-1 * var(--osmbc-navbar-height, 5rem));
+}

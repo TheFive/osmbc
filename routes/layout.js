@@ -159,10 +159,19 @@ function prepareRenderLayout(req, res, next) {
       debug(JSON.stringify(err));
       return next(err);
     }
+    // Small screens (below Bootstrap's lg breakpoint) work in one language,
+    // see the osmbc_view cookie set in layout.pug.
+    const mobileView = /(?:^|;\s*)osmbc_view=mobile(?:;|$)/.test((req.headers && req.headers.cookie) || "");
+    const mobileLang = req.user.getMobileLang();
+    req.mobileView = mobileView;
+    if (mobileView) usedLanguages[mobileLang] = true;
     const activeLanguages = [];
     languages.forEach(function(item) {
       if (usedLanguages[item]) activeLanguages.push(item);
     });
+    // choice for the mobile language: the active languages and the user's own
+    const ownLanguages = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()].concat(req.user.getLanguages() || []);
+    const mobileLanguages = languages.filter((item) => usedLanguages[item] || ownLanguages.indexOf(item) >= 0);
     if (!result.editBlog) result.editBlog = [];
     if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
     if (!result.listOfEditBlog) result.listOfEditBlog = [];
@@ -203,6 +212,9 @@ function prepareRenderLayout(req, res, next) {
       editBlog: result.editBlog,
       tbc: result.tbc,
       activeLanguages: activeLanguages,
+      mobileView: mobileView,
+      mobileLang: mobileLang,
+      mobileLanguages: mobileLanguages,
       style: style,
       helpMenu: helpMenu,
       user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),

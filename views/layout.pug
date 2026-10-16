@@ -89,6 +89,21 @@ mixin toolMenu
 
 
 
+//- Small screens (mobile mode, see routes/layout.js): the header shows where
+//- the user is (the issue) and the one mobile language instead of the app name.
+mixin mobileHeader
+  - var contextBlog = (typeof blog !== "undefined" && blog && blog.name) ? blog.name : ((typeof article !== "undefined" && article && article.blog) ? article.blog : null)
+  if contextBlog
+    a.navbar-brand.me-auto.text-truncate(href=layout.htmlroot + "/blog/" + contextBlog)=contextBlog
+  else
+    +homeButton("navbar-brand me-auto")
+  div.dropdown
+    button.btn.badge.rounded-pill.osmbc-badge-lang.dropdown-toggle.fs-6#mobileLangMenu(type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Language you work in on this device")=layout.mobileLang
+    ul.dropdown-menu.dropdown-menu-end(aria-labelledby="mobileLangMenu")
+      each l in layout.mobileLanguages
+        li
+          a.dropdown-item(href="#" id="mobileLang_" + l class=(l === layout.mobileLang) ? "active" : "" onclick=`chooseMobileLanguage('${l}'); return false;`)=l
+
 block all
   doctype html
   html(lang='en')
@@ -99,6 +114,23 @@ block all
       meta(name='author', content='')
       link(rel='icon', href='/favicon.ico')
       title=(layout)?layout.title:appName
+      script(nonce=cspNonce).
+        // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
+        // the save bar. The server reads the cookie; if it rendered the other
+        // mode, reload once (not again if the cookie does not stick).
+        (function () {
+          var rendered = "#{(typeof layout !== "undefined" && layout && layout.mobileView) ? "mobile" : "desktop"}";
+          var wanted = window.matchMedia("(max-width: 991.98px)").matches ? "mobile" : "desktop";
+          if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
+            document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
+          }
+          if (wanted === rendered || document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+          try {
+            if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
+            window.sessionStorage.setItem("osmbcViewReload", location.href);
+          } catch (e) { return; }
+          location.reload();
+        })();
       // Bootstrap core CSS
       link(href=layout.htmlroot + "/stylesheets/bootstrap.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
       link(href=layout.htmlroot + "/stylesheets/bootstrap-select.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
@@ -126,7 +158,10 @@ block all
           
           button.navbar-toggler(type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation")
             span.navbar-toggler-icon
-          +homeButton("navbar-brand")  
+          if (layout && layout.mobileView)
+            +mobileHeader
+          else
+            +homeButton("navbar-brand")  
           //- below lg the menu is a side panel (offcanvas), from lg on a normal menu bar
           div.offcanvas.offcanvas-end#navbarSupportedContent(tabindex="-1" aria-labelledby="navbarSupportedContentLabel")
             div.offcanvas-header
@@ -191,10 +226,18 @@ block all
           if (window.CSSStyleSheet && document.adoptedStyleSheets && window.ResizeObserver) {
             var sheet = new CSSStyleSheet();
             document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
-            var fit = function () { sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; }"); };
+            var fit = function () { sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }"); };
             fit();
             new ResizeObserver(fit).observe(navbar);
           }
+          // small screens: hide the bar when scrolling down, show it when scrolling up
+          var lastY = window.scrollY;
+          window.addEventListener("scroll", function () {
+            var y = window.scrollY;
+            var hide = window.matchMedia("(max-width: 991.98px)").matches && y > lastY && y > navbar.offsetHeight;
+            navbar.classList.toggle("osmbc-navbar-hidden", hide);
+            lastY = y;
+          }, { passive: true });
           // close the side panel after choosing an entry (also for script actions)
           var panel = document.getElementById("navbarSupportedContent");
           panel.addEventListener("click", function (event) {

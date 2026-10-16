@@ -9,11 +9,18 @@ block markdownArea
     - languages = layout.user.getLanguages()
     if layout.user.getLanguageSet() === "Active"
       - languages = layout.activeLanguages
+    //- small screens: one language only, the others are sources for Translate
+    if layout.mobileView
+      - languages = [layout.mobileLang]
     for lang of languages
       if (lang)
         div.col
           div.osmbc-language-column
+            if layout.mobileView
+              +mobileTranslateButtons(lang)
             +markdownWithPreview(lang)
+    if layout.mobileView
+      +translationSources(layout.mobileLang)
 
 
   // Language Flags All Column

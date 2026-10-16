@@ -74,6 +74,35 @@ mixin articleTranslateButton(langFrom,langTo)
 mixin saveButton
   button.btn.btn-lg.btn-primary#saveButton(type = "button" onclick ="window.saveButton()") Save
 
+//- Small screens (one language): if that language is still empty, offer a
+//- translation from every language that already has text, EN first (most
+//- languages translate from English). Uses translate() in article_view.js.
+mixin mobileTranslateButtons(lang)
+  if (!article["markdown" + lang] && article.isChangeAllowed("markdown" + lang))
+    - const sources = layout.languages.filter((l) => l !== lang && article["markdown" + l] && article["markdown" + l] !== "no translation")
+    - sources.sort((a, b) => (a === "EN") ? -1 : (b === "EN") ? 1 : 0)
+    - const services = layout.user.getTranslations().filter((service) => layout.user.useOneTranslation(service))
+    if (sources.length > 0)
+      div.d-flex.flex-wrap.gap-2.my-2
+        if (services.length === 0)
+          a.osmbc-help-text(href=layout.htmlroot + "/usert/" + layout.user.id)="Configure a translation service to translate from " + sources.join(", ")
+        each source in sources
+          each service in services
+            button.btn.btn-outline-primary(type="button" class="translate" + source + lang onclick=`window.translate('${source}','${lang}','${service}');`)
+              ="Translate from " + source + ((services.length > 1) ? " (" + service + ")" : "")
+          span.badge.text-bg-warning.d-none(class="translateWait" + source + lang)="please wait …"
+          span.badge.text-bg-danger.d-none(class="translateError" + source + lang)="translation from " + source + " failed"
+          each service in services
+            span.badge.text-bg-success.d-none(class="translateDone" + source + lang + " " + service)="translated from " + source
+
+//- Texts of the other languages for Translate on small screens: hidden and
+//- disabled, so they are never submitted with the form.
+mixin translationSources(lang)
+  each source in layout.languages
+    if (source !== lang && article["markdown" + source])
+      textarea.d-none(id="markdown" + source disabled)=article["markdown" + source]
+      div.d-none(id="preview" + source)=article["markdown" + source]
+
 //- Below lg (phones, and the "desktop view" of phone browsers) Save and
 //- last Version sit in a bar at the bottom of the screen, wherever the user
 //- is editing. It appears only when something is changed (showModified in
@@ -143,36 +172,38 @@ mixin articleTranslateMenu(langFrom,langTo,service)
 
 
 mixin translationMenu
-  - let emptyMenu = true
-  li.dropdown.navbar-item#translation.d-none.d-sm-block
-    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
-    ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
-      - let tsList = layout.user.getTranslations()
-      each tService in tsList
-        - emptyMenu = false
-        li.dropdown-header="Use " + tService +":"
-          - list = []
-          - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
-          - let nothingToTranslate = true
-          each a in list
-            - all = []
-            each b in list
-              if (a !== b && a !== null && b !== null)
-                if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
-                  - all.push(b);
-                  if (layout.user.useOneTranslation(tService))
-                    +articleTranslateMenu(a, b, tService)
-            if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))  
-              if (all.length > 1)
-                if (layout.user.useManyTranslation(tService))  
-                  +articleTranslateMenu(a, all, tService)
+  //- small screens: Translate buttons at the text field replace this menu
+  if !layout.mobileView
+    - let emptyMenu = true
+    li.dropdown.navbar-item#translation.d-none.d-sm-block
+      a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+      ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
+        - let tsList = layout.user.getTranslations()
+        each tService in tsList
+          - emptyMenu = false
+          li.dropdown-header="Use " + tService +":"
+            - list = []
+            - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
+            - let nothingToTranslate = true
+            each a in list
+              - all = []
+              each b in list
+                if (a !== b && a !== null && b !== null)
+                  if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
+                    - all.push(b);
+                    if (layout.user.useOneTranslation(tService))
+                      +articleTranslateMenu(a, b, tService)
+              if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))  
+                if (all.length > 1)
+                  if (layout.user.useManyTranslation(tService))  
+                    +articleTranslateMenu(a, all, tService)
                 
 
 
-      .dropdown-divider
-      a.dropdown-item(
-        onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';"
-      )="Configure your Translation services"
+        .dropdown-divider
+        a.dropdown-item(
+          onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';"
+        )="Configure your Translation services"
         
 
 

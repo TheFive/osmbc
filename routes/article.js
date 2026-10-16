@@ -135,6 +135,11 @@ function renderArticleId(req, res, next) {
   params.edit = req.query.edit;
   params.left_lang = req.user.getMainLang();
   params.right_lang = req.user.getSecondLang();
+  // small screens: one language only (see routes/layout.js)
+  if (req.mobileView) {
+    params.left_lang = req.user.getMobileLang();
+    params.right_lang = null;
+  }
   params.editComment = null;
   let mainTranslationService = "deepl";
   const translationServices = ["deepl", "copy"];

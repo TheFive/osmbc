@@ -335,6 +335,14 @@ function renderBlogTab(req, res, next) {
 
   let lang = req.user.getMainLang();
   if (typeof (lang) === "undefined") lang = "DE";
+  // small screens: one language only (see routes/layout.js)
+  let leftLang = req.user.getMainLang();
+  let rightLang = req.user.getSecondLang();
+  if (req.mobileView) {
+    lang = req.user.getMobileLang();
+    leftLang = lang;
+    rightLang = null;
+  }
 
 
   let clearParams = false;
@@ -415,8 +423,8 @@ function renderBlogTab(req, res, next) {
       lang: lang,
       tab: tab,
       votes: votes,
-      left_lang: req.user.getMainLang(),
-      right_lang: req.user.getSecondLang(),
+      left_lang: leftLang,
+      right_lang: rightLang,
       renderer: renderer,
       reviewInWP: reviewInWP,
       reviewScripts: reviewScripts,

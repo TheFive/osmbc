@@ -53,16 +53,17 @@ describe("uc.article save bar", function() {
     should(await driver.findElement(By.id("saveButton")).isDisplayed()).be.False();
     should(await barSave.isDisplayed()).be.False();
 
-    // the English text field is far below the top of the form
-    const field = await driver.findElement(By.id("markdownEN"));
+    // mobile mode shows one language (the user's main language DE);
+    // its text field is far below the top of the form
+    const field = await driver.findElement(By.id("markdownDE"));
     await driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", field);
-    await field.sendKeys("Text EN");
+    await field.sendKeys(" more");
     should(await barSave.isDisplayed()).be.True();
     should(await barIsAtBottomOfScreen()).be.True();
 
     // click fails if the bar is covered or outside the screen
     await barSave.click();
-    await driver.wait(async () => (await articleModule.findById(articleId)).markdownEN === "Text EN", 5000, "text not saved");
+    await driver.wait(async () => (await articleModule.findById(articleId)).markdownDE === "Text DE more", 5000, "text not saved");
   });
   it("should copy the full text of a language by tapping its label (X7)", async function() {
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });

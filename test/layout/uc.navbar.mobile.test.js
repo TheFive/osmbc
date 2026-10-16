@@ -42,7 +42,7 @@ describe("uc/navbar on small screens", function() {
       .reply(200, "ok");
     testutil.startServerSync();
     await testutil.clearDB();
-    await userModule.createNewUser({ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", email: "a@b.c", translationServices: ["copy"] });
+    await userModule.createNewUser({ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", mobileLang: "EN", email: "a@b.c", translationServices: ["copy"] });
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN1", status: "edit" });
   });
   afterEach(async function() {
@@ -71,21 +71,27 @@ describe("uc/navbar on small screens", function() {
     beforeEach(async function() {
       driver = await testutil.getNewDriver("TheFive", { device: "desktopView" });
     });
-    it("should close the menu after translating, so Save is not covered (#1155)", async function() {
+    it("should translate and save without the menu covering anything (#1155)", async function() {
       const article = await articleModule.createNewArticle({ blog: "WN1", markdownDE: "Text DE" });
       await driver.get(osmbcLink("/article/" + article.id));
       should(await contentStartsBelowNavbar()).be.True();
 
-      await openPanel();
-      await driver.findElement(By.id("articleTranslateMenu")).click();
-      await driver.findElement(By.css(".translateDEEN")).click();
-
-      await waitPanelClosed();
+      // the desktop view is mobile mode too: one language (EN), Translate
+      // at the text field, Save in the bar at the bottom
+      await driver.findElement(By.css("button.translateDEEN")).click();
       await driver.wait(async () => (await driver.findElement(By.id("markdownEN")).getAttribute("value")) === "Text DE", 3000);
-      // below lg Save is in the bar at the bottom (X2);
-      // click fails if the button is covered by the menu
+      // click fails if the button is covered
       await driver.findElement(By.id("saveButtonBar")).click();
       await driver.wait(async () => (await articleModule.findById(article.id)).markdownEN === "Text DE", 3000, "translation not saved");
+    });
+    it("should close the menu panel after choosing an entry", async function() {
+      await driver.get(osmbcLink("/osmbc"));
+      await openPanel();
+      await driver.findElement(By.id("articleMenuDropdown")).click();
+      // a script action keeps the page: the panel must close by itself
+      await driver.executeScript("document.getElementById('articleMenuSearch').setAttribute('href', '#');");
+      await driver.findElement(By.id("articleMenuSearch")).click();
+      await waitPanelClosed();
     });
   });
 });
