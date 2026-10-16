@@ -40,7 +40,8 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   variables that `config.js` lays over `config.test.yaml` (the file itself
   never changes). The database is dropped afterwards (`--keep` to inspect
   it). So parallel runs in different or the same worktree don't collide.
-  Calling `mocha` directly (without the wrapper, e.g. `test-github`/CI)
+  CI runs `npm test` too, so it uses the wrapper. Calling `mocha` directly
+  (without the wrapper, e.g. `test-github`)
   still uses the fixed values from `config.test.yaml` and is not safe to
   run in parallel. Two `nyc` runs in the same worktree still share
   `.nyc_output` (coverage report only).
