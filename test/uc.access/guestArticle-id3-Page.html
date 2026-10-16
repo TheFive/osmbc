@@ -120,7 +120,7 @@
                 <p class="osmbc-help-text">black font: language closed</p>
               </div>
               <div class="col-md-1"></div>
-              <div class="col-md-7 text-end"><button class="btn btn-lg btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button><button class="btn btn-lg btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" disabled="">last Version</button></div>
+              <div class="col-md-7 text-end d-none d-lg-block"><button class="btn btn-lg btn-primary" id="saveButton" type="button" onclick="window.saveButton()" disabled="">Save</button><button class="btn btn-lg btn-secondary" id="cancelButton" type="button" onclick="disableUnchanged(); location.href='/article/3?edit=false';" disabled="">last Version</button></div>
             </div>
           </div>
         </div><!-- Display Title Row-->
@@ -168,7 +168,7 @@
         </div><!-- display Markdown Blog--><!-- Markdown Area All Column-->
         <div class="row">
           <div class="col">
-            <div style="min-width:400px;max-width:900px"><span class="badge text-bg-secondary osmbc-label-lang" draggable="true" data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge text-bg-danger" style="display:none" id="markdownEN_unsaved">unsaved</span><textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea><textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
+            <div class="osmbc-language-column"><span class="badge text-bg-secondary osmbc-label-lang" draggable="true" data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge text-bg-danger" style="display:none" id="markdownEN_unsaved">unsaved</span><textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea><textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with a person or a company!
 3. Decomplify your sentences.
@@ -212,6 +212,10 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
         </div><iframe class="d-none" name="iframeform"></iframe>
       </div>
       <div class="row" id="doublettes"></div>
+      <div class="d-lg-none">
+        <div class="osmbc-save-bar fixed-bottom bg-light border-top px-3 py-2 d-flex d-none justify-content-end gap-2"><button class="btn btn-primary" id="saveButtonBar" type="button" onmousedown="event.preventDefault();" onclick="window.saveButton()">Save</button><button class="btn btn-secondary" id="cancelButtonBar" type="button" onmousedown="event.preventDefault();" onclick="disableUnchanged(); location.href='/article/3?edit=false';">last Version</button></div>
+        <div class="osmbc-save-bar-spacer d-none" style="height: 4rem;"></div>
+      </div>
       <p></p>
     </div><!-- /container--><!-- Bootstrap core JavaScript--><!-- ==================================================--><!-- Placed at the end of the document so the pages load faster-->
     <script src="/javascripts/jquery.min.js"></script>

@@ -648,6 +648,8 @@ function showModified() {
   });
   $("#saveButton").prop("disabled", !modified);
   $("#cancelButton").prop("disabled", !modified);
+  // the save bar on small screens is only shown when there is something to save
+  $(".osmbc-save-bar, .osmbc-save-bar-spacer").toggleClass("d-none", !modified);
 
   if (modified) {
     $("#noTranslationButton").removeClass("visible");

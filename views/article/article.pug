@@ -91,7 +91,8 @@ block content
             if (layout.user.access === "full")
               +noTranslationButton
           .col-md-1
-          .col-md-7.text-end
+          //- below lg the save bar at the bottom takes over (one Save only)
+          .col-md-7.text-end.d-none.d-lg-block
             +saveButton
             +cancelButton
 
@@ -254,3 +255,5 @@ block content
 
 
    
+
+  +saveBar

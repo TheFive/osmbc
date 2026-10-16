@@ -393,3 +393,14 @@ table {
 .blog-status-table.blog-status-table-compact tr.blog-status-row:hover td {
   background-color: #f9fbff;
 }
+
+/* Article view: one column per language. The minimum width only from lg
+   on, below it a column must not be wider than a phone screen. */
+.osmbc-language-column {
+  max-width: 900px;
+}
+@media (min-width: 992px) {
+  .osmbc-language-column {
+    min-width: 400px;
+  }
+}

@@ -82,8 +82,9 @@ describe("uc/navbar on small screens", function() {
 
       await waitPanelClosed();
       await driver.wait(async () => (await driver.findElement(By.id("markdownEN")).getAttribute("value")) === "Text DE", 3000);
+      // below lg Save is in the bar at the bottom (X2);
       // click fails if the button is covered by the menu
-      await driver.findElement(By.id("saveButton")).click();
+      await driver.findElement(By.id("saveButtonBar")).click();
       await driver.wait(async () => (await articleModule.findById(article.id)).markdownEN === "Text DE", 3000, "translation not saved");
     });
   });

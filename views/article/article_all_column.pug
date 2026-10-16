@@ -12,7 +12,7 @@ block markdownArea
     for lang of languages
       if (lang)
         div.col
-          div(style="min-width:400px;max-width:900px")
+          div.osmbc-language-column
             +markdownWithPreview(lang)
 
 
