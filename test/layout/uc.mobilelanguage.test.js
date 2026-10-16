@@ -29,7 +29,15 @@ describe("uc/mobile language", function() {
     await driver.findElement(By.id("mobileLangMenu")).click();
     const entry = await driver.findElement(By.id("mobileLang_" + lang));
     await entry.click();
-    await driver.wait(async () => (await driver.findElement(By.id("mobileLangMenu")).getText()) === lang, 5000, "language not switched");
+    // the page reloads: the menu found may be gone before getText
+    await driver.wait(async () => {
+      try {
+        return (await driver.findElement(By.id("mobileLangMenu")).getText()) === lang;
+      } catch (err) {
+        if (err.name === "StaleElementReferenceError") return false;
+        throw err;
+      }
+    }, 5000, "language not switched");
   }
 
   beforeEach(async function() {
