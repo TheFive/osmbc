@@ -966,7 +966,7 @@ function urlExist(req, res) {
       });
     },
     function final(err) {
-      if (err) res.end(err);
+      if (err) return req.next(err);
       else res.json(result);
     }
   );

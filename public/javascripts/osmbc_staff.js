@@ -7,15 +7,26 @@
 /* exported addSpinnerAndSubmit */
 
 
-function highlightWrongLinks() {
-  const object = $(this);
-  const list = [];
-  const mapping = {};
-  if (!window.cacheLink) window.cacheLink = {};
+// Link check for #linkArea and the .preview elements.
+// The previews fire "change" on every keyup, so the check waits until
+// changes pause, then sends all unknown links of the page in one request.
+// Links already requested are not requested again while waiting for the
+// answer, so several previews firing at once share one request.
+const LINK_CHECK_DELAY_MS = 500;
+const pendingLinks = new Set();
+let linkCheckTimer = null;
 
-  function collectLinks() {
+function highlightWrongLinks() {
+  clearTimeout(linkCheckTimer);
+  linkCheckTimer = setTimeout(checkAllLinks, LINK_CHECK_DELAY_MS);
+}
+
+function collectAllLinks() {
+  const mapping = {};
+  $("#linkArea a, .preview a").each(function() {
     const o = $(this);
     const url = o.attr("href");
+    if (!url) return;
     // Anchor hrefs are usually just in-page UI (collapse toggles etc.),
     // not worth checking - except our own footnote-anchor convention
     // ("#wn<issue>_<articleId>", e.g. in a Picture caption's "[1]" link),
@@ -25,48 +36,48 @@ function highlightWrongLinks() {
     if (url.charAt(0) === "#" && !/^#wn\d+_\d+$/i.test(url)) return;
     if (!mapping[url]) mapping[url] = [];
     mapping[url].push(o);
-  }
-  function collectLinksForPreview() {
-    const object = $(this);
-    object.find("a").each(collectLinks);
-  }
+  });
+  return mapping;
+}
 
-  if (object.attr("id")) object.find("a").each(collectLinks);
-  else $(".preview").each(collectLinksForPreview);
-
-  for (const k in mapping) {
-    if (!window.cacheLink[k]) list.push(k);
-  }
-
-  function setAllLinks() {
-    for (const l in mapping) {
-      if (window.cacheLink[l] !== "OK") {
-        mapping[l].forEach(function(k) {
-          k.addClass("osmbc-nonexist");
-          k.text(k.text() + " #" + window.cacheLink[l]);
-        });
-      }
-    }
-  }
-  if (list.length > 0) {
-    $.ajax({
-      url: window.htmlroot + "/article/urlexist",
-      data: { urls: list },
-      dataType: "json",
-      traditional: true,
-      type: "post",
-      success: function(data) {
-        if (data) {
-          for (const l in data) {
-            window.cacheLink[l] = data[l];
-          }
-          setAllLinks();
-        }
-      }
+function markWrongLinks(mapping) {
+  for (const l in mapping) {
+    const status = window.cacheLink[l];
+    if (!status || status === "OK") continue;
+    mapping[l].forEach(function(k) {
+      // #linkArea and the blog previews are not re-rendered between checks
+      if (k.hasClass("osmbc-nonexist")) return;
+      k.addClass("osmbc-nonexist");
+      k.text(k.text() + " #" + status);
     });
-  } else {
-    setAllLinks();
   }
+}
+
+function checkAllLinks() {
+  if (!window.cacheLink) window.cacheLink = {};
+  const mapping = collectAllLinks();
+  const list = Object.keys(mapping).filter(function(url) {
+    return !window.cacheLink[url] && !pendingLinks.has(url);
+  });
+
+  if (list.length === 0) {
+    markWrongLinks(mapping);
+    return;
+  }
+  list.forEach(function(url) { pendingLinks.add(url); });
+  $.ajax({
+    url: window.htmlroot + "/article/urlexist",
+    data: { urls: list },
+    dataType: "json",
+    traditional: true,
+    type: "post"
+  }).done(function(data) {
+    if (data) Object.assign(window.cacheLink, data);
+  }).always(function() {
+    list.forEach(function(url) { pendingLinks.delete(url); });
+    // the page may have changed while waiting, so collect the links again
+    markWrongLinks(collectAllLinks());
+  });
 }
 
 

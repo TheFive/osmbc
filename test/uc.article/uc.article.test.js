@@ -4,6 +4,7 @@
 import path from "path";
 import fs from "fs";
 import nock from "nock";
+import sinon from "sinon";
 import should from "should";
 import testutil from "../testutil.js";
 import userModule from "../../model/user.js";
@@ -14,6 +15,7 @@ import { cmdCtrl } from "../../test/PageObjectModel/page.js";
 import { Key } from "selenium-webdriver";
 
 import util from "../../util/util.js";
+import linkCheck from "../../util/linkCheck.js";
 import config from "../../config.js";
 
 const osmbcLink = util.osmbcLink;
@@ -236,6 +238,21 @@ describe("uc.article", function() {
         text: "https://www.openstreetmap.org/user/Sever . . . 37681",
         warning: false
       });
+    });
+    it("should check a typed link once, not every partial link while typing", async function() {
+      const typedUrl = "https://www.openstreetmap.org/a_brilliant_map";
+      const checkUrl = sinon.spy(linkCheck, "checkUrl");
+      try {
+        // sendKeys types char by char, every keyup redraws the link area
+        await osmbcApp.getArticlePage().fillCollectionInput(typedUrl);
+        await driver.wait(() => checkUrl.calledWith(typedUrl), 5000);
+
+        const checked = checkUrl.args.map(a => a[0]);
+        should(checked.filter(u => u === typedUrl)).have.length(1);
+        should(checked.filter(u => u !== typedUrl && typedUrl.startsWith(u))).eql([]);
+      } finally {
+        checkUrl.restore();
+      }
     });
   });
   describe("QueryParameters", function() {

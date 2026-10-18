@@ -1265,6 +1265,25 @@ describe("router/article", function() {
         should(body.status).eql(HttpStatus.OK);
         should(body.data["#wn997_" + article.id]).match(/not wn997/i);
       });
+
+      it("answers with an error status when the article lookup fails", async function () {
+        const form = { urls: ["#wn997_1"] };
+
+        const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+        await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+        const stub = sinon.stub(articleModule, "findById").callsFake(function(id, callback) {
+          callback(new Error("database not reachable"));
+        });
+        let body;
+        try {
+          body = await client.post(url, form);
+        } finally {
+          stub.restore();
+        }
+
+        should(body.status).eql(HttpStatus.INTERNAL_SERVER_ERROR);
+        body.data.should.containEql("database not reachable");
+      });
     });
   });
 });
