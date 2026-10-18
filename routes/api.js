@@ -28,7 +28,9 @@ function checkApiKey(req, res, next) {
   debug("checkApiKey");
   const apiKey = req.params.apiKey;
 
-  if (apiKeys[apiKey]) {
+  // Object.hasOwn: a plain lookup would accept inherited names like
+  // "constructor" as a valid key.
+  if (Object.hasOwn(apiKeys, apiKey) && apiKeys[apiKey]) {
     req.apiKey = apiKeys[apiKey];
     return next();
   }
@@ -270,7 +272,7 @@ function getOutstandingExportUser(req) {
 // (not present in `apiKeys` at all) - never attributes a migration-style
 // write to a real editor's own name.
 function getBlogSyncUser(req) {
-  return { OSMUser: apiKeys[req.params.apiKey] || SYNTHETIC_MIGRATION_USER_NAME };
+  return { OSMUser: req.apiKey || SYNTHETIC_MIGRATION_USER_NAME };
 }
 
 // Parses an optional minBlogNumber/maxBlogNumber query param into a

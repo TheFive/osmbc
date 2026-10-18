@@ -773,4 +773,11 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
       should(response.data.log).eql([]);
     });
   });
+
+  // apiKeys is a plain object: a lookup without own-property check would
+  // accept inherited names as keys.
+  it("should not accept an inherited object property name as key", async function() {
+    const inPath = await axios.get(baseLink + "/api/blogSync/constructor/WN100", { validateStatus: () => true });
+    should(inPath.status).eql(401);
+  });
 });
