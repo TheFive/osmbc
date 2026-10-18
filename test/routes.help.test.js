@@ -2,6 +2,7 @@
 
 import should from "should";
 import initialiseModules from "../util/initialise.js";
+import testutil from "./testutil.js";
 
 import helpRoutes from "../routes/help.js";
 
@@ -9,6 +10,7 @@ import helpRoutes from "../routes/help.js";
 
 describe("routes/help", function() {
   before(async function() {
+    await testutil.clearDB();
     await initialiseModules();
   });
   describe("generateHelpText", function() {

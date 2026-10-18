@@ -16,8 +16,8 @@ describe("router/user", function() {
 
 
   before(async function () {
-    await initialiseModules();
     await testutil.clearDB();
+    await initialiseModules();
     testutil.startServerSync();
   });
 

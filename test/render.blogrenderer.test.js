@@ -16,6 +16,7 @@ import config from "../config.js";
 describe("render/blogrenderer", function () {
     let renderer;
     before(async function () {
+        await testutil.clearDB();
         await configModule.initialise();
         renderer = BlogRenderer.createRenderer("HTML");
         nock("https://missingmattermost.example.com/")

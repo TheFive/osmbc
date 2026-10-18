@@ -38,6 +38,7 @@ async function waitUntilExported(name, profile, lang) {
 describe("router/api", function() {
   let baseLink;
   before(async function() {
+    await testutil.clearDB();
     await initialiseModules();
   });
   beforeEach(function(bddone) {
