@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.4.11](https://github.com/TheFive/osmbc/tree/4.4.11) (2026-10-18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.10...4.4.11)
+
+**Features:**
+
+- api: accept the blogSync API key in the Authorization header
+
+**Fixed bugs:**
+
+- blog: store "closed" instead of "close" from the blog edit form
+- views: hide translate menu entries for closed target languages
+- api: reject inherited object property names as API key
+- article: check preview links once instead of on every keyup
+
 ## [4.4.10](https://github.com/TheFive/osmbc/tree/4.4.10) (2026-10-05)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.9...4.4.10)
