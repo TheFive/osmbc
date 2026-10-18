@@ -88,18 +88,36 @@ mixin mobileTranslateButtons(lang)
           a.osmbc-help-text(href=layout.htmlroot + "/usert/" + layout.user.id)="Configure a translation service to translate from " + sources.join(", ")
         each source in sources
           each service in services
-            button.btn.btn-outline-primary(type="button" class="translate" + source + lang onclick=`window.translate('${source}','${lang}','${service}');`)
+            button.btn.btn-outline-primary(type="button" class="translate" + source + lang onmousedown="event.preventDefault();" onclick=`window.translate('${source}','${lang}','${service}');`)
               ="Translate from " + source + ((services.length > 1) ? " (" + service + ")" : "")
           span.badge.text-bg-warning.d-none(class="translateWait" + source + lang)="please wait …"
           span.badge.text-bg-danger.d-none(class="translateError" + source + lang)="translation from " + source + " failed"
           each service in services
             span.badge.text-bg-success.d-none(class="translateDone" + source + lang + " " + service)="translated from " + source
 
+//- Small screens: the second language of the desktop pair on demand,
+//- below the mobile language and editable (X11). "Translate → second" shows
+//- it and translates in one tap; article_view.js shows the button while the
+//- mobile language has text and the second one is empty.
+mixin mobileSecondLanguage(lang, second)
+  - const services = layout.user.getTranslations().filter((service) => layout.user.useOneTranslation(service))
+  - const canTranslate = services.length > 0 && article.isChangeAllowed("markdown" + second)
+  div.d-flex.flex-wrap.gap-2.my-2.w-100
+    //- onmousedown keeps the focus in the text field: losing it resizes the
+    //- field (FitToContent) and moves the button away before the tap ends
+    button.btn.btn-outline-secondary#toggleSecondLang(type="button" data-lang=second onmousedown="event.preventDefault();")="Show " + second
+    if canTranslate
+      button.btn.btn-outline-primary.d-none#translateToSecondLang(type="button" data-from=lang data-to=second data-service=services[0] onmousedown="event.preventDefault();")="Translate → " + second
+  div.col-12.d-none#secondLanguage
+    div.osmbc-language-column
+      +mobileTranslateButtons(second)
+      +markdownWithPreview(second)
+
 //- Texts of the other languages for Translate on small screens: hidden and
 //- disabled, so they are never submitted with the form.
-mixin translationSources(lang)
+mixin translationSources(shown)
   each source in layout.languages
-    if (source !== lang && article["markdown" + source])
+    if (shown.indexOf(source) < 0 && article["markdown" + source])
       textarea.d-none(id="markdown" + source disabled)=article["markdown" + source]
       div.d-none(id="preview" + source)=article["markdown" + source]
 

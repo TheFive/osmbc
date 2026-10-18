@@ -139,6 +139,9 @@ function renderArticleId(req, res, next) {
   if (req.mobileView) {
     params.left_lang = req.user.getMobileLang();
     params.right_lang = null;
+    // a second language to show on demand: the other one of the desktop pair
+    const pair = [req.user.getMainLang(), req.user.getSecondLang()];
+    params.mobile_second_lang = pair.find((l) => l && l !== params.left_lang) || null;
   }
   params.editComment = null;
   let mainTranslationService = "deepl";

@@ -75,6 +75,15 @@ export default class Page {
     await this._driver.actions().move({ origin: object }).perform();
   }
 
+  // Click an element below the visible part of a phone screen. Bootstrap
+  // sets `scroll-behavior: smooth`: Selenium scrolls the element into view
+  // and clicks while the page is still moving, the click then hits another
+  // element (ElementClickInterceptedError). So scroll instantly first.
+  async tap(element) {
+    await this._driver.executeScript("arguments[0].scrollIntoView({ block: 'center', behavior: 'instant' });", element);
+    await element.click();
+  }
+
   async _waitForBootstrapOverlaysToDisappear() {
     // Prüfe auf mögliche Overlays (z. B. Bootstrap-Modal oder Dropdown) und warte, bis sie verschwinden
     try {

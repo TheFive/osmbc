@@ -97,6 +97,7 @@ function init() {
     .change(FitToContent)
     .keyup(FitToContent)
     .trigger("change");
+  initSecondLanguage();
   // $('[data-bs-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
@@ -550,6 +551,40 @@ function insertIntoMarkdown(mf, text, asLink) {
   mf.focus();
   mf.selectionStart = mf.selectionEnd = r.pos;
   $(mf).trigger("change");
+}
+
+// Small screens: show the second language on demand (X11). Whether it is
+// shown is remembered in the browser, it is a per viewer convenience.
+function initSecondLanguage() {
+  const toggle = $("#toggleSecondLang");
+  if (toggle.length === 0) return;
+  const second = toggle.data("lang");
+  const area = $("#secondLanguage");
+  const translateButton = $("#translateToSecondLang");
+  function show(shown) {
+    area.toggleClass("d-none", !shown);
+    toggle.text((shown ? "Hide " : "Show ") + second);
+    try { window.localStorage.setItem("osmbcShowSecondLang", shown ? "yes" : "no"); } catch (e) {}
+  }
+  function updateTranslateButton() {
+    const from = ($("#markdown" + translateButton.data("from")).val() || "").trim();
+    const to = ($("#markdown" + second).val() || "").trim();
+    // toggleClass needs a real boolean: anything else (e.g. "") toggles
+    translateButton.toggleClass("d-none", from === "" || to !== "");
+  }
+  let shown = false;
+  try { shown = window.localStorage.getItem("osmbcShowSecondLang") === "yes"; } catch (e) {}
+  show(shown);
+  toggle.on("click", function() { show(area.hasClass("d-none")); });
+  if (translateButton.length === 0) return;
+  // input, not keyup: it fires for every change of the text, also for
+  // pasting, dropping, autocorrect and the keyboard's word suggestions
+  $("#markdown" + translateButton.data("from") + ", #markdown" + second).on("input change", updateTranslateButton);
+  updateTranslateButton();
+  translateButton.on("click", function() {
+    show(true);
+    window.translate(translateButton.data("from"), second, translateButton.data("service"));
+  });
 }
 
 // Buttons below lg: insert the link, or its google translate link in the

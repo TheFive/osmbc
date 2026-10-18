@@ -127,6 +127,71 @@ class ArticlePage extends StandardPage {
     return { text: value, warning: hasWarningClass };
   }
 
+  // Small screens (mobile mode): one language, the second one on demand,
+  // Save in the bar at the bottom, insert buttons at the collection links.
+
+  // type at the end of the text, keeping what is there
+  async appendMarkdownInput(lang, text) {
+    await this.assertPage();
+    await this._driver.findElement(By.id("markdown" + lang)).sendKeys(text);
+  }
+
+  async isMarkdownShown(lang) {
+    return this._driver.findElement(By.id("markdown" + lang)).isDisplayed();
+  }
+
+  async getToggleSecondLanguageText() {
+    return this._driver.findElement(By.id("toggleSecondLang")).getText();
+  }
+
+  async clickToggleSecondLanguage() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.id("toggleSecondLang")));
+  }
+
+  async isTranslateToSecondLanguageShown() {
+    return this._driver.findElement(By.id("translateToSecondLang")).isDisplayed();
+  }
+
+  async clickTranslateToSecondLanguage() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.id("translateToSecondLang")));
+  }
+
+  async clickSaveBar() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.id("saveButtonBar")));
+  }
+
+  async isSaveBarShown() {
+    return this._driver.findElement(By.id("saveButtonBar")).isDisplayed();
+  }
+
+  // the first collection link's "+ Link" / "+ translated" button
+  async clickInsertLink() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("#linkArea button.insertLink")));
+  }
+
+  async clickInsertTranslatedLink() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("#linkArea button.insertTranslatedLink")));
+  }
+
+  async isInsertLinkShown() {
+    return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
+  }
+
+  // select text in a markdown field, or place the cursor (no "to");
+  // from = "end" puts the cursor after the text
+  async setMarkdownSelection(lang, from, to) {
+    await this._driver.executeScript(`
+      const f = document.getElementById("markdown" + arguments[0]);
+      const from = (arguments[1] === "end") ? f.value.length : arguments[1];
+      f.focus();
+      f.setSelectionRange(from, arguments[2] ?? from);`, lang, from, to);
+  }
+
   async getWarningMessage(lang) {
     const ele =  await this._driver.findElement(By.id("text" + lang));
     const text = await ele.getAttribute("innerHTML");

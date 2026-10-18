@@ -7,6 +7,7 @@ import userModule from "../../model/user.js";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import util from "../../util/util.js";
+import ArticlePage from "../PageObjectModel/articlePage.js";
 
 const osmbcLink = util.osmbcLink;
 
@@ -68,23 +69,24 @@ describe("uc.article save bar", function() {
   it("should insert a collection link and its translation link by tapping (X7)", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const articlePage = new ArticlePage(driver);
     await driver.get(osmbcLink("/article/" + linked.id));
     // select "Text": the link is put around it
-    await driver.executeScript("const f = document.getElementById('markdownDE'); f.focus(); f.setSelectionRange(0, 4);");
-    await driver.findElement(By.css("#linkArea button.insertLink")).click();
-    should(await driver.findElement(By.id("markdownDE")).getAttribute("value")).eql("[Text](https://example.com/news) DE");
+    await articlePage.setMarkdownSelection("DE", 0, 4);
+    await articlePage.clickInsertLink();
+    should(await articlePage.getMarkdownInput("DE")).eql("[Text](https://example.com/news) DE");
 
-    await driver.executeScript("const f = document.getElementById('markdownDE'); f.setSelectionRange(f.value.length, f.value.length);");
-    await driver.findElement(By.css("#linkArea button.insertTranslatedLink")).click();
-    should(await driver.findElement(By.id("markdownDE")).getAttribute("value"))
+    await articlePage.setMarkdownSelection("DE", "end");
+    await articlePage.clickInsertTranslatedLink();
+    should(await articlePage.getMarkdownInput("DE"))
       .eql("[Text](https://example.com/news) DE:??-s: >   [:DE-t:](https://example-com.translate.goog/news?_x_tr_sl=auto&_x_tr_tl=DE)");
-    should(await driver.findElement(By.id("saveButtonBar")).isDisplayed()).be.True();
+    should(await articlePage.isSaveBarShown()).be.True();
   });
   it("should not show the insert buttons on a desktop", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive");
     await driver.get(osmbcLink("/article/" + linked.id));
-    should(await driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed()).be.False();
+    should(await new ArticlePage(driver).isInsertLinkShown()).be.False();
   });
   it("should insert a dropped text where it is dropped, not at the cursor", async function() {
     driver = await testutil.getNewDriver("TheFive");

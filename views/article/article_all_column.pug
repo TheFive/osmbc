@@ -20,7 +20,10 @@ block markdownArea
               +mobileTranslateButtons(lang)
             +markdownWithPreview(lang)
     if layout.mobileView
-      +translationSources(layout.mobileLang)
+      - const second = params.mobile_second_lang
+      if second
+        +mobileSecondLanguage(layout.mobileLang, second)
+      +translationSources([layout.mobileLang, second])
 
 
   // Language Flags All Column
