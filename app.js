@@ -28,7 +28,6 @@ import configRouter from "./routes/config.js";
 import auth from "./routes/auth.js";
 import rateLimit from "express-rate-limit";
 
-import fileUpload from "express-fileupload";
 import _debug from "debug";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { createSessionStore } from "./routes/sessionStore.js";
@@ -129,7 +128,6 @@ if (mediaFolder["externally mirrored"] === false) {
 // app.use(cookieParser());
 
 
-app.use(fileUpload({ safeFileNames: true, preserveExtension: true, abortOnLimit: true, limits: { fileSize: 50 * 1024 * 1024 } }));
 
 
 token("OSMUser", function (req) { return (req.user && req.user.OSMUser) ? req.user.OSMUser : "no user"; });

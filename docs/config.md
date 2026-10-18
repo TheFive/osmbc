@@ -122,12 +122,12 @@ a map of *where to look*, not a restatement of every field.
 | `auth` | `htaccess` (basic-auth escape hatch) and `openstreetmap_oauth20` (the real login: `authorizationURL`, `tokenURL`, `clientID`, `clientSecret`, `callbackURL`, `scope`). **When `serverport`/`url` change, `auth.openstreetmap_oauth20.callbackURL` must be updated to match too** — OSM's own OAuth app registration has to agree with it, easy to miss (see `CLAUDE.local.md`, "Whenever the port changes, three places need to match"). |
 | `allowGuest`, `createGuestUsersAutomatic`, `DefineRole` | Login/role behavior for users without (or before) an OSM-verified account. |
 | `WelcomeInterval`, `userIsOldInDays`, `WelcomeRefreshInSeconds` | Home-screen "recently active"/"welcome" display tuning, not data-affecting. |
-| `scripts` | Paths + allowed users for the in-app scripted-review tooling (`scriptFilePath`/`logFilePath`, matched by `*FileFilter` globs). |
 | `Transition` | The automatic workflow scheduler (`AutoEditMode`, `AutoLanguageClose`) — `enabled: false` in `config.test.yaml` so tests don't race a live cron. |
 | `limitValues` | Express-`helmet` rate limiting (`limitWindowsMs`, `limitMaxCount`, `trustProxy`) — found to matter for a real bulk-write batch: a fast unpaced client can trip this within seconds (see `CLAUDE.local.md`, 2026-09-04 full-range Blog-Sync-Merger run). |
 | `DeeplProConfig` | DeepL API auth/endpoints for machine translation. |
 | `copyLanguageFromAnother` | Per-language "translate from this other language instead" fallback map. |
 | `blogTranslationVisibleFor` | Restricts the blog-translation feature to specific OSM usernames. |
+| `manyTranslationVisibleFor` | List of OSM usernames (or `"full"` for every user with full access) who get the "translate into many languages" menu in the article editor; each user still has to enable it via their own `translationServicesMany` setting. Missing = nobody. |
 | `ReviewInWP`, `urlWoErrorWhileEdit` | Misc per-language/per-URL editorial-workflow exceptions. |
 | `"media folder"` | Local-vs-published media path mapping used by markdown/export sanitizing (note the key needs quoting — it contains a space). |
 | `"Feature Image Base URL"` | **Required** (OSMBC refuses to start without it), e.g. `https://weeklyosm.eu`. When an editor saves a `Picture` article, its feature image must be a relative path (`/wp-content/...`) and must exist under this base url, otherwise the save is rejected. This keeps a broken `featureImage` out of the Hugo export. Migration/sync writes (API, `wp-reconcile`) are not checked. |

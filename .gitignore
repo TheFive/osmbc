@@ -14,7 +14,6 @@ package-lock.json
 test/uc.access/stylesheets
 maillogTest.log
 yarn.lock
-script_logs
 
 # Ignore all temporary files for comparison
 *_actual.html

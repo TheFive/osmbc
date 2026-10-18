@@ -106,14 +106,9 @@ userIsOldInDays: 60
 WelcomeRefreshInSeconds: 0
 createGuestUsersAutomatic: true
 
-# Script execution and review tooling paths.
-scripts:
-  user:
-    - TestUser
-  logFilePath: script_logs
-  scriptFilePath: scripts
-  logFileFilter: "*.log"
-  scriptFileFilter: "*.yaml"
+# OSM users who see "translate into many languages" (or "full").
+manyTranslationVisibleFor:
+  - TestUser
 
 User-Agent: Hello i am Kitty
 
