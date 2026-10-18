@@ -32,7 +32,7 @@ header" below). Either way it is checked in one of two ways (see
    The value (`monitor`, `TBC Collections`, ...) is a human-readable label,
    not a secret — it identifies *what the key is for*, not *who* is calling.
    Requests authenticated this way do not carry a real OSM user identity —
-   **except** for `POST /api/blogSync/:apiKey/:blog_id/apply`, which
+   **except** for the blogSync `apply` endpoint, which
    attributes its writes using this same label as the OSMUser (see that
    endpoint's own section below) - give a key meant for that endpoint a
    name-shaped value rather than a free-text description.
@@ -60,10 +60,15 @@ GET  /api/blogSync/:articleId/:property/changelog   Authorization: Bearer <key>
 ```
 
 A key in the path ends up in OSMBC's own access log (morgan) and in every
-proxy's access log; a header doesn't. Use the header variant for new
-clients. Migration: both variants are served until the last client has
-switched, then the `:apiKey` variants of `blogSync` will be removed. A
-missing, unknown or non-`Bearer` header returns `401`, checked before the
+proxy's access log; a header doesn't.
+
+> **Deprecated:** the `/api/blogSync/:apiKey/...` path variants. They
+> still work for now, so existing clients keep running during the
+> migration, but will be **removed** once the last client has switched.
+> Use the header variant for every new or updated client. (The other
+> endpoints in this document keep the `:apiKey` path segment for now.)
+
+A missing, unknown or non-`Bearer` header returns `401`, checked before the
 blog/article lookup (so no `404` without a valid key).
 
 ```sh
@@ -454,7 +459,10 @@ curl -o closedSince.zip \
 
 ## `GET /api/blogSync/:apiKey/:blog_id`
 
-Header variant: `GET /api/blogSync/:blog_id` (see "Key in the request header").
+**Deprecated path variant** — use `GET /api/blogSync/:blog_id` with `Authorization: Bearer <key>`
+instead (see "Key in the request header"); this `:apiKey` form will be
+removed. Both behave the same otherwise; the `apiKey` route parameter
+below exists only in the old form.
 
 Blog-Sync-Merger read endpoint (see `CLAUDE.local.md` in the `osmbc-develop`
 worktree for the full design). Unlike every `blogPreviewDownload` route
@@ -489,7 +497,10 @@ merge tool needs to compute a diff against another OSMBC instance.
 
 ## `POST /api/blogSync/:apiKey/:blog_id/apply`
 
-Header variant: `POST /api/blogSync/:blog_id/apply` (see "Key in the request header").
+**Deprecated path variant** — use `POST /api/blogSync/:blog_id/apply` with `Authorization: Bearer <key>`
+instead (see "Key in the request header"); this `:apiKey` form will be
+removed. Both behave the same otherwise; the `apiKey` route parameter
+below exists only in the old form.
 
 Blog-Sync-Merger write endpoint. Applies a merge plan (as computed by
 `wp-reconcile/blog-sync-merger/blogSyncMerger.js` against a local copy and a prior `GET
@@ -557,7 +568,10 @@ non-dry-run batch temporarily reopens the blog and restores it (including
 
 ## `GET /api/blogSync/:apiKey/:articleId/:property/changelog`
 
-Header variant: `GET /api/blogSync/:articleId/:property/changelog` (see "Key in the request header").
+**Deprecated path variant** — use `GET /api/blogSync/:articleId/:property/changelog` with `Authorization: Bearer <key>`
+instead (see "Key in the request header"); this `:apiKey` form will be
+removed. Both behave the same otherwise; the `apiKey` route parameter
+below exists only in the old form.
 
 Blog-Sync-Merger changelog endpoint: the full changes-log history for one
 tracked field of one article, plus its current live value. Built for a
