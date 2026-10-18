@@ -11,13 +11,23 @@
       // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
       // the save bar. The server reads the cookie; if it rendered the other
       // mode, reload once (not again if the cookie does not stick).
+      // The "desktop view" of a phone browser (~980px, below lg) stays
+      // desktop: its viewport is much wider than the screen.
       (function() {
         var rendered = "desktop";
-        var wanted = window.matchMedia("(max-width: 991.98px)").matches ? "mobile" : "desktop";
+        var desktopView = window.screen.width > 0 && window.innerWidth > window.screen.width * 1.2;
+        var wanted = (!desktopView && window.matchMedia("(max-width: 991.98px)").matches) ? "mobile" : "desktop";
         if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
           document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
         }
-        if (wanted === rendered || document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+        if (wanted === rendered) {
+          // a later switch on the same page must be able to reload again
+          try {
+            window.sessionStorage.removeItem("osmbcViewReload");
+          } catch (e) {}
+          return;
+        }
+        if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
         try {
           if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
           window.sessionStorage.setItem("osmbcViewReload", location.href);
@@ -197,7 +207,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <p class="osmbc-help-text">Drag me to a markdown field, or paste an URL into selected text to create an markdown link.</p>
+            <p class="osmbc-help-text d-none d-lg-block">Drag me to a markdown field, or paste an URL into selected text to create an markdown link.</p>
           </div>
         </div>
         <div class="row invisible" id="linkTextPlainRow">
@@ -208,7 +218,7 @@
         </div><!-- display Markdown Blog--><!-- Markdown Area All Column-->
         <div class="row">
           <div class="col">
-            <div class="osmbc-language-column"><span class="badge text-bg-secondary osmbc-label-lang" role="button" draggable="true" data-bs-toggle="tooltip" data-bs-placement="left" title="Tap to copy the full text, or drag it into a text field" onclick="copyLanguageText('EN', this);" ondragstart="ondragstartLangLabel(event,'EN');">  EN  </span><span class="badge text-bg-danger" style="display:none" id="markdownEN_unsaved">unsaved</span><textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea><textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
+            <div class="osmbc-language-column"><span class="badge text-bg-secondary osmbc-label-lang">  EN  </span><span class="badge text-bg-danger" style="display:none" id="markdownEN_unsaved">unsaved</span><textarea class="d-none form-control" id="old_markdownEN" name="old_markdownEN" rows="1" hide="hide">This is the written text.</textarea><textarea class="markdownEdit form-control af" id="markdownEN" placeholder="1. Formulate not passive, but active.
 Sample: OpenCage data published an interview with David Overton, the doer behind the tissue map producing company Splashmaps. (via Twitter)
 2. People &amp; companies are information! So start an article with a person or a company!
 3. Decomplify your sentences.

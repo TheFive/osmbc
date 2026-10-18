@@ -65,15 +65,53 @@ describe("uc.article save bar", function() {
     await barSave.click();
     await driver.wait(async () => (await articleModule.findById(articleId)).markdownDE === "Text DE more", 5000, "text not saved");
   });
-  it("should copy the full text of a language by tapping its label (X7)", async function() {
+  it("should insert a collection link and its translation link by tapping (X7)", async function() {
+    const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    await driver.get(osmbcLink("/article/" + linked.id));
+    // select "Text": the link is put around it
+    await driver.executeScript("const f = document.getElementById('markdownDE'); f.focus(); f.setSelectionRange(0, 4);");
+    await driver.findElement(By.css("#linkArea button.insertLink")).click();
+    should(await driver.findElement(By.id("markdownDE")).getAttribute("value")).eql("[Text](https://example.com/news) DE");
+
+    await driver.executeScript("const f = document.getElementById('markdownDE'); f.setSelectionRange(f.value.length, f.value.length);");
+    await driver.findElement(By.css("#linkArea button.insertTranslatedLink")).click();
+    should(await driver.findElement(By.id("markdownDE")).getAttribute("value"))
+      .eql("[Text](https://example.com/news) DE:??-s: >   [:DE-t:](https://example-com.translate.goog/news?_x_tr_sl=auto&_x_tr_tl=DE)");
+    should(await driver.findElement(By.id("saveButtonBar")).isDisplayed()).be.True();
+  });
+  it("should not show the insert buttons on a desktop", async function() {
+    const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
+    driver = await testutil.getNewDriver("TheFive");
+    await driver.get(osmbcLink("/article/" + linked.id));
+    should(await driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed()).be.False();
+  });
+  it("should insert a dropped text where it is dropped, not at the cursor", async function() {
+    driver = await testutil.getNewDriver("TheFive");
     await driver.get(osmbcLink("/article/" + articleId));
-    // headless Chrome has no real clipboard: record what is written to it
-    await driver.executeScript("window.copied = null; navigator.clipboard.writeText = (t) => { window.copied = t; return Promise.resolve(); };");
-    const label = await driver.findElement(By.xpath("//span[starts-with(@onclick, \"copyLanguageText('DE'\")]"));
-    await label.click();
-    await driver.wait(async () => (await label.getText()) === "copied", 3000, "no feedback on the label");
-    should(await driver.executeScript("return window.copied;")).eql("Text DE");
+    // what the browser does on a drop: the cursor stays at the start, the
+    // dragged translation link lands at the end of the text
+    const dropped = ":??-s: >   [:DE-t:](https://example-com.translate.goog/news?_x_tr_sl=auto&_x_tr_tl=DE)";
+    await driver.executeScript(`
+      const f = document.getElementById("markdownDE");
+      f.value = "https://example.com/news";
+      f.setSelectionRange(0, 0);
+      f.dispatchEvent(new Event("drop"));
+      f.value = f.value + arguments[0];
+      f.setSelectionRange(f.value.length, f.value.length);`, dropped);
+    await driver.sleep(100);
+    should(await driver.findElement(By.id("markdownDE")).getAttribute("value")).eql("https://example.com/news" + dropped);
+
+    // a dropped url still becomes a markdown link
+    await driver.executeScript(`
+      const f = document.getElementById("markdownDE");
+      f.value = "See  here";
+      f.setSelectionRange(0, 0);
+      f.dispatchEvent(new Event("drop"));
+      f.value = "See https://example.com/news here";
+      f.setSelectionRange(f.value.length, f.value.length);`);
+    await driver.sleep(100);
+    should(await driver.findElement(By.id("markdownDE")).getAttribute("value")).eql("See [](https://example.com/news) here");
   });
   it("should not show the bar on a desktop", async function() {
     driver = await testutil.getNewDriver("TheFive");

@@ -142,14 +142,7 @@ mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbc-label-lang";
   - if (params.right_lang === lang) labelClass = "osmbc-label-lang2";
-  //- tap copies the full text (touch screens cannot drag), drag still works
-  span.badge.text-bg-secondary(
-      class=labelClass
-      role="button"
-      draggable="true"
-      data-bs-toggle="tooltip" data-bs-placement="left" title="Tap to copy the full text, or drag it into a text field"
-      onclick=`copyLanguageText('${lang}', this);`
-      ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
+  span.badge.text-bg-secondary(class=labelClass)="  " + lang + "  "
   span.badge.text-bg-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 

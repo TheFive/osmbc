@@ -152,7 +152,8 @@ block content
       .col-md-6
         .div(id="linkArea")
       .col-md-4
-        p.osmbc-help-text Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
+        //- below lg the links have insert buttons instead (touch screens cannot drag)
+        p.osmbc-help-text.d-none.d-lg-block Drag me to a markdown field, or paste an URL into selected text to create an markdown link.
     div.row.invisible(id="linkTextPlainRow")
       .col-md-1
         label="Text"

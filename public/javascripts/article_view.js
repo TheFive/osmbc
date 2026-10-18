@@ -2,7 +2,7 @@
 
 /* global highlightWrongLinks, urlWoErrorWhileEdit */
 
-/* exported myclick, ondragstartflag, ondragstartLangLabel, copyLanguageText */
+/* exported myclick, ondragstartflag */
 /* exported callAndRedraw, setNoTranslation, translate */
 
 
@@ -67,6 +67,7 @@ function init() {
     .keyup(showModified)
     .on("paste", pasteEvent)
     .on("drop", pasteEvent)
+    .on("focus", function() { lastMarkdownField = this; })
     .trigger("change");
   $("#title")
     .keyup(showModified);
@@ -295,9 +296,23 @@ function generateMarkdownLink2(par1, par2) {
   return null;
 }
 
+// Position of the text a drop inserted: the part between the common start
+// and the common end of the text before and after. null if the drop also
+// removed text (text moved inside the field).
+function droppedRange(beforeText, afterText) {
+  let start = 0;
+  while (start < beforeText.length && beforeText[start] === afterText[start]) start++;
+  let end = 0;
+  while (end < beforeText.length - start && end < afterText.length - start &&
+    beforeText[beforeText.length - 1 - end] === afterText[afterText.length - 1 - end]) end++;
+  if (start + end !== beforeText.length) return null;
+  return { start: start, end: afterText.length - end };
+}
+
 // Event Handler for pasting text to markdown field
-function pasteEvent() {
+function pasteEvent(event) {
   const mf = this;
+  const isDrop = event && event.type === "drop";
 
   // Generate a triple of text, start selection and end selection BEFORE Pasting new text
   const before = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
@@ -305,6 +320,14 @@ function pasteEvent() {
   setTimeout(function () {
     // Generate a triple of text, start selection and end selection AFTER Pasting new text
     const after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
+    // A drop inserts where it is dropped, not at the cursor: the selection
+    // before the drop says nothing about where the new text is.
+    if (isDrop) {
+      const range = droppedRange(before.text, after.text);
+      if (!range) return $(mf).trigger("change");
+      before.startselection = before.endselection = range.start;
+      after.startselection = after.endselection = range.end;
+    }
     // And use the result, to generate the markdown link
     const r = generateMarkdownLink2(before, after);
 
@@ -445,9 +468,9 @@ function checkMarkdownError() {
 
 
 
-// Generate the automatic google translate link for an url
-// and a given language, used to show it in edit mode
-function generateGoogleTranslateLink(link, lang) {
+// The google translate link of an url for a given language,
+// as url and as markdown (with the "translated" emoji)
+function googleTranslateLink(link, lang) {
   let gttl = lang;
 
   if (lang === "JP") gttl = "JA";
@@ -470,8 +493,6 @@ function generateGoogleTranslateLink(link, lang) {
   gtl = gtl.replace("#ORIGIN#", origin);
   gtl = gtl.replace("#PATHNAME#", pathnameWithSearch);
 
-  window.linklist.push(gtl);
-
   let gtlMarkdown = ":??-s: >   [:#LANG#-t:](#ORIGIN#.translate.goog#PATHNAME#_x_tr_sl=auto&_x_tr_tl=#GTTL#)";
 
 
@@ -480,6 +501,16 @@ function generateGoogleTranslateLink(link, lang) {
   gtlMarkdown = gtlMarkdown.replace("#GTTL#", gttl);
   gtlMarkdown = gtlMarkdown.replace("#ORIGIN#", origin);
   gtlMarkdown = gtlMarkdown.replace("#PATHNAME#", pathnameWithSearch);
+  return { url: gtl, markdown: gtlMarkdown };
+}
+
+// Generate the automatic google translate link for an url
+// and a given language, used to show it in edit mode
+function generateGoogleTranslateLink(link, lang) {
+  const gt = googleTranslateLink(link, lang);
+  const gtl = gt.url;
+  const gtlMarkdown = gt.markdown;
+  window.linklist.push(gtl);
 
   // build DOM elements instead of an HTML string, the link comes from
   // the collection field and must not be interpreted as HTML or JavaScript
@@ -494,6 +525,51 @@ function dragstart(event, text) {
   event.dataTransfer.setData("TEXT", text);
 }
 
+
+// The markdown field the link buttons insert into: the one edited last,
+// or the first one that can be edited.
+let lastMarkdownField = null;
+function insertTargetField() {
+  if (lastMarkdownField && !lastMarkdownField.readOnly && $(lastMarkdownField).is(":visible")) return lastMarkdownField;
+  return $(".markdownEdit:visible").not("[readonly]")[0];
+}
+
+// Insert text at the cursor of a markdown field, the tap alternative to
+// dragging a link (touch screens cannot drag). A link wraps the selected
+// text like pasting an url into a selection: [selection](link).
+function insertIntoMarkdown(mf, text, asLink) {
+  const start = asLink ? mf.selectionStart : mf.selectionEnd;
+  const end = mf.selectionEnd;
+  const before = { text: mf.value, startselection: start, endselection: end };
+  const newText = mf.value.substring(0, start) + text + mf.value.substring(end);
+  const pos = start + text.length;
+  let r = null;
+  if (asLink) r = generateMarkdownLink2(before, { text: newText, startselection: pos, endselection: pos });
+  if (!r) r = { text: newText, pos: pos };
+  mf.value = r.text;
+  mf.focus();
+  mf.selectionStart = mf.selectionEnd = r.pos;
+  $(mf).trigger("change");
+}
+
+// Buttons below lg: insert the link, or its google translate link in the
+// language of the field
+function linkInsertButtons(link) {
+  function button(label, cls, onInsert) {
+    return $("<button>", { type: "button", class: "btn btn-sm btn-outline-primary py-0 me-1 " + cls })
+      .text(label)
+      // keep the focus (and the cursor) in the markdown field
+      .on("mousedown", function(event) { event.preventDefault(); })
+      .on("click", function() {
+        const mf = insertTargetField();
+        if (mf) onInsert(mf);
+      });
+  }
+  return $("<span>", { class: "d-lg-none" }).append(
+    button("+ Link", "insertLink", function(mf) { insertIntoMarkdown(mf, link, true); }),
+    button("+ translated", "insertTranslatedLink", function(mf) { insertIntoMarkdown(mf, googleTranslateLink(link, mf.lang).markdown, false); })
+  );
+}
 
 // Collection is changed, so create a linkList
 // for the linkArea
@@ -539,6 +615,7 @@ function onchangeCollection() {
     window.userLanguages.forEach(function(lang) {
       result.append(text(" "), generateGoogleTranslateLink(link, lang));
     });
+    result.append(text(" "), linkInsertButtons(link));
 
     result.append($("<br>"), text("\n"));
   }
@@ -590,26 +667,6 @@ function ondragstartflag (event, id) {
   event.dataTransfer.setData("TEXT", src);
 }
 
-function ondragstartLangLabel(event, lang) {
-  const v = $("#markdown" + lang).val();
-  event.dataTransfer.setData("TEXT", v);
-}
-
-// Tap alternative to dragging a language label: copy the full text of that
-// language to the clipboard and show it briefly on the label.
-function copyLanguageText(lang, label) {
-  const text = $("#markdown" + lang).val();
-  const original = label.textContent;
-  function feedback(message) {
-    label.textContent = message;
-    setTimeout(function () { label.textContent = original; }, 1500);
-  }
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(function () { feedback(" copied "); }, function () { feedback(" not copied "); });
-  } else {
-    feedback(" not copied ");
-  }
-}
 
 
 // Fit to content event
