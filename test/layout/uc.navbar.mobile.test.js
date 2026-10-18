@@ -71,18 +71,32 @@ describe("uc/navbar on small screens", function() {
     beforeEach(async function() {
       driver = await testutil.getNewDriver("TheFive", { device: "desktopView" });
     });
-    it("should translate and save without the menu covering anything (#1155)", async function() {
+    it("should edit both languages and save without the menu covering anything (#1155)", async function() {
       const article = await articleModule.createNewArticle({ blog: "WN1", markdownDE: "Text DE" });
       await driver.get(osmbcLink("/article/" + article.id));
       should(await contentStartsBelowNavbar()).be.True();
 
-      // the desktop view is mobile mode too: one language (EN), Translate
-      // at the text field, Save in the bar at the bottom
-      await driver.findElement(By.css("button.translateDEEN")).click();
-      await driver.wait(async () => (await driver.findElement(By.id("markdownEN")).getAttribute("value")) === "Text DE", 3000);
+      // the desktop view is the way out of mobile mode: both languages of
+      // the desktop pair, Save still in the bar at the bottom (below lg)
+      should(await driver.executeScript("return document.cookie.indexOf('osmbc_view=desktop') >= 0;")).be.True();
+      should(await driver.findElement(By.id("markdownDE")).isDisplayed()).be.True();
+      const markdownEN = await driver.findElement(By.id("markdownEN"));
+      should(await markdownEN.isDisplayed()).be.True();
+      await markdownEN.sendKeys("Text EN");
       // click fails if the button is covered
       await driver.findElement(By.id("saveButtonBar")).click();
-      await driver.wait(async () => (await articleModule.findById(article.id)).markdownEN === "Text DE", 3000, "translation not saved");
+      await driver.wait(async () => (await articleModule.findById(article.id)).markdownEN === "Text EN", 3000, "text not saved");
+    });
+    it("should switch from mobile mode to desktop mode without a manual reload", async function() {
+      const article = await articleModule.createNewArticle({ blog: "WN1", markdownDE: "Text DE" });
+      // a cookie left over from the normal phone view
+      await driver.manage().addCookie({ name: "osmbc_view", value: "mobile", path: "/" });
+      await driver.get(osmbcLink("/article/" + article.id));
+      await driver.wait(async () => {
+        try {
+          return await driver.findElement(By.id("markdownDE")).isDisplayed();
+        } catch (err) { return false; }
+      }, 5000, "page did not switch to desktop mode");
     });
     it("should close the menu panel after choosing an entry", async function() {
       await driver.get(osmbcLink("/osmbc"));

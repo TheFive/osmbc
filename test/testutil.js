@@ -652,10 +652,12 @@ const testDevices = {
     userAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36"
   },
   // the "desktop view" of a phone browser: desktop user agent, ~980px wide,
-  // just below Bootstrap's lg breakpoint
+  // just below Bootstrap's lg breakpoint, on a phone screen (412px)
   desktopView: {
     deviceMetrics: { width: 980, height: 2120, pixelRatio: 1, touch: true },
-    userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"
+    userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+    screen: { width: 412, height: 915 },
+    view: "desktop"
   }
 };
 
@@ -667,7 +669,11 @@ async function getNewDriver(username, options = {}) {
   if (isHeadless) chromeOptions.addArguments("headless=new");
   if (options.device) {
     if (!testDevices[options.device]) throw new Error("Unknown test device " + options.device);
-    chromeOptions.setMobileEmulation(testDevices[options.device]);
+    const { deviceMetrics, userAgent, screen } = testDevices[options.device];
+    // mobile emulation always makes the screen as wide as the viewport, a
+    // device with its own screen size is set up by DevTools below
+    if (screen) chromeOptions.addArguments("user-agent=" + userAgent);
+    else chromeOptions.setMobileEmulation({ deviceMetrics, userAgent });
   } else {
     chromeOptions.addArguments("window-size=1920,1080");
   }
@@ -711,6 +717,19 @@ async function getNewDriver(username, options = {}) {
     throw improvedError;
   }
   // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
+  const device = options.device && testDevices[options.device];
+  if (device && device.screen) {
+    // a viewport wider than the screen, like a phone browser's desktop view
+    await driver.sendDevToolsCommand("Emulation.setDeviceMetricsOverride", {
+      width: device.deviceMetrics.width,
+      height: device.deviceMetrics.height,
+      deviceScaleFactor: device.deviceMetrics.pixelRatio,
+      mobile: false,
+      screenWidth: device.screen.width,
+      screenHeight: device.screen.height
+    });
+    if (device.deviceMetrics.touch) await driver.sendDevToolsCommand("Emulation.setTouchEmulationEnabled", { enabled: true });
+  }
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
   await driver.manage().setTimeouts({ implicit: 700, script: 700 });
@@ -724,9 +743,9 @@ async function getNewDriver(username, options = {}) {
     await loginPage.typeUsername(username);
     await loginPage.typePassword(username);
     await loginPage.clickOK();
-    // small test devices work in mobile mode (one language), set the cookie
-    // the layout script would set, so no test waits for its reload
-    if (options.device) await driver.manage().addCookie({ name: "osmbc_view", value: "mobile", path: "/" });
+    // set the cookie the layout script would set (small test devices work in
+    // mobile mode, one language), so no test waits for its reload
+    if (device) await driver.manage().addCookie({ name: "osmbc_view", value: device.view || "mobile", path: "/" });
   } catch (err) {
     console.error(err);
     // Ensure driver is properly closed on error

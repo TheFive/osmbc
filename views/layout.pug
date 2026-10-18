@@ -118,13 +118,21 @@ block all
         // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
         // the save bar. The server reads the cookie; if it rendered the other
         // mode, reload once (not again if the cookie does not stick).
+        // The "desktop view" of a phone browser (~980px, below lg) stays
+        // desktop: its viewport is much wider than the screen.
         (function () {
           var rendered = "#{(typeof layout !== "undefined" && layout && layout.mobileView) ? "mobile" : "desktop"}";
-          var wanted = window.matchMedia("(max-width: 991.98px)").matches ? "mobile" : "desktop";
+          var desktopView = window.screen.width > 0 && window.innerWidth > window.screen.width * 1.2;
+          var wanted = (!desktopView && window.matchMedia("(max-width: 991.98px)").matches) ? "mobile" : "desktop";
           if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
             document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
           }
-          if (wanted === rendered || document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+          if (wanted === rendered) {
+            // a later switch on the same page must be able to reload again
+            try { window.sessionStorage.removeItem("osmbcViewReload"); } catch (e) {}
+            return;
+          }
+          if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
           try {
             if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
             window.sessionStorage.setItem("osmbcViewReload", location.href);
