@@ -774,10 +774,113 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
     });
   });
 
+  // Same endpoints with the key in the Authorization header instead of the
+  // path (migration away from the key in the URL, see routes/api.js).
+  describe("API key in the Authorization header", function() {
+    let articleId;
+    function bearer(key) {
+      return { headers: { Authorization: "Bearer " + key }, validateStatus: () => true };
+    }
+
+    beforeEach(function(bddone) {
+      async.series([
+        function(cb) {
+          testutil.importData({
+            clear: false,
+            blog: [{ name: "WN100", status: "closed", categories: ["Mapping"] }],
+            article: [{ blog: "WN100", title: "Existing article", categoryEN: "Mapping", markdownDE: "* original" }]
+          }, cb);
+        },
+        function(cb) {
+          articleModule.find({ blog: "WN100" }, function(err, articles) {
+            if (err) return cb(err);
+            articleId = articles[0].id;
+            cb();
+          });
+        }
+      ], bddone);
+    });
+
+    it("should return the blog for a valid key", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/WN100", bearer("testapikey"));
+      should(response.status).eql(200);
+      should(response.data.blog.name).eql("WN100");
+      should(response.data.articles.length).eql(1);
+    });
+
+    it("should accept a personal (usert) key", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/WN100", bearer("334433"));
+      should(response.status).eql(200);
+    });
+
+    it("should reject a missing header, an incorrect key and a non-Bearer scheme", async function() {
+      const missing = await axios.get(baseLink + "/api/blogSync/WN100", { validateStatus: () => true });
+      should(missing.status).eql(401);
+      const wrong = await axios.get(baseLink + "/api/blogSync/WN100", bearer("incorrecttestapikey"));
+      should(wrong.status).eql(401);
+      const basic = await axios.get(baseLink + "/api/blogSync/WN100", { headers: { Authorization: "Basic testapikey" }, validateStatus: () => true });
+      should(basic.status).eql(401);
+    });
+
+    it("should check the key before looking up the blog (no 404 without a valid key)", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/WN_DOES_NOT_EXIST", { validateStatus: () => true });
+      should(response.status).eql(401);
+      const withKey = await axios.get(baseLink + "/api/blogSync/WN_DOES_NOT_EXIST", bearer("testapikey"));
+      should(withKey.status).eql(404);
+    });
+
+    it("should apply and attribute the write to the key's configured apiKeys value", async function() {
+      const response = await axios.post(
+        baseLink + "/api/blogSync/WN100/apply",
+        {
+          maxBlogNumber: 1000,
+          creates: [{ localId: "local-1", fields: { categoryEN: "Mapping", title: "Header article", markdownDE: "* via header" } }],
+          patches: []
+        },
+        bearer("testapikey.dataadmin")
+      );
+      should(response.status).eql(200);
+      should(response.data.created.length).eql(1);
+      const createdId = response.data.created[0].id;
+      const changeRows = await new Promise((resolve, reject) => {
+        logModule.find(
+          " where data->>'oid' = '" + createdId + "' and data->>'table' = 'article' and data->>'user' = 'dataAdmin-TestUser'",
+          { column: "id", desc: false },
+          (err, rows) => (err ? reject(err) : resolve(rows))
+        );
+      });
+      should(changeRows.length > 0).be.True();
+    });
+
+    it("should reject apply without a valid key", async function() {
+      const response = await axios.post(
+        baseLink + "/api/blogSync/WN100/apply",
+        { maxBlogNumber: 1000, dryRun: true, creates: [], patches: [] },
+        { validateStatus: () => true }
+      );
+      should(response.status).eql(401);
+    });
+
+    it("should return the changelog for a valid key", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/" + articleId + "/markdownDE/changelog", bearer("testapikey"));
+      should(response.status).eql(200);
+      should(response.data.current).eql("* original");
+      const missing = await axios.get(baseLink + "/api/blogSync/" + articleId + "/markdownDE/changelog", { validateStatus: () => true });
+      should(missing.status).eql(401);
+    });
+
+    it("should still serve the old path variant, ignoring the header there", async function() {
+      const response = await axios.get(baseLink + "/api/blogSync/testapikey/WN100", bearer("incorrecttestapikey"));
+      should(response.status).eql(200);
+    });
+  });
+
   // apiKeys is a plain object: a lookup without own-property check would
   // accept inherited names as keys.
   it("should not accept an inherited object property name as key", async function() {
     const inPath = await axios.get(baseLink + "/api/blogSync/constructor/WN100", { validateStatus: () => true });
     should(inPath.status).eql(401);
+    const inHeader = await axios.get(baseLink + "/api/blogSync/WN100", { headers: { Authorization: "Bearer constructor" }, validateStatus: () => true });
+    should(inHeader.status).eql(401);
   });
 });

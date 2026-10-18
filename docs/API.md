@@ -18,8 +18,10 @@ covers what a *caller* of the routes below needs to know.
 
 ## Authentication
 
-Every endpoint takes an `:apiKey` path segment. It is checked in one of two
-ways (see `checkApiKey` in `routes/api.js`):
+Every endpoint takes an `:apiKey` path segment. The `blogSync` endpoints
+also accept the key in a request header instead (see "Key in the request
+header" below). Either way it is checked in one of two ways (see
+`verifyApiKey` in `routes/api.js`):
 
 1. **Shared/label key** — configured under `apiKeys` in `config.<env>.yaml`:
    ```yaml
@@ -46,10 +48,32 @@ HTTP 401
 Not Authorised
 ```
 
+### Key in the request header (`blogSync` only)
+
+Each `blogSync` endpoint has a second variant without the `:apiKey`
+segment, taking the key from the `Authorization` header instead:
+
+```
+GET  /api/blogSync/:blog_id                         Authorization: Bearer <key>
+POST /api/blogSync/:blog_id/apply                   Authorization: Bearer <key>
+GET  /api/blogSync/:articleId/:property/changelog   Authorization: Bearer <key>
+```
+
+A key in the path ends up in OSMBC's own access log (morgan) and in every
+proxy's access log; a header doesn't. Use the header variant for new
+clients. Migration: both variants are served until the last client has
+switched, then the `:apiKey` variants of `blogSync` will be removed. A
+missing, unknown or non-`Bearer` header returns `401`, checked before the
+blog/article lookup (so no `404` without a valid key).
+
+```sh
+curl -H "Authorization: Bearer $OSMBC_BLOGSYNC_APIKEY" "https://<host>/api/blogSync/WN300"
+```
+
 ### Passing the key to the CLI runners
 
-The key sits in the request path, so it will show up in the target
-server's HTTP access logs. Keep it out of the *caller's* shell history and
+With the key in the request path, it shows up in the target server's HTTP
+access logs. Keep it out of the *caller's* shell history and
 process list too: both `wp-reconcile/blog-sync-merger/syncBlog.js` and
 `wp-reconcile/blog-sync-merger/dataAdminTemplate.py` accept the key from
 the `OSMBC_BLOGSYNC_APIKEY` environment variable instead of `--api-key`:
@@ -430,6 +454,8 @@ curl -o closedSince.zip \
 
 ## `GET /api/blogSync/:apiKey/:blog_id`
 
+Header variant: `GET /api/blogSync/:blog_id` (see "Key in the request header").
+
 Blog-Sync-Merger read endpoint (see `CLAUDE.local.md` in the `osmbc-develop`
 worktree for the full design). Unlike every `blogPreviewDownload` route
 above, this does **not** go through a renderer — it returns the raw,
@@ -462,6 +488,8 @@ merge tool needs to compute a diff against another OSMBC instance.
 - `404` — no such blog.
 
 ## `POST /api/blogSync/:apiKey/:blog_id/apply`
+
+Header variant: `POST /api/blogSync/:blog_id/apply` (see "Key in the request header").
 
 Blog-Sync-Merger write endpoint. Applies a merge plan (as computed by
 `wp-reconcile/blog-sync-merger/blogSyncMerger.js` against a local copy and a prior `GET
@@ -528,6 +556,8 @@ non-dry-run batch temporarily reopens the blog and restores it (including
 - `409` — blog not eligible (see above).
 
 ## `GET /api/blogSync/:apiKey/:articleId/:property/changelog`
+
+Header variant: `GET /api/blogSync/:articleId/:property/changelog` (see "Key in the request header").
 
 Blog-Sync-Merger changelog endpoint: the full changes-log history for one
 tracked field of one article, plus its current live value. Built for a

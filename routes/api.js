@@ -24,27 +24,44 @@ const publicApiRouter  = express.Router();
 
 const apiKeys = config.getValue("apiKeys", { mustExist: true });
 
-function checkApiKey(req, res, next) {
-  debug("checkApiKey");
-  const apiKey = req.params.apiKey;
+function notAuthorised() {
+  const err = new Error("Not Authorised");
+  err.status = 401;
+  err.type = "API";
+  return err;
+}
 
-  // Object.hasOwn: a plain lookup would accept inherited names like
-  // "constructor" as a valid key.
+// Shared by both ways to pass the key: sets req.apiKey to the `apiKeys`
+// label for a shared key, or req.user for a personal (usert) key.
+// Object.hasOwn: a plain lookup would accept inherited names like
+// "constructor" as a valid key.
+function verifyApiKey(apiKey, req, next) {
+  if (typeof apiKey !== "string" || apiKey === "") return next(notAuthorised());
+
   if (Object.hasOwn(apiKeys, apiKey) && apiKeys[apiKey]) {
     req.apiKey = apiKeys[apiKey];
     return next();
   }
 
-  userModule.findOne({ apiKey: req.params.apiKey }, function(err, user) {
-    if (err || !user) {
-      const err = new Error("Not Authorised");
-      err.status = 401;
-      err.type = "API";
-      return next(err);
-    }
+  userModule.findOne({ apiKey: apiKey }, function(err, user) {
+    if (err || !user) return next(notAuthorised());
     req.user = user;
     return next();
   });
+}
+
+// Key as `:apiKey` path segment (old style, ends up in access logs).
+function checkApiKey(req, res, next) {
+  debug("checkApiKey");
+  verifyApiKey(req.params.apiKey, req, next);
+}
+
+// Key as `Authorization: Bearer <key>` request header, so it stays out of
+// the URL and therefore out of OSMBC's (morgan) and nginx's access logs.
+function checkApiKeyHeader(req, res, next) {
+  debug("checkApiKeyHeader");
+  const match = /^Bearer\s+(\S+)\s*$/i.exec(req.get("Authorization") || "");
+  verifyApiKey(match ? match[1] : undefined, req, next);
 }
 
 // If function is called just return OK
@@ -1220,5 +1237,21 @@ publicApiRouter.get("/blogPreviewDownload/:apiKey/:blog_id", getBlogPreviewDownl
 publicApiRouter.get("/blogSync/:apiKey/:blog_id", getBlogSync);
 publicApiRouter.post("/blogSync/:apiKey/:blog_id/apply", applyBlogSync);
 publicApiRouter.get("/blogSync/:apiKey/:articleId/:property/changelog", getArticleChangelog);
+
+// Same blogSync endpoints with the key in the `Authorization: Bearer <key>`
+// header instead of the path. Migration: both variants are served until the
+// last client has switched, then the `:apiKey` routes above go.
+// Own router mounted after the old routes, so the key check runs before the
+// blog_id/articleId lookups (as the apiKey param does for the old routes)
+// and an unauthenticated caller can't probe which blogs exist. No path
+// overlaps with the old routes (they always have one segment more), so
+// every old-style request is answered above and never reaches this.
+const blogSyncHeaderRouter = express.Router();
+blogSyncHeaderRouter.param("blog_id", checkBlogId);
+blogSyncHeaderRouter.param("articleId", checkArticleId);
+blogSyncHeaderRouter.get("/:blog_id", getBlogSync);
+blogSyncHeaderRouter.post("/:blog_id/apply", applyBlogSync);
+blogSyncHeaderRouter.get("/:articleId/:property/changelog", getArticleChangelog);
+publicApiRouter.use("/blogSync", checkApiKeyHeader, blogSyncHeaderRouter);
 
 export default publicApiRouter;
