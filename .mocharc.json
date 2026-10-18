@@ -1,4 +1,3 @@
 {
-  "recursive":true,
-  "require": ["test/hooks/schema.js"]
+  "recursive":true
 }

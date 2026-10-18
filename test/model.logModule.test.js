@@ -14,8 +14,9 @@ import config from "../config.js";
 
 
 describe("model/changes", function() {
-  before(function(bddone) {
-    initialiseModules(bddone);
+  before(async function() {
+    await testutil.clearDB();
+    await initialiseModules();
   });
   context("Change Constructor", function() {
     /* eslint-disable mocha/no-synchronous-tests */

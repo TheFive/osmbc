@@ -38,7 +38,7 @@ describe("routes/slack", function() {
 
 
 
-  before(function(bddone) {
+  before(async function() {
     link = "http://localhost:" + config.getServerPort() + config.htmlRoot() + "/slack/create/wn";
 
     nock("https://missingmattermost.example.com/")
@@ -48,7 +48,8 @@ describe("routes/slack", function() {
     testutil.nockHtmlPages();
 
     process.env.TZ = "Europe/Amsterdam";
-    initialiseModules(bddone);
+    await testutil.clearDB();
+    await initialiseModules();
   });
   after(function(bddone) {
     testutil.nockHtmlPagesClear();

@@ -13,8 +13,8 @@ describe("routes/tool", function() {
   let client;
 
   before(async function() {
-    await initialiseModules();
     await testutil.clearDB();
+    await initialiseModules();
     testutil.startServerSync();
   });
 

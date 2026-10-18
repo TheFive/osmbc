@@ -28,8 +28,8 @@ describe("router/article", function() {
   const id = 2;
 
   before(async function () {
-    await initialiseModules();
     await testutil.clearDB();
+    await initialiseModules();
     articleRouterForTestOnly.cacheFlushAll();
     testutil.startServerSync();
   });

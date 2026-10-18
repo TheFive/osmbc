@@ -4,6 +4,7 @@ import should from "should";
 
 import nock from "nock";
 import initialiseModules from "../util/initialise.js";
+import testutil from "./testutil.js";
 
 import translator from "../model/translator.js";
 
@@ -13,8 +14,9 @@ import translator from "../model/translator.js";
 
 
 describe("model/translator", function() {
-  before(function(bddone) {
-    initialiseModules(bddone);
+  before(async function() {
+    await testutil.clearDB();
+    await initialiseModules();
   });
 
 

@@ -12,6 +12,7 @@ import testutil from "../test/testutil.js";
 describe("router/api blogSync (Blog-Sync-Merger)", function() {
   let baseLink;
   before(async function() {
+    await testutil.clearDB();
     await initialiseModules();
   });
   beforeEach(function(bddone) {
