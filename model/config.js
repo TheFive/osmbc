@@ -302,6 +302,7 @@ pgObject.table = "config";
 const checkAndRepair = {
   formulation_tipEN: function () {},
   formulation_tipDE: function () {},
+  firstdraftprompt: function () {},
   calendartranslation: function (c) {
     let ct = c.getJSON();
     if (!ct) ct = {};
@@ -443,7 +444,8 @@ function initialise(callback) {
       initConfigElement.bind(null, "votes"),
       initConfigElement.bind(null, "eventsfilter"),
       initConfigElement.bind(null, "ignoreforsearch"),
-      initConfigElement.bind(null, "newArticles")
+      initConfigElement.bind(null, "newArticles"),
+      initConfigElement.bind(null, "firstdraftprompt")
     ],
     function final(err) {
       debug("finalFunction initialise");

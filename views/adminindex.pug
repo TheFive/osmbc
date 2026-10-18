@@ -41,6 +41,9 @@ block content
         a(href=layout.htmlroot+"/config/ignoreforsearch") Not a Doublette Link
       p
         a(href=layout.htmlroot+"/config/votes") Votes For Articles
+      if layout.firstDraftVisible
+        p
+          a(href=layout.htmlroot+"/config/firstdraftprompt") First Draft Prompt (Claude)
       h3="IM Notification"
       p
         a(href=layout.htmlroot+"/config/slacknotification") Configuration of IM Channel (Slack,MM)
