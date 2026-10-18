@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.4.12](https://github.com/TheFive/osmbc/tree/4.4.12) (2026-10-18)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.11...4.4.12)
+
+**Features:**
+
+- article: draft an empty language markdown from a link with Claude
+
 ## [4.4.11](https://github.com/TheFive/osmbc/tree/4.4.11) (2026-10-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.10...4.4.11)
