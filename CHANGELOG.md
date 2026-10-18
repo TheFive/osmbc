@@ -14,6 +14,7 @@
 - views: hide translate menu entries for closed target languages
 - api: reject inherited object property names as API key
 - article: check preview links once instead of on every keyup
+- deps: update proxy-addr, compression and source-map-js
 
 ## [4.4.10](https://github.com/TheFive/osmbc/tree/4.4.10) (2026-10-05)
 
