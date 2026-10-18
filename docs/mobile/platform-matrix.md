@@ -138,9 +138,12 @@ Based on the polls (5 participants), the access log and the analysis:
    so switching it on the phone does not change the desktop language pair
    and vice versa. Mobile mode is detected by screen width (a small script
    stores it in a cookie). One breakpoint for everything: below 992px
-   (Bootstrap `lg`), where the menu panel and the save bar apply too — so
-   the "desktop view" of a phone browser (~980px) is mobile mode as well
-   (corrected 2026-10-16, uniform like most responsive apps).
+   (Bootstrap `lg`), where the menu panel and the save bar apply too.
+   Exception (2026-10-18, beta feedback): the "desktop view" of a phone
+   browser (~980px) is desktop mode, the way out for editing several
+   languages on a phone. It is recognised by a viewport much wider than the
+   screen; the menu panel and the save bar still apply there (CSS, below
+   `lg`). The first version (2026-10-16) made it mobile mode as well.
    Default: the user's main language. Choice: all active languages (e.g. for
    reviewers checking several languages). The phone UI then needs only one
    language display and one language choice.
