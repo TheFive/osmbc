@@ -74,6 +74,16 @@ class MainPage extends StandardPage {
     await this._driver.wait(until.elementIsVisible(await this._driver.findElement(By.id("badgeLegend"))), 3000, "legend did not open");
   }
 
+  // height of each language row of the status table, by language
+  async getStatusRowHeights() {
+    return this._driver.executeScript(`
+      const result = {};
+      document.querySelectorAll(".blog-status-table tr.blog-status-row").forEach(tr => {
+        result[tr.querySelector(".blog-status-lang-head").textContent.trim()] = Math.round(tr.getBoundingClientRect().height);
+      });
+      return result;`);
+  }
+
   // the link to the unwritten articles of a blog and language in the status table
   async clickUnwrittenArticles(blog, lang) {
     await this.assertPage();

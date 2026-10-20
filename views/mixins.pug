@@ -308,7 +308,8 @@ mixin blogStatusTable(blogWithLink, compactView)
             td.blog-status-blog-head=editBlog.name
 
       for l in layout.activeLanguages
-        tr.blog-status-row
+        //- phones: the row of the mobile language is the one to tap (style.css)
+        tr.blog-status-row(class=(layout.mobileView && l === layout.mobileLang) ? "osmbc-mobile-lang-row" : undefined)
           td.text-center.blog-status-lang-head=l
           for openBlog in openBlogs
             td.text-center.blog-status-value

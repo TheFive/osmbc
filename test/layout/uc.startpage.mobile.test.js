@@ -30,7 +30,8 @@ describe("uc/start page on small screens", function() {
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN1", status: "edit" });
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2", status: "edit" });
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN3", status: "open" });
-    await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "One", markdownDE: "Text" });
+    // a text in EN: a second language in the status table
+    await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "One", markdownDE: "Text", markdownEN: "Text" });
     await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Two" });
   });
   afterEach(async function() {
@@ -44,8 +45,13 @@ describe("uc/start page on small screens", function() {
     const mainPage = new MainPage(driver);
     await driver.get(osmbcLink("/"));
     should(await mainPage.hasHorizontalScroll()).be.False();
-    // the numbers: 44px high, narrower (32px) so a cell's numbers stay together
-    should(await mainPage.tapTargetsTooSmall(".blog-status-table a", { width: 32 })).eql([]);
+    // blog names and the numbers of the mobile language (DE) are tap targets:
+    // 44px high, narrower (32px) so a cell's numbers stay together; the other
+    // languages stay compact for reading
+    should(await mainPage.tapTargetsTooSmall(".blog-status-header a, .osmbc-mobile-lang-row a", { width: 32 })).eql([]);
+    const heights = await mainPage.getStatusRowHeights();
+    should(heights.DE).be.aboveOrEqual(44);
+    should(heights.EN).be.below(32);
     // admin is desktop only
     should(await mainPage.hasLinkToAdminPage()).be.False();
     // the legend opens on demand

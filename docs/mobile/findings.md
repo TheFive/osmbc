@@ -216,10 +216,12 @@ UX ↔ dev conflicts:
   a `gap-2` row. Start page: the status table stays (product owner,
   2026-10-20, after trying the list per blog: the table shows the state of
   all languages, there are about three blogs to work on); in mobile mode
-  the table is only as wide as its content, rows 44 px, its links 44 px
-  high and 32 px wide (the numbers of a cell stay together; a mis-tap hits
-  the neighbour in the same blog and language), the badge legend opens on
-  demand; admin link hidden. Collect:
+  the table is only as wide as its content; the blog names and the row of
+  the mobile language are tap targets, 44 px high and 32 px wide (the
+  numbers of a cell stay together; a mis-tap hits the neighbour in the same
+  blog and language); the other languages stay compact for reading (13
+  languages × 44 px was too high, product owner 2026-10-20); the badge
+  legend opens on demand; admin link hidden. Collect:
   search button beside the field below md, OK and Cancel apart. User page
   (and guest user page) on the normal layout, form label above the field
   below md, "OK" → "Save". Inline handlers replaced by data attributes and
