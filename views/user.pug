@@ -32,10 +32,10 @@ block content
    span="  Edit OSMBC User "+ usershown.OSMUser
 
   p="OpenStreetMap User Links: "
-    a(href="https://www.openstreetmap.org/user/" + usershown.OSMUser)
+    a(href="https://www.openstreetmap.org/user/" + usershown.OSMUser class=layout.mobileView ? "btn btn-link osmbc-tap-square" : undefined aria-label="OSM profile" title="OSM profile")
       i.fa.fa-map.text-body-secondary
     span=" "
-    a(href="https://hdyc.neis-one.org/?" + usershown.OSMUser)
+    a(href="https://hdyc.neis-one.org/?" + usershown.OSMUser class=layout.mobileView ? "btn btn-link osmbc-tap-square" : undefined aria-label="How did you contribute" title="How did you contribute")
       i.fa.fa-line-chart.text-body-secondary
 
   if (usershown.temporaryGuest===true)

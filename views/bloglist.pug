@@ -6,20 +6,23 @@ block additionalMenuRight
 
 
 block content
+  //- phones: only the mobile language, no service column (closing is desktop only)
+  - var listLanguages = layout.mobileView ? [layout.mobileLang] : layout.activeLanguages
 
 
 
 
   .row
     div
-      table.table.table-striped.table-responsive.text-
+      table.table.table-striped.table-responsive.text-(class=layout.mobileView ? "osmbc-bloglist" : undefined)
         thead
           tr 
             th name
             th status
-            for lang in layout.activeLanguages
+            for lang in listLanguages
               th= lang
-            th service
+            if !layout.mobileView
+              th service
         tbody
           - var onlyhelp = true
           each blog in blogs
@@ -32,7 +35,7 @@ block content
                 td
                   a(href=layout.htmlroot+'/blog/' + blog.name)=blog.name
                 td= blog.status
-                for lang in layout.activeLanguages
+                for lang in listLanguages
                   td
                     if blog["close"+lang]
                       - labeltype = "osmbc-label-closedblog"
@@ -64,11 +67,12 @@ block content
                     if blog._timeToClose[lang]
                       bold.span=" (+"+blog._timeToClose[lang]+"d)"
 
-                td
-                  if blog.status != "closed"
-                    a(href=layout.htmlroot+"/blog/" + blog.name +"?setStatus=closed") Close Blog
-                  else
-                    |-
+                if !layout.mobileView
+                  td
+                    if blog.status != "closed"
+                      a(href=layout.htmlroot+"/blog/" + blog.name +"?setStatus=closed") Close Blog
+                    else
+                      |-
   .row
     p
       | Click on any label to edit the articles or view the blog.

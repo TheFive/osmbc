@@ -9,6 +9,7 @@ import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import util from "../../util/util.js";
 import BlogPage from "../PageObjectModel/blogPage.js";
+import BlogListPage from "../PageObjectModel/blogListPage.js";
 
 const osmbcLink = util.osmbcLink;
 
@@ -89,6 +90,14 @@ describe("uc/blog mobile inline editor", function() {
       const texts = (await blogModule.findOne({ name: "WN2" })).reviewCommentDE.map(c => c.text);
       should(texts).not.containEql("reviewing...");
     });
+    it("should list the blogs for the mobile language only (X10)", async function() {
+      const blogListPage = new BlogListPage(driver);
+      await driver.get(osmbcLink("/blog/list"));
+      should(await blogListPage.getLanguageColumns()).eql(["DE"]);
+      should(await blogListPage.hasCloseBlogLink()).be.False();
+      should(await blogListPage.hasHorizontalScroll()).be.False();
+      should(await blogListPage.tapTargetsTooSmall("table td a", { width: 32 })).eql([]);
+    });
     it("should hide the optional overview columns", async function() {
       await driver.get(osmbcLink("/blog/WN1/overview"));
       should(new Set(await overviewCellDisplays())).eql(new Set(["none"]));
@@ -98,7 +107,7 @@ describe("uc/blog mobile inline editor", function() {
       for (const view of ["overview", "review", "full"]) {
         await driver.get(osmbcLink("/blog/WN1/" + view));
         should(await blogPage.hasHorizontalScroll()).be.False();
-        should(await blogPage.tapTargetsTooSmall(".osmbc-inline-edit, .osmbc-article-open, .nav-tabs .nav-link")).eql([]);
+        should(await blogPage.tapTargetsTooSmall(".osmbc-inline-edit, .osmbc-article-open, .nav-tabs .nav-link, .osmbc-text-link")).eql([]);
         // export is desktop only
         should(await blogPage.isExportMenuShown()).be.False();
       }

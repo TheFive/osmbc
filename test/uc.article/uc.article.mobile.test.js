@@ -95,7 +95,9 @@ describe("uc.article save bar", function() {
     await articlePage.waitForBackgroundRequests();
     should((await articlePage.getValueFromLinkArea(longLink)).warning).be.True();
     should(await articlePage.hasHorizontalScroll()).be.False();
-    should(await articlePage.tapTargetsTooSmall("#linkArea button, .navbar-toggler")).eql([]);
+    should(await articlePage.tapTargetsTooSmall("#linkArea button, .navbar-toggler, .osmbc-text-link")).eql([]);
+    // the flags are desktop only
+    should(await articlePage.isLanguageFlagsShown()).be.False();
     // the other link actions are in a menu (translated pages may carry a link check result)
     const entries = await articlePage.openLinkMenu();
     should(entries.slice(0, 2)).eql(["Readable text", "Page content"]);

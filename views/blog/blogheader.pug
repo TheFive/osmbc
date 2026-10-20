@@ -317,14 +317,14 @@ block content
     .col-md-8
     .col-md-1
       p
-        a(href=layout.htmlroot+"/changes/log?blog=" + blog.name +"&table=blog") [changes]
+        a(href=layout.htmlroot+"/changes/log?blog=" + blog.name +"&table=blog" class=layout.mobileView ? "osmbc-text-link" : undefined) [changes]
     .col-md-1
       p
-        a(href=layout.htmlroot+"/blog/" + blog.name +"/stat") [Statistic]
+        a(href=layout.htmlroot+"/blog/" + blog.name +"/stat" class=layout.mobileView ? "osmbc-text-link" : undefined) [Statistic]
 
     .col-md-2
       p
-        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/" + blog.name) [Edit Blog Detail]
+        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/" + blog.name class=layout.mobileView ? "osmbc-text-link" : undefined) [Edit Blog Detail]
 
 
 

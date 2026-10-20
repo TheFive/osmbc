@@ -479,6 +479,18 @@ table {
   min-height: 44px;
 }
 
+/* text links (e.g. [changes], (more)) and the blog list links as tap
+   targets */
+.osmbc-mobile .osmbc-text-link,
+.osmbc-mobile .osmbc-bloglist td a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.osmbc-mobile .osmbc-bloglist td a {
+  min-width: 32px;
+}
+
 /* collection links: a long URL (plus the link check result) wraps */
 .osmbc-mobile #linkArea .badge {
   white-space: normal;

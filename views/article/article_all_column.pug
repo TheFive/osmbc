@@ -28,7 +28,8 @@ block markdownArea
 
   // Language Flags All Column
 
-  .row#languageFlags
+  //- phones: no flags (rare use), hidden not removed: the preview reads img.flag
+  .row#languageFlags(class=layout.mobileView ? "d-none" : undefined)
     - for (lang in languageFlags)
       - if (["warning", "error", "emoji", "shortcut"].indexOf(lang) < 0)
         img.flag(id=lang,

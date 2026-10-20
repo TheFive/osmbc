@@ -25,7 +25,7 @@ block content
             label.col-sm-2.col-form-label="Blog Date"
             label.col-md-10=layout.util.dateFormat(article._blog.startDate,"EN") + " - " +layout.util.dateFormat(article._blog.endDate,"EN")
         div.form-group.row
-          a.col-sm-2.col-form-label(href=`${layout.htmlroot}/blog/${article.blog}`)="Blog"
+          a.col-sm-2.col-form-label(href=`${layout.htmlroot}/blog/${article.blog}` class=layout.mobileView ? "osmbc-text-link" : undefined)="Blog"
           div.col-md-10
             +blogSelector(article,layout.user.access !== "full" || !article.isChangeAllowed("blog"))
             textarea.d-none.form-control(id="old_blog" name="old_blog",rows=1,hide=true)=article.blog
@@ -217,7 +217,7 @@ block content
     .row.d-block.d-sm-none
       p
         br
-        a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id) [changes]
+        a(href=layout.htmlroot+"/changes/log?table=article&oid=" +article.id class=layout.mobileView ? "osmbc-text-link" : undefined) [changes]
     .row.d-none.d-sm-block
       if changes
         h3

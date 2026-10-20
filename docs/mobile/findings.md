@@ -248,6 +248,18 @@ UX ↔ dev conflicts:
   Tests: `uc.article.mobile` (comments), `uc.blog.mobile` (review),
   `user/uc.inbox.mobile`.
 
+- **P4 done (2026-10-20):** mobile mode: the language flags are hidden
+  (kept in the page, the preview reads `img.flag`) — product owner waits
+  for feedback from the editors whether flags are needed on phones (then a
+  "Insert flag…" grid like "+ Link"); text links ([changes], [Statistic],
+  [Edit Blog Detail], (more), "Blog", WORTLIGA) 44 px high; OSM profile
+  icons on the user page as labelled buttons; blog list only with the
+  mobile language column and without "Close Blog". `btn-small` (not a
+  Bootstrap class) removed. Desktop unchanged. Tests: `uc.article.mobile`,
+  `uc.blog.mobile` (blog list).
+- **Still small on phones (accepted):** the avatar in the menu panel
+  (40 px), the issue link in the header (33 px high).
+
 Order: P1 → P2 → P3 → P4, each package tested on the beta. P1 has no desktop
 effect; desktop baseline (1280 × 900) measured on `7ca9f522`, compare after
 every package.

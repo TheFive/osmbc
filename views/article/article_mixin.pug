@@ -55,18 +55,18 @@ mixin articlePreview(lang)
 
 mixin articleTextanalyse(lang)
   if (lang === "DE") && (article["markdown" + lang])
-    a(href="#" onClick ="taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+    a(href="#" class=layout.mobileView ? "osmbc-text-link" : undefined onClick ="taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
 
 mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    button.btn.btn-small.btn-primary(
+    button.btn.btn-primary(
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick =`window.translate('${langFrom}','${langTo}',window.mainTranslationService);return false;`
        ) Translate #{langFrom} -> #{langTo}
-    button.btn.btn-small.btn-warning.d-none(class="translateWait"+langFrom+langTo)
+    button.btn.btn-warning.d-none(class="translateWait"+langFrom+langTo)
       i.fa.fa-sync
       span=" Please Wait"
-    button.btn.btn-small.btn-danger.d-none(class="translateError"+langFrom+langTo)
+    button.btn.btn-danger.d-none(class="translateError"+langFrom+langTo)
       span="Error occured"
 
 
@@ -154,7 +154,7 @@ mixin noTranslationButton
         - open = true;
     if open
       p
-        button.btn.btn-small.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
+        button.btn.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
 
 mixin markdownWithPreview(lang)
   - labelClass = ""

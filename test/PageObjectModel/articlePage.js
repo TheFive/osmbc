@@ -182,6 +182,10 @@ class ArticlePage extends StandardPage {
     return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
   }
 
+  async isLanguageFlagsShown() {
+    return this._driver.findElement(By.id("languageFlags")).isDisplayed();
+  }
+
   // comment area: number of comments marked unread (envelope)
   async countUnreadComments() {
     return (await this._driver.findElements(By.css("#commentArea button[aria-label='Mark as read']"))).length;
