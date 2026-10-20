@@ -156,7 +156,9 @@
           </div>
           <div class="col-md-6">
             <div class="form-group row">
-              <div class="col-md-4" id="voteButtons"><button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.pro','/article/3/votes')"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span></button><button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.unpublish','/article/3/votes')"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span></button></div>
+              <div class="col-md-4" id="voteButtons">
+                <div class="d-flex flex-wrap gap-2"><button class="btn osmbc-btn-not-voted" type="button" data-call="/article/3/setVote.pro" data-redraw="/article/3/votes"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span></button><button class="btn osmbc-btn-not-voted" type="button" data-call="/article/3/setVote.unpublish" data-redraw="/article/3/votes"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span></button></div>
+              </div>
               <div class="col-md-4"></div>
               <div class="col-md-4"></div>
             </div>
@@ -255,25 +257,25 @@ Use @OSMUser to address any special editor."></textarea><button class="btn btn-l
         <table class="table table-sm">
           <tbody>
             <tr>
-              <td><button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.pro','/article/3/votes')"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span></button></td>
+              <td><button class="btn osmbc-btn-not-voted" type="button" data-call="/article/3/setVote.pro" data-redraw="/article/3/votes"><i class="fa-lg fa fa-thumbs-up"></i><span>  0</span></button></td>
               <td>pro</td>
               <td></td>
               <td>Use this to show your interest publishing this article</td>
             </tr>
             <tr>
-              <td><button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.unpublish','/article/3/votes')"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span></button></td>
+              <td><button class="btn osmbc-btn-not-voted" type="button" data-call="/article/3/setVote.unpublish" data-redraw="/article/3/votes"><i class="fa-lg fa fa-thumbs-down"></i><span>  0</span></button></td>
               <td>unpublish</td>
               <td></td>
               <td>Use to vote for unpublishing this article</td>
             </tr>
             <tr>
-              <td><button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.fav','/article/3/votes')"><i class="glyphicon glyphicon-star"></i><span>  0</span></button></td>
+              <td><button class="btn osmbc-btn-not-voted" type="button" data-call="/article/3/setVote.fav" data-redraw="/article/3/votes"><i class="glyphicon glyphicon-star"></i><span>  0</span></button></td>
               <td>fav</td>
               <td></td>
               <td>Favs will be shown in the weeklyOSM ecxerpt of the issue.</td>
             </tr>
             <tr>
-              <td><button class="btn osmbc-btn-not-voted" type="button" onclick="callAndRedraw('/article/3/setVote.doit','/article/3/votes')"><i></i><span>doit</span><span>  0</span></button></td>
+              <td><button class="btn osmbc-btn-not-voted" type="button" data-call="/article/3/setVote.doit" data-redraw="/article/3/votes"><i></i><span>doit</span><span>  0</span></button></td>
               <td>doit</td>
               <td></td>
               <td></td>

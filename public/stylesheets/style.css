@@ -435,6 +435,32 @@ table {
   padding-top: .625rem;
 }
 
+/* blog views: the article text that opens the inline editor */
+.osmbc-mobile .osmbc-inline-edit {
+  min-height: 44px;
+}
+
+/* blog views: tabs as tap targets */
+.osmbc-mobile .nav-tabs .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+/* article: room between the predecessor select and the vote buttons */
+.osmbc-mobile #voteButtons {
+  margin-top: .5rem;
+}
+
+/* start page: one entry per blog, the name as a large link */
+.osmbc-blog-status-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: bold;
+}
+
 /* collection links: a long URL (plus the link check result) wraps */
 .osmbc-mobile #linkArea .badge {
   white-space: normal;

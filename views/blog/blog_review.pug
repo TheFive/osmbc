@@ -41,7 +41,7 @@ block blogcontent
           .row
             div(class=firstColSize).d-flex.flex-nowrap
               span
-                +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId})
+                +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId, openAtEnd: layout.mobileView})
                 - predecessorId = a.id
               span.d-none.d-md-block
                 if (showCollector && a.author && a.author.collection)
@@ -57,9 +57,11 @@ block blogcontent
                   +languageDisplay(a)
                 span(id="voteLabels" + a.id)
                   +voteDisplay(a,showVotes)
+              if layout.mobileView
+                +articleOpenButton(a)
 
             div(class=secondColSize)
-              div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
+              div.osmbc-inline-edit(data-inline-editor=`div${a.id}`)
                 +previewDiv(a, lang)
                   ul
                     div.preview(id="preview" + a.id)

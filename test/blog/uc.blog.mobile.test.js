@@ -8,6 +8,7 @@ import userModule from "../../model/user.js";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import util from "../../util/util.js";
+import BlogPage from "../PageObjectModel/blogPage.js";
 
 const osmbcLink = util.osmbcLink;
 
@@ -23,7 +24,7 @@ describe("uc/blog mobile inline editor", function() {
     await driver.get(osmbcLink("/blog/WN1/overview"));
     // marker survives only if the page is not reloaded
     await driver.executeScript("window.noReloadMarker = true;");
-    await driver.findElement(By.xpath(`//div[contains(@onclick, "'div${articleId}'")]`)).click();
+    await new BlogPage(driver).openInlineEditor(articleId);
     const field = await driver.findElement(By.id("markdown" + articleId));
     should(await field.isDisplayed()).be.True();
     return field;
@@ -72,6 +73,18 @@ describe("uc/blog mobile inline editor", function() {
       await driver.get(osmbcLink("/blog/WN1/overview"));
       should(new Set(await overviewCellDisplays())).eql(new Set(["none"]));
     });
+    it("should keep rows and tabs tap-sized and open the article from its row (X10)", async function() {
+      const blogPage = new BlogPage(driver);
+      for (const view of ["overview", "review", "full"]) {
+        await driver.get(osmbcLink("/blog/WN1/" + view));
+        should(await blogPage.hasHorizontalScroll()).be.False();
+        should(await blogPage.tapTargetsTooSmall(".osmbc-inline-edit, .osmbc-article-open, .nav-tabs .nav-link")).eql([]);
+        // export is desktop only
+        should(await blogPage.isExportMenuShown()).be.False();
+      }
+      await blogPage.clickOpenArticle(articleId);
+      await driver.wait(async () => (await driver.getCurrentUrl()).endsWith("/article/" + articleId), 5000, "article not opened");
+    });
     it("should save with the Save button without reloading the page", async function() {
       const field = await openEditor();
       await replaceText(field, "Neuer Text");
@@ -119,6 +132,13 @@ describe("uc/blog mobile inline editor", function() {
       await waitForStatus("saved");
       should(await driver.executeScript("return window.noReloadMarker === true;")).be.True();
       should(await storedMarkdown()).eql("Text vom Desktop");
+    });
+    it("should ask before closing a language and keep it open on Cancel", async function() {
+      // reviewed and exported: Close is shown
+      await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2", status: "edit", exportedDE: true, reviewCommentDE: [{ user: "TheFive", text: "ok", timestamp: new Date().toISOString() }] });
+      await driver.get(osmbcLink("/blog/WN2/overview"));
+      await new BlogPage(driver).clickCloseAndCancel("WN2", "DE");
+      should((await blogModule.findOne({ name: "WN2" })).closeDE).not.be.True();
     });
   });
 });

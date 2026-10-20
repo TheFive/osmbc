@@ -86,7 +86,7 @@ block blogcontent
           .row
             div(class=firstColSize).d-flex.flex-nowrap
               span
-                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId})
+                +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId, openAtEnd: layout.mobileView})
                 - predecessorId = a.id
               span
                 if (showCollector && a.author && a.author.collection)
@@ -101,11 +101,13 @@ block blogcontent
                   +languageDisplay(a)
               span(id="voteLabels" + a.id)
                 +voteDisplay(a,showVotes)
+              if layout.mobileView
+                +articleOpenButton(a)
 
             div(class=secondColSize)
               .row
                 div(class=columnLeftSize)
-                  div(onclick=`if (!openEditor) {openEditor = document.getElementById('ldiv${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
+                  div.osmbc-inline-edit(data-inline-editor=`ldiv${a.id}`)
                     +previewDiv(a, left_lang)
                       ul
                         div.preview(id="lpreview" + a.id)
@@ -136,7 +138,7 @@ block blogcontent
 
                 div.d-none.d-md-block(class=columnRightSize)
                   if right_lang
-                    div(onclick=`if (!openEditor) {openEditor = document.getElementById('rdiv${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
+                    div.osmbc-inline-edit(data-inline-editor=`rdiv${a.id}`)
                       +previewDiv(a, right_lang)
                         ul.preview(id="rpreview" + a.id)
                           |!{renderer.renderArticle(right_lang,a)}

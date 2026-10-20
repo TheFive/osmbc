@@ -48,6 +48,15 @@ export default class SearchAndCollectPage extends StandardPage {
     await this._driver.wait(until.stalenessOf(okButton));
   }
 
+  // small screens: the search button in the same row as the field
+  async isSearchButtonBesideField() {
+    await this.assertPage();
+    return this._driver.executeScript(`
+      const f = document.getElementById("searchField").getBoundingClientRect();
+      const b = document.getElementById("searchButton").getBoundingClientRect();
+      return b.left >= f.right && b.top < f.bottom;`);
+  }
+
   async getOkButton() {
     await this.assertPage();
     return await this._driver.findElement(By.css("button#OK"));

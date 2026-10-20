@@ -44,6 +44,12 @@ function init() {
 
   $("#linkArea")
     .change(highlightWrongLinks);
+  // buttons with data-redraw (votes): call data-call (if given), then redraw
+  // that part of the page; delegated, the parts are replaced when redrawn
+  $(document).on("click", "[data-redraw]", function(event) {
+    event.preventDefault();
+    callAndRedraw($(this).data("call") || null, $(this).data("redraw"));
+  });
   // save bar below lg (article_mixin.pug); mousedown keeps the focus in the
   // text field, on touch screens the tap was lost otherwise
   $(".osmbc-save-bar button")

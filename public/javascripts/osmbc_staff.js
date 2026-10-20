@@ -139,8 +139,9 @@ function addSpinnerAndSubmit(element) {
   // https://martinwolf.org/before-2018/blog/2014/06/force-repaint-of-an-element-with-javascript/
   el.style.display = "none";
   el.offsetHeight; // eslint-disable-line no-unused-expressions
-  // no need to store this anywhere, the reference is enough
-  el.style.display = "block";
+  // no need to store this anywhere, the reference is enough; back to the
+  // style sheet's display (block would stretch it in a flex row)
+  el.style.display = "";
   // end of redraw fix
 
   setTimeout(() => { el.form.submit(); }, 1);

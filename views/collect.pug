@@ -12,16 +12,17 @@ block content
     - var action = layout.htmlroot+"/article/searchandcreate";
     - if (!showCollect) action = layout.htmlroot+"/article/search";
       form(name="search", action=action, method="get")
+        //- below md the search button sits next to the field
         div.row
-          div.col-3
-          div.col-6
+          div.d-none.d-md-block.col-md-3
+          div.col.col-md-6
             input#searchField(type="text",class="form-control",name ="search",value=search)
             if showCollect
               if (layout && layout.user && layout.user.access === "guest")
                 p.osmbc-help-text(align="center") Please check your link for duplicates before submit it.
               else
                 p.osmbc-help-text(align="center") Please check your link for duplicates before collect it.
-          div.col
+          div.col-auto.col-md
             button#searchButton.btn.btn-lg.btn-primary(name="SearchNow" type="submit" disabled) Search
 
 
@@ -99,11 +100,9 @@ block content
               .row
                 .col-md-7
                   p.osmbc-help-text(id="categoryDisplay")
-                .col-md-5
-                  button.btn.btn-lg.btn-primary(onclick="javascript:window.addSpinnerAndSubmit('#OK')", id="OK")="OK"
-                    //span(style="visibility:hidden" id="OK-Spinner")
-                      i(class="fa fa-solid fa-spinner fa-pulse")
-                  a(href=layout.htmlroot+`/article/create` class="btn btn-secondary" role="button") Cancel
+                .col-md-5.d-flex.align-items-center.gap-2
+                  button.btn.btn-lg.btn-primary(id="OK")="OK"
+                  a(href=layout.htmlroot+`/article/create` class="btn btn-outline-secondary" role="button") Cancel
 
           .row
             .col-md-1
@@ -139,6 +138,7 @@ block append scripts_to_execute
       categoryEN = document.getElementById("categoryEN");
       if (categoryEN) categoryEN.onchange = onchangeCategory;
       okButton = document.getElementById("OK");
+      if (okButton) okButton.addEventListener("click", function () { addSpinnerAndSubmit("#OK"); });
       searchButton = document.getElementById("searchButton")
       title = document.getElementById("title");
       searchField = document.getElementById("searchField")

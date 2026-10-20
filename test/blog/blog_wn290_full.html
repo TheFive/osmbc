@@ -134,10 +134,10 @@
           <h2><span class="d-none d-md-block">Wochennotiz </span>WN290<span class="d-none d-md-block"> (Review DE)</span></h2>
         </div>
         <div class="col-md-3">
-          <div class="div"><button class="btn btn-lg btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
+          <div class="div"><button class="btn btn-lg btn-warning" id="didexport" data-lang-status="markexported" data-lang="DE" data-confirm="Mark WN290 (DE) as exported?">Did Export (DE)</button></div>
         </div>
         <div class="col-md-3 d-none d-md-block">
-          <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
+          <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" data-lang-status="closelang" data-lang="EN" data-confirm="Close WN290 (EN)?">Close WN290(EN)</button></div>
         </div>
       </div>
       <div class="row">
@@ -266,7 +266,7 @@ while layout.user["blogSetting"+v]
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv17');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv17">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview17">
@@ -288,7 +288,7 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv17');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv17">
                 <div>
                   <ul class="preview" id="rpreview17">
                     <div style="width: 810px" class="wp-caption alignnone">
@@ -328,7 +328,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv47');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv47">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview47">
@@ -347,7 +347,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv47');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv47">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview47">
                     <li id="wn290_47">
@@ -384,7 +384,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv12');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv12">
                 <div class="osmbc-automated-translation">
                   <ul>
                     <div class="preview" id="lpreview12">
@@ -405,7 +405,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv12');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv12">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview12">
                     <li id="wn290_12">
@@ -429,7 +429,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv24');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv24">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview24">
@@ -448,7 +448,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv24');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv24">
                 <div>
                   <ul class="preview" id="rpreview24">
                     <li id="wn290_24">
@@ -472,7 +472,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv41');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv41">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview41">
@@ -491,7 +491,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv41');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv41">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview41">
                     <li id="wn290_41">
@@ -515,7 +515,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv19');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv19">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview19">
@@ -534,7 +534,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv19');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv19">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview19">
                     <li id="wn290_19">
@@ -558,7 +558,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv22');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv22">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview22">
@@ -577,7 +577,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv22');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv22">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview22">
                     <li id="wn290_22">
@@ -601,7 +601,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv26');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv26">
                 <div class="hide-text">
                   <ul>
                     <div class="preview" id="lpreview26">
@@ -620,7 +620,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv26');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv26">
                 <div>
                   <ul class="preview" id="rpreview26">
                     <li id="wn290_26">
@@ -644,7 +644,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv5');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv5">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview5">
@@ -663,7 +663,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv5');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv5">
                 <div>
                   <ul class="preview" id="rpreview5">
                     <li id="wn290_5">
@@ -700,7 +700,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv8');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv8">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview8">
@@ -719,7 +719,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv8');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv8">
                 <div>
                   <ul class="preview" id="rpreview8">
                     <li id="wn290_8">
@@ -743,7 +743,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv57');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv57">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview57">
@@ -762,7 +762,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv57');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv57">
                 <div>
                   <ul class="preview" id="rpreview57">
                     <li id="wn290_57">
@@ -786,7 +786,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv9');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv9">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview9">
@@ -805,7 +805,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv9');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv9">
                 <div>
                   <ul class="preview" id="rpreview9">
                     <li id="wn290_9">
@@ -829,7 +829,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv14');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv14">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview14">
@@ -848,7 +848,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv14');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv14">
                 <div>
                   <ul class="preview" id="rpreview14">
                     <li id="wn290_14">
@@ -872,7 +872,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv28');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv28">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview28">
@@ -891,7 +891,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv28');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv28">
                 <div>
                   <ul class="preview" id="rpreview28">
                     <li id="wn290_28">
@@ -915,7 +915,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv33');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv33">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview33">
@@ -934,7 +934,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv33');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv33">
                 <div>
                   <ul class="preview" id="rpreview33">
                     <li id="wn290_33">
@@ -958,7 +958,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv30');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv30">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview30">
@@ -980,7 +980,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv30');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv30">
                 <div>
                   <ul class="preview" id="rpreview30">
                     <li id="wn290_30">
@@ -1004,7 +1004,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv10');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv10">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview10">
@@ -1023,7 +1023,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv10');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv10">
                 <div>
                   <ul class="preview" id="rpreview10">
                     <li id="wn290_10">
@@ -1060,7 +1060,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv37');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv37">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview37">
@@ -1079,7 +1079,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv37');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv37">
                 <div>
                   <ul class="preview" id="rpreview37">
                     <li id="wn290_37">
@@ -1116,7 +1116,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv29');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv29">
                 <div class="hide-text">
                   <ul>
                     <div class="preview" id="lpreview29">
@@ -1135,7 +1135,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv29');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv29">
                 <div>
                   <ul class="preview" id="rpreview29">
                     <li id="wn290_29">
@@ -1159,7 +1159,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv64');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv64">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview64">
@@ -1178,7 +1178,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv64');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv64">
                 <div>
                   <ul class="preview" id="rpreview64">
                     <li id="wn290_64">
@@ -1202,7 +1202,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv63');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv63">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview63">
@@ -1221,7 +1221,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv63');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv63">
                 <div>
                   <ul class="preview" id="rpreview63">
                     <li id="wn290_63">
@@ -1245,7 +1245,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv58');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv58">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview58">
@@ -1264,7 +1264,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv58');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv58">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview58">
                     <li id="wn290_58">
@@ -1288,7 +1288,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv11');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv11">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview11">
@@ -1307,7 +1307,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv11');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv11">
                 <div>
                   <ul class="preview" id="rpreview11">
                     <li id="wn290_11">
@@ -1344,7 +1344,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv39');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv39">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview39">
@@ -1363,7 +1363,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv39');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv39">
                 <div>
                   <ul class="preview" id="rpreview39">
                     <li id="wn290_39">
@@ -1387,7 +1387,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv44');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv44">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview44">
@@ -1406,7 +1406,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv44');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv44">
                 <div>
                   <ul class="preview" id="rpreview44">
                     <li id="wn290_44">
@@ -1430,7 +1430,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv45');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv45">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview45">
@@ -1449,7 +1449,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv45');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv45">
                 <div>
                   <ul class="preview" id="rpreview45">
                     <li id="wn290_45">
@@ -1473,7 +1473,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv46');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv46">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview46">
@@ -1492,7 +1492,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv46');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv46">
                 <div>
                   <ul class="preview" id="rpreview46">
                     <li id="wn290_46">
@@ -1529,7 +1529,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv32');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv32">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview32">
@@ -1548,7 +1548,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv32');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv32">
                 <div>
                   <ul class="preview" id="rpreview32">
                     <li id="wn290_32">
@@ -1572,7 +1572,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv27');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv27">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview27">
@@ -1591,7 +1591,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv27');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv27">
                 <div>
                   <ul class="preview" id="rpreview27">
                     <li id="wn290_27">
@@ -1615,7 +1615,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv35');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv35">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview35">
@@ -1634,7 +1634,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv35');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv35">
                 <div>
                   <ul class="preview" id="rpreview35">
                     <li id="wn290_35">
@@ -1658,7 +1658,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv38');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv38">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview38">
@@ -1677,7 +1677,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv38');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv38">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview38">
                     <li id="wn290_38">
@@ -1701,7 +1701,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv59');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv59">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview59">
@@ -1720,7 +1720,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv59');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv59">
                 <div>
                   <ul class="preview" id="rpreview59">
                     <li id="wn290_59">
@@ -1744,7 +1744,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv42');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv42">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview42">
@@ -1763,7 +1763,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv42');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv42">
                 <div>
                   <ul class="preview" id="rpreview42">
                     <li id="wn290_42">
@@ -1800,7 +1800,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv15');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv15">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview15">
@@ -1819,7 +1819,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv15');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv15">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview15">
                     <li id="wn290_15">
@@ -1856,7 +1856,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv62');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv62">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview62">
@@ -1875,7 +1875,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv62');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv62">
                 <div>
                   <ul class="preview" id="rpreview62">
                     <li id="wn290_62">
@@ -1899,7 +1899,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv60');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv60">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview60">
@@ -1918,7 +1918,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv60');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv60">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview60">
                     <li id="wn290_60">
@@ -1942,7 +1942,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv16');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv16">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview16">
@@ -1961,7 +1961,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv16');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv16">
                 <div>
                   <ul class="preview" id="rpreview16">
                     <li id="wn290_16">
@@ -1985,7 +1985,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv23');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv23">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview23">
@@ -2004,7 +2004,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv23');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv23">
                 <div>
                   <ul class="preview" id="rpreview23">
                     <li id="wn290_23">
@@ -2041,7 +2041,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv65');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv65">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview65">
@@ -2060,7 +2060,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv65');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv65">
                 <div>
                   <ul class="preview" id="rpreview65">
                     <li id="wn290_65">
@@ -2084,7 +2084,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv7');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv7">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview7">
@@ -2103,7 +2103,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv7');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv7">
                 <div>
                   <ul class="preview" id="rpreview7">
                     <li id="wn290_7">
@@ -2140,7 +2140,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv50');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv50">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview50">
@@ -2159,7 +2159,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv50');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv50">
                 <div>
                   <ul class="preview" id="rpreview50">
                     <li id="wn290_50">
@@ -2183,7 +2183,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv55');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv55">
                 <div class="osmbc-not-formulated">
                   <ul>
                     <div class="preview" id="lpreview55">
@@ -2202,7 +2202,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv55');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv55">
                 <div class="osmbc-not-formulated">
                   <ul class="preview" id="rpreview55">
                     <li id="wn290_55">
@@ -2226,7 +2226,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv1');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv1">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview1">
@@ -2245,7 +2245,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv1');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv1">
                 <div>
                   <ul class="preview" id="rpreview1">
                     <li id="wn290_1">
@@ -2282,7 +2282,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv49');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv49">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview49">
@@ -2301,7 +2301,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv49');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv49">
                 <div>
                   <ul class="preview" id="rpreview49">
                     <li id="wn290_49">
@@ -2325,7 +2325,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv40');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv40">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview40">
@@ -2344,7 +2344,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv40');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv40">
                 <div>
                   <ul class="preview" id="rpreview40">
                     <li id="wn290_40">
@@ -2368,7 +2368,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv61');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv61">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview61">
@@ -2387,7 +2387,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv61');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv61">
                 <div>
                   <ul class="preview" id="rpreview61">
                     <li id="wn290_61">
@@ -2424,7 +2424,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv56');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv56">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview56">
@@ -2528,7 +2528,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv56');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv56">
                 <div>
                   <ul class="preview" id="rpreview56">
                     <li id="wn290_56">
@@ -2642,7 +2642,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv34');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv34">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview34">
@@ -2661,7 +2661,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv34');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv34">
                 <div>
                   <ul class="preview" id="rpreview34">
                     <li id="wn290_34">
@@ -2685,7 +2685,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv31');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv31">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview31">
@@ -2704,7 +2704,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv31');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv31">
                 <div>
                   <ul class="preview" id="rpreview31">
                     <li id="wn290_31">
@@ -2728,7 +2728,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv6');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv6">
                 <div class="hide-text">
                   <ul>
                     <div class="preview" id="lpreview6">
@@ -2747,7 +2747,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv6');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv6">
                 <div>
                   <ul class="preview" id="rpreview6">
                     <li id="wn290_6">
@@ -2771,7 +2771,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv43');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv43">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview43">
@@ -2790,7 +2790,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv43');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv43">
                 <div>
                   <ul class="preview" id="rpreview43">
                     <li id="wn290_43">
@@ -2814,7 +2814,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv36');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv36">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview36">
@@ -2833,7 +2833,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv36');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv36">
                 <div>
                   <ul class="preview" id="rpreview36">
                     <li id="wn290_36">
@@ -2857,7 +2857,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv21');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv21">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview21">
@@ -2876,7 +2876,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv21');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv21">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview21">
                     <li id="wn290_21">
@@ -2900,7 +2900,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv2');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv2">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview2">
@@ -2919,7 +2919,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv2');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv2">
                 <div>
                   <ul class="preview" id="rpreview2">
                     <li id="wn290_2">
@@ -2956,7 +2956,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv4');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv4">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview4">
@@ -2975,7 +2975,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv4');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv4">
                 <div>
                   <ul class="preview" id="rpreview4">
                     <li id="wn290_4">
@@ -2999,7 +2999,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv54');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv54">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview54">
@@ -3018,7 +3018,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv54');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv54">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview54">
                     <li id="wn290_54">
@@ -3042,7 +3042,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv3');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv3">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview3">
@@ -3061,7 +3061,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv3');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv3">
                 <div>
                   <ul class="preview" id="rpreview3">
                     <li id="wn290_3">
@@ -3085,7 +3085,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv48');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv48">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview48">
@@ -3104,7 +3104,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv48');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv48">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview48">
                     <li id="wn290_48">
@@ -3128,7 +3128,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv53');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv53">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview53">
@@ -3147,7 +3147,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv53');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv53">
                 <div>
                   <ul class="preview" id="rpreview53">
                     <li id="wn290_53">
@@ -3171,7 +3171,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv25');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv25">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview25">
@@ -3190,7 +3190,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv25');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv25">
                 <div>
                   <ul class="preview" id="rpreview25">
                     <li id="wn290_25">
@@ -3214,7 +3214,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv51');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv51">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview51">
@@ -3233,7 +3233,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv51');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv51">
                 <div>
                   <ul class="preview" id="rpreview51">
                     <li id="wn290_51">
@@ -3257,7 +3257,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv20');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv20">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview20">
@@ -3276,7 +3276,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv20');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv20">
                 <div class="hide-text">
                   <ul class="preview" id="rpreview20">
                     <li id="wn290_20">
@@ -3313,7 +3313,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv18');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv18">
                 <div>
                   <ul>
                     <div class="preview" id="lpreview18">
@@ -3442,7 +3442,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv18');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv18">
                 <div>
                   <ul class="preview" id="rpreview18">
                     <p></p>
@@ -3605,7 +3605,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         <div class="col-md-11">
           <div class="row">
             <div class="col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('ldiv52');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="ldiv52">
                 <div class="osmbc-not-formulated">
                   <ul>
                     <div class="preview" id="lpreview52">
@@ -3625,7 +3625,7 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
               </div>
             </div>
             <div class="d-none d-md-block col-md-6">
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('rdiv52');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="rdiv52">
                 <div class="osmbc-not-formulated">
                   <ul class="preview" id="rpreview52">
                     <li id="wn290_52">
@@ -3860,6 +3860,19 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
 
       var openEditor = null;
 
+      // a tap on an article text opens its inline editor (or closes the open
+      // one); links in the text do not navigate
+      $(document).on("click", "[data-inline-editor]", function(event) {
+        event.preventDefault();
+        if (!openEditor) {
+          openEditor = document.getElementById(this.dataset.inlineEditor);
+          openEditor.classList.toggle("d-none");
+        } else {
+          openEditor.classList.toggle("d-none");
+          openEditor = null;
+        }
+      });
+
       window.onload = function() {
         window.mdRender = window.markdownit();
 
@@ -4045,20 +4058,23 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
         });
       }
 
-      function setLangStatus(lang, status, button) {
-        $(button).prop('disabled', true);
-        $(button).prop('html', "wait ...");
+      // status buttons of a language (blogReviewButtons); Close and Did Export
+      // ask first
+      $(document).on("click", "[data-lang-status]", function() {
+        const button = $(this);
+        if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        button.prop("disabled", true);
+        button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus", {
-          action: status,
-          lang: lang
-        }, function(data) {
+          action: button.data("lang-status"),
+          lang: button.data("lang")
+        }, function() {
           location.reload();
         }).fail(function(err) {
           console.error("Trouble setting Language Status");
           console.error(err);
         });
-
-      }
+      });
     </script>
   </body>
 

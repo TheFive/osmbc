@@ -51,11 +51,26 @@ class BlogPage extends StandardPage {
     await (await this._driver.findElement(By.xpath(`//button[text()="Set ${blog}(${lang}) ready for review"]`))).click();
   }
 
+  // Close and Did Export ask first
+  async #acceptConfirmation() {
+    await this._driver.wait(until.alertIsPresent(), 2000, "no confirmation asked");
+    await (await this._driver.switchTo().alert()).accept();
+  }
+
   async clickClose(blog, lang) {
     await this.assertPage();
     const closeLang = await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`));
     await (closeLang).click();
+    await this.#acceptConfirmation();
     await (this._driver.wait(until.stalenessOf(closeLang)));
+  }
+
+  // Close, but answer the confirmation with Cancel
+  async clickCloseAndCancel(blog, lang) {
+    await this.assertPage();
+    await (await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`))).click();
+    await this._driver.wait(until.alertIsPresent(), 2000, "no confirmation asked");
+    await (await this._driver.switchTo().alert()).dismiss();
   }
 
   async clickStartPersonalReview(lang) {
@@ -122,6 +137,25 @@ class BlogPage extends StandardPage {
   async clickDidExport(lang) {
     await this.assertPage();
     await (await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`))).click();
+    await this.#acceptConfirmation();
+  }
+
+  // Small screens (mobile mode)
+
+  // tap the article text: opens its inline editor
+  async openInlineEditor(articleId) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`[data-inline-editor='div${articleId}']`)));
+  }
+
+  // the button at the end of the article's row
+  async clickOpenArticle(articleId) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`)));
+  }
+
+  async isExportMenuShown() {
+    return (await this._driver.findElements(By.id("dropdownExportLanguages"))).length > 0;
   }
 
   async clickShowNumbersCheckbox() {

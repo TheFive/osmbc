@@ -182,6 +182,13 @@ class ArticlePage extends StandardPage {
     return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
   }
 
+  // the n-th vote button next to the article's form (0 = first)
+  async clickTopVote(n) {
+    await this.assertPage();
+    const buttons = await this._driver.findElements(By.css("#voteButtons button"));
+    await this.tap(buttons[n]);
+  }
+
   // the "⋯" menu of the first collection link (mobile mode): its entries
   async openLinkMenu() {
     await this.assertPage();

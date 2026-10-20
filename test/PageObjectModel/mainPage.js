@@ -63,6 +63,21 @@ class MainPage extends StandardPage {
     await (await this._driver.findElement(By.xpath("//a[text()='(more)']"))).click();
   }
 
+  // Small screens (mobile mode): the blogs to work on as a list
+
+  // one text per blog entry
+  async getBlogStatusEntries() {
+    await this.assertPage();
+    const entries = await this._driver.findElements(By.css(".osmbc-blog-status-list .list-group-item"));
+    return Promise.all(entries.map(e => e.getText()));
+  }
+
+  // the "N open" link of a blog
+  async clickOpenArticlesOf(blog) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`.osmbc-blog-status-list a[href*='blog=${blog}&unwrittenLang=']`)));
+  }
+
   async waitForInitialisation() {
     await this._driver.wait(until.elementLocated(By.css("a#adminlink")), 5000);
     await this.assertPage();

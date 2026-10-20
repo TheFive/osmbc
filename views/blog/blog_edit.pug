@@ -153,9 +153,9 @@ block content
               //- Special Column
               td
                 if (blog["close" + lang])
-                  button.btn.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","editlang",this);`) Reopen
+                  button.btn.btn-warning(id="closebutton" data-lang-status="editlang" data-lang=lang) Reopen
                 else if (blog["reviewComment" + lang])
-                  button.btn.btn-warning(id="deletereviewbutton" onclick=`window.setLangStatus("${lang}","deleteallreviews",this);`) Delete Review
+                  button.btn.btn-warning(id="deletereviewbutton" data-lang-status="deleteallreviews" data-lang=lang data-confirm=`Delete all reviews of ${blog.name} (${lang})?`) Delete Review
                 else if (copyLanguageFromAnother[lang])
                   form(id="copyArticle" name="copyArticle", action=layout.htmlroot + "/blog/" + blog.name + "/copy/"+copyLanguageFromAnother[lang]+"/"+lang, method="post")
                     button.btn.btn-warning(id="copyArticlebutton" type = "submit" )=(copyLanguageFromAnother[lang] === "no_translation") ? "Set empty articles to no translation" :" Copy From " + copyLanguageFromAnother[lang]

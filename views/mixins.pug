@@ -17,7 +17,7 @@ mixin voteButton(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  button.btn(type="button" class = vb_displayClass onclick="callAndRedraw('/article/" + article.id + "/" + vb_voteAction +"." + vote.name + "','/article/" + article.id +"/votes')" style=vb_voteStyle)
+  button.btn(type="button" class = vb_displayClass data-call="/article/" + article.id + "/" + vb_voteAction + "." + vote.name data-redraw="/article/" + article.id + "/votes" style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name
@@ -44,31 +44,33 @@ mixin voteLabel(vote,article)
     span="  "+vb_numVotes
 
 
+//- labeled* (user page): label, field and explanation side by side from md
+//- on, below md the label above the field
 mixin labeledInput(label,name,value,explanation)
   - if (!value) value =""
   div.row.mb-3
-    div.col
+    div.col-12.col-md
       label.col-form-label(for=name)=label
-    div.col-5
+    div.col-12.col-md-5
       input.form-control(name=name,id=name,value = value)
-    div.col
+    div.col-12.col-md
       label.d-none.d-md-block.form-text=explanation
 
 mixin labeledTextarea(label,name,value,explanation)
   - if (!value) value =""
   div.row.mb-3
-    div.col
+    div.col-12.col-md
       label.col-form-label(for=name)=label
-    div.col-5
+    div.col-12.col-md-5
       textarea.form-control(name=name,id=name)=value
-    div.col
+    div.col-12.col-md
       label.d-none.d-md-block.form-text=explanation
 
 mixin labeledSelect(label,name,value,values,displayValues,explanation)
   - if (!value) value =""
   div.row.mb-3
-    label.col.col-form-label(for=name)=label
-    div.col-5
+    label.col-12.col-md.col-form-label(for=name)=label
+    div.col-12.col-md-5
       select(id=name,name=name).form-control
         each v,i in values
             if (value ==v)
@@ -76,30 +78,31 @@ mixin labeledSelect(label,name,value,values,displayValues,explanation)
             else
                 option(value=v )=displayValues[i]
                     
-    label.col.d-none.d-md-block.form-text=explanation
+    label.col-12.col-md.d-none.d-md-block.form-text=explanation
 
 mixin labeledMultiSelect(label,name,value,values,displayValues,explanation)
   - if (!value) value =""
   div.row.mb-3
-    label.col.col-form-label(for=name)=label
-    div.col-5
-      select.selectpicker(name=name id=name multiple)
+    label.col-12.col-md.col-form-label(for=name)=label
+    div.col-12.col-md-5
+      //- phones: as wide as the column (bootstrap-select's default is 220px)
+      select.selectpicker(name=name id=name multiple data-width=layout.mobileView ? "100%" : undefined)
         each v,i in values
           if (value.indexOf(v)>=0)
               option(selected id = name + "_" + v value = v)=displayValues[i]
           else 
               option(id = name + "_" + v value = v)=displayValues[i]
-    label.col.d-none.d-md-block.form-text=explanation
+    label.col-12.col-md.d-none.d-md-block.form-text=explanation
 
 
 mixin labeledText(label,name,value,explanation)
     - if (!value) value =""
     div.row.mb-3
-      div.col
+      div.col-12.col-md
         label.col-sm-4.col-form-label( for=name)=label
-      div.col-5
+      div.col-12.col-md-5
         input.form-control(name=name,id=name,value = value readonly)
-      div.col
+      div.col-12.col-md
         label.col-sm-4.d-none.d-md-block.form-text=explanation
 
 
@@ -133,6 +136,12 @@ mixin voteDisplay(article,options)
         +voteLabel(vote ,article)
 
 
+//- Open the article, as a tap target (blog views in mobile mode, at the end
+//- of the article's row)
+mixin articleOpenButton(a)
+  a.btn.btn-link.osmbc-tap-square.ms-auto.osmbc-article-open(href=layout.htmlroot + "/article/" + a.id aria-label="Open article")
+    i.fa.fa-edit
+
 mixin articleIcons(a,options)
   div.d-flex.flex-nowrap
     - numCol = 0;
@@ -158,8 +167,10 @@ mixin articleIcons(a,options)
           i.fa.fa-comment.small-margin(style="color:grey")
         if !a.getCommentRead(layout.user.OSMUser)
           i.fa.fa-envelope.small-margin
-    a(href=layout.htmlroot+"/article/" + a.id)
-      i.fa.fa-edit.small-margin
+    //- openAtEnd: the view shows articleOpenButton at the end of the row instead
+    if !options.openAtEnd
+      a(href=layout.htmlroot+"/article/" + a.id)
+        i.fa.fa-edit.small-margin
     if a.predecessorId
       if (a.predecessorId === options.predecessorId)
         span.d-none.d-sm-inline.fa.fa-thumbtack.small-margin
@@ -270,9 +281,10 @@ mixin blogSelector(article,readonly)
       +blogSelection(missingList,missingList,"",readonly)
 
 mixin voteButtonList(votes)
-  for vote,i in votes
-    if (vote.displayAtTop)
-      +voteButton(vote,article)
+  div.d-flex.flex-wrap.gap-2
+    for vote,i in votes
+      if (vote.displayAtTop)
+        +voteButton(vote,article)
 
 mixin blogStatusTable(blogWithLink, compactView)
   - if (compactView !== true) compactView = false
@@ -342,6 +354,37 @@ mixin blogStatusTable(blogWithLink, compactView)
                       div.badge.osmbc-label-closedblog=written
                   else
                     div.badge.osmbc-label-closedblog=written
+
+//- Mobile mode: the blogs to work on as a list, one entry per blog with the
+//- numbers of the mobile language; the open articles as one link
+mixin blogStatusList
+  - const blogs = layout.listOfOpenBlog.slice(0).reverse().concat(layout.editBlog.slice(0).reverse())
+  - const l = layout.mobileLang
+  div.list-group.osmbc-blog-status-list
+    for b in blogs
+      div.list-group-item
+        a.osmbc-blog-status-link(href=layout.htmlroot + "/blog/" + b.name)=b.name
+        div.d-flex.flex-wrap.align-items-center.gap-2
+          span.osmbc-badge-lang.badge=l
+          if (b["close" + l])
+            span.badge.osmbc-label-closedblog
+              i.fa.fa-check
+              |  closed
+          else
+            if (b.isReviewStarted(l))
+              span.badge.osmbc-label-reviewblog=b.getClosedReviewCount(l) + " reviewed"
+            - unedited = b.getUnEdited(l)
+            if (unedited > 0)
+              if (layout.user.access === "full")
+                a.btn.btn-outline-primary(href=layout.htmlroot + "/article/list?blog=" + b.name + "&unwrittenLang=" + l)=unedited + " open"
+              else
+                span.badge.osmbc-not-formulated=unedited + " open"
+            - autoTranslate = b.getAutoTranslate(l)
+            if (autoTranslate > 0)
+              span.badge.osmbc-automated-translation=autoTranslate + " auto"
+            - written = b.getWritten(l)
+            if (written > 0)
+              span.badge.osmbc-label-closedblog=written + " written"
 
 mixin helpMenu(configarray)
   li.dropdown.nav-item

@@ -101,6 +101,20 @@ describe("uc.article save bar", function() {
     should(entries.slice(0, 2)).eql(["Readable text", "Page content"]);
     should(entries.slice(2).map(e => e.split(" #")[0])).eql(["Translated page (DE)", "Translated page (EN)"]);
   });
+  it("should keep the vote buttons apart and vote by tapping (X10)", async function() {
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const articlePage = new ArticlePage(driver);
+    await driver.get(osmbcLink("/article/" + articleId));
+    should(await articlePage.tapTargetsTooSmall("#voteButtons button")).eql([]);
+    should(await articlePage.tapTargetsTooClose("#voteButtons button, #predecessorId")).eql([]);
+    await articlePage.clickTopVote(0);
+    await driver.wait(async () => {
+      const votes = (await articleModule.findById(articleId)).votes;
+      return votes && Object.values(votes).some(users => users.includes("TheFive"));
+    }, 5000, "vote not stored");
+    // redrawn: still apart
+    should(await articlePage.tapTargetsTooClose("#voteButtons button")).eql([]);
+  });
   it("should not show the insert buttons on a desktop", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive");

@@ -119,7 +119,7 @@
         <div class="col-md-6">
           <h2><span class="d-none d-md-block">Wochennotiz </span>WN251<span class="d-none d-md-block"> (edit)</span></h2>
         </div>
-        <div class="col-md-3"><button class="btn btn-lg btn-primary" id="readyreview" onclick="window.setLangStatus(&quot;DE&quot;,&quot;startreview&quot;,this);">Set WN251(DE) ready for review</button></div>
+        <div class="col-md-3"><button class="btn btn-lg btn-primary" id="readyreview" data-lang-status="startreview" data-lang="DE">Set WN251(DE) ready for review</button></div>
         <div class="col-md-3 d-none d-md-block"></div>
       </div>
       <div class="row">
@@ -172,7 +172,7 @@ while layout.user["blogSetting"+v]
               <div class="d-flex flex-nowrap"><span id="voteLabels2"><div class="d-flex flex-nowrap"></div></span></div>
             </td>
             <td>
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('div2');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="div2">
                 <div class="osmbc-not-formulated">
                   <ul class="no-margin">
                     <li>WN251 Picture</li>
@@ -217,7 +217,7 @@ while layout.user["blogSetting"+v]
               <div class="d-flex flex-nowrap"><span id="voteLabels1"><div class="d-flex flex-nowrap"></div></span></div>
             </td>
             <td>
-              <div onclick="if (!openEditor) {openEditor = document.getElementById('div1');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;">
+              <div class="osmbc-inline-edit" data-inline-editor="div1">
                 <div class="osmbc-not-formulated">
                   <ul class="no-margin">
                     <li>WN251 Upcoming Events</li>
@@ -378,6 +378,19 @@ while layout.user["blogSetting"+v]
 
 
       var openEditor = null;
+
+      // a tap on an article text opens its inline editor (or closes the open
+      // one); links in the text do not navigate
+      $(document).on("click", "[data-inline-editor]", function(event) {
+        event.preventDefault();
+        if (!openEditor) {
+          openEditor = document.getElementById(this.dataset.inlineEditor);
+          openEditor.classList.toggle("d-none");
+        } else {
+          openEditor.classList.toggle("d-none");
+          openEditor = null;
+        }
+      });
 
       window.onload = function() {
         window.mdRender = window.markdownit();
@@ -564,20 +577,23 @@ while layout.user["blogSetting"+v]
         });
       }
 
-      function setLangStatus(lang, status, button) {
-        $(button).prop('disabled', true);
-        $(button).prop('html', "wait ...");
+      // status buttons of a language (blogReviewButtons); Close and Did Export
+      // ask first
+      $(document).on("click", "[data-lang-status]", function() {
+        const button = $(this);
+        if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        button.prop("disabled", true);
+        button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus", {
-          action: status,
-          lang: lang
-        }, function(data) {
+          action: button.data("lang-status"),
+          lang: button.data("lang")
+        }, function() {
           location.reload();
         }).fail(function(err) {
           console.error("Trouble setting Language Status");
           console.error(err);
         });
-
-      }
+      });
     </script>
   </body>
 

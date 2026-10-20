@@ -111,6 +111,26 @@ export default class Page {
         .map(x => (x.e.textContent || x.e.className).trim() + " (" + Math.round(x.r.width) + " x " + Math.round(x.r.height) + ")");`, selector);
   }
 
+  // pairs of visible elements matching `selector` closer than 8 px
+  // (edge to edge), as "text | text (gap)"
+  async tapTargetsTooClose(selector) {
+    return this._driver.executeScript(`
+      const list = Array.from(document.querySelectorAll(arguments[0]))
+        .map(e => ({ e: e, r: e.getBoundingClientRect() }))
+        .filter(x => x.r.width > 0 && x.r.height > 0);
+      const result = [];
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          const a = list[i].r; const b = list[j].r;
+          const dx = Math.max(0, Math.max(a.left, b.left) - Math.min(a.right, b.right));
+          const dy = Math.max(0, Math.max(a.top, b.top) - Math.min(a.bottom, b.bottom));
+          const gap = Math.max(dx, dy);
+          if (gap < 7.5) result.push(list[i].e.textContent.trim() + " | " + list[j].e.textContent.trim() + " (" + Math.round(gap) + ")");
+        }
+      }
+      return result;`, selector);
+  }
+
   async _waitForBootstrapOverlaysToDisappear() {
     // Prüfe auf mögliche Overlays (z. B. Bootstrap-Modal oder Dropdown) und warte, bis sie verschwinden
     try {

@@ -187,7 +187,7 @@ describe("router/article", function() {
       const body = await client.get(url);
 
       const json = body.data;
-      json["#voteButtons"].should.containEql("callAndRedraw(\'/article/2/setVote.unpublish\'");
+      json["#voteButtons"].should.containEql('data-call="/article/2/setVote.unpublish"');
       json["#voteButtonsList"].should.containEql('<i class="fa-lg fa fa-thumbs-up">');
     });
     it("should deny denied access user",

@@ -1,4 +1,25 @@
-extends adminlayout
+extends layout
+
+//- admin menus as on the admin pages (desktop only, admin is D on phones)
+block additionalMenuMain
+  if (layout.user.access === "full" && !layout.mobileView)
+    li.dropdown.nav-item
+      a.nav-link.dropdown-toggle#userLists(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
+        | UserLists
+      div.dropdown-menu(aria-labelledby="userLists")
+        a.dropdown-item#createUser(href=layout.htmlroot + "/usert/create") Create
+        a.dropdown-header User Lists
+        a.dropdown-item(href=layout.htmlroot + "/usert/list?access=full") List Active
+        a.dropdown-item(href=layout.htmlroot + "/usert/list?access=guest") List Guest
+        a.dropdown-item(href=layout.htmlroot + "/usert/list?temporaryGuest=true") List Full User Testing Guest
+        a.dropdown-item(href=layout.htmlroot + "/usert/list?access=denied") List Denied
+        a.dropdown-item(href=layout.htmlroot + "/usert/list") List All
+        a.dropdown-item(href=layout.htmlroot + "/usert/list?access=full&sort=lastAccess&desc=true&lastAccess=!=never") Who Is Online
+        div.dropdown-divider
+        a.dropdown-item#createblog(href=layout.htmlroot+"/createblog") Create Blog
+
+block additionalMenuRight
+  +langMenu(1)
 
 
 
@@ -126,9 +147,9 @@ block content
       if (usershown.publicProfile === "Yes")
         +labeledTextarea("Public Markdown","publicHtml",usershown.publicHtml,"Markdown for your public OSMBC Profile")
       .row 
-        div.col
+        div.col-12.col-md
           label.col-form-label(for="Color")="Color"
-        div.col-5
+        div.col-12.col-md-5
           div.input-group
             input.form-control(name="color",id="color",value = usershown.color aria-describedby="colorDisplayAddon")
             span.input-group-text#colorDisplayAddon(style=`background-color:${usershown.color};`)
@@ -145,9 +166,8 @@ block content
 
 
 
-      .form-group
-        div.col-sm-offset-2.col-sm-10
-          input#save(name="OK" type="submit", class="btn btn-primary",value="OK")
+      .form-group.mt-3
+        input#save(name="OK" type="submit" class="btn btn-primary" class=layout.mobileView ? "w-100" : undefined value="Save")
 
   p.row
     div.d-none.d-md-block
@@ -156,9 +176,8 @@ block content
 
   div.d-flex.flex-row-reverse
       if (usershown.OSMUser === layout.user.OSMUser)
-        p
+        p.d-flex.flex-wrap.gap-2
           a.btn.btn-primary(href=layout.htmlroot+"/logout") logout user
-          span=" "
           a.btn.btn-primary(href=layout.htmlroot+"/usert/self?becomeGuest=true") Switch temporary to Guest
           
   p.row

@@ -207,6 +207,24 @@ UX ↔ dev conflicts:
   bar. Phone (390 px): no screen except the user page (P2) scrolls sideways
   any more. Test: `uc.article.mobile` (long link + doublette).
 
+- **P2 done (2026-10-20):** blog views: the article text (inline editor)
+  is ≥ 44 px high, "Open article" as a 44 px button at the end of the row
+  (left edit icon hidden in mobile mode), tabs 44 px and `nav-fill`, room
+  below the status button, export menu hidden; Close, Did Export and
+  Delete Review ask first (all widths, native `confirm`), the status
+  buttons show "wait ..." again (the old code set a DOM property). Votes in
+  a `gap-2` row. Start page: "Blogs to work on" as a list for the mobile
+  language with one "N open" link, legend and admin link hidden. Collect:
+  search button beside the field below md, OK and Cancel apart. User page
+  (and guest user page) on the normal layout, form label above the field
+  below md, "OK" → "Save". Inline handlers replaced by data attributes and
+  delegated listeners on the way. Desktop (1280 px): page heights unchanged
+  except the user page (+26 px, normal layout with its e-mail notice);
+  intended changes: vote gap, collect columns, Cancel outline, user page
+  menu. Tests: `uc.blog.mobile`, `uc.article.mobile` (votes),
+  `layout/uc.startpage.mobile`, `collect/uc.collect.mobile`,
+  `user/uc.user.mobile`.
+
 Order: P1 → P2 → P3 → P4, each package tested on the beta. P1 has no desktop
 effect; desktop baseline (1280 × 900) measured on `7ca9f522`, compare after
 every package.

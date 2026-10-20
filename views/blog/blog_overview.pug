@@ -11,7 +11,7 @@ mixin displayOverviewRow(a)
   if enable
     tr
       td
-        +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
+        +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId, openAtEnd: layout.mobileView})
         - predecessorId = a.id
       td.d-none.d-md-table-cell
         div.d-flex.flex-nowrap
@@ -22,7 +22,7 @@ mixin displayOverviewRow(a)
 
 
       td
-        div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
+        div.osmbc-inline-edit(data-inline-editor=`div${a.id}`)
           +previewDiv(a, lang)
             ul.no-margin
               |!{renderer.articleTitle(lang,a)}
@@ -37,6 +37,9 @@ mixin displayOverviewRow(a)
       td.d-none.d-md-table-cell
         if (showLanguages)
           +languageDisplay(a)
+      if layout.mobileView
+        td
+          +articleOpenButton(a)
 
 
 

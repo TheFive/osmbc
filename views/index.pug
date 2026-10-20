@@ -16,8 +16,12 @@ block content
           h3="Blogs to work on "
             a(href=layout.htmlroot+"/blog/list?status=IN(open,edit)") (more)
           div
-            +blogStatusTable(true, true)
-          .mt-1.mb-2
+            if layout.mobileView
+              +blogStatusList
+            else
+              +blogStatusTable(true, true)
+          //- the mobile list names its numbers, no legend needed
+          .mt-1.mb-2(class=layout.mobileView ? "d-none" : undefined)
             small.osmbc-help-text Badge legend
             table.table.table-sm.w-auto.mb-0
               tbody
@@ -106,11 +110,13 @@ block content
 
 
 
-          p.row
-            h4="Admin View"
-            p
-              a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here" 
-              span=" to go to the Admin Section of OSMBC"
+          //- admin is desktop only
+          if !layout.mobileView
+            p.row
+              h4="Admin View"
+              p
+                a#adminlink(href=layout.htmlroot+"/osmbc/admin")="click here" 
+                span=" to go to the Admin Section of OSMBC"
       .col-12.col-xl-6.d-none.d-lg-block
         if changes
           h4="Last Changes "
