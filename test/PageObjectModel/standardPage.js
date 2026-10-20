@@ -35,6 +35,22 @@ export default class StandardPage extends Page {
     await this._driver.wait(until.stalenessOf(collectButton));
   }
 
+  // small screens: the app name at the top of the menu panel leads home
+  async clickHomeInMenu() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("button.navbar-toggler")));
+    // Bootstrap marks the panel .show at the start of its slide-in and drops
+    // .showing when it has arrived
+    const panel = await this._driver.findElement(By.id("navbarSupportedContent"));
+    await this._driver.wait(async () => {
+      const cls = await panel.getAttribute("class");
+      return cls.includes("show") && !cls.includes("showing");
+    }, 3000, "menu panel did not open");
+    const home = await this._driver.findElement(By.id("menuHome"));
+    await this.tap(home);
+    await this._driver.wait(until.stalenessOf(home), 5000, "home page not loaded");
+  }
+
   async clickUserIcon() {
     await this.assertPage();
     await (await this._driver.findElement(By.css("#navbarSupportedContent li > img"))).click();

@@ -174,7 +174,13 @@ block all
           //- below lg the menu is a side panel (offcanvas), from lg on a normal menu bar
           div.offcanvas.offcanvas-end#navbarSupportedContent(tabindex="-1" aria-labelledby="navbarSupportedContentLabel")
             div.offcanvas-header
-              h5.offcanvas-title#navbarSupportedContentLabel=appName
+              //- mobile mode: the header shows the issue instead of the app name,
+              //- so the way home is here
+              h5.offcanvas-title#navbarSupportedContentLabel
+                if (layout && layout.mobileView)
+                  a.osmbc-menu-home#menuHome(href=htmlroot + '/osmbc.html')=appName
+                else
+                  =appName
               button.btn-close(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
             div.offcanvas-body.flex-grow-1
               ul.navbar-nav

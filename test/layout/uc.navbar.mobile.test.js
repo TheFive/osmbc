@@ -7,6 +7,8 @@ import userModule from "../../model/user.js";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import util from "../../util/util.js";
+import BlogPage from "../PageObjectModel/blogPage.js";
+import MainPage from "../PageObjectModel/mainPage.js";
 
 const osmbcLink = util.osmbcLink;
 
@@ -65,6 +67,12 @@ describe("uc/navbar on small screens", function() {
       await driver.findElement(By.id("collect")).click();
 
       await driver.wait(until.urlContains("/article/create"), 3000);
+    });
+    it("should go home from a blog through the menu panel", async function() {
+      // the header shows the issue there, not the app name
+      await driver.get(osmbcLink("/blog/WN1"));
+      await new BlogPage(driver).clickHomeInMenu();
+      await new MainPage(driver).assertPage();
     });
   });
   describe("in the desktop view of a phone browser", function() {
