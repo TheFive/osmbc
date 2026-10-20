@@ -512,6 +512,8 @@ with `blog_overview.pug`, `blog_full.pug`, `blog_review.pug` as tab content;
   "Delete Review" sits at the far right, likely off-screen. No
   confirmation. Possible link to the reported "deleting language
   contributions" problem.
+- **Mobile (2026-10-20):** Reopen is needed on phones and works; see the
+  matrix (BLOG-12).
 
 ### BLOG-13 — Edit the blog details
 - **Role:** full

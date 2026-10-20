@@ -33,6 +33,7 @@ Order agreed 2026-10-16: X5 → X3 → X1, then the rest.
 | X9 | Compact header on phones: the top bar shows only the menu button and the app name. Show context instead (current issue and, with X4, the mobile language, tappable to switch it, e.g. `WN846 · DE`); hide the bar when scrolling down, show it again when scrolling up. The bottom stays reserved for the save bar. | space on every screen | **done** 2026-10-16: in mobile mode the header shows the issue (link) and the mobile language (tap to switch) instead of the app name; the bar slides out when scrolling down and back when scrolling up. Language dropdowns and the Translate menu are not shown in mobile mode. |
 | X10 | Button sizes and spacing on phones: every tap target at least 44 × 44 px, at least 8 px between targets; the visible size may be smaller than the tap area. `btn-lg` is used as a general style (comment area, search, review), so button rows wrap into stacked lines that touch each other and take much height (comment area: 3 rows, about 150 px). One prominent primary action per block, secondary actions compact (icon buttons or a "⋯" menu), rows as `d-flex flex-wrap gap-2`. Bare icons as controls (pencil, envelope, flag, avatar) get a padded tap area. First step: the ux-reviewer measures all interactive elements per screen (too small / too close / much height for a rare action). | D, E – ART-08/09/10, BLOG-05/06, COL-01, all screens | open |
 | X11 | Second language on demand on phones (beta feedback 2026-10-17/18: an editor writes in DE, then translates to EN or checks the auto translation; two languages are enough, the second one editable) | A – ART-02/03 | **done** 2026-10-18: in mobile mode the article page has "Show EN" / "Hide EN" below the text: the other language of the desktop pair, stacked below and editable, saved together (the browser remembers whether it is shown). "Translate → EN" appears while the mobile language has text (also unsaved) and the second one is empty: one tap shows it and translates. Article page only, blog views stay one language. Test in `test/uc.article/uc.article.secondlang.mobile.test.js`. |
+| X12 | Hint and help texts on phones: drag hints, formulation tips and explanations above fields take space and partly describe desktop actions. Hide them in mobile mode or move them to a page help (one "?" per page). | layout – all screens (beta feedback 2026-10-17) | open |
 
 Related cleanups (dead code removed while working in the area):
 `208bd271` (unused article column templates, `showRL`),
@@ -94,7 +95,7 @@ they are at a desktop. So:
 | BLOG-09 | Close language / did export | per issue × lang | M | X4 | | 2.5 % (1) ⚠A | M |
 | BLOG-10 | Export / download | per issue × lang | D | | publishing happens on a desktop | 0 % of 62 | D |
 | BLOG-11 | Translate whole blog | per issue | D | | | 0 % of 75 | D |
-| BLOG-12 | Reopen, delete review, copy texts | rare | D | | | – | D |
+| BLOG-12 | Reopen, delete review, copy texts | rare | D | | Reopen works on phones (beta feedback 2026-10-17), improve: 8-column table without `table-responsive`, buttons at the far right, Delete Review without confirmation | – | M (Reopen only; Delete Review, Copy: D) |
 | BLOG-13 | Edit blog details | rare | D | | | save 0 % of 51 | D |
 | BLOG-14 | Blog statistics | rare | R | | | 0 % of 3 | R |
 | BLOG-15 | Blog list, close a blog | per issue | R | | | 9 % (3) | R |
@@ -148,6 +149,11 @@ Based on the polls (5 participants), the access log and the analysis:
    Default: the user's main language. Choice: all active languages (e.g. for
    reviewers checking several languages). The phone UI then needs only one
    language display and one language choice.
+
+7. **Beta feedback (2026-10-20).** Reopening a language (BLOG-12) is needed
+   on phones; it works already and gets a better layout later. Delete Review
+   and Copy stay desktop only. Hint texts on phones are a layout topic, not a
+   use case: X12.
 
 Feedback that is not in the catalogue yet: be notified when someone submits a
 link, and discuss the submission with its author (esp. guests) on the phone.
