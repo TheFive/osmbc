@@ -453,12 +453,26 @@ table {
   margin-top: .5rem;
 }
 
-/* start page: the links in the blog status table as tap targets */
+/* start page: the blog status table only as wide as its content; its
+   links 44px high (the row height) and narrower, so the numbers of a cell
+   stay together */
+.osmbc-mobile .table-responsive .blog-status-table.blog-status-table-compact {
+  min-width: 0;
+}
+.osmbc-mobile .blog-status-table.blog-status-table-compact td {
+  padding-block: 0;
+}
 .osmbc-mobile .blog-status-table a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
+  min-width: 32px;
+  min-height: 44px;
+}
+
+.osmbc-legend-toggle {
+  display: inline-flex;
+  align-items: center;
   min-height: 44px;
 }
 

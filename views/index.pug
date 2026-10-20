@@ -18,8 +18,12 @@ block content
           div
             +blogStatusTable(true, true)
           .mt-1.mb-2
-            small.osmbc-help-text Badge legend
-            table.table.table-sm.w-auto.mb-0
+            //- phones: the legend opens on demand
+            if layout.mobileView
+              a.osmbc-legend-toggle.small(href="#badgeLegend" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="badgeLegend") Badge legend
+            else
+              small.osmbc-help-text Badge legend
+            table.table.table-sm.w-auto.mb-0(id=layout.mobileView ? "badgeLegend" : undefined class=layout.mobileView ? "collapse" : undefined)
               tbody
                 tr
                   td.text-center.align-middle

@@ -63,6 +63,17 @@ class MainPage extends StandardPage {
     await (await this._driver.findElement(By.xpath("//a[text()='(more)']"))).click();
   }
 
+  // small screens: the badge legend is folded
+  async isBadgeLegendShown() {
+    return (await this._driver.findElement(By.css(".table.w-auto"))).isDisplayed();
+  }
+
+  async clickBadgeLegend() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("a.osmbc-legend-toggle")));
+    await this._driver.wait(until.elementIsVisible(await this._driver.findElement(By.id("badgeLegend"))), 3000, "legend did not open");
+  }
+
   // the link to the unwritten articles of a blog and language in the status table
   async clickUnwrittenArticles(blog, lang) {
     await this.assertPage();

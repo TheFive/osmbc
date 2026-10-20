@@ -102,13 +102,15 @@ export default class Page {
   }
 
   // visible elements matching `selector` that are smaller than a tap target
-  // (44 x 44 px), as "text (width x height)"
-  async tapTargetsTooSmall(selector) {
+  // (44 x 44 px, or the given minimum), as "text (width x height)"
+  async tapTargetsTooSmall(selector, minimum = {}) {
+    const width = minimum.width || 44;
+    const height = minimum.height || 44;
     return this._driver.executeScript(`
       return Array.from(document.querySelectorAll(arguments[0]))
         .map(e => ({ e: e, r: e.getBoundingClientRect() }))
-        .filter(x => x.r.width > 0 && x.r.height > 0 && (x.r.width < 43.5 || x.r.height < 43.5))
-        .map(x => (x.e.textContent || x.e.className).trim() + " (" + Math.round(x.r.width) + " x " + Math.round(x.r.height) + ")");`, selector);
+        .filter(x => x.r.width > 0 && x.r.height > 0 && (x.r.width < arguments[1] - 0.5 || x.r.height < arguments[2] - 0.5))
+        .map(x => (x.e.textContent || x.e.className).trim() + " (" + Math.round(x.r.width) + " x " + Math.round(x.r.height) + ")");`, selector, width, height);
   }
 
   // pairs of visible elements matching `selector` closer than 8 px

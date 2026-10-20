@@ -44,9 +44,14 @@ describe("uc/start page on small screens", function() {
     const mainPage = new MainPage(driver);
     await driver.get(osmbcLink("/"));
     should(await mainPage.hasHorizontalScroll()).be.False();
-    should(await mainPage.tapTargetsTooSmall(".blog-status-table a")).eql([]);
+    // the numbers: 44px high, narrower (32px) so a cell's numbers stay together
+    should(await mainPage.tapTargetsTooSmall(".blog-status-table a", { width: 32 })).eql([]);
     // admin is desktop only
     should(await mainPage.hasLinkToAdminPage()).be.False();
+    // the legend opens on demand
+    should(await mainPage.isBadgeLegendShown()).be.False();
+    await mainPage.clickBadgeLegend();
+    should(await mainPage.isBadgeLegendShown()).be.True();
     await mainPage.clickUnwrittenArticles("WN1", "DE");
     await driver.wait(async () => (await driver.getCurrentUrl()).endsWith("/article/list?blog=WN1&unwrittenLang=DE"), 5000, "list not opened");
   });
@@ -55,5 +60,6 @@ describe("uc/start page on small screens", function() {
     const mainPage = new MainPage(driver);
     await driver.get(osmbcLink("/"));
     should(await mainPage.hasLinkToAdminPage()).be.True();
+    should(await mainPage.isBadgeLegendShown()).be.True();
   });
 });
