@@ -1,8 +1,8 @@
 # Changelog
 
-## [4.5.0-beta.2](https://github.com/TheFive/osmbc/tree/4.5.0-beta.2) (2026-10-18)
+## [4.5.0-beta.3](https://github.com/TheFive/osmbc/tree/4.5.0-beta.3) (2026-10-20)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.10...4.5.0-beta.2)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.10...4.5.0-beta.3)
 
 **Features:**
 
@@ -12,6 +12,10 @@
 - mobile: work in one language on small screens [#1154](https://github.com/TheFive/osmbc/issues/1154)
 - mobile: insert collection links by tapping instead of copying a language
 - mobile: show a second language on demand on the article page
+- mobile: tap-sized controls and no sideways scrolling on phones
+- mobile: tap-sized blog views, start page, collect and user page
+- mobile: tap-sized comment, review and inbox actions
+- mobile: tap-sized text links and blog list, no flags on phones
 
 **Fixed bugs:**
 
@@ -20,6 +24,11 @@
 - article: show translate progress and done mark again
 - views: table cells in the blog overview and tap to copy a language text
 - mobile: keep the desktop view of phone browsers in desktop mode
+- mobile: way home from the menu panel
+- mobile: keep the blog status table on the start page
+- mobile: compact blog status table and folded legend on phones
+- mobile: only the mobile language row of the status table is tall
+- deps: update follow-redirects to 1.16.1
 
 ## [4.4.10](https://github.com/TheFive/osmbc/tree/4.4.10) (2026-10-05)
 
