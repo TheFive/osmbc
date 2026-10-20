@@ -453,12 +453,13 @@ table {
   margin-top: .5rem;
 }
 
-/* start page: one entry per blog, the name as a large link */
-.osmbc-blog-status-link {
-  display: flex;
+/* start page: the links in the blog status table as tap targets */
+.osmbc-mobile .blog-status-table a {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 44px;
   min-height: 44px;
-  font-weight: bold;
 }
 
 /* collection links: a long URL (plus the link check result) wraps */

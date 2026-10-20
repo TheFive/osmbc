@@ -213,8 +213,10 @@ UX ↔ dev conflicts:
   below the status button, export menu hidden; Close, Did Export and
   Delete Review ask first (all widths, native `confirm`), the status
   buttons show "wait ..." again (the old code set a DOM property). Votes in
-  a `gap-2` row. Start page: "Blogs to work on" as a list for the mobile
-  language with one "N open" link, legend and admin link hidden. Collect:
+  a `gap-2` row. Start page: the status table stays (product owner,
+  2026-10-20, after trying the list per blog: the table shows the state of
+  all languages, there are about three blogs to work on), its links are
+  44 px tap targets in mobile mode; admin link hidden. Collect:
   search button beside the field below md, OK and Cancel apart. User page
   (and guest user page) on the normal layout, form label above the field
   below md, "OK" → "Save". Inline handlers replaced by data attributes and

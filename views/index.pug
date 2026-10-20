@@ -16,12 +16,8 @@ block content
           h3="Blogs to work on "
             a(href=layout.htmlroot+"/blog/list?status=IN(open,edit)") (more)
           div
-            if layout.mobileView
-              +blogStatusList
-            else
-              +blogStatusTable(true, true)
-          //- the mobile list names its numbers, no legend needed
-          .mt-1.mb-2(class=layout.mobileView ? "d-none" : undefined)
+            +blogStatusTable(true, true)
+          .mt-1.mb-2
             small.osmbc-help-text Badge legend
             table.table.table-sm.w-auto.mb-0
               tbody

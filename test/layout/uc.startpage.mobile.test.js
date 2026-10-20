@@ -12,8 +12,8 @@ const osmbcLink = util.osmbcLink;
 
 const maxTimer = 30000;
 
-// Start page on a phone: the blogs to work on as a list for the mobile
-// language, tap-sized (X10).
+// Start page on a phone: the status table of the blogs to work on with
+// tap-sized links (X10).
 describe("uc/start page on small screens", function() {
   this.timeout(maxTimer);
   let driver;
@@ -26,10 +26,12 @@ describe("uc/start page on small screens", function() {
     testutil.startServerSync();
     await testutil.clearDB();
     await userModule.createNewUser({ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", email: "a@b.c" });
+    // as in production: about three blogs to work on
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN1", status: "edit" });
+    await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2", status: "edit" });
+    await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN3", status: "open" });
     await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "One", markdownDE: "Text" });
     await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Two" });
-    await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Three" });
   });
   afterEach(async function() {
     nock.cleanAll();
@@ -37,27 +39,21 @@ describe("uc/start page on small screens", function() {
     testutil.stopServer();
   });
 
-  it("should list the blogs with the numbers of the mobile language", async function() {
+  it("should show the status table with tap-sized links", async function() {
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });
     const mainPage = new MainPage(driver);
     await driver.get(osmbcLink("/"));
-    // the numbers are the ones of the desktop table (a new blog brings its
-    // own placeholder articles), here only their labels matter
-    const entries = await mainPage.getBlogStatusEntries();
-    should(entries.length).eql(1);
-    should(entries[0]).match(/^WN1\nDE\n\d+ open\n1 written$/);
     should(await mainPage.hasHorizontalScroll()).be.False();
-    should(await mainPage.tapTargetsTooSmall(".osmbc-blog-status-list a")).eql([]);
+    should(await mainPage.tapTargetsTooSmall(".blog-status-table a")).eql([]);
     // admin is desktop only
     should(await mainPage.hasLinkToAdminPage()).be.False();
-    await mainPage.clickOpenArticlesOf("WN1");
+    await mainPage.clickUnwrittenArticles("WN1", "DE");
     await driver.wait(async () => (await driver.getCurrentUrl()).endsWith("/article/list?blog=WN1&unwrittenLang=DE"), 5000, "list not opened");
   });
-  it("should keep the table on a desktop", async function() {
+  it("should show the admin link on a desktop", async function() {
     driver = await testutil.getNewDriver("TheFive");
     const mainPage = new MainPage(driver);
     await driver.get(osmbcLink("/"));
-    should(await mainPage.getBlogStatusEntries()).eql([]);
     should(await mainPage.hasLinkToAdminPage()).be.True();
   });
 });

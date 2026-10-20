@@ -355,37 +355,6 @@ mixin blogStatusTable(blogWithLink, compactView)
                   else
                     div.badge.osmbc-label-closedblog=written
 
-//- Mobile mode: the blogs to work on as a list, one entry per blog with the
-//- numbers of the mobile language; the open articles as one link
-mixin blogStatusList
-  - const blogs = layout.listOfOpenBlog.slice(0).reverse().concat(layout.editBlog.slice(0).reverse())
-  - const l = layout.mobileLang
-  div.list-group.osmbc-blog-status-list
-    for b in blogs
-      div.list-group-item
-        a.osmbc-blog-status-link(href=layout.htmlroot + "/blog/" + b.name)=b.name
-        div.d-flex.flex-wrap.align-items-center.gap-2
-          span.osmbc-badge-lang.badge=l
-          if (b["close" + l])
-            span.badge.osmbc-label-closedblog
-              i.fa.fa-check
-              |  closed
-          else
-            if (b.isReviewStarted(l))
-              span.badge.osmbc-label-reviewblog=b.getClosedReviewCount(l) + " reviewed"
-            - unedited = b.getUnEdited(l)
-            if (unedited > 0)
-              if (layout.user.access === "full")
-                a.btn.btn-outline-primary(href=layout.htmlroot + "/article/list?blog=" + b.name + "&unwrittenLang=" + l)=unedited + " open"
-              else
-                span.badge.osmbc-not-formulated=unedited + " open"
-            - autoTranslate = b.getAutoTranslate(l)
-            if (autoTranslate > 0)
-              span.badge.osmbc-automated-translation=autoTranslate + " auto"
-            - written = b.getWritten(l)
-            if (written > 0)
-              span.badge.osmbc-label-closedblog=written + " written"
-
 mixin helpMenu(configarray)
   li.dropdown.nav-item
     a.nav-link.dropdown-toggle#helpDropdown(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
