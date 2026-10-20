@@ -182,6 +182,28 @@ class ArticlePage extends StandardPage {
     return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
   }
 
+  // comment area: number of comments marked unread (envelope)
+  async countUnreadComments() {
+    return (await this._driver.findElements(By.css("#commentArea button[aria-label='Mark as read']"))).length;
+  }
+
+  async clickMarkFirstUnreadCommentRead() {
+    await this.assertPage();
+    const envelope = await this._driver.findElement(By.css("#commentArea button[aria-label='Mark as read']"));
+    await this.tap(envelope);
+    await this._driver.wait(until.stalenessOf(envelope), 3000, "comment area not redrawn");
+  }
+
+  async tapAddComment(text) {
+    await this.assertPage();
+    const field = await this._driver.findElement(By.id("comment"));
+    await this.tap(field);
+    await field.sendKeys(text);
+    const button = await this._driver.findElement(By.css("button[name='AddComment']"));
+    await this.tap(button);
+    await this._driver.wait(until.stalenessOf(button), 3000, "comment area not redrawn");
+  }
+
   // the n-th vote button next to the article's form (0 = first)
   async clickTopVote(n) {
     await this.assertPage();

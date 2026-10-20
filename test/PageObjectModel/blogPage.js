@@ -154,6 +154,20 @@ class BlogPage extends StandardPage {
     await this.tap(await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`)));
   }
 
+  // edit button of an own review comment (n-th comment of the language)
+  async clickEditReviewComment(lang, n) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`[data-edit-review='${lang}${n}']`)));
+    await this._driver.wait(until.elementIsVisible(await this._driver.findElement(By.id(`reviewComment${lang}${n}`))), 2000, "edit form not shown");
+  }
+
+  async clickStopReview(lang) {
+    await this.assertPage();
+    const button = await this._driver.findElement(By.id("reviewButtonCancel" + lang));
+    await this.tap(button);
+    await this._driver.wait(until.stalenessOf(button), 3000, "page not reloaded");
+  }
+
   async isExportMenuShown() {
     return (await this._driver.findElements(By.id("dropdownExportLanguages"))).length > 0;
   }

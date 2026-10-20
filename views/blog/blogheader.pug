@@ -57,7 +57,7 @@ mixin reviewBlog(reviewComments,lang)
                 i.text-body-secondary.small="Edit: "+layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && (!blog["close"+lang])
                 span=" "
-                a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('d-none');document.getElementById('reviewLeftText${lang}${i}').classList.add('d-none');`)
+                button.btn.btn-link.osmbc-tap-square(type="button" data-edit-review=lang + i aria-label="Edit review comment" title="Edit review comment")
                   i.fa.fa-pencil
               if reviewStartTime
                 span=" "
@@ -70,12 +70,14 @@ mixin reviewBlog(reviewComments,lang)
                 form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
                   textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
                   input.d-none(type="text",name="lang" value = lang)
-                  button.btn.btn-lg.btn-primary(id="reviewButton"+lang+i type="submit") Change
+                  div.d-flex.flex-wrap.gap-2.mt-2
+                    button.btn.btn-primary(id="reviewButton"+lang+i type="submit") Change
           if comment.text == "reviewing..."
             if layout.user.OSMUser === comment.user
               - personalReviewStarted = true
             h3
-              div.badge.text-bg-warning
+              //- wraps on phones (the name and the time are longer than a screen)
+              div.badge.text-bg-warning.text-wrap.text-start
                 b.span=comment.user
                 span=" is reviewing since "+layout.moment(comment.timestamp).fromNow()
 
@@ -90,15 +92,13 @@ mixin reviewBlog(reviewComments,lang)
                         name ="text",
                         id="reviewComment"+lang
                         placeholder="Please Type your Review here"
-                        onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
+                        data-review-text=lang)
                   input.d-none(type="text",name="lang" value = lang)
 
-                  button.btn.btn-lg.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
-                  button.btn.btn-lg.btn-secondary(
-                    id="reviewButtonCancel"+lang
-                    type="button"
-                    onclick="document.getElementById('reviewComment" + lang +"').value='delete';\
-                       document.getElementById('review" +  lang + "').submit();") cancel
+                  div.d-flex.flex-wrap.gap-2.mt-2
+                    button.btn.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
+                    //- ends the personal review (sends "delete")
+                    button.btn.btn-outline-secondary(id="reviewButtonCancel"+lang type="button" data-review-stop=lang) Stop review
             else
               form(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8
@@ -107,8 +107,7 @@ mixin reviewBlog(reviewComments,lang)
                   name ="text",
                   value ="reviewing..."
                   id="reviewComment" + lang
-                  placeholder="Please Type your Review here"
-                  onkeyup="document.getElementById('reviewButton" + lang + "').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
+                  placeholder="Please Type your Review here")
                   input.d-none(type="text",name="lang" value = lang)
                 .col-md-4
                   button.btn.btn-lg.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review

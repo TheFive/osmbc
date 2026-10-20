@@ -577,6 +577,22 @@ while layout.user["blogSetting"+v]
         });
       }
 
+      // review comments (blogheader.pug): edit an own comment, Review only with
+      // a text, stop the personal review
+      $(document).on("click", "[data-edit-review]", function() {
+        const key = this.dataset.editReview;
+        document.getElementById("editReview" + key).classList.remove("d-none");
+        document.getElementById("reviewLeftText" + key).classList.add("d-none");
+      });
+      $(document).on("input", "[data-review-text]", function() {
+        document.getElementById("reviewButton" + this.dataset.reviewText).disabled = (this.value === "");
+      });
+      $(document).on("click", "[data-review-stop]", function() {
+        const lang = this.dataset.reviewStop;
+        document.getElementById("reviewComment" + lang).value = "delete";
+        document.getElementById("review" + lang).submit();
+      });
+
       // status buttons of a language (blogReviewButtons); Close and Did Export
       // ask first
       $(document).on("click", "[data-lang-status]", function() {

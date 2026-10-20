@@ -232,6 +232,22 @@ UX ↔ dev conflicts:
   `layout/uc.startpage.mobile`, `collect/uc.collect.mobile`,
   `user/uc.user.mobile`.
 
+- **P3 done (2026-10-20), all widths:** comment area: "Reload Comments"
+  is an icon button in the heading; Add Comment and Solve Comment (outline)
+  in a `gap-2` row without `btn-lg`; the pencil and the envelope are
+  buttons with a tap area, the envelope at the end of the comment's header
+  line; Update / Cancel apart. Review: the pencil of an own review comment
+  is a button, Review and "Stop review" (was "cancel") apart, without
+  `btn-lg`. Inbox: the envelope as a button at the end of the line; phones
+  without the icon column, "Open article" in the card header. Fixed on the
+  way: a comment read state of 0 (first comment read) counted as "nothing
+  read" (article and inbox; also stored as a string by the route); the
+  badge "X is reviewing since …" did not wrap and made the blog page 474 px
+  wide on phones. Desktop: the article page +45 px, the blog review +21 px
+  (larger comment/review action buttons), envelope moved to the right.
+  Tests: `uc.article.mobile` (comments), `uc.blog.mobile` (review),
+  `user/uc.inbox.mobile`.
+
 Order: P1 → P2 → P3 → P4, each package tested on the beta. P1 has no desktop
 effect; desktop baseline (1280 × 900) measured on `7ca9f522`, compare after
 every package.

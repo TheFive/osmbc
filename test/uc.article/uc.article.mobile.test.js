@@ -47,7 +47,7 @@ describe("uc.article save bar", function() {
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });
     await driver.get(osmbcLink("/article/" + articleId));
     // the page must not be wider than the phone (language columns, X8)
-    should(await driver.executeScript("return document.documentElement.scrollWidth <= window.innerWidth;")).be.True();
+    should(await new ArticlePage(driver).hasHorizontalScroll()).be.False();
     const barSave = await driver.findElement(By.id("saveButtonBar"));
     // one Save only: the buttons at the top are replaced by the bar,
     // and the bar appears only when something is changed
@@ -114,6 +114,27 @@ describe("uc.article save bar", function() {
     }, 5000, "vote not stored");
     // redrawn: still apart
     should(await articlePage.tapTargetsTooClose("#voteButtons button")).eql([]);
+  });
+  it("should keep the comment actions tap-sized and apart (X10)", async function() {
+    const now = new Date().toISOString();
+    // the first comment is read (commentRead 0), the second is not
+    const commented = await articleModule.createNewArticle({
+      blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE",
+      commentList: [{ user: "TheFive", text: "first", timestamp: now }, { user: "Other", text: "second", timestamp: now }],
+      commentRead: { TheFive: 0 }
+    });
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const articlePage = new ArticlePage(driver);
+    await driver.get(osmbcLink("/article/" + commented.id));
+    should(await articlePage.countUnreadComments()).eql(1);
+    const actions = "#commentArea button";
+    should(await articlePage.tapTargetsTooSmall(actions)).eql([]);
+    should(await articlePage.tapTargetsTooClose(actions)).eql([]);
+
+    await articlePage.clickMarkFirstUnreadCommentRead();
+    should(await articlePage.countUnreadComments()).eql(0);
+    await articlePage.tapAddComment("third");
+    should((await articleModule.findById(commented.id)).commentList.map(c => c.text)).eql(["first", "second", "third"]);
   });
   it("should not show the insert buttons on a desktop", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });

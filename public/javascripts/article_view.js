@@ -44,11 +44,23 @@ function init() {
 
   $("#linkArea")
     .change(highlightWrongLinks);
-  // buttons with data-redraw (votes): call data-call (if given), then redraw
-  // that part of the page; delegated, the parts are replaced when redrawn
-  $(document).on("click", "[data-redraw]", function(event) {
+  // buttons with data-redraw (votes, comment area): call data-call (if
+  // given), then redraw that part of the page; delegated, the parts are
+  // replaced when redrawn
+  $(document).on("click", "[data-redraw]:not([data-submit])", function(event) {
     event.preventDefault();
     callAndRedraw($(this).data("call") || null, $(this).data("redraw"));
+  });
+  // buttons with data-submit (comment area): post the form, then redraw.
+  // data-field: a text that must not be empty, or that gets data-append
+  $(document).on("click", "[data-submit]", function(event) {
+    event.preventDefault();
+    const button = $(this);
+    const field = $(button.data("field"));
+    if (button.data("append")) {
+      field.val(field.val() + button.data("append"));
+    } else if (field.length && field.val().trim() === "") return;
+    submitAndRedraw(button.data("submit"), button.data("redraw"));
   });
   // save bar below lg (article_mixin.pug); mousedown keeps the focus in the
   // text field, on touch screens the tap was lost otherwise

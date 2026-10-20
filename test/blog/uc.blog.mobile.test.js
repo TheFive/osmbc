@@ -69,6 +69,26 @@ describe("uc/blog mobile inline editor", function() {
     beforeEach(async function() {
       driver = await testutil.getNewDriver("TheFive", { device: "phone" });
     });
+    it("should keep the review buttons tap-sized and apart (X10)", async function() {
+      const now = new Date().toISOString();
+      // review started: an own review comment, and the own review running
+      await blogModule.createNewBlog({ OSMUser: "test" }, {
+        name: "WN2", status: "edit",
+        reviewCommentDE: [{ user: "TheFive", text: "first half ok", timestamp: now }, { user: "TheFive", text: "reviewing...", timestamp: now }]
+      });
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN2/overview"));
+      should(await blogPage.hasHorizontalScroll()).be.False();
+      const buttons = "#reviewButtonDE, #reviewButtonCancelDE, [data-edit-review]";
+      should(await blogPage.tapTargetsTooSmall(buttons)).eql([]);
+      should(await blogPage.tapTargetsTooClose(buttons)).eql([]);
+      await blogPage.clickEditReviewComment("DE", 0);
+      should(await blogPage.tapTargetsTooSmall("#reviewButtonDE0")).eql([]);
+
+      await blogPage.clickStopReview("DE");
+      const texts = (await blogModule.findOne({ name: "WN2" })).reviewCommentDE.map(c => c.text);
+      should(texts).not.containEql("reviewing...");
+    });
     it("should hide the optional overview columns", async function() {
       await driver.get(osmbcLink("/blog/WN1/overview"));
       should(new Set(await overviewCellDisplays())).eql(new Set(["none"]));

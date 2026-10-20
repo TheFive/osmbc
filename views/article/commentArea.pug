@@ -2,37 +2,47 @@ if !MIXIN_INCLUDE
   include ../mixins
 
 
+- var commentAreaUrl = "/article/" + article.id + "/commentArea"
+.row
+  .col
+    //- read up to this comment; 0 = the first one is read (stored as number
+    //- or as string from the route's query)
+    - var commentRead = article.commentRead ? article.commentRead[layout.user.OSMUser] : undefined
+    - upToComment = (commentRead === undefined || commentRead === null || commentRead === "" || isNaN(Number(commentRead))) ? -1 : Number(commentRead)
+    h3.d-flex.align-items-center.gap-2
+      if (article.commentList)
+        span="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
+      else
+        span="Comments"
+      button.btn.btn-link.osmbc-tap-square(type="button" data-redraw=commentAreaUrl aria-label="Reload comments" title="Reload comments")
+        i.fa.fa-refresh
 if (article.commentList)
-  .row
-    .col
-      - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
-      - if (!upToComment) upToComment = -1;
-      h3="Comments ("+((article.commentStatus)?article.commentStatus:"open")+")"
   each comment,i in article.commentList
     if (   (layout.user.access === "full")|| (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i"))>=0)|| (comment.user === layout.user.OSMUser))
       .row
         .col-sm-1
           img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")
-        .col-sm-11 
-          b
+        .col-sm-11
+          //- the actions are buttons with a tap area; mark as read at the end,
+          //- away from the name
+          div.d-flex.flex-wrap.align-items-center.column-gap-2
+            b=comment.user
+            span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
+            if (comment.editstamp)
+              i.text-body-secondary.small="edit: " + layout.moment(comment.editstamp).fromNow()
+            if layout.user.OSMUser === comment.user && params.editComment != i
+              button.btn.btn-link.osmbc-tap-square(type="button" id="EditComment"+i data-redraw=commentAreaUrl + "?editComment=" + i aria-label="Edit comment" title="Edit comment")
+                i.fa.fa-pencil
             if (i > upToComment)
-              i.fa.fa-envelope(onclick=`window.callAndRedraw('/article/${article.id}/markCommentRead?index=${i}&reload=false','/article/${article.id}/commentArea');`)
-              span=" "
-            span=comment.user
-          span=" "
-          span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
-          if (comment.editstamp)
-            span=" "
-            i.text-body-secondary.small="edit: " + layout.moment(comment.editstamp).fromNow()
-          if layout.user.OSMUser === comment.user && params.editComment != i
-            span=" "
-            i.fa.fa-pencil(id="EditComment"+i onclick=`window.callAndRedraw(null,'/article/${article.id}/commentArea?editComment=${i}');`)
+              button.btn.btn-link.osmbc-tap-square.ms-auto(type="button" data-call=`/article/${article.id}/markCommentRead?index=${i}&reload=false` data-redraw=commentAreaUrl aria-label="Mark as read" title="Mark as read")
+                i.fa.fa-envelope
 
           if params.editComment == i && layout.user.OSMUser === comment.user
             form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
               textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
-              button.btn.btn-lg.btn-primary(name = "update" type = "button" onclick =`window.submitAndRedraw('form#EditCommentForm','/article/${article.id}/commentArea');`) Update
-              button.btn.btn-lg.btn-secondary(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Cancel
+              div.d-flex.flex-wrap.gap-2.mt-2
+                button.btn.btn-primary(name = "update" type = "button" data-submit="form#EditCommentForm" data-redraw=commentAreaUrl) Update
+                button.btn.btn-outline-secondary(type = "button" data-redraw=commentAreaUrl) Cancel
           else
             p
               |!{layout.md_renderInline(comment.text,accessMap)}
@@ -42,14 +52,10 @@ if (article.commentList)
     if (!params.editComment)
       form(target="iframeform" name="AddComment",id="AddComment", action=`${layout.htmlroot}/article/${article.id}/addComment?reload=false`, method="post")
         textarea.form-control(spellcheck = "true" name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
-        button.btn.btn-lg.btn-primary(
-          name= "AddComment"
-          type = "button"
-          onclick=`if (document.getElementById('comment').value.trim()==='') return;window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`
-        ) Add Comment
-        button.btn.btn-lg.btn-secondary(type = "button" onclick =`window.callAndRedraw(null,'/article/${article.id}/commentArea');`) Reload Comments
-        if article.commentStatus !== "solved"
-          button.btn.btn-lg.btn-secondary(name= "AddComment" type = "button" onclick =`document.getElementById('comment').value = document.getElementById('comment').value+' #solved';window.onbeforeunload=null; window.submitAndRedraw('form#AddComment','/article/${article.id}/commentArea');`) Solve Comment
+        div.d-flex.flex-wrap.gap-2.mt-2
+          button.btn.btn-primary(name= "AddComment" type = "button" data-submit="form#AddComment" data-field="#comment" data-redraw=commentAreaUrl) Add Comment
+          if article.commentStatus !== "solved"
+            button.btn.btn-outline-secondary(name= "AddComment" type = "button" data-submit="form#AddComment" data-field="#comment" data-append=" #solved" data-redraw=commentAreaUrl) Solve Comment
 
 
 iframe.d-none(name="iframeform")
