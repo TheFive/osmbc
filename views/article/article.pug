@@ -182,8 +182,9 @@ block content
     if articleReferences.count >= 1
       h3
         |Links used in other Post
-      div
-        table.table.table-striped.table-responsive
+      //- the table scrolls, not the page (long links on phones)
+      div.table-responsive
+        table.table.table-striped
           thead
             tr
               th="link"

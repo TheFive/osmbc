@@ -124,13 +124,13 @@ mixin translationSources(shown)
 //- Below lg (phones, and the "desktop view" of phone browsers) Save and
 //- last Version sit in a bar at the bottom of the screen, wherever the user
 //- is editing. It appears only when something is changed (showModified in
-//- article_view.js). onmousedown keeps the focus in the text field: on touch
-//- screens the tap was lost while the field lost its focus.
+//- article_view.js, which also handles the buttons). Save is the widest
+//- button, on the right under the thumb.
 mixin saveBar
   div.d-lg-none
-    div.osmbc-save-bar.fixed-bottom.bg-light.border-top.px-3.py-2.d-flex.d-none.justify-content-end.gap-2
-      button.btn.btn-primary#saveButtonBar(type = "button" onmousedown="event.preventDefault();" onclick ="window.saveButton()") Save
-      button.btn.btn-secondary#cancelButtonBar(type = "button" onmousedown="event.preventDefault();" onclick =`disableUnchanged(); location.href='${layout.htmlroot}/article/${article.id}?edit=false';`) last Version
+    div.osmbc-save-bar.fixed-bottom.bg-light.border-top.px-3.py-2.d-flex.d-none.gap-2
+      button.btn.btn-outline-secondary#cancelButtonBar(type = "button" data-href=`${layout.htmlroot}/article/${article.id}?edit=false`) last Version
+      button.btn.btn-primary.flex-grow-1#saveButtonBar(type = "button") Save
     //- room for the bar below the last content
     div.osmbc-save-bar-spacer.d-none(style="height: 4rem;")
 

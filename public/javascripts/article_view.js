@@ -44,6 +44,17 @@ function init() {
 
   $("#linkArea")
     .change(highlightWrongLinks);
+  // save bar below lg (article_mixin.pug); mousedown keeps the focus in the
+  // text field, on touch screens the tap was lost otherwise
+  $(".osmbc-save-bar button")
+    .on("mousedown", function(event) { event.preventDefault(); });
+  $("#saveButtonBar")
+    .on("click", function() { saveButton(); });
+  $("#cancelButtonBar")
+    .on("click", function() {
+      disableUnchanged();
+      location.href = $(this).data("href");
+    });
   $(".preview")
     .change(highlightWrongLinks);
   $("#collection")
@@ -588,10 +599,11 @@ function initSecondLanguage() {
 }
 
 // Buttons below lg: insert the link, or its google translate link in the
-// language of the field
-function linkInsertButtons(link) {
+// language of the field. In mobile mode full size (tap targets), otherwise
+// small next to the link.
+function linkInsertButtons(link, mobile) {
   function button(label, cls, onInsert) {
-    return $("<button>", { type: "button", class: "btn btn-sm btn-outline-primary py-0 me-1 " + cls })
+    return $("<button>", { type: "button", class: "btn btn-outline-primary " + (mobile ? "" : "btn-sm py-0 me-1 ") + cls })
       .text(label)
       // keep the focus (and the cursor) in the markdown field
       .on("mousedown", function(event) { event.preventDefault(); })
@@ -600,10 +612,12 @@ function linkInsertButtons(link) {
         if (mf) onInsert(mf);
       });
   }
-  return $("<span>", { class: "d-lg-none" }).append(
+  const buttons = [
     button("+ Link", "insertLink", function(mf) { insertIntoMarkdown(mf, link, true); }),
     button("+ translated", "insertTranslatedLink", function(mf) { insertIntoMarkdown(mf, googleTranslateLink(link, mf.lang).markdown, false); })
-  );
+  ];
+  if (mobile) return buttons;
+  return $("<span>", { class: "d-lg-none" }).append(buttons);
 }
 
 // Collection is changed, so create a linkList
@@ -613,9 +627,10 @@ function onchangeCollection() {
   const cl = $("#collection").val();
   const linkArea = $("#linkArea");
   const regexToken = regexUrlFromCollection;
+  const mobile = document.documentElement.classList.contains("osmbc-mobile");
   let linkList;
   window.linklist = [];
-  const result = $("<p>");
+  const result = $(mobile ? "<div>" : "<p>");
   function linkShortener(link) {
     if (link.length < 50) return link;
     return link.substr(0, 40) + " . . . " + link.substr(link.length - 5, 5);
@@ -627,6 +642,27 @@ function onchangeCollection() {
     return $("<a>", { href: "#" })
       .append($("<i>", { class: icon }), text("  "))
       .on("click", function() { clickAndLoadLinktext(this, field, link); });
+  }
+  // Mobile mode: one block per link, the link on its own line, below it the
+  // insert buttons and a menu with the other actions (tap targets, X10)
+  function mobileLinkBlock(link, badge) {
+    const menu = $("<ul>", { class: "dropdown-menu dropdown-menu-end" }).append(
+      $("<li>").append(linkTextLoader(link, "textContent", "fa fa-file-text").addClass("dropdown-item").append(text("Readable text"))),
+      $("<li>").append(linkTextLoader(link, "content", "fa fa-file-text-o").addClass("dropdown-item").append(text("Page content")))
+    );
+    window.userLanguages.forEach(function(lang) {
+      const translated = generateGoogleTranslateLink(link, lang).addClass("dropdown-item");
+      translated.text("Translated page (" + lang + ")");
+      menu.append($("<li>").append(translated));
+    });
+    const more = $("<div>", { class: "dropdown" }).append(
+      $("<button>", { type: "button", class: "btn btn-outline-secondary osmbc-tap-square", "data-bs-toggle": "dropdown", "aria-expanded": "false", "aria-label": "More for this link" }).text("⋯"),
+      menu
+    );
+    return $("<div>", { class: "mb-2" }).append(
+      $("<div>").append(badge),
+      $("<div>", { class: "d-flex flex-wrap gap-2 mt-1" }).append(linkInsertButtons(link, true), more)
+    );
   }
 
 
@@ -640,12 +676,17 @@ function onchangeCollection() {
     });
     if (found) continue;
     window.linklist.push(link);
-    result.append(text(" "), linkTextLoader(link, "textContent", "fa fa-file-text"));
-    result.append(text(" "), linkTextLoader(link, "content", "fa fa-file-text-o"));
 
     const isDoublette = window.articleReferences[link] && (window.articleReferences[link]).length > 0;
-    result.append($("<a>", { class: "badge " + (isDoublette ? "text-bg-danger" : "text-bg-secondary"), href: link, target: "_blank" })
-      .text(linkShortener(link) + (isDoublette ? " #(Check for Doublette)" : "")), text("\n"));
+    const badge = $("<a>", { class: "badge " + (isDoublette ? "text-bg-danger" : "text-bg-secondary"), href: link, target: "_blank" })
+      .text(linkShortener(link) + (isDoublette ? " #(Check for Doublette)" : ""));
+    if (mobile) {
+      result.append(mobileLinkBlock(link, badge));
+      continue;
+    }
+    result.append(text(" "), linkTextLoader(link, "textContent", "fa fa-file-text"));
+    result.append(text(" "), linkTextLoader(link, "content", "fa fa-file-text-o"));
+    result.append(badge, text("\n"));
 
     window.userLanguages.forEach(function(lang) {
       result.append(text(" "), generateGoogleTranslateLink(link, lang));

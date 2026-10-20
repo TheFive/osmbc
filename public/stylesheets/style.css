@@ -323,12 +323,13 @@ table {
 /* This style is used in blog full view to limit size of pictures */
 .preview > div.wp-caption > p.wp-caption-text > img {
   max-height: 350px;
-  max-width: 300px;
+  max-width: min(300px, 100%);
   object-fit: cover;
 }
-/* This style is used in blog full view to limit size of picture caption */
+/* This style is used in blog full view to limit size of picture caption.
+   Never wider than its cell (phones). */
 .preview > div.wp-caption  {
-  max-width: 320px;
+  max-width: min(320px, 100%);
 }
 
 .table-responsive .blog-status-table.blog-status-table-compact {
@@ -412,4 +413,71 @@ table {
 }
 #fixedNavbar.osmbc-navbar-hidden {
   top: calc(-1 * var(--osmbc-navbar-height, 5rem));
+}
+
+/* Mobile mode (class osmbc-mobile on <html>, layout.pug): tap targets at
+   least 44 x 44 px (X10). Padding instead of min-height keeps the label in
+   the middle: 24px line + 2 x 9px padding + 2px border. Buttons styled as
+   badges keep their look and get their own hit area. */
+.osmbc-mobile .btn:not(.badge) {
+  --bs-btn-padding-y: .5625rem;
+}
+.osmbc-mobile .form-control:not(textarea),
+.osmbc-mobile .form-select {
+  min-height: 44px;
+}
+/* icon-only buttons */
+.osmbc-mobile .osmbc-tap-square {
+  min-width: 44px;
+}
+.osmbc-mobile .form-check {
+  min-height: 44px;
+  padding-top: .625rem;
+}
+
+/* collection links: a long URL (plus the link check result) wraps */
+.osmbc-mobile #linkArea .badge {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
+  max-width: 100%;
+}
+
+/* header: menu button, language badge (hit area larger than the badge;
+   ::before, because ::after is Bootstrap's dropdown caret) and its menu */
+.osmbc-mobile .navbar-toggler {
+  min-width: 44px;
+  min-height: 44px;
+}
+.osmbc-mobile #mobileLangMenu {
+  position: relative;
+}
+.osmbc-mobile #mobileLangMenu::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+.osmbc-mobile #fixedNavbar .dropdown-item {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* menu panel (offcanvas, below lg only - also in the desktop view of a
+   phone browser) */
+@media (max-width: 991.98px) {
+  #navbarSupportedContent .nav-link,
+  #navbarSupportedContent .dropdown-item {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  #navbarSupportedContent .dropdown-menu .dropdown-item {
+    padding-inline-start: 1.5rem;
+  }
+  .offcanvas-header .btn-close {
+    box-sizing: border-box;
+    min-width: 44px;
+    min-height: 44px;
+  }
 }

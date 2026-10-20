@@ -82,11 +82,32 @@ describe("uc.article save bar", function() {
       .eql("[Text](https://example.com/news) DE:??-s: >   [:DE-t:](https://example-com.translate.goog/news?_x_tr_sl=auto&_x_tr_tl=DE)");
     should(await articlePage.isSaveBarShown()).be.True();
   });
+  it("should keep long collection links within a phone screen, with tap-sized buttons (X10)", async function() {
+    const longLink = "https://example.com/a/rather/long/path/to/some/news/article-about-mapping?id=12345";
+    // a second article with the same link: the link is marked as doublette
+    await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Other", collection: longLink });
+    const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: longLink + "\nhttps://example.com/news" });
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const articlePage = new ArticlePage(driver);
+    await driver.get(osmbcLink("/article/" + linked.id));
+    should(await articlePage.isMobileMode()).be.True();
+    // the link check appends its result to the links: the widest state
+    await articlePage.waitForBackgroundRequests();
+    should((await articlePage.getValueFromLinkArea(longLink)).warning).be.True();
+    should(await articlePage.hasHorizontalScroll()).be.False();
+    should(await articlePage.tapTargetsTooSmall("#linkArea button, .navbar-toggler")).eql([]);
+    // the other link actions are in a menu (translated pages may carry a link check result)
+    const entries = await articlePage.openLinkMenu();
+    should(entries.slice(0, 2)).eql(["Readable text", "Page content"]);
+    should(entries.slice(2).map(e => e.split(" #")[0])).eql(["Translated page (DE)", "Translated page (EN)"]);
+  });
   it("should not show the insert buttons on a desktop", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive");
+    const articlePage = new ArticlePage(driver);
     await driver.get(osmbcLink("/article/" + linked.id));
-    should(await new ArticlePage(driver).isInsertLinkShown()).be.False();
+    should(await articlePage.isMobileMode()).be.False();
+    should(await articlePage.isInsertLinkShown()).be.False();
   });
   it("should insert a dropped text where it is dropped, not at the cursor", async function() {
     driver = await testutil.getNewDriver("TheFive");

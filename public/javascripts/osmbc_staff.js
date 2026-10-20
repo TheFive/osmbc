@@ -3,7 +3,6 @@
 /* exported highlightWrongLinks */
 /* exported chooseLanguage */
 /* exported chooseLanguageSet */
-/* exported chooseMobileLanguage */
 /* exported setUserConfig */
 /* exported addSpinnerAndSubmit */
 
@@ -90,6 +89,12 @@ function chooseMobileLanguage(lang) {
     console.error(err);
   });
 }
+
+// language menu in the mobile header (layout.pug)
+jQuery(document).on("click", "[data-mobile-lang]", function (event) {
+  event.preventDefault();
+  chooseMobileLanguage(jQuery(this).data("mobile-lang"));
+});
 
 function chooseLanguageSet(set, action) {
   const data = {};

@@ -192,6 +192,21 @@ UX ↔ dev conflicts:
   at the **right end of the row** (the reviewer's proposal; M instead of S),
   so it is visible without opening the editor.
 
+## Status
+
+- **P1 done (2026-10-20):** class `osmbc-mobile` on `<html>` in mobile mode,
+  44 px rule for buttons, inputs, selects and checkboxes; collection links
+  in mobile mode as one block per link (link wraps, "+ Link" / "+ translated"
+  full size, other actions in a "⋯" menu); save bar with Save on the right;
+  header and menu panel entries 44 px; blog picture never wider than its
+  cell. Found while testing: the doublette table at the end of the article
+  page ("Links used in other Post") made the page 680 px wide on phones (the
+  full URL in a table, `table-responsive` on the table instead of a wrapper)
+  → wrapper, the table scrolls. Desktop (1280 px) unchanged on all 15
+  screens of the baseline; the only desktop HTML change is the hidden save
+  bar. Phone (390 px): no screen except the user page (P2) scrolls sideways
+  any more. Test: `uc.article.mobile` (long link + doublette).
+
 Order: P1 → P2 → P3 → P4, each package tested on the beta. P1 has no desktop
 effect; desktop baseline (1280 × 900) measured on `7ca9f522`, compare after
 every package.

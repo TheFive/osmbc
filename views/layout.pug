@@ -94,19 +94,20 @@ mixin toolMenu
 mixin mobileHeader
   - var contextBlog = (typeof blog !== "undefined" && blog && blog.name) ? blog.name : ((typeof article !== "undefined" && article && article.blog) ? article.blog : null)
   if contextBlog
-    a.navbar-brand.me-auto.text-truncate(href=layout.htmlroot + "/blog/" + contextBlog)=contextBlog
+    a.navbar-brand.ms-2.me-auto.text-truncate(href=layout.htmlroot + "/blog/" + contextBlog)=contextBlog
   else
-    +homeButton("navbar-brand me-auto")
+    +homeButton("navbar-brand ms-2 me-auto")
   div.dropdown
     button.btn.badge.rounded-pill.osmbc-badge-lang.dropdown-toggle.fs-6#mobileLangMenu(type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Language you work in on this device")=layout.mobileLang
     ul.dropdown-menu.dropdown-menu-end(aria-labelledby="mobileLangMenu")
       each l in layout.mobileLanguages
         li
-          a.dropdown-item(href="#" id="mobileLang_" + l class=(l === layout.mobileLang) ? "active" : "" onclick=`chooseMobileLanguage('${l}'); return false;`)=l
+          a.dropdown-item(href="#" id="mobileLang_" + l class=(l === layout.mobileLang) ? "active" : "" data-mobile-lang=l)=l
 
 block all
   doctype html
-  html(lang='en')
+  //- osmbc-mobile: CSS rules for mobile mode (style.css), absent on desktop
+  html(lang='en' class=(typeof layout !== "undefined" && layout && layout.mobileView) ? "osmbc-mobile" : undefined)
     head
       meta(charset='utf-8')
       meta(name='viewport', content='width=device-width, initial-scale=1')

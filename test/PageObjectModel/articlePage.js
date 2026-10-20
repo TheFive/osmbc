@@ -120,7 +120,7 @@ class ArticlePage extends StandardPage {
 
   async getValueFromLinkArea(link) {
     this.assertPage();
-    const ele = await this._driver.findElement(By.css(`div#linkArea>p>a[href='${link}']`));
+    const ele = await this._driver.findElement(By.css(`div#linkArea a.badge[href='${link}']`));
     const value = await ele.getText();
     const cssClass = await ele.getAttribute("class");
     const hasWarningClass = /(?:^|\s)(?:badge-danger|text-bg-danger)(?:\s|$)/.test(cssClass || "");
@@ -180,6 +180,14 @@ class ArticlePage extends StandardPage {
 
   async isInsertLinkShown() {
     return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
+  }
+
+  // the "⋯" menu of the first collection link (mobile mode): its entries
+  async openLinkMenu() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("#linkArea [data-bs-toggle='dropdown']")));
+    const entries = await this._driver.findElements(By.css("#linkArea .dropdown-menu.show .dropdown-item"));
+    return Promise.all(entries.map(e => e.getText()));
   }
 
   // select text in a markdown field, or place the cursor (no "to");
