@@ -96,6 +96,12 @@ jQuery(document).on("click", "[data-mobile-lang]", function (event) {
   chooseMobileLanguage(jQuery(this).data("mobile-lang"));
 });
 
+// history.pug: open the full text of a change, but not when a link was hit
+jQuery(document).on("click", "[data-history-toggle]", function (event) {
+  if (jQuery(event.target).closest("a").length) return;
+  jQuery(".class_" + jQuery(this).data("history-toggle")).toggleClass("d-none");
+});
+
 function chooseLanguageSet(set, action) {
   const data = {};
 

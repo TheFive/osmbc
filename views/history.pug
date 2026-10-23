@@ -45,11 +45,14 @@ block content
           if (history)
             each change in history
 
-             tr(onclick="$('.class_" + change.id + "').toggleClass('d-none');")
+             //- rows with a text change open the full text below (osmbc_staff.js);
+             //- a tap on a link in the row only follows the link
+             tr(data-history-toggle=(change.property && change.property.substring(0, 8) === "markdown") ? change.id : undefined)
                td
                  if change.property && change.property.substring(0, 8) === "markdown"
-                   i.fa.fa-caret-right(class="class_" + change.id)
-                   i.fa.fa-caret-down.d-none(class="class_" + change.id)
+                   button.btn.btn-link.osmbc-tap-square.p-0(type="button" aria-label="Show text")
+                     i.fa.fa-caret-right(class="class_" + change.id)
+                     i.fa.fa-caret-down.d-none(class="class_" + change.id)
                td
                  a(href=layout.htmlroot+'/changes/' + change.id)
                    i.fa.fa-info-circle

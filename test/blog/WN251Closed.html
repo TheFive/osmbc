@@ -46,7 +46,7 @@
   <body><!-- Fixed navbar-->
     <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
       <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="navbar-brand" href="/osmbc.html">TESTBC</a>
-        <div class="offcanvas offcanvas-end" id="navbarSupportedContent" tabindex="-1" aria-labelledby="navbarSupportedContentLabel">
+        <div class="offcanvas offcanvas-start" id="navbarSupportedContent" tabindex="-1" aria-labelledby="navbarSupportedContentLabel">
           <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="navbarSupportedContentLabel">TESTBC</h5><button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
@@ -91,7 +91,7 @@
                   </form>
                 </div>
               </li>
-              <li><img onclick="location.href='/usert/1';" style="height:40px;width:40px"></li>
+              <li><a class="nav-link d-flex align-items-center gap-2" id="userAvatar" href="/usert/1" title="TheFive"><img alt="" style="height:40px;width:40px"><span class="d-lg-none">TheFive</span></a></li>
             </ul>
           </div>
         </div>
@@ -210,7 +210,7 @@ while layout.user["blogSetting"+v]
                 </div>
                 <div class="card-body">
                   <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
-                    <div class="d-flex gap-2 my-2"><button class="btn btn-primary" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Save</button><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button></div>
+                    <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Save</button></div>
                   </form>
                   <p></p>
                 </div>
@@ -257,7 +257,7 @@ while layout.user["blogSetting"+v]
                   <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea>
-                    <div class="d-flex gap-2 my-2"><button class="btn btn-primary" type="button" id="inlineSave1" onmousedown="event.preventDefault();" onclick="saveInlineEditor(1,'',true);">Save</button><button class="btn btn-secondary" type="button" id="inlineCancel1" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(1,'');">Cancel</button></div>
+                    <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel1" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(1,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave1" onmousedown="event.preventDefault();" onclick="saveInlineEditor(1,'',true);">Save</button></div>
                   </form>
                   <p><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">OSMCAL</span><span> Time: a few seconds ago</span></p>
                 </div>

@@ -22,10 +22,11 @@ mixin blogReviewButtons(lang)
 
 //- Save and Cancel for the inline editors. onmousedown keeps the focus in
 //- the text field, so Cancel does not trigger the save on leaving it.
+//- Cancel at the start, Save at the end (under the thumb).
 mixin inlineEditorButtons(id, column)
   div.d-flex.gap-2.my-2
-    button.btn.btn-primary(type="button" id=column + "inlineSave" + id onmousedown="event.preventDefault();" onclick=`saveInlineEditor(${id},'${column}',true);`) Save
     button.btn.btn-secondary(type="button" id=column + "inlineCancel" + id onmousedown="event.preventDefault();" onclick=`cancelInlineEditor(${id},'${column}');`) Cancel
+    button.btn.btn-primary.ms-auto(type="button" id=column + "inlineSave" + id onmousedown="event.preventDefault();" onclick=`saveInlineEditor(${id},'${column}',true);`) Save
 
 block append scripts_to_load
   script(src=layout.htmlroot + "/javascripts/markdown-it.min.js?osmbc_v=" + layout.osmbc_version)

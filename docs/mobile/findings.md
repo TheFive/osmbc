@@ -263,3 +263,31 @@ UX ↔ dev conflicts:
 Order: P1 → P2 → P3 → P4, each package tested on the beta. P1 has no desktop
 effect; desktop baseline (1280 × 900) measured on `7ca9f522`, compare after
 every package.
+
+## Beta.3 feedback (2026-10-23, one editor, Android)
+
+Done (2026-10-23):
+- Menu panel slides in from the left, where the toggler is (`offcanvas-start`).
+- Space below the doublet badge on the article page.
+- Button order: cancel at the start, primary action at the end (under the
+  thumb) — blog inline editor (Cancel … Save), personal review (Stop
+  review … Review), edit comment (Cancel … Update). Desktop too, like the
+  save bar.
+- Avatar in the menu is a link; in the side panel (below lg) the OSM name
+  stands next to it.
+- History log: a text change opens via its own caret button (tap size); a
+  tap on a link in the row only follows the link (was: row `onclick`
+  toggled and the info link navigated).
+
+To investigate:
+- Review overview still scrolls sideways; the navbar takes the content
+  width, so the language dropdown is only reachable by scrolling, and the
+  menu animation looks wrong on such pages.
+- Profile pictures missing at the comments (`layout.getAvatar`).
+
+For the product owner:
+- Review inline editor: text area grows with its content (like
+  FitToContent on the article page).
+- Up/down/image vote directly on the review page (or a user setting).
+- History log: choose visible columns.
+- Liked: "make comment" button on the right of the review page.

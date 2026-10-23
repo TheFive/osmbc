@@ -459,8 +459,12 @@ mixin langMenu(size)
           
 mixin userAvatar
   if layout && layout.user && layout.user
+    //- a link instead of a click on the picture; in the side panel (below lg)
+    //- the name says that it leads to the user page
     li
-      img(src=layout.user.getAvatar() onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';" style="height:40px;width:40px")
+      a.nav-link.d-flex.align-items-center.gap-2#userAvatar(href=layout.htmlroot + "/usert/" + layout.user.id title=layout.user.OSMUser)
+        img(src=layout.user.getAvatar() alt="" style="height:40px;width:40px")
+        span.d-lg-none=layout.user.OSMUser
   else
     li
       a(href='./') Anonymous

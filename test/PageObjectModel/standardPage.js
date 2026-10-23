@@ -53,6 +53,6 @@ export default class StandardPage extends Page {
 
   async clickUserIcon() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("#navbarSupportedContent li > img"))).click();
+    await (await this._driver.findElement(By.css("#navbarSupportedContent #userAvatar"))).click();
   }
 };

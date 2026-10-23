@@ -41,8 +41,8 @@ if (article.commentList)
             form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
               textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
               div.d-flex.flex-wrap.gap-2.mt-2
-                button.btn.btn-primary(name = "update" type = "button" data-submit="form#EditCommentForm" data-redraw=commentAreaUrl) Update
                 button.btn.btn-outline-secondary(type = "button" data-redraw=commentAreaUrl) Cancel
+                button.btn.btn-primary.ms-auto(name = "update" type = "button" data-submit="form#EditCommentForm" data-redraw=commentAreaUrl) Update
           else
             p
               |!{layout.md_renderInline(comment.text,accessMap)}

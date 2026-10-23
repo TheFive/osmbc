@@ -95,10 +95,11 @@ mixin reviewBlog(reviewComments,lang)
                         data-review-text=lang)
                   input.d-none(type="text",name="lang" value = lang)
 
+                  //- Stop review at the start, Review at the end (under the thumb)
                   div.d-flex.flex-wrap.gap-2.mt-2
-                    button.btn.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
                     //- ends the personal review (sends "delete")
                     button.btn.btn-outline-secondary(id="reviewButtonCancel"+lang type="button" data-review-stop=lang) Stop review
+                    button.btn.btn-primary.ms-auto(id="reviewButton"+lang type="submit" disabled) Review
             else
               form(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8
