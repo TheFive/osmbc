@@ -279,15 +279,18 @@ Done (2026-10-23):
   tap on a link in the row only follows the link (was: row `onclick`
   toggled and the info link navigated).
 
+- Blog overview scrolled sideways (533 px on a 390 px phone): a long word
+  in an article text (URL, tag like `ref:penndot`) set the minimum width of
+  the text column. The inline-edit text now wraps anywhere on phones. The
+  navbar and the menu animation only looked wrong because the page was
+  wider than the screen.
+- Inline editors (overview, review, full) grow with their text, on open
+  and while typing; `rows` stays the minimum. Desktop too (product owner).
+
 To investigate:
-- Review overview still scrolls sideways; the navbar takes the content
-  width, so the language dropdown is only reachable by scrolling, and the
-  menu animation looks wrong on such pages.
 - Profile pictures missing at the comments (`layout.getAvatar`).
 
 For the product owner:
-- Review inline editor: text area grows with its content (like
-  FitToContent on the article page).
 - Up/down/image vote directly on the review page (or a user setting).
 - History log: choose visible columns.
 - Liked: "make comment" button on the right of the review page.

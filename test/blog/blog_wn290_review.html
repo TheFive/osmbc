@@ -2048,10 +2048,23 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
         if (!openEditor) {
           openEditor = document.getElementById(this.dataset.inlineEditor);
           openEditor.classList.toggle("d-none");
+          openEditor.querySelectorAll("textarea[name=markdown]:not(.d-none)").forEach(fitInlineField);
         } else {
           openEditor.classList.toggle("d-none");
           openEditor = null;
         }
+      });
+
+      // the text field of an inline editor grows with its text, so the whole
+      // text is visible without scrolling inside the field (rows is the minimum)
+      function fitInlineField(field) {
+        field.style.height = "";
+        if (field.scrollHeight > field.clientHeight) {
+          field.style.height = (field.scrollHeight + field.offsetHeight - field.clientHeight) + "px";
+        }
+      }
+      $(document).on("input", "form[id*=EditArticle] textarea[name=markdown]", function() {
+        fitInlineField(this);
       });
 
       window.onload = function() {

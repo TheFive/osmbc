@@ -114,6 +114,26 @@ describe("uc/blog mobile inline editor", function() {
       await blogPage.clickOpenArticle(articleId);
       await driver.wait(async () => (await driver.getCurrentUrl()).endsWith("/article/" + articleId), 5000, "article not opened");
     });
+    it("should wrap a long word in the article text instead of scrolling sideways", async function() {
+      const longWord = "https://wiki.openstreetmap.org/wiki/Pennsylvania/Quadrant_routes_ref:penndot_quadrant_route";
+      await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: longWord, markdownDE: "Siehe " + longWord });
+      const blogPage = new BlogPage(driver);
+      for (const view of ["overview", "review", "full"]) {
+        await driver.get(osmbcLink("/blog/WN1/" + view));
+        should(await blogPage.hasHorizontalScroll()).be.False(view);
+      }
+    });
+    it("should grow the inline text field with its text", async function() {
+      const article = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Long", markdownDE: Array(15).fill("Eine Zeile Text").join("\n") });
+      const blogPage = new BlogPage(driver);
+      for (const view of ["overview", "review"]) {
+        await driver.get(osmbcLink("/blog/WN1/" + view));
+        await blogPage.openInlineEditor(article.id);
+        should(await blogPage.isInlineTextFullyShown(article.id)).be.True(view + " on open");
+        await blogPage.typeInlineText(article.id, "\nnoch eine\nund noch eine\nund noch eine");
+        should(await blogPage.isInlineTextFullyShown(article.id)).be.True(view + " while typing");
+      }
+    });
     it("should save with the Save button without reloading the page", async function() {
       const field = await openEditor();
       await replaceText(field, "Neuer Text");

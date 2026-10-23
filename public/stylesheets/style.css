@@ -435,9 +435,12 @@ table {
   padding-top: .625rem;
 }
 
-/* blog views: the article text that opens the inline editor */
+/* blog views: the article text that opens the inline editor; a long word
+   (URL, tag like ref:penndot) wraps, else it widens the table past the
+   screen */
 .osmbc-mobile .osmbc-inline-edit {
   min-height: 44px;
+  overflow-wrap: anywhere;
 }
 
 /* blog views: tabs as tap targets */
