@@ -21,7 +21,7 @@ if (article.commentList)
     if (   (layout.user.access === "full")|| (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i"))>=0)|| (comment.user === layout.user.OSMUser))
       .row
         .col-sm-1
-          img(src=layout.getAvatar(comment.user) style="height:40px;width:40px")
+          img.osmbc-avatar(src=layout.getAvatar(comment.user) alt="" style="height:40px;width:40px")
         .col-sm-11
           //- the actions are buttons with a tap area; mark as read at the end,
           //- away from the name

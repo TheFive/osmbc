@@ -7,7 +7,11 @@ import sinon from "sinon";
 
 import testutil from "./testutil.js";
 
-import userModule from "../model/user.js";
+import userModule, { getAvatar, avatarTest } from "../model/user.js";
+import nock from "nock";
+import fs from "fs";
+import path from "path";
+import config from "../config.js";
 import logModule from "../model/logModule.js";
 import { MailReceiverForTestOnly } from "../notification/mailReceiver.js";
 
@@ -297,5 +301,57 @@ describe("model/user", function() {
       });
     });
   });
+  describe("getAvatar", function() {
+    const profile = (src) => `<html><head><title>U | OpenStreetMap</title></head><body><img class="user_image" src="${src}"></body></html>`;
+    // the lookup runs in the background, wait until OSM was asked
+    async function lookedUp(scope) {
+      for (let i = 0; i < 100 && !scope.isDone(); i++) await new Promise(resolve => setTimeout(resolve, 10));
+      should(scope.isDone()).be.True();
+      await new Promise(resolve => setImmediate(resolve));
+    }
+    beforeEach(function() {
+      avatarTest.enableLookup(true);
+      avatarTest.flush();
+    });
+    afterEach(function() {
+      avatarTest.enableLookup(false);
+      avatarTest.flush();
+      nock.cleanAll();
+    });
+    it("should show the placeholder until the avatar is known, then the avatar", async function() {
+      const scope = nock("https://www.openstreetmap.org").get("/user/Mapper").reply(200, profile("/avatars/mapper.png"));
+      should(getAvatar("Mapper")).eql(avatarTest.placeholder);
+      await lookedUp(scope);
+      should(getAvatar("Mapper")).eql("https://www.openstreetmap.org/avatars/mapper.png");
+    });
+    it("should show a stale avatar and look it up again", async function() {
+      avatarTest.setEntry("Mapper", { url: "https://example.com/old.png", fetchedAt: Date.now() - avatarTest.refreshAfter - 1000 });
+      const scope = nock("https://www.openstreetmap.org").get("/user/Mapper").reply(200, profile("https://example.com/new.png"));
+      should(getAvatar("Mapper")).eql("https://example.com/old.png");
+      await lookedUp(scope);
+      should(getAvatar("Mapper")).eql("https://example.com/new.png");
+    });
+    it("should not ask OSM again for a fresh entry", function() {
+      avatarTest.setEntry("Mapper", { url: "https://example.com/a.png", fetchedAt: Date.now() });
+      // nock without interceptor: any request would fail the test with an error log, check isDone instead
+      const scope = nock("https://www.openstreetmap.org").get("/user/Mapper").reply(200, profile("https://example.com/b.png"));
+      should(getAvatar("Mapper")).eql("https://example.com/a.png");
+      should(scope.isDone()).be.False();
+    });
+    it("should keep the avatars on disk", async function() {
+      avatarTest.setEntry("Mapper", { url: "https://example.com/a.png", fetchedAt: 1 });
+      // InternalCache writes a second after the change
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const file = JSON.parse(fs.readFileSync(path.join(config.getDirName(), "cache", "avatar.test.cache"), "utf8"));
+      should(file.Mapper).eql({ url: "https://example.com/a.png", fetchedAt: 1 });
+    });
+    it("should remember an unknown user and show the placeholder", async function() {
+      const scope = nock("https://www.openstreetmap.org").get("/user/Nobody").reply(404);
+      should(getAvatar("Nobody")).eql(avatarTest.placeholder);
+      await lookedUp(scope);
+      const again = nock("https://www.openstreetmap.org").get("/user/Nobody").reply(404);
+      should(getAvatar("Nobody")).eql(avatarTest.placeholder);
+      should(again.isDone()).be.False();
+    });
+  });
 });
-

@@ -287,8 +287,14 @@ Done (2026-10-23):
 - Inline editors (overview, review, full) grow with their text, on open
   and while typing; `rows` stays the minimum. Desktop too (product owner).
 
-To investigate:
-- Profile pictures missing at the comments (`layout.getAvatar`).
+- Missing profile pictures: the avatar URL is looked up on demand from the
+  OSM profile page and was kept in memory only, so after every restart
+  (deploy) the first page showed `<img>` without `src`. Now kept on disk
+  (`cache/avatar.cache`, `{ url, fetchedAt }`), shown while older than 7
+  days (1 day for "no avatar") and looked up again in the background; no
+  prefetch at startup (dropped in `18ac882d`, OSM throttles). A placeholder
+  (`/images/avatar.svg`) is shown while unknown, and in the browser when
+  the image does not load (changed on OSM, blocked by tracker protection).
 
 For the product owner:
 - Up/down/image vote directly on the review page (or a user setting).

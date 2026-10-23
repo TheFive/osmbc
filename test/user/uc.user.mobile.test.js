@@ -2,7 +2,7 @@ import should from "should";
 import nock from "nock";
 
 import testutil from "../testutil.js";
-import userModule from "../../model/user.js";
+import userModule, { avatarTest } from "../../model/user.js";
 import util from "../../util/util.js";
 import UserPage from "../PageObjectModel/userPage.js";
 
@@ -41,5 +41,14 @@ describe("uc/user on small screens", function() {
     await userPage.fillMdWeeklyAuthor("Mobile Author");
     await userPage.clickSave();
     await driver.wait(async () => (await userModule.findOne({ OSMUser: "TheFive" })).mdWeeklyAuthor === "Mobile Author", 5000, "not saved");
+  });
+  it("should show the placeholder for an avatar that does not load", async function() {
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const userPage = new UserPage(driver);
+    await driver.get(osmbcLink("/usert/self"));
+    // menu and user page
+    should(await userPage.getAvatarSources()).eql([avatarTest.placeholder, avatarTest.placeholder]);
+    await userPage.setAvatarSources(osmbcLink("/images/no-such-avatar.png"));
+    await driver.wait(async () => (await userPage.getAvatarSources()).every(src => src.endsWith(avatarTest.placeholder)), 5000, "placeholder not shown");
   });
 });

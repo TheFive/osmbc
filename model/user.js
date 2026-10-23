@@ -9,6 +9,7 @@ import { validate } from "email-validator";
 import config from "../config.js";
 import { load } from "cheerio";
 import axios from "axios";
+import InternalCache from "../util/internalCache.js";
 import { CONFLICT, UNAUTHORIZED, FORBIDDEN } from "http-status-codes";
 import _debug from "debug";
 const debug = _debug("OSMBC:model:user");
@@ -462,21 +463,50 @@ function createNewUser (proto, callback) {
   });
 }
 
-const avatarCache = {};
+// Avatar URLs from the openstreetmap.org profile pages, kept on disk
+// (cache/avatar.cache), so a restart or deploy does not start empty.
+// Value: { url, fetchedAt }, url null for "no avatar" / unknown user.
+// An entry older than its refresh time is still shown and looked up again
+// in the background (on demand only, no prefetch: ~1560 users made OSM
+// answer with 503, see 18ac882d).
+// tests use their own file, so they never flush the development cache
+const avatarCache = new InternalCache({ file: (process.env.NODE_ENV === "test") ? "avatar.test.cache" : "avatar.cache" });
+const AVATAR_REFRESH_AFTER = 7 * 24 * 60 * 60 * 1000;
+const AVATAR_NONE_REFRESH_AFTER = 24 * 60 * 60 * 1000;
 // OSM users whose avatar lookup is running or failed recently (value: timestamp),
 // so that a page rendering many avatars does not hammer openstreetmap.org
 const avatarPending = {};
 const AVATAR_TIMEOUT = 10000;
 const AVATAR_RETRY_AFTER = 10 * 60 * 1000;
 const userAgent = config.getValue("User-Agent", { mustExist: true });
+// shown while the avatar is not known (and in the browser, when it does not load)
+const avatarPlaceholder = config.htmlRoot() + "/images/avatar.svg";
+// tests run without lookups (and without the developer's cache file),
+// unless a test switches them on
+let avatarLookupInTest = false;
+
+function avatarLookupEnabled() {
+  return process.env.NODE_ENV !== "test" || avatarLookupInTest;
+}
+
+function isAvatarFresh(entry) {
+  if (!entry) return false;
+  const refreshAfter = (entry.url) ? AVATAR_REFRESH_AFTER : AVATAR_NONE_REFRESH_AFTER;
+  return Date.now() - entry.fetchedAt < refreshAfter;
+}
 
 function cacheOSMAvatar(osmuser, callback) {
   debug("cacheOSMAvatar %s", osmuser);
   if (osmuser === undefined) return callback();
-  if (process.env.NODE_ENV === "test") return callback();
-  if (avatarCache[osmuser]) return callback();
+  if (!avatarLookupEnabled()) return callback();
+  if (isAvatarFresh(avatarCache.get(osmuser))) return callback();
   if (avatarPending[osmuser] && Date.now() - avatarPending[osmuser] < AVATAR_RETRY_AFTER) return callback();
   avatarPending[osmuser] = Date.now();
+  function store(url) {
+    avatarCache.set(osmuser, { url: url, fetchedAt: Date.now() });
+    delete avatarPending[osmuser];
+    return callback();
+  }
   const requestString = "https://www.openstreetmap.org/user/" + encodeURI(osmuser);
   axios({
     method: "GET",
@@ -484,22 +514,18 @@ function cacheOSMAvatar(osmuser, callback) {
     timeout: AVATAR_TIMEOUT,
     headers: { "User-Agent": userAgent }
   }).then(function(response) {
-    if (response.data) {
-      const c = load(response.data);
-      let avatarLink = c(".user_image").attr("src");
-      const title = c("title").text();
-      if (title === "No such user | OpenStreetMap") return callback();
-      if (avatarLink === undefined) {
-        return callback();
-      }
-      if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
-      avatarCache[osmuser] = avatarLink;
-      delete avatarPending[osmuser];
-    }
-    return callback();
+    if (!response.data) return callback();
+    const c = load(response.data);
+    let avatarLink = c(".user_image").attr("src");
+    const title = c("title").text();
+    if (title === "No such user | OpenStreetMap") return store(null);
+    if (avatarLink === undefined) return store(null);
+    if (avatarLink.substring(0, 1) === "/") avatarLink = "https://www.openstreetmap.org" + avatarLink;
+    return store(avatarLink);
   }).catch(function(err) {
     // deleted / unknown OSM user, no avatar to show
-    if (err.response && err.response.status === 404) return callback();
+    if (err.response && err.response.status === 404) return store(null);
+    // other errors keep an older entry, the next try comes after AVATAR_RETRY_AFTER
     if (err.code !== "ECONNABORTED" && err.code !== "ETIMEDOUT") {
       const error = new Error("User " + osmuser + " avatar could not be loaded (" + ((err.response && err.response.status) || err.code) + ").");
       return callback(error, null);
@@ -511,9 +537,26 @@ function cacheOSMAvatar(osmuser, callback) {
 function getAvatar(osmuser) {
   debug("getAvatar");
   if (osmuser === undefined && this !== undefined) osmuser = this.OSMUser;
+  if (!avatarLookupEnabled()) return avatarPlaceholder;
   cacheOSMAvatar(osmuser, function() {});
-  return avatarCache[osmuser];
+  const entry = avatarCache.get(osmuser);
+  return (entry && entry.url) ? entry.url : avatarPlaceholder;
 }
+
+// for tests: switch the lookup on, start with an empty cache
+const avatarTest = {
+  enableLookup(enable) { avatarLookupInTest = enable; },
+  flush() {
+    // load the file first, else a later get() reads the old entries back
+    avatarCache.get("");
+    avatarCache.flushAll();
+    for (const k in avatarPending) delete avatarPending[k];
+  },
+  setEntry(osmuser, entry) { avatarCache.set(osmuser, entry); },
+  placeholder: avatarPlaceholder,
+  refreshAfter: AVATAR_REFRESH_AFTER
+};
+export { avatarTest };
 
 
 User.prototype.getAvatar = getAvatar;

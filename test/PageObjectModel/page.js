@@ -95,6 +95,16 @@ export default class Page {
     return this._driver.executeScript("return document.documentElement.classList.contains('osmbc-mobile');");
   }
 
+  // sources of the shown avatars (menu, comments, user page)
+  async getAvatarSources() {
+    return this._driver.executeScript("return [...document.querySelectorAll('img.osmbc-avatar')].map(img => img.getAttribute('src'));");
+  }
+
+  // the avatars point to `url`, like a stored avatar URL that OSM no longer serves
+  async setAvatarSources(url) {
+    await this._driver.executeScript("document.querySelectorAll('img.osmbc-avatar').forEach(img => { img.src = arguments[0]; });", url);
+  }
+
   // a phone page must not scroll sideways. Compared with the screen width:
   // the browser widens the layout viewport (innerWidth) to wide content.
   async hasHorizontalScroll() {

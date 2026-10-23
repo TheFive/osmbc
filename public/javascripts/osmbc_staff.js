@@ -96,6 +96,16 @@ jQuery(document).on("click", "[data-mobile-lang]", function (event) {
   chooseMobileLanguage(jQuery(this).data("mobile-lang"));
 });
 
+// an avatar that does not load (changed on OSM, blocked by the browser)
+// shows the placeholder; error does not bubble, so listen while capturing
+document.addEventListener("error", function (event) {
+  const img = event.target;
+  if (!(img instanceof HTMLImageElement) || !img.classList.contains("osmbc-avatar")) return;
+  const placeholder = window.htmlroot + "/images/avatar.svg";
+  if (img.src.endsWith(placeholder)) return;
+  img.src = placeholder;
+}, true);
+
 // history.pug: open the full text of a change, but not when a link was hit
 jQuery(document).on("click", "[data-history-toggle]", function (event) {
   if (jQuery(event.target).closest("a").length) return;

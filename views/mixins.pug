@@ -463,7 +463,7 @@ mixin userAvatar
     //- the name says that it leads to the user page
     li
       a.nav-link.d-flex.align-items-center.gap-2#userAvatar(href=layout.htmlroot + "/usert/" + layout.user.id title=layout.user.OSMUser)
-        img(src=layout.user.getAvatar() alt="" style="height:40px;width:40px")
+        img.osmbc-avatar(src=layout.user.getAvatar() alt="" style="height:40px;width:40px")
         span.d-lg-none=layout.user.OSMUser
   else
     li
