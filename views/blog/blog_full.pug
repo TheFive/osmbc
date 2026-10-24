@@ -114,7 +114,7 @@ block blogcontent
                           |!{renderer.renderArticle(left_lang,a)}
                   div.d-none(id="ldiv" + a.id)
                     form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
-                      textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
+                      textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 data-fit-content onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
                       textarea.d-none.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
                       +inlineEditorButtons(a.id, "l")
                     form(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
@@ -144,7 +144,7 @@ block blogcontent
                           |!{renderer.renderArticle(right_lang,a)}
                     div.d-none(id="rdiv" + a.id )
                       form(name="rEditArticle",id="rEditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + right_lang, method="post")
-                        textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
+                        textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 data-fit-content onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
                         textarea.d-none.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
                         +inlineEditorButtons(a.id, "r")
                       form(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")

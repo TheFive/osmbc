@@ -5,6 +5,7 @@
 /* exported chooseLanguageSet */
 /* exported setUserConfig */
 /* exported addSpinnerAndSubmit */
+/* exported fitToContentIn */
 
 
 function highlightWrongLinks() {
@@ -105,6 +106,22 @@ document.addEventListener("error", function (event) {
   if (img.src.endsWith(placeholder)) return;
   img.src = placeholder;
 }, true);
+
+// text fields with data-fit-content grow with their text, so the whole
+// text is visible without scrolling inside the field (rows is the minimum).
+// Fitted while typing, on focus, on page load, and by fitToContentIn() when
+// a hidden or redrawn part of the page appears
+function fitToContent(field) {
+  field.style.height = "";
+  if (field.scrollHeight > field.clientHeight) {
+    field.style.height = (field.scrollHeight + field.offsetHeight - field.clientHeight) + "px";
+  }
+}
+function fitToContentIn(container) {
+  jQuery(container).find("textarea[data-fit-content]").filter(":visible").each(function () { fitToContent(this); });
+}
+jQuery(document).on("input focusin", "textarea[data-fit-content]", function () { fitToContent(this); });
+jQuery(function () { fitToContentIn(document); });
 
 // history.pug: open the full text of a change, but not when a link was hit
 jQuery(document).on("click", "[data-history-toggle]", function (event) {

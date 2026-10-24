@@ -138,6 +138,27 @@ describe("uc.article save bar", function() {
     await articlePage.tapAddComment("third");
     should((await articleModule.findById(commented.id)).commentList.map(c => c.text)).eql(["first", "second", "third"]);
   });
+  it("should grow the comment fields with their text", async function() {
+    const lines = Array(12).fill("Eine Zeile Kommentar").join("\n");
+    const commented = await articleModule.createNewArticle({
+      blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE",
+      commentList: [{ user: "TheFive", text: lines, timestamp: new Date().toISOString() }]
+    });
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const articlePage = new ArticlePage(driver);
+    await driver.get(osmbcLink("/article/" + commented.id));
+    await articlePage.typeCommentText(lines);
+    should(await articlePage.isTextFullyShown("comment")).be.True();
+    // the edit form comes with the redrawn comment area
+    await articlePage.openEditComment(0);
+    should(await articlePage.isTextFullyShown("editComment")).be.True();
+  });
+  it("should hide the hint texts on a phone (X12)", async function() {
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const articlePage = new ArticlePage(driver);
+    await driver.get(osmbcLink("/article/" + articleId));
+    should(await articlePage.getShownHelpTexts()).eql([]);
+  });
   it("should not show the insert buttons on a desktop", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive");

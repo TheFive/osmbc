@@ -148,14 +148,6 @@ class BlogPage extends StandardPage {
     await this.tap(await this._driver.findElement(By.css(`[data-inline-editor='div${articleId}']`)));
   }
 
-  // the open inline editor's text field shows its whole text, no
-  // scrolling inside the field
-  async isInlineTextFullyShown(articleId) {
-    return this._driver.executeScript(`
-      const field = document.getElementById("markdown${articleId}");
-      return field.offsetHeight > 0 && field.scrollHeight <= field.clientHeight;`);
-  }
-
   async typeInlineText(articleId, text) {
     await (await this._driver.findElement(By.id("markdown" + articleId))).sendKeys(text);
   }

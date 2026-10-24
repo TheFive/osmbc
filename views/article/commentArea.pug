@@ -39,7 +39,7 @@ if (article.commentList)
 
           if params.editComment == i && layout.user.OSMUser === comment.user
             form(target="iframeform" name="EditComment",id="EditCommentForm", action=`${layout.htmlroot}/article/${article.id}/EditComment/${i}?reload=false`, method="post")
-              textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7)=comment.text
+              textarea.form-control(spellcheck = "true" name="comment" id="editComment" rows=7 data-fit-content)=comment.text
               div.d-flex.flex-wrap.gap-2.mt-2
                 button.btn.btn-outline-secondary(type = "button" data-redraw=commentAreaUrl) Cancel
                 button.btn.btn-primary.ms-auto(name = "update" type = "button" data-submit="form#EditCommentForm" data-redraw=commentAreaUrl) Update
@@ -51,7 +51,7 @@ if (article.commentList)
   .col
     if (!params.editComment)
       form(target="iframeform" name="AddComment",id="AddComment", action=`${layout.htmlroot}/article/${article.id}/addComment?reload=false`, method="post")
-        textarea.form-control(spellcheck = "true" name="comment" id="comment" rows=7 placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
+        textarea.form-control(spellcheck = "true" name="comment" id="comment" rows=7 data-fit-content placeholder="Your comment is shared between all weekly teams. \nSo please use english if possible. Do not hesitate to use your language and address your team with @LANG.\nTo solve a comment use #solved, and to reopen #open in your text.\nUse @OSMUser to address any special editor.")
         div.d-flex.flex-wrap.gap-2.mt-2
           button.btn.btn-primary(name= "AddComment" type = "button" data-submit="form#AddComment" data-field="#comment" data-redraw=commentAreaUrl) Add Comment
           if article.commentStatus !== "solved"

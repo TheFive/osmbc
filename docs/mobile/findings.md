@@ -296,6 +296,16 @@ Done (2026-10-23):
   (`/images/avatar.svg`) is shown while unknown, and in the browser when
   the image does not load (changed on OSM, blocked by tracker protection).
 
+- Comment fields grow with their text too (article comment new/edit,
+  review comment new/edit), one helper for all: `textarea[data-fit-content]`
+  + `fitToContentIn()` in `osmbc_staff.js`. The old FitToContent bindings
+  for comments hit the form and a not yet rendered field — removed.
+- X12: hint paragraphs (`p`/`div.osmbc-help-text`) hidden in mobile mode;
+  the start page legend and the "Configure a translation service" link stay.
+- Drag of the translated-page link `DE` (`[]()` garbage, 2026-10-17): fixed
+  by the drop fix `5d106317`, covered by "should insert a dropped text where
+  it is dropped"; phones have no drag source any more ("+ translated").
+
 For the product owner:
 - Up/down/image vote directly on the review page (or a user setting).
 - History log: choose visible columns.

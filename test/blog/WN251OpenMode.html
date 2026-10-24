@@ -192,7 +192,7 @@ while layout.user["blogSetting"+v]
                   <ul class="preview" id="preview2"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
+                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
                     <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Save</button></div>
                   </form>
                   <p></p>
@@ -237,7 +237,7 @@ while layout.user["blogSetting"+v]
                   <ul class="preview" id="preview1"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7"></textarea>
+                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7"></textarea>
                     <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel1" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(1,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave1" onmousedown="event.preventDefault();" onclick="saveInlineEditor(1,'',true);">Save</button></div>
                   </form>
                   <p></p>
@@ -386,23 +386,11 @@ while layout.user["blogSetting"+v]
         if (!openEditor) {
           openEditor = document.getElementById(this.dataset.inlineEditor);
           openEditor.classList.toggle("d-none");
-          openEditor.querySelectorAll("textarea[name=markdown]:not(.d-none)").forEach(fitInlineField);
+          fitToContentIn(openEditor);
         } else {
           openEditor.classList.toggle("d-none");
           openEditor = null;
         }
-      });
-
-      // the text field of an inline editor grows with its text, so the whole
-      // text is visible without scrolling inside the field (rows is the minimum)
-      function fitInlineField(field) {
-        field.style.height = "";
-        if (field.scrollHeight > field.clientHeight) {
-          field.style.height = (field.scrollHeight + field.offsetHeight - field.clientHeight) + "px";
-        }
-      }
-      $(document).on("input", "form[id*=EditArticle] textarea[name=markdown]", function() {
-        fitInlineField(this);
       });
 
       window.onload = function() {
@@ -596,6 +584,7 @@ while layout.user["blogSetting"+v]
         const key = this.dataset.editReview;
         document.getElementById("editReview" + key).classList.remove("d-none");
         document.getElementById("reviewLeftText" + key).classList.add("d-none");
+        fitToContentIn("#editReview" + key);
       });
       $(document).on("input", "[data-review-text]", function() {
         document.getElementById("reviewButton" + this.dataset.reviewText).disabled = (this.value === "");

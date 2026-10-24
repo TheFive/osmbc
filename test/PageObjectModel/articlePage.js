@@ -37,6 +37,21 @@ class ArticlePage extends StandardPage {
     await (ele).sendKeys(text);
   }
 
+  // opens the edit form of an own comment (the comment area is redrawn)
+  async openEditComment(number) {
+    await this.assertPage();
+    const button = await this._driver.findElement(By.css("#EditComment" + number));
+    await this.tap(button);
+    await this._driver.wait(until.stalenessOf(button), 3000, "comment area not redrawn");
+  }
+
+  async typeCommentText(text) {
+    await this.assertPage();
+    const field = await this._driver.findElement(By.id("comment"));
+    await this.tap(field);
+    await field.sendKeys(text);
+  }
+
   async editComment(number, text) {
     await this.assertPage();
     let ele = await this._driver.findElement(By.css("#EditComment" + number));

@@ -426,6 +426,13 @@ table {
 .osmbc-mobile .form-select {
   min-height: 44px;
 }
+/* hint paragraphs take room on a small screen and are known after the first
+   days (X12); the start page legend (opens on demand) and the "Configure a
+   translation service" link (span/td/small/a) stay */
+.osmbc-mobile p.osmbc-help-text,
+.osmbc-mobile div.osmbc-help-text {
+  display: none !important;
+}
 /* icon-only buttons */
 .osmbc-mobile .osmbc-tap-square {
   min-width: 44px;

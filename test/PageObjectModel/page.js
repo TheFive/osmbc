@@ -95,6 +95,18 @@ export default class Page {
     return this._driver.executeScript("return document.documentElement.classList.contains('osmbc-mobile');");
   }
 
+  // the text field shows its whole text, no scrolling inside the field
+  async isTextFullyShown(id) {
+    return this._driver.executeScript(`
+      const field = document.getElementById(arguments[0]);
+      return field.offsetHeight > 0 && field.scrollHeight <= field.clientHeight;`, id);
+  }
+
+  // hint texts that are shown (osmbc-help-text paragraphs)
+  async getShownHelpTexts() {
+    return this._driver.executeScript("return [...document.querySelectorAll('p.osmbc-help-text, div.osmbc-help-text')].filter(e => e.offsetHeight > 0).map(e => e.textContent.trim());");
+  }
+
   // sources of the shown avatars (menu, comments, user page)
   async getAvatarSources() {
     return this._driver.executeScript("return [...document.querySelectorAll('img.osmbc-avatar')].map(img => img.getAttribute('src'));");

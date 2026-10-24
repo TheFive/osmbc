@@ -129,10 +129,24 @@ describe("uc/blog mobile inline editor", function() {
       for (const view of ["overview", "review"]) {
         await driver.get(osmbcLink("/blog/WN1/" + view));
         await blogPage.openInlineEditor(article.id);
-        should(await blogPage.isInlineTextFullyShown(article.id)).be.True(view + " on open");
+        should(await blogPage.isTextFullyShown("markdown" + article.id)).be.True(view + " on open");
         await blogPage.typeInlineText(article.id, "\nnoch eine\nund noch eine\nund noch eine");
-        should(await blogPage.isInlineTextFullyShown(article.id)).be.True(view + " while typing");
+        should(await blogPage.isTextFullyShown("markdown" + article.id)).be.True(view + " while typing");
       }
+    });
+    it("should grow the review comment fields with their text", async function() {
+      const now = new Date().toISOString();
+      const lines = Array(10).fill("Eine Zeile Review").join("\n");
+      await blogModule.createNewBlog({ OSMUser: "test" }, {
+        name: "WN2", status: "edit",
+        reviewCommentDE: [{ user: "TheFive", text: lines, timestamp: now }, { user: "TheFive", text: "reviewing...", timestamp: now }]
+      });
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN2/overview"));
+      await blogPage.typeReviewText("DE", lines);
+      should(await blogPage.isTextFullyShown("reviewCommentDE")).be.True();
+      await blogPage.clickEditReviewComment("DE", 0);
+      should(await blogPage.isTextFullyShown("reviewCommentDE0")).be.True();
     });
     it("should save with the Save button without reloading the page", async function() {
       const field = await openEditor();

@@ -68,7 +68,7 @@ mixin reviewBlog(reviewComments,lang)
             div.d-none(id="editReview"+lang+i)
               if (!blog["close"+lang])
                 form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
-                  textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
+                  textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i data-fit-content)=comment.text
                   input.d-none(type="text",name="lang" value = lang)
                   div.d-flex.flex-wrap.gap-2.mt-2
                     button.btn.btn-primary(id="reviewButton"+lang+i type="submit") Change
@@ -92,7 +92,8 @@ mixin reviewBlog(reviewComments,lang)
                         name ="text",
                         id="reviewComment"+lang
                         placeholder="Please Type your Review here"
-                        data-review-text=lang)
+                        data-review-text=lang
+                        data-fit-content)
                   input.d-none(type="text",name="lang" value = lang)
 
                   //- Stop review at the start, Review at the end (under the thumb)

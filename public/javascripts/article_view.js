@@ -1,6 +1,6 @@
 
 
-/* global highlightWrongLinks, urlWoErrorWhileEdit */
+/* global highlightWrongLinks, urlWoErrorWhileEdit, fitToContentIn */
 
 /* exported myclick, ondragstartflag */
 /* exported callAndRedraw, setNoTranslation, translate */
@@ -117,14 +117,6 @@ function init() {
     .change(syncPlaceholder)
     .change(showHideUnpublishReason)
 
-    .trigger("change");
-  $("#AddComment")
-    .change(FitToContent)
-    .keyup(FitToContent)
-    .trigger("change");
-  $("#editComment")
-    .change(FitToContent)
-    .keyup(FitToContent)
     .trigger("change");
   initSecondLanguage();
   // $('[data-bs-toggle="tooltip"]').tooltip();
@@ -850,6 +842,7 @@ function redrawFunc(redraw) {
   $.getJSON(window.htmlroot + redraw, function (json) {
     for (k in json) {
       $(k).html(json[k]);
+      fitToContentIn(k);
     }
   });
 }

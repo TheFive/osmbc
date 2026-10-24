@@ -52,23 +52,11 @@ block append scripts_to_execute
       if (!openEditor) {
         openEditor = document.getElementById(this.dataset.inlineEditor);
         openEditor.classList.toggle("d-none");
-        openEditor.querySelectorAll("textarea[name=markdown]:not(.d-none)").forEach(fitInlineField);
+        fitToContentIn(openEditor);
       } else {
         openEditor.classList.toggle("d-none");
         openEditor = null;
       }
-    });
-
-    // the text field of an inline editor grows with its text, so the whole
-    // text is visible without scrolling inside the field (rows is the minimum)
-    function fitInlineField(field) {
-      field.style.height = "";
-      if (field.scrollHeight > field.clientHeight) {
-        field.style.height = (field.scrollHeight + field.offsetHeight - field.clientHeight) + "px";
-      }
-    }
-    $(document).on("input", "form[id*=EditArticle] textarea[name=markdown]", function () {
-      fitInlineField(this);
     });
 
     window.onload = function () {
@@ -248,6 +236,7 @@ block append scripts_to_execute
       const key = this.dataset.editReview;
       document.getElementById("editReview" + key).classList.remove("d-none");
       document.getElementById("reviewLeftText" + key).classList.add("d-none");
+      fitToContentIn("#editReview" + key);
     });
     $(document).on("input", "[data-review-text]", function () {
       document.getElementById("reviewButton" + this.dataset.reviewText).disabled = (this.value === "");
