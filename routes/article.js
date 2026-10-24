@@ -1128,8 +1128,10 @@ function postFirstDraft(req, res) {
   if (!firstDraft.isVisibleFor(req.user)) {
     return res.status(FORBIDDEN).type("text/plain").send("First Draft is not enabled for " + req.user.OSMUser);
   }
-  firstDraft.createDraft({ lang: req.params.lang, url: req.body.url })
-    .then((text) => res.type("text/plain").send(text))
+  // withTitle (collect page): JSON { markdown, title }, else the markdown as text
+  const withTitle = req.body.withTitle === "true";
+  firstDraft.createDraft({ lang: req.params.lang, url: req.body.url, withTitle: withTitle })
+    .then((draft) => (withTitle) ? res.json(draft) : res.type("text/plain").send(draft))
     .catch((err) => res.status(BAD_GATEWAY).type("text/plain").send(err.message));
 }
 

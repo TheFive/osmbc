@@ -341,4 +341,8 @@ offered here, to the users in `FirstDraftConfig.visibleFor`.
   found in other articles only on request ("First Draft" button).
 - Cancel / "Save link only" / "Save with draft"; the edited collection is
   saved either way.
+- The same call returns a compact working title (structured output, JSON
+  schema `{ markdown, title }`); it replaces the page title unless the user
+  changed the title field. The title instruction is a fixed sentence in
+  `model/firstDraft.js`, not part of the admin-editable prompt.
 

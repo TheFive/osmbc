@@ -85,6 +85,18 @@ function languageName(lang) {
   return lang;
 }
 
+// With options.withTitle the answer is structured (JSON schema) and also
+// carries a compact working title: { markdown, title } instead of the text.
+const draftWithTitleSchema = {
+  type: "object",
+  properties: {
+    markdown: { type: "string", description: "The markdown of the article, as described in the system prompt" },
+    title: { type: "string", description: "Compact working title for the editors' article list" }
+  },
+  required: ["markdown", "title"],
+  additionalProperties: false
+};
+
 async function createDraft(options) {
   debug("createDraft %s %s", options.lang, options.url);
   if (!active()) throw new Error("No Anthropic API key configured");
@@ -96,12 +108,18 @@ async function createDraft(options) {
   const userMessage = "Target language: " + languageName(options.lang) + "\n" +
     "URL: " + options.url + "\n" +
     "Title: " + (page.title ?? "") + "\n\n" +
-    "<page_content>\n" + page.text + "\n</page_content>";
+    "<page_content>\n" + page.text + "\n</page_content>" +
+    ((options.withTitle)
+      ? "\n\nAlso give a compact working title for the editors' article list: a few words, at most about 60 characters, in the target language, no markdown."
+      : "");
+
+  const outputConfig = { effort: firstDraftConfig.effort ?? defaultEffort };
+  if (options.withTitle) outputConfig.format = { type: "json_schema", schema: draftWithTitleSchema };
 
   const response = await getClient().beta.messages.create({
     model: firstDraftConfig.model ?? defaultModel,
     max_tokens: 16000,
-    output_config: { effort: firstDraftConfig.effort ?? defaultEffort },
+    output_config: outputConfig,
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
     system: prompt,
@@ -117,7 +135,12 @@ async function createDraft(options) {
     .join("")
     .trim();
   if (text === "") throw new Error("Claude returned no text for " + options.url);
-  return text;
+  if (!options.withTitle) return text;
+
+  if (response.stop_reason === "max_tokens") throw new Error("Claude's answer for " + options.url + " was cut off");
+  const draft = JSON.parse(text);
+  if (typeof draft.markdown !== "string" || draft.markdown.trim() === "") throw new Error("Claude returned no text for " + options.url);
+  return { markdown: draft.markdown.trim(), title: (typeof draft.title === "string") ? draft.title.trim() : "" };
 }
 
 const firstDraft = {

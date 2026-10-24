@@ -1,8 +1,9 @@
 /* global markdownit, fitToContent, addSpinnerAndSubmit */
 
 // First Draft while collecting (collect.pug): the collector gets a draft of
-// the markdown in their language and saves the link only, or the link with
-// the (edited) draft. The draft is made for a new link right away, for a link
+// the markdown in their language (and a compact title, which replaces the
+// page title unless the user changed it) and saves the link only, or the
+// link with the (edited) draft. The draft is made for a new link right away, for a link
 // that was found in other articles only on request.
 
 (function () {
@@ -18,6 +19,9 @@
   const saveLinkButton = document.getElementById("OK");
   const saveDraftButton = document.getElementById("OKWithDraft");
   const md = markdownit();
+  const title = document.getElementById("title");
+  // the page's own title, replaced by Claude's unless the user changed it
+  const pageTitle = title ? title.value : "";
 
   function showPreview() {
     preview.innerHTML = md.render(field.value);
@@ -25,7 +29,6 @@
   }
 
   window.updateDraftSaveButton = function () {
-    const title = document.getElementById("title");
     const titleOk = title && title.value.trim().length > 5;
     saveDraftButton.disabled = !titleOk || field.disabled || field.value.trim() === "";
   };
@@ -34,15 +37,19 @@
     startButton.classList.add("d-none");
     error.classList.add("d-none");
     wait.classList.remove("d-none");
-    jQuery.post(window.htmlroot + "/article/firstdraft/" + encodeURIComponent(lang), { url: url }, function (text) {
+    jQuery.post(window.htmlroot + "/article/firstdraft/" + encodeURIComponent(lang), { url: url, withTitle: "true" }, function (draft) {
       wait.classList.add("d-none");
-      field.value = text;
+      if (title && draft.title && title.value === pageTitle) {
+        title.value = draft.title;
+        title.dispatchEvent(new Event("change"));
+      }
+      field.value = draft.markdown;
       field.disabled = false;
       field.classList.remove("d-none");
       fitToContent(field);
       showPreview();
       window.updateDraftSaveButton();
-    }, "text").fail(function (jqXHR) {
+    }, "json").fail(function (jqXHR) {
       wait.classList.add("d-none");
       error.textContent = "First Draft failed: " + (jqXHR.responseText || jqXHR.statusText);
       error.classList.remove("d-none");

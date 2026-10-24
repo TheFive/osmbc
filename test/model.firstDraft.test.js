@@ -73,6 +73,29 @@ describe("model/firstDraft", function() {
 
       should(create.firstCall.args[0].messages[0].content).containEql("Target language: DE (German)");
     });
+    it("should ask for a title with a JSON schema and return markdown and title", async function() {
+      nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+      create.resolves(claudeAnswer(JSON.stringify({ markdown: "The Bonn group mapped all benches.\n", title: " Bench mapping in Bonn " })));
+
+      const draft = await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party", withTitle: true });
+
+      should(draft).eql({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping in Bonn" });
+      const params = create.firstCall.args[0];
+      should(params.output_config.format.type).eql("json_schema");
+      should(params.output_config.format.schema.required).eql(["markdown", "title"]);
+      should(params.output_config.effort).eql("medium");
+      should(params.messages[0].content).containEql("compact working title");
+    });
+    it("should not ask for a title without withTitle", async function() {
+      nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+      create.resolves(claudeAnswer("Text"));
+
+      await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party" });
+
+      const params = create.firstCall.args[0];
+      should(params.output_config.format).be.undefined();
+      should(params.messages[0].content).not.containEql("working title");
+    });
     it("should fail if the page can not be loaded", async function() {
       nock("https://news.example.org").get("/missing").reply(404, "not found");
 
