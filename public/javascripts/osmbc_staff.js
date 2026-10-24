@@ -5,7 +5,7 @@
 /* exported chooseLanguageSet */
 /* exported setUserConfig */
 /* exported addSpinnerAndSubmit */
-/* exported fitToContentIn */
+/* exported fitToContentIn, fitToContent */
 
 
 // Link check for #linkArea and the .preview elements.

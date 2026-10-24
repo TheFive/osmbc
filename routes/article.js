@@ -436,7 +436,12 @@ function searchAndCreate(req, res, next) {
         title: title,
         collection: collection,
         categories: blogModule.getCategories(),
-        foundArticles: result
+        foundArticles: result,
+        // First Draft while collecting: the collector knows the page and can
+        // judge the draft right away; in the language the user writes in
+        firstDraftLang: (firstDraft.isVisibleFor(req.user) && firstDraft.active() && util.isURL(search))
+          ? ((req.mobileView) ? req.user.getMobileLang() : req.user.getMainLang())
+          : null
       });
     });
   });

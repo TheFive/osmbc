@@ -100,9 +100,17 @@ block content
               .row
                 .col-md-7
                   p.osmbc-help-text(id="categoryDisplay")
-                .col-md-5.d-flex.align-items-center.gap-2
-                  button.btn.btn-lg.btn-primary(id="OK")="OK"
-                  a(href=layout.htmlroot+`/article/create` class="btn btn-outline-secondary" role="button") Cancel
+                if firstDraftLang
+                  //- with a First Draft: cancel at the start, saving with the
+                  //- draft at the end (under the thumb)
+                  .col-md-5.d-flex.flex-wrap.align-items-center.gap-2
+                    a(href=layout.htmlroot+`/article/create` class="btn btn-outline-secondary" role="button") Cancel
+                    button.btn.btn-lg.btn-outline-primary(id="OK")="Save link only"
+                    button.btn.btn-lg.btn-primary(id="OKWithDraft" type="button" disabled)="Save with draft"
+                else
+                  .col-md-5.d-flex.align-items-center.gap-2
+                    button.btn.btn-lg.btn-primary(id="OK")="OK"
+                    a(href=layout.htmlroot+`/article/create` class="btn btn-outline-secondary" role="button") Cancel
 
           .row
             .col-md-1
@@ -118,9 +126,26 @@ block content
                 | Collection <br>
             .col-md-11
               textarea.form-control(name="collection",rows=7,placeholder="put your link or info here")=collection
+          if firstDraftLang
+            //- the draft is made in the browser after loading (collect_draft.js),
+            //- right away if the link is new, on request if it was found above
+            .row#firstDraftArea(data-lang=firstDraftLang data-url=search.trim() data-auto=(foundArticles.length === 0) ? "true" : "false")
+              .col-md-1
+                | Draft #{firstDraftLang}
+              .col-md-11
+                div.d-flex.flex-wrap.align-items-center.gap-2.my-2
+                  button.btn.btn-outline-primary.d-none#firstDraftStart(type="button")="First Draft (" + firstDraftLang + ")"
+                  span.d-none#firstDraftWait
+                    i.fa.fa-spinner.fa-spin
+                    |  Claude is writing a first draft …
+                  span.text-danger.d-none#firstDraftError
+                textarea.form-control.d-none#firstDraftMarkdown(name="markdown" + firstDraftLang rows=3 lang=firstDraftLang spellcheck="true" data-fit-content disabled)
+                div.card.card-body.my-2.d-none#firstDraftPreview
 
 block append scripts_to_load                
   script(src=layout.htmlroot + "/javascripts/markdown-it.min.js?osmbc_v=" + layout.osmbc_version)
+  if firstDraftLang
+    script(src=layout.htmlroot + "/javascripts/collect_draft.js?osmbc_v=" + layout.osmbc_version)
 
 block append scripts_to_execute
   script(nonce=cspNonce).
@@ -171,6 +196,9 @@ block append scripts_to_execute
       if (t.length>5) {
         okButton.disabled=false;
       }
+      // First Draft (collect_draft.js): saving with the draft needs a title
+      // and a draft
+      if (window.updateDraftSaveButton) window.updateDraftSaveButton();
     }
     function onchangeSearch() {
       if (!searchField) return;

@@ -517,6 +517,9 @@
         if (t.length > 5) {
           okButton.disabled = false;
         }
+        // First Draft (collect_draft.js): saving with the draft needs a title
+        // and a draft
+        if (window.updateDraftSaveButton) window.updateDraftSaveButton();
       }
 
       function onchangeSearch() {

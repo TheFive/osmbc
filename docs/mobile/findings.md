@@ -328,3 +328,17 @@ For the product owner:
   mobile language (and of the second language when shown); desktop keeps
   the menu.
 
+## First Draft while collecting (2026-10-24, idea from the editors' channel)
+
+Collectors often submit a link from the phone but have no time to write
+the article; they know the page and can judge a summary at once. Editors
+should not generate drafts for pages they never read, so the draft is only
+offered here, to the users in `FirstDraftConfig.visibleFor`.
+
+- After the search, the collect form shows a draft of the markdown in the
+  user's language (mobile language on phones, main language on desktop),
+  editable, with a preview. For a new link it is made right away, for a link
+  found in other articles only on request ("First Draft" button).
+- Cancel / "Save link only" / "Save with draft"; the edited collection is
+  saved either way.
+
