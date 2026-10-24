@@ -51,17 +51,18 @@ and is still actively maintained. Changes are listed in the
 * [PostgreSQL](https://www.postgresql.org) (tested with 16)
 
 The server uses Express with Pug templates. Details are in the
-[Installation Guide](Install_Guide.md).
+[Installation Guide](docs/install.md).
 
 
 ## Documentation
 
-* [Installation Guide](Install_Guide.md): setting up a server
+* [Installation Guide](docs/install.md): setting up a server
 * [Configuration](docs/config.md): the configuration file
 * [Export Profiles](docs/export-profiles.md) and [Hugo Export](docs/hugo-export.md)
 * [API](docs/API.md): interface for external tools
 * [User Help](help/): the help pages shown inside OSMBC
-* [README Developer](README%20Developer.md): local setup and tests
+* [Development](docs/development.md): local setup and tests
+* [Tools](tools/README.md): maintenance and test scripts
 * [Contributing](CONTRIBUTING.md): commit message format
 
 

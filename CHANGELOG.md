@@ -65,4 +65,4 @@
 - security: set session cookie secure auto and SameSite lax
 
 Older releases (up to 4.4.9, generated from GitHub issues/PRs by the
-previous tool): see [CHANGELOG-ARCHIVE.md](CHANGELOG-ARCHIVE.md).
+previous tool): see [CHANGELOG-ARCHIVE.md](docs/CHANGELOG-ARCHIVE.md).

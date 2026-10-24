@@ -16,8 +16,8 @@ to produce a useful changelog, commit messages need to follow the
 ```
 
 A commit-msg hook (`git-hooks/CommitMsg.sh`, running `commitlint`) checks
-the format locally; see `README Developer.md` for how to install it. See
-`RELEASE_PROCESS_CHECKLIST.md` for the full rollout plan.
+the format locally; see `docs/development.md` for how to install it. See
+`docs/RELEASE_PROCESS_CHECKLIST.md` for the full rollout plan.
 
 ### Type
 
@@ -123,5 +123,5 @@ adopted here for consistency with the commit `type`s.
 
 ## Everything else
 
-See `README Developer.md` for local setup and general development
+See `docs/development.md` for local setup and general development
 tooling.

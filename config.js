@@ -128,7 +128,7 @@ function initialise(callback) {
   logger.info("Reading Config from: " + baseConfig.fileName);
   configuration = baseConfig.data;
 
-  // per test run overrides, set by scripts/run-tests.mjs so that several
+  // per test run overrides, set by tools/run-tests.mjs so that several
   // test runs (worktrees) can run in parallel without sharing port, DB or files
   if (env === "test") {
     if (process.env.OSMBC_TEST_PORT) configuration.serverport = Number(process.env.OSMBC_TEST_PORT);
