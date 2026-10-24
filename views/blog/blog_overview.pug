@@ -17,8 +17,9 @@ mixin displayOverviewRow(a)
         div.d-flex.flex-nowrap
           if showVisibleLanguages
             +languageDisplay(a,{short: true})
-          span(id="voteLabels"+ a.id)
-            +voteDisplay(a,showVotes)
+          if !layout.mobileView
+            span(id="voteLabels"+ a.id)
+              +voteDisplay(a,showVotes)
 
 
       td
@@ -38,8 +39,12 @@ mixin displayOverviewRow(a)
         if (showLanguages)
           +languageDisplay(a)
       if layout.mobileView
+        //- phones: the chosen votes (options below) and the open button
         td
-          +articleOpenButton(a)
+          div.d-flex.flex-nowrap.align-items-center
+            span(id="voteLabels"+ a.id)
+              +voteDisplay(a,showVotes)
+            +articleOpenButton(a)
 
 
 

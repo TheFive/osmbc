@@ -362,7 +362,8 @@ function renderArticleIdVotesBlog(req, res, next) {
 
   const article = req.article;
   assert(article);
-  assert(vote);
+  // the route takes any second path part, e.g. a mistyped or relative url
+  if (!vote) return next();
 
   auto({ },
     function (err) {

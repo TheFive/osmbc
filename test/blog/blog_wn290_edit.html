@@ -640,6 +640,12 @@
 
       }
 
+      // vote labels (voteLabel in mixins.pug)
+      $(document).on("click", ".osmbc-vote-label[data-call]", function(event) {
+        event.preventDefault();
+        callAndRedraw(this.dataset.call, this.dataset.redraw);
+      });
+
       function callAndRedraw(call, redraw) {
         $.get("" + call, function(data) {
           let j = $.getJSON("" + redraw, function(json) {

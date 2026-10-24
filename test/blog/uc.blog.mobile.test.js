@@ -148,6 +148,17 @@ describe("uc/blog mobile inline editor", function() {
       await blogPage.clickEditReviewComment("DE", 0);
       should(await blogPage.isTextFullyShown("reviewCommentDE0")).be.True();
     });
+    it("should show the chosen votes and vote by tapping", async function() {
+      const blogPage = new BlogPage(driver);
+      for (const view of ["overview", "review"]) {
+        await driver.get(osmbcLink("/blog/WN1/" + view));
+        await blogPage.clickShowVoteCheckbox("pro");
+        should(await blogPage.tapTargetsTooSmall("#vote_pro_" + articleId)).eql([]);
+        should(await blogPage.hasHorizontalScroll()).be.False(view);
+      }
+      await blogPage.tapVoteLabel(articleId, "pro");
+      should((await articleModule.findById(articleId)).votes.pro).eql(["TheFive"]);
+    });
     it("should save with the Save button without reloading the page", async function() {
       const field = await openEditor();
       await replaceText(field, "Neuer Text");

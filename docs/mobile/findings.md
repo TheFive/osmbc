@@ -306,7 +306,15 @@ Done (2026-10-23):
   by the drop fix `5d106317`, covered by "should insert a dropped text where
   it is dropped"; phones have no drag source any more ("+ translated").
 
+- Votes in the blog views: they were already choosable one by one ("Display
+  Votes" under each view), but the labels sat in a part hidden below md, so
+  on phones the option had no effect. Now shown on phones too (review: in
+  the row; overview: last cell, next to the open button), tap-sized, a tap
+  votes; inline `onclick` replaced by a listener. The redraw route
+  `GET /article/:id/:votename` answered 500 (`assert`) for any unknown
+  second path part, now 404 — likely part of the vote route's error rate in
+  the access log.
+
 For the product owner:
-- Up/down/image vote directly on the review page (or a user setting).
 - History log: choose visible columns.
 - Liked: "make comment" button on the right of the review page.

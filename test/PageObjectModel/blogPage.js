@@ -152,6 +152,22 @@ class BlogPage extends StandardPage {
     await (await this._driver.findElement(By.id("markdown" + articleId))).sendKeys(text);
   }
 
+  // "Display Votes" option of the view; the page reloads with the votes
+  async clickShowVoteCheckbox(vote) {
+    const selector = `div[name="choose_showVote_${vote}"]`;
+    const before = await this._driver.findElement(By.css(selector));
+    await this.#clickACheckbox(selector);
+    await this._driver.wait(until.stalenessOf(before), 5000, "page not reloaded");
+  }
+
+  // vote label of an article (chosen under "Display Votes"); waits for the redraw
+  async tapVoteLabel(articleId, vote) {
+    await this.assertPage();
+    const label = await this._driver.findElement(By.id(`vote_${vote}_${articleId}`));
+    await this.tap(label);
+    await this._driver.wait(until.stalenessOf(label), 3000, "vote label not redrawn");
+  }
+
   // the button at the end of the article's row
   async clickOpenArticle(articleId) {
     await this.assertPage();

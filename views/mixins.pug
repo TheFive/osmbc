@@ -37,7 +37,8 @@ mixin voteLabel(vote,article)
   - if (vb_listVotes && vb_listVotes.length>0)  vb_displayClass = "osmbc-btn-voted"
   - if (vb_voted)  {vb_displayClass = "osmbc-btn-voted";vb_voteStyle = "color:"+vote.color+";"}
   - if (vb_voted)  vb_voteAction = "unsetVote"
-  span.badge(id = "vote_" + vote.name + "_"  + article.id class = vb_displayClass onclick="callAndRedraw('/article/" + article.id +"/" + vb_voteAction +"." + vote.name +"','/article/" + article.id +"/" + vote.name +"')" style=vb_voteStyle)
+  //- a tap votes (or takes the vote back) and redraws the label (blog_mixin.pug)
+  span.badge.osmbc-vote-label(id = "vote_" + vote.name + "_"  + article.id class = vb_displayClass role="button" title=vote.name data-call="/article/" + article.id + "/" + vb_voteAction + "." + vote.name data-redraw="/article/" + article.id + "/" + vote.name style=vb_voteStyle)
     i(class=vote.iconClass)
     if (!vote.iconClass)
       span=vote.name

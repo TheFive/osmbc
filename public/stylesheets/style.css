@@ -433,6 +433,14 @@ table {
 .osmbc-mobile div.osmbc-help-text {
   display: none !important;
 }
+/* vote labels in the blog views */
+.osmbc-mobile .osmbc-vote-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
 /* icon-only buttons */
 .osmbc-mobile .osmbc-tap-square {
   min-width: 44px;

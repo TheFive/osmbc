@@ -55,8 +55,9 @@ block blogcontent
               span.d-none.d-md-block
                 if (showLanguages)
                   +languageDisplay(a)
-                span(id="voteLabels" + a.id)
-                  +voteDisplay(a,showVotes)
+              //- the chosen votes (options below), on phones too
+              span(id="voteLabels" + a.id)
+                +voteDisplay(a,showVotes)
               if layout.mobileView
                 +articleOpenButton(a)
 

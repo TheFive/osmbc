@@ -193,6 +193,12 @@ block append scripts_to_execute
 
     }
 
+    // vote labels (voteLabel in mixins.pug)
+    $(document).on("click", ".osmbc-vote-label[data-call]", function (event) {
+      event.preventDefault();
+      callAndRedraw(this.dataset.call, this.dataset.redraw);
+    });
+
     function callAndRedraw(call, redraw) {
       $.get("!{layout.htmlroot}" + call, function (data) {
         let j = $.getJSON("!{layout.htmlroot}" + redraw, function (json) {
