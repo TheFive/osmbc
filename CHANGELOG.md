@@ -1,8 +1,8 @@
 # Changelog
 
-## [4.5.0-beta.3](https://github.com/TheFive/osmbc/tree/4.5.0-beta.3) (2026-10-20)
+## [4.5.0-beta.4](https://github.com/TheFive/osmbc/tree/4.5.0-beta.4) (2026-10-24)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.10...4.5.0-beta.3)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.12...4.5.0-beta.4)
 
 **Features:**
 
@@ -16,11 +16,14 @@
 - mobile: tap-sized blog views, start page, collect and user page
 - mobile: tap-sized comment, review and inbox actions
 - mobile: tap-sized text links and blog list, no flags on phones
+- mobile: beta.3 feedback — menu from the left, save at the end
+- mobile: no sideways scroll in the blog overview, growing inline editor
+- mobile: growing comment fields, no hint texts on phones
+- mobile: chosen votes in the blog views on phones too
+- mobile: show First Draft as buttons at the text field on small screens
 
 **Fixed bugs:**
 
-- blog: store "closed" instead of "close" from the blog edit form
-- views: hide translate menu entries for closed target languages
 - article: show translate progress and done mark again
 - views: table cells in the blog overview and tap to copy a language text
 - mobile: keep the desktop view of phone browsers in desktop mode
@@ -29,6 +32,18 @@
 - mobile: compact blog status table and folded legend on phones
 - mobile: only the mobile language row of the status table is tall
 - deps: update follow-redirects to 1.16.1
+- deps: update sanitize-html to 2.18.0
+- user: keep avatars on disk, placeholder while unknown
+- deps: update follow-redirects to 1.16.1
+- deps: update sanitize-html to 2.18.0
+- deps: update dompurify to 3.4.17
+- deps: update markdown-it to 14.3.3
+- deps: update sanitize-html to 2.18.1
+- deps: update ip-address to 10.7.4
+- deps: update body-parser to 2.4.0
+- deps: update undici override to 7.30.1
+- deps: update nodemailer to 10.2.1
+- deps: update dev dependencies fast-uri and serialize-javascript
 
 ## [4.4.12](https://github.com/TheFive/osmbc/tree/4.4.12) (2026-10-18)
 
