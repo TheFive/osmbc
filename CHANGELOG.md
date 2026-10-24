@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.4.13](https://github.com/TheFive/osmbc/tree/4.4.13) (2026-10-24)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.12...4.4.13)
+
+**Fixed bugs:**
+
+- deps: update follow-redirects to 1.16.1
+- deps: update sanitize-html to 2.18.0
+- deps: update dompurify to 3.4.17
+- deps: update markdown-it to 14.3.3
+- deps: update sanitize-html to 2.18.1
+- deps: update ip-address to 10.7.4
+- deps: update body-parser to 2.4.0
+- deps: update undici override to 7.30.1
+- deps: update nodemailer to 10.2.1
+- deps: update dev dependencies fast-uri and serialize-javascript
+
 ## [4.4.12](https://github.com/TheFive/osmbc/tree/4.4.12) (2026-10-18)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.11...4.4.12)
