@@ -1,53 +1,88 @@
 # OSMBC
 
-OpenStreetMap Blog Collector, a tool for editing the weekly news in OpenStreetMap.
+OpenStreetMap Blog Collector, a web tool for the editorial workflow of a
+multilingual weekly news blog.
+
+[![Tests](https://github.com/TheFive/osmbc/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/TheFive/osmbc/actions/workflows/test.yml)
 
 
 ## Summary
 
-OSMBC is a small tool to support the editorial process of the [OpenStreetMap]&nbsp;[Wochennotiz]. It enables editors collecting references for news easily, and supports editing them in Markdown later. From edited markdown code, the final blog entry is created. As all articles can be edited "bilingual" so in German and in English, the production of the [WeeklyOSM], the international variant of the Wochennotiz, is supported by OSMBC too.
+OSMBC supports a team of editors producing a regular news issue together.
+Editors collect links to news, write and edit the articles in Markdown,
+review each other's work and finally export the finished issue. Every
+article can be written in several languages side by side, so one issue can
+be published in parallel language editions.
+
+It was built for the [OpenStreetMap] weekly news: the German
+[Wochennotiz] and its international variant [WeeklyOSM]. It is not tied to
+OpenStreetMap, though, and can be used for any multilingual blog that is
+put together by a team.
+
+[OpenStreetMap]: https://www.openstreetmap.org
+[Wochennotiz]: https://blog.openstreetmap.de
+[WeeklyOSM]: https://weeklyosm.eu/
 
 
-[OpenStreetMap]: http://www.openstreetmap.org
-[Wochennotiz]: http://blog.openstreetmap.de
-[WeeklyOSM]: http://www.weeklyosm.eu/
+## Features
+
+* Collect references (URL plus a short note) and sort them into the
+  categories of an issue
+* Edit articles in Markdown, with a preview for each language
+* Machine translation between languages via DeepL (optional)
+* Workflow per issue: open → edit → closed, with review and close status
+  per language
+* Comments and notifications to editors by mail, Slack or Mattermost
+* Export to WordPress HTML, Markdown or Hugo (configurable export profiles)
+* Event list imported from [osmcal](https://osmcal.org)
+* Login via OpenStreetMap OAuth, with full and guest users
 
 
-## Status 
+## Status
 
-The system is active used since Wochennotiz 272 in September 2015. 
-
-The running instance for the editors is: https://osmbc.openstreetmap.de. This can be used by 
-OSM Mapper in guest mode too.
-
-At the moment there is no special test instance.
-
-## Software Build Status
-
-I have stopped to use Travis-CI as CI Plattform to test OSMBC on a neutral environment. Will be back sometimes, somewhere in summertime :-)
-
-## Tooling
-
-* Database: postgres (>= 9.3) and JSON support required
-* Webserver: node.js with express and JADE rendering
-
-More info in the [Installation Guide](Install_Guide.md).
+OSMBC has been in daily use since Wochennotiz issue 272 (September 2015)
+and is still actively maintained. Changes are listed in the
+[Changelog](CHANGELOG.md).
 
 
-## Support the Developer
+## Requirements
 
-I am happy to do any bug fixes for the system. But please make sure, that your error report here in Git fulfills the following rules
+* [Node.js](https://nodejs.org) (tested with 22 LTS)
+* [PostgreSQL](https://www.postgresql.org) (tested with 16)
 
-1. The error message occurs in the productive system, if you are working on the development version, please put the info in the bug report, to avoid unnecessary work (see section development version above).
+The server uses Express with Pug templates. Details are in the
+[Installation Guide](docs/install.md).
 
-2. The error message occurs in the current version, so it can can be reproduced on the day, the error message has given. (then you do not need to put any version number to your request, otherwise please include the version number of OSMBC).
 
-3. Please describe shortly, what you have done, to produce the error.
+## Documentation
 
-4. Please describe shortly, what the result of your action was, and what result you have expected.
+* [Installation Guide](docs/install.md): setting up a server
+* [Configuration](docs/config.md): the configuration file
+* [Export Profiles](docs/export-profiles.md) and [Hugo Export](docs/hugo-export.md)
+* [API](docs/API.md): interface for external tools
+* [User Help](help/): the help pages shown inside OSMBC
+* [Development](docs/development.md): local setup and tests
+* [Tools](tools/README.md): maintenance and test scripts
+* [Contributing](CONTRIBUTING.md): commit message format
 
-5. Pictures and Hyperlinks can support 3. and 4. but do not replace them.
 
-6. "is not working" or "is broken" obviously does not fulfill 3. and 4. .
+## Reporting Bugs
 
-The rules support the developer to get quicker to the point. Sometimes you are using other ways in OSMBC to get your result and the way coming to a result is important for bug fixing.
+Bug reports and feature requests are welcome as
+[GitHub issues](https://github.com/TheFive/osmbc/issues). To help get to
+the point quickly, please make sure your report
+
+1. refers to the current release. If not, please name the version you are
+   using.
+2. describes briefly what you did.
+3. describes briefly what happened, and what you expected to happen.
+
+Screenshots and links help with 2. and 3., but do not replace them.
+"is not working" or "is broken" is not a description. The way you got to
+a result matters, because there are often several ways to do the same
+thing in OSMBC.
+
+
+## License
+
+OSMBC is released under the [MIT License](LICENSE).

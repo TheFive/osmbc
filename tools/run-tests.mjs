@@ -2,7 +2,7 @@
 // Runs a test command with its own server port, database and temp directory,
 // so several test runs (in different or the same worktree) don't collide.
 //
-// Usage: node scripts/run-tests.mjs [--keep] <command> [args...]
+// Usage: node tools/run-tests.mjs [--keep] <command> [args...]
 //
 // - picks a free port, creates the database osmbc_test_<port> (CREATE DATABASE
 //   is atomic, so it also acts as the lock between parallel runs)
@@ -29,7 +29,7 @@ const args = process.argv.slice(2);
 const keep = args[0] === "--keep";
 if (keep) args.shift();
 if (args.length === 0) {
-  console.error("Usage: node scripts/run-tests.mjs [--keep] <command> [args...]");
+  console.error("Usage: node tools/run-tests.mjs [--keep] <command> [args...]");
   process.exit(2);
 }
 

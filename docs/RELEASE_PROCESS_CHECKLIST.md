@@ -1,7 +1,7 @@
 # Release-Prozess-Umbau: Conventional Commits + git-basierter Changelog + Branch-Modell
 
 Arbeitsdokument, wird gemeinsam abgearbeitet. Nach Abschluss auflösen:
-Endzustand geht in `CONTRIBUTING.md` / `README Developer.md`, diese Datei
+Endzustand geht in `CONTRIBUTING.md` / `docs/development.md`, diese Datei
 kann dann gelöscht werden.
 
 ## Entscheidungen (Phase 0, fix)
@@ -26,7 +26,7 @@ kann dann gelöscht werden.
 - [x] `CONTRIBUTING.md` angelegt: Conventional-Commits-Format dokumentiert
       (`type(scope): subject`, Types aus `@commitlint/config-conventional`),
       `Closes #123`/`Refs #123` als Footer-Konvention.
-- [x] Verweis dazu in `README Developer.md` ergänzt.
+- [x] Verweis dazu in `docs/development.md` ergänzt.
 - [ ] Externe Mitwirkende informieren.
 
 ## Phase 2 — Hook + CI (Standard-Strenge)
@@ -38,7 +38,7 @@ kann dann gelöscht werden.
 - [x] `commit-msg`-Hook nach bestehender `git-hooks/`-Konvention
       (`git-hooks/CommitMsg.sh`, ruft `npx --no-install commitlint --edit`
       auf), manuell zu installieren wie `PreCommit.sh`/`branchChange.sh`
-      (Anleitung in `README Developer.md`), kein Husky nötig.
+      (Anleitung in `docs/development.md`), kein Husky nötig.
 - [ ] Merge-Strategie: PRs von externen/nicht-eingespielten Mitwirkenden
       (teils nur "Programmiervorschläge" ohne vollständige Dev-Umgebung)
       per **Squash-Merge** zusammenführen — bereits im Repo erlaubt
@@ -90,7 +90,7 @@ Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
       fallen still raus.
 - [x] `package.json`: `"changelog"`-Script neu angelegt (gab es vorher
       nicht): `git-cliff 4.4.9..HEAD --tag $npm_package_version`.
-- [x] Alter gcl-Changelog als `CHANGELOG-ARCHIVE.md` archiviert
+- [x] Alter gcl-Changelog als `docs/CHANGELOG-ARCHIVE.md` archiviert
       (unverändert bis 4.4.9); `CHANGELOG.md` wird ab 4.4.9 jedes Mal
       komplett neu generiert (statt `--prepend`, das die `# Changelog`-
       Überschrift falsch einsortiert).
@@ -101,7 +101,7 @@ Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
       "chore(release): %s"` erzeugt Changelog, Release-Commit und Tag auf
       genau diesem Commit (bei 4.4.9 saß er einen Commit davor). In einem
       Wegwerf-Clone getestet, inkl. Hook-Ablehnung bei falscher Message.
-      Doku in `README Developer.md`.
+      Doku in `docs/development.md`.
 - [x] „Multi-commit features“ + „What ends up in the changelog“ in
       `CONTRIBUTING.md`.
 - [x] Nach dem Merge: `gcl.sh` + `github-changelog-http-cache` (lokal,
@@ -118,7 +118,7 @@ Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
 - [ ] Worktree `osmbc-develop` aufräumen/umwidmen.
 - [ ] Feature-Branches künftig von `master` abzweigen, PR zurück nach
       `master` (GitHub-Flow statt Gitflow).
-- [ ] Doku/Memory nachziehen: `README Developer.md`,
+- [ ] Doku/Memory nachziehen: `docs/development.md`,
       `project_develop_master_backport_pattern`-Memory als "erledigt"
       markieren, betroffene Worktree-Memories
       (`project_second_worktree_hugo_export`,
@@ -129,8 +129,8 @@ Branch `chore/git-cliff-changelog` (Worktree `osmbc-git-cliff`).
 - [ ] Migrations-Tag setzen (z. B. `4.5.0`), Changelog-Eintrag dazu.
 - [x] Ruby-Erwähnungen in Doku/Install-Guide entfernen, falls vorhanden.
       (Geprüft 2026-10-03: keine vorhanden.)
-- [ ] Diese Datei (`RELEASE_PROCESS_CHECKLIST.md`) auflösen, Endzustand in
-      `CONTRIBUTING.md`/`README Developer.md` überführt.
+- [ ] Diese Datei (`docs/RELEASE_PROCESS_CHECKLIST.md`) auflösen, Endzustand in
+      `CONTRIBUTING.md`/`docs/development.md` überführt.
 
 ## Phase 7 — GitLab-Umzug (separat, eigener Termin)
 

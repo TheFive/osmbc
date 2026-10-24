@@ -4,7 +4,7 @@ import config from "../config.js";
 import async from "async";
 import should from "should";
 
-// scripts/run-tests.mjs assigns a free port per test run
+// tools/run-tests.mjs assigns a free port per test run
 const expectedPort = process.env.OSMBC_TEST_PORT ? Number(process.env.OSMBC_TEST_PORT) : 35043;
 
 describe("config", function() {
