@@ -5,6 +5,8 @@ import testutil from "./testutil.js";
 
 import config from "../config.js";
 import blogModule from "../model/blog.js";
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
 import { runTransitionSweep } from "../model/blogTransitionScheduler.js";
 
 describe("model/blogTransitionScheduler", function() {
@@ -194,6 +196,235 @@ describe("model/blogTransitionScheduler", function() {
           should.not.exist(err3);
           should(updated.closeDE).not.equal(true);
           done();
+        });
+      });
+    });
+  });
+
+  describe("AutoTranslate", function() {
+    function useTransitionConfig(autoTranslate, autoLanguageClose) {
+      originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "Transition") {
+          return {
+            enabled: true,
+            scheduleCron: "*/1 * * * *",
+            runOnStart: true,
+            AutoEditMode: { enabled: false },
+            AutoLanguageClose: autoLanguageClose || { enabled: false },
+            AutoTranslate: Object.assign({
+              enabled: true,
+              sourceLanguage: "EN",
+              service: "deeplPro",
+              languages: "ALL",
+              previousBlogs: 2,
+              blogStatusFilter: ["edit"],
+              delayDays: 3,
+              actorUser: "autotranslate"
+            }, autoTranslate)
+          };
+        }
+        return originalGetValue.call(config, key, subkey, options);
+      };
+    }
+    function dueEndDate() {
+      const date = new Date();
+      date.setDate(date.getDate() - 3);
+      date.setMinutes(date.getMinutes() - 30);
+      return date.toISOString();
+    }
+    function importBlogs(blogs, articles, cb) {
+      testutil.importData({
+        clear: true,
+        blog: blogs,
+        article: articles || [{ blog: "WN101", title: "a", markdownEN: "English *Text*" }]
+      }, cb);
+    }
+    function nockDeepl(targetLang, times) {
+      return nock("https://api.deepl.com")
+        .post("/v2/translate", (body) => body.target_lang === targetLang && body.source_lang === "EN")
+        .times(times || 1)
+        .reply(200, { translations: [{ text: "<p>Translated</p>" }] });
+    }
+    function sweepAndFindArticles(cb) {
+      runTransitionSweep(function(err) {
+        should.not.exist(err);
+        articleModule.find({}, { column: "id" }, cb);
+      });
+    }
+    afterEach(function() {
+      nock.abortPendingRequests();
+      nock.cleanAll();
+      nock("https://missingmattermost.example.com/")
+        .post(/\/services\/.*/)
+        .times(999)
+        .reply(200, "ok");
+    });
+
+    it("translates a language closed in the previous blog and logs the actor user", function(done) {
+      useTransitionConfig({});
+      const deepl = nockDeepl("DE");
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        { name: "WN101", status: "edit", endDate: dueEndDate() }
+      ], [
+        { blog: "WN101", title: "a", markdownEN: "English *Text*" },
+        { blog: "WN101", title: "b", markdownEN: "English", markdownDE: "Schon da" },
+        { blog: "WN101", title: "c", markdownEN: "no translation" },
+        { blog: "WN101", title: "d", markdownEN: "English", categoryEN: "--unpublished--" }
+      ], function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(deepl.isDone()).be.true();
+          should(articles[0].markdownDE).eql("Translated");
+          should(articles[1].markdownDE).eql("Schon da");
+          should(articles[2].markdownDE).eql(undefined);
+          should(articles[3].markdownDE).eql(undefined);
+          // other languages were not closed in a previous blog
+          should(articles[0].markdownFR).eql(undefined);
+          should(articles[0].markdownES).eql(undefined);
+          logModule.find({ table: "blog", property: "translation with deeplPro" }, function(err, logs) {
+            should.not.exist(err);
+            should(logs.length).eql(1);
+            should(logs[0].user).eql("autotranslate");
+            should(logs[0].to).eql("EN -> DE");
+            done();
+          });
+        });
+      });
+    });
+
+    it("looks two blogs back with previousBlogs 2", function(done) {
+      useTransitionConfig({ previousBlogs: 2 });
+      const deepl = nockDeepl("DE");
+      importBlogs([
+        { name: "WN99", status: "closed", closeDE: true },
+        { name: "WN100", status: "closed" },
+        { name: "WN101", status: "edit", endDate: dueEndDate() }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(deepl.isDone()).be.true();
+          should(articles[0].markdownDE).eql("Translated");
+          done();
+        });
+      });
+    });
+
+    it("looks only one blog back with previousBlogs 1", function(done) {
+      useTransitionConfig({ previousBlogs: 1 });
+      importBlogs([
+        { name: "WN99", status: "closed", closeDE: true },
+        { name: "WN100", status: "closed" },
+        { name: "WN101", status: "edit", endDate: dueEndDate() }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(articles[0].markdownDE).eql(undefined);
+          should(articles[0].version).eql(1);
+          done();
+        });
+      });
+    });
+
+    it("skips a language that is already closed in the current blog", function(done) {
+      useTransitionConfig({});
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        { name: "WN101", status: "edit", endDate: dueEndDate(), closeDE: true }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(articles[0].markdownDE).eql(undefined);
+          should(articles[0].version).eql(1);
+          done();
+        });
+      });
+    });
+
+    it("does nothing outside the time window", function(done) {
+      useTransitionConfig({});
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 6);
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        { name: "WN101", status: "edit", endDate: oldDate.toISOString() }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(articles[0].markdownDE).eql(undefined);
+          should(articles[0].version).eql(1);
+          done();
+        });
+      });
+    });
+
+    it("does nothing without a valid source language", function(done) {
+      useTransitionConfig({ sourceLanguage: "XX" });
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        { name: "WN101", status: "edit", endDate: dueEndDate() }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(articles[0].markdownDE).eql(undefined);
+          should(articles[0].version).eql(1);
+          done();
+        });
+      });
+    });
+
+    it("does nothing when disabled", function(done) {
+      useTransitionConfig({ enabled: false });
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        { name: "WN101", status: "edit", endDate: dueEndDate() }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(articles[0].markdownDE).eql(undefined);
+          done();
+        });
+      });
+    });
+
+    it("translates before the language close of the same sweep", function(done) {
+      useTransitionConfig({}, {
+        enabled: true,
+        delayDays: 3,
+        minReviews: 1,
+        blogStatusFilter: ["edit"],
+        onlyIfNotExported: true,
+        languages: ["DE"],
+        actorUser: "autoclose-review"
+      });
+      const deepl = nockDeepl("DE");
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        {
+          name: "WN101",
+          status: "edit",
+          endDate: dueEndDate(),
+          reviewCommentDE: [{ user: "reviewerA", text: "ok", timestamp: new Date() }]
+        }
+      ], null, function(err) {
+        should.not.exist(err);
+        sweepAndFindArticles(function(err, articles) {
+          should.not.exist(err);
+          should(deepl.isDone()).be.true();
+          should(articles[0].markdownDE).eql("Translated");
+          blogModule.findOne({ name: "WN101" }, function(err, blog) {
+            should.not.exist(err);
+            should(blog.closeDE).eql(true);
+            done();
+          });
         });
       });
     });

@@ -4,12 +4,21 @@ import { scheduleJob } from "node-schedule";
 import config from "../config.js";
 import language from "./language.js";
 import blogModule from "./blog.js";
+import translator from "./translator.js";
 import _debug from "debug";
 
 const debug = _debug("OSMBC:model:blogTransitionScheduler");
 
 let _transitionJob = null;
 let _transitionSweepRunning = 0;
+const _warnedOnce = new Set();
+
+// the sweep runs every minute, so a configuration problem is logged only once
+function warnOnce(message) {
+  if (_warnedOnce.has(message)) return;
+  _warnedOnce.add(message);
+  config.logger.warn(message);
+}
 
 function parseBoolean(value, fallback) {
   if (value === true || value === "true") return true;
@@ -89,10 +98,23 @@ function getTransitionConfig() {
   const raw = config.getValue("Transition", { default: {} }) || {};
   const rawAutoLanguageClose = raw.AutoLanguageClose || {};
   const rawAutoEditMode = raw.AutoEditMode || {};
+  const rawAutoTranslate = raw.AutoTranslate || {};
 
   let blogStatusFilter = rawAutoLanguageClose.blogStatusFilter;
   if (!Array.isArray(blogStatusFilter) || blogStatusFilter.length === 0) {
     blogStatusFilter = ["edit"];
+  }
+
+  let translateStatusFilter = rawAutoTranslate.blogStatusFilter;
+  if (!Array.isArray(translateStatusFilter) || translateStatusFilter.length === 0) {
+    translateStatusFilter = ["edit"];
+  }
+
+  // no default for the source language, it has to be one of the configured languages
+  let sourceLanguage = null;
+  if (typeof rawAutoTranslate.sourceLanguage === "string") {
+    const candidate = rawAutoTranslate.sourceLanguage.trim().toUpperCase();
+    if (language.getLid().indexOf(candidate) >= 0) sourceLanguage = candidate;
   }
 
   return {
@@ -113,6 +135,21 @@ function getTransitionConfig() {
       actorUser: (typeof rawAutoLanguageClose.actorUser === "string" && rawAutoLanguageClose.actorUser.trim() !== "")
         ? rawAutoLanguageClose.actorUser.trim()
         : "autoclose-review"
+    },
+    autoTranslate: {
+      enabled: parseBoolean(rawAutoTranslate.enabled, false),
+      sourceLanguage: sourceLanguage,
+      service: (typeof rawAutoTranslate.service === "string" && rawAutoTranslate.service.trim() !== "")
+        ? rawAutoTranslate.service.trim()
+        : "deeplPro",
+      languages: normaliseLanguageList(rawAutoTranslate.languages).filter((lang) => lang !== sourceLanguage),
+      previousBlogs: parseNumber(rawAutoTranslate.previousBlogs, 2),
+      blogStatusFilter: translateStatusFilter,
+      delayDays: parseNumber(rawAutoTranslate.delayDays, 3),
+      translateAt: normaliseCloseAt(rawAutoTranslate.translateAt),
+      actorUser: (typeof rawAutoTranslate.actorUser === "string" && rawAutoTranslate.actorUser.trim() !== "")
+        ? rawAutoTranslate.actorUser.trim()
+        : "autotranslate"
     }
   };
 }
@@ -160,6 +197,65 @@ function runLanguageAutoCloseRule(callback) {
   });
 }
 
+function runAutoTranslateRule(callback) {
+  const transitionConfig = getTransitionConfig();
+  const ruleConfig = transitionConfig.autoTranslate;
+
+  if (ruleConfig.enabled !== true) return callback();
+  if (!ruleConfig.sourceLanguage) {
+    warnOnce("Transition.AutoTranslate: sourceLanguage missing or not a configured language, rule skipped");
+    return callback();
+  }
+  const service = translator[ruleConfig.service];
+  if (!service || typeof service.active !== "function" || !service.active()) {
+    warnOnce("Transition.AutoTranslate: translation service " + ruleConfig.service + " not available, rule skipped");
+    return callback();
+  }
+
+  const now = Date.now();
+  const statusFilter = "IN(" + ruleConfig.blogStatusFilter.join(",") + ")";
+
+  blogModule.find({ status: statusFilter }, { column: "endDate", desc: false }, function(err, blogs) {
+    if (err) return callback(err);
+    if (!blogs || blogs.length === 0) return callback();
+
+    eachSeries(blogs, function(blog, cbBlog) {
+      if (!blog || !blog.endDate) return cbBlog();
+
+      const endDateTs = new Date(blog.endDate).getTime();
+      if (Number.isNaN(endDateTs)) return cbBlog();
+
+      let translateFromTs = endDateTs + (ruleConfig.delayDays * 24 * 60 * 60 * 1000);
+      if (ruleConfig.translateAt) {
+        translateFromTs = nextWeeklyCloseTimeAtOrAfter(endDateTs, ruleConfig.translateAt);
+      }
+      // blog is not ready for translation, do nothing
+      if (now < translateFromTs) return cbBlog();
+      // same 1 hour window as the language close, so the rule runs once without a marker
+      if (now > translateFromTs + (1 * 60 * 60 * 1000)) return cbBlog();
+
+      blogModule.findPreviousBlogs(blog, ruleConfig.previousBlogs, function(err, previousBlogs) {
+        if (err) return cbBlog(err);
+
+        // translate only languages with an active team, that closed one of the previous blogs
+        const languages = ruleConfig.languages.filter(function(lang) {
+          if (!blog.isEditable(lang)) return false;
+          return previousBlogs.some((previous) => previous["close" + lang] === true);
+        });
+
+        eachSeries(languages, function(lang, cbLanguage) {
+          debug("Auto translate language %s for blog %s", lang, blog.name);
+          blog.translateAllArticles({ OSMUser: ruleConfig.actorUser }, ruleConfig.sourceLanguage, lang, ruleConfig.service, function(err) {
+            // a problem in one language should not stop the others
+            if (err) config.logger.error(err);
+            cbLanguage();
+          });
+        }, cbBlog);
+      });
+    }, callback);
+  });
+}
+
 export function runTransitionSweep(callback) {
   debug("runTransitionSweep");
   if (_transitionSweepRunning > 0) {
@@ -174,6 +270,10 @@ export function runTransitionSweep(callback) {
     function runOpenToEditAndCreate(cb) {
       if (transitionConfig.autoEditMode.enabled !== true) return cb();
       blogModule.autoCloseBlog(cb);
+    },
+    function runAutoTranslate(cb) {
+      // before the language close, a closed language can not be edited any more
+      runAutoTranslateRule(cb);
     },
     function runLanguageAutoClose(cb) {
       runLanguageAutoCloseRule(cb);

@@ -546,6 +546,7 @@ class Blog {
         eachLimit(articleList, 1, function (article, cb2) {
           debug("translateArticles.forEach");
           if (article.categoryEN === "Upcoming Events") return cb2();
+          if (article.categoryEN === "--unpublished--") return cb2();
 
           // to lang already defined
           if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
@@ -559,7 +560,7 @@ class Blog {
 
           const options = { fromLang: fromLang, toLang: toLang, text: source };
 
-          if (translator[service] && translator[service].active) {
+          if (translator[service] && translator[service].active()) {
             const fakeUser = { OSMUser: translator[service].user };
             translator[service].translate(options, function (err, text) {
               if (err) {
@@ -1178,6 +1179,28 @@ function getComparableBlogNumber(blog) {
   const match = blog.name.match(/^WN(\d+)$/i);
   if (!match) return null;
   return Number.parseInt(match[1], 10);
+}
+
+// findPreviousBlogs(blog,count,callback)
+// returns the up to count blogs before blog (WN<n-1> ... WN<n-count>),
+// blogs that do not exist are left out
+export function findPreviousBlogs(blog, count, callback) {
+  debug("findPreviousBlogs");
+  const number = getComparableBlogNumber(blog);
+  if (number === null) return callback(null, []);
+  const prefix = blog.name.replace(/\d+$/, "");
+  const result = [];
+  let k = 1;
+  function next() {
+    if (k > count || number - k < 0) return callback(null, result);
+    findOne({ name: prefix + (number - k) }, function (err, previous) {
+      if (err) return callback(err);
+      if (previous) result.push(previous);
+      k += 1;
+      next();
+    });
+  }
+  next();
 }
 
 function isWeeklyNoteBlog(blog) {
@@ -2032,6 +2055,7 @@ const blogModule = {
   findBlogByRouteId: findBlogByRouteId,
   findBlogByRouteIdForUser: findBlogByRouteIdForUser,
   findCurrentEditBlog: findCurrentEditBlog,
+  findPreviousBlogs: findPreviousBlogs,
   findBlogsForOutstandingExport: findBlogsForOutstandingExport,
   buildOutstandingExportZip: buildOutstandingExportZip,
   getOutstandingLangsForBlog: getOutstandingLangsForBlog,
