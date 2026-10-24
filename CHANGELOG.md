@@ -1,8 +1,8 @@
 # Changelog
 
-## [4.5.0-beta.4](https://github.com/TheFive/osmbc/tree/4.5.0-beta.4) (2026-10-24)
+## [4.5.0-beta.5](https://github.com/TheFive/osmbc/tree/4.5.0-beta.5) (2026-10-24)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.12...4.5.0-beta.4)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.12...4.5.0-beta.5)
 
 **Features:**
 
@@ -21,6 +21,9 @@
 - mobile: growing comment fields, no hint texts on phones
 - mobile: chosen votes in the blog views on phones too
 - mobile: show First Draft as buttons at the text field on small screens
+- article: offer a First Draft when collecting a link
+- article: let First Draft suggest a compact title when collecting
+- article: roll out First Draft by user list, full or guest
 
 **Fixed bugs:**
 
