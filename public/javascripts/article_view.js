@@ -119,6 +119,8 @@ function init() {
 
     .trigger("change");
   initSecondLanguage();
+  $("#articleFirstDraftDropdown")
+    .on("click", ".firstDraftItem", firstDraft);
   // $('[data-bs-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
@@ -929,4 +931,33 @@ function translate(langFrom, langToParam, service) {
       $(".translateDone" + langFrom + langTo + "." + service).removeClass("d-none");
     }
   });
+}
+
+
+
+// First Draft: let the server ask Claude for a summary of the link
+// and put it into the (empty) markdown of the language
+function firstDraft(event) {
+  event.preventDefault();
+  const item = $(this);
+  const lang = item.data("lang");
+  const url = item.data("url");
+  const markdown = $("#markdown" + lang);
+  if (item.hasClass("disabled")) return false;
+  if (markdown.val() !== "" && !window.confirm("Markdown " + lang + " is not empty, replace it?")) return false;
+  const sameLang = $(".firstDraftItem").filter(function() { return $(this).data("lang") === lang; });
+  sameLang.addClass("disabled");
+  item.find(".firstDraftDone, .firstDraftError").addClass("d-none");
+  item.find(".firstDraftWait").removeClass("d-none");
+  $.post(window.htmlroot + "/article/firstdraft/" + encodeURIComponent(lang), { url: url }, function (data) {
+    item.find(".firstDraftWait").addClass("d-none");
+    item.find(".firstDraftDone").removeClass("d-none");
+    markdown.val(data).trigger("change");
+  }).fail(function (jqXHR) {
+    item.find(".firstDraftWait").addClass("d-none");
+    item.find(".firstDraftError").removeClass("d-none");
+    item.attr("title", url + "\n" + (jqXHR.responseText || "First Draft failed"));
+    sameLang.removeClass("disabled");
+  });
+  return false;
 }

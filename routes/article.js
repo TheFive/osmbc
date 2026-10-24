@@ -4,7 +4,7 @@ import { Router } from "express";
 import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
 import { resolve } from "path";
-import { NOT_FOUND, FORBIDDEN } from "http-status-codes";
+import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY } from "http-status-codes";
 import { renderFile } from "pug";
 
 
@@ -26,6 +26,7 @@ import configModule from "../model/config.js";
 import userModule from "../model/user.js";
 import htmlTitle from "../model/htmltitle.js";
 import translator from "../model/translator.js";
+import firstDraft from "../model/firstDraft.js";
 
 import auth from "../routes/auth.js";
 
@@ -270,7 +271,10 @@ function renderArticleId(req, res, next) {
       util: util,
       collectedByGuest: collectedByGuest,
       mainTranslationService: mainTranslationService,
-      translationServices: translationServices
+      translationServices: translationServices,
+      firstDraftUrls: (firstDraft.isVisibleFor(req.user) && firstDraft.active() && typeof article.collection === "string")
+        ? [...new Set(util.getAllURL(article.collection))]
+        : []
     });
   }
   );
@@ -975,7 +979,7 @@ function urlExist(req, res) {
       });
     },
     function final(err) {
-      if (err) res.end(err);
+      if (err) return req.next(err);
       else res.json(result);
     }
   );
@@ -1114,6 +1118,17 @@ function translateWithPlugin(translatePlugin) {
 }
 
 
+function postFirstDraft(req, res) {
+  debug("postFirstDraft");
+  if (!firstDraft.isVisibleFor(req.user)) {
+    return res.status(FORBIDDEN).type("text/plain").send("First Draft is not enabled for " + req.user.OSMUser);
+  }
+  firstDraft.createDraft({ lang: req.params.lang, url: req.body.url })
+    .then((text) => res.type("text/plain").send(text))
+    .catch((err) => res.status(BAD_GATEWAY).type("text/plain").send(err.message));
+}
+
+
 function isFirstCollector(req, res, next) {
   if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
@@ -1140,6 +1155,7 @@ router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
+router.post("/firstdraft/:lang", allowFullAccess, postFirstDraft);
 router.post("/urlexist", allowGuestAccess, urlExist);
 router.post("/checkfeatureimage", allowFullAccess, checkFeatureImage);
 router.get("/readability", allowFullAccess, getExternalText);

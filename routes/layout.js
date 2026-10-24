@@ -7,6 +7,7 @@ import config from "../config.js";
 import language from "../model/language.js";
 import { osmbcMarkdown } from "../util/md_util.js";
 import configModule from "../model/config.js";
+import firstDraft from "../model/firstDraft.js";
 
 import { getTBC, find } from "../model/blog.js";
 import { getAvatar as _getAvatar } from "../model/user.js";
@@ -180,6 +181,7 @@ function prepareRenderLayout(req, res, next) {
 
     const scriptUser = config.getValue("scripts").user;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
+    const firstDraftVisible = firstDraft.isVisibleFor(req.user);
     const helpMenu = configModule.getConfig("helpmenu");
     const exportProfilesRaw = config.getValue("ExportProfiles", { mustExist: true });
     const exportProfiles = Object.keys(exportProfilesRaw)
@@ -224,6 +226,7 @@ function prepareRenderLayout(req, res, next) {
       getAvatar: _getAvatar,
       scriptUser: scriptUser,
       blogTranslationVisibleFor: blogTranslationVisibleFor,
+      firstDraftVisible: firstDraftVisible,
       exportProfiles: exportProfiles
     });
     next();

@@ -4,6 +4,7 @@
 import path from "path";
 import fs from "fs";
 import nock from "nock";
+import sinon from "sinon";
 import should from "should";
 import testutil from "../testutil.js";
 import userModule from "../../model/user.js";
@@ -14,6 +15,7 @@ import { cmdCtrl } from "../../test/PageObjectModel/page.js";
 import { By, Key } from "selenium-webdriver";
 
 import util from "../../util/util.js";
+import linkCheck from "../../util/linkCheck.js";
 import config from "../../config.js";
 
 const osmbcLink = util.osmbcLink;
@@ -178,13 +180,24 @@ describe("uc.article", function() {
     /* eslint-enable mocha/no-synchronous-tests */
   });
 
-  it.skip("should calculate a new height, if to many lines are used", function(bddone) {
-    // Function is skipped, it is unclear, how to deal with modified height in zombie.js
+  describe("Markdown field height", function() {
+    this.timeout(maxTimer);
+    beforeEach(async function() {
+      await driver.get(osmbcLink("/article/" + articleId));
+    });
+    it("should calculate a new height, if to many lines are used", async function() {
+      const articlePage = osmbcApp.getArticlePage();
+      await articlePage.fillMarkdownInput("DE", "one line");
+      const initialHeight = await articlePage.getMarkdownInputHeight("DE");
 
+      const manyLines = Array.from({ length: 20 }, (_, i) => "line " + (i + 1)).join("\n");
+      await articlePage.fillMarkdownInput("DE", manyLines);
+      const grownHeight = await articlePage.getMarkdownInputHeight("DE");
+      should(grownHeight).be.above(initialHeight * 2);
 
-    // Simulate a change Event manually
-
-    bddone();
+      await articlePage.fillMarkdownInput("DE", "one line again");
+      should(await articlePage.getMarkdownInputHeight("DE")).eql(initialHeight);
+    });
   });
   describe("Change Collection", function() {
     this.timeout(maxTimer * 3);
@@ -236,6 +249,21 @@ describe("uc.article", function() {
         text: "https://www.openstreetmap.org/user/Sever . . . 37681",
         warning: false
       });
+    });
+    it("should check a typed link once, not every partial link while typing", async function() {
+      const typedUrl = "https://www.openstreetmap.org/a_brilliant_map";
+      const checkUrl = sinon.spy(linkCheck, "checkUrl");
+      try {
+        // sendKeys types char by char, every keyup redraws the link area
+        await osmbcApp.getArticlePage().fillCollectionInput(typedUrl);
+        await driver.wait(() => checkUrl.calledWith(typedUrl), 5000);
+
+        const checked = checkUrl.args.map(a => a[0]);
+        should(checked.filter(u => u === typedUrl)).have.length(1);
+        should(checked.filter(u => u !== typedUrl && typedUrl.startsWith(u))).eql([]);
+      } finally {
+        checkUrl.restore();
+      }
     });
   });
   describe("QueryParameters", function() {
@@ -352,9 +380,30 @@ describe("uc.article", function() {
     });
   });
   describe("Translate", function() {
-    // skipped, as there is only a workaround ignoring internal translation nock
-    it.skip("should call and translate an article", async function() {
+    this.timeout(maxTimer);
+    it("should call and translate an article", async function() {
+      // The Translate menu lists only the user's configured services.
+      // The server runs in this process, so nock catches its call to DeepL
+      // (config.test.yaml has a fake DeeplProConfig authKey).
+      const user = await userModule.findOne({ OSMUser: "TheFive" });
+      user.translationServices = ["deeplPro"];
+      await user.save();
+      nock("https://api.deepl.com")
+        .post("/v2/translate", body => body.source_lang === "DE" && body.target_lang === "EN")
+        .reply(200, { translations: [{ detected_source_language: "DE", text: "<p>English <b>text</b></p>" }] });
+      const article = await articleModule.findById(articleId);
+      article.markdownDE = "Deutscher *Text*";
+      await article.save();
+      await driver.get(osmbcLink("/article/" + articleId));
 
+      const articlePage = osmbcApp.getArticlePage();
+      await articlePage.translateWithMenu("DE", "EN", "deeplPro");
+      await articlePage.waitMarkdownInputToBe("EN", "English **text**");
+      await articlePage.clickSave();
+
+      const saved = await articleModule.findById(articleId);
+      should(saved.markdownEN).eql("English **text**");
+      should(saved.markdownDE).eql("Deutscher *Text*");
     });
   });
 });

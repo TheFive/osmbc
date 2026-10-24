@@ -88,6 +88,25 @@ class ArticlePage extends StandardPage {
     return text;
   }
 
+  async getMarkdownInputHeight(lang) {
+    const ele = await this._driver.findElement(By.id("markdown" + lang));
+    const rect = await ele.getRect();
+    return rect.height;
+  }
+
+  // Navbar "Translate" menu, entry "Translate <from>-><to>" of the given
+  // service (only listed for the services in the user's translationServices).
+  async translateWithMenu(fromLang, toLang, service) {
+    await this.assertPage();
+    await (await this._driver.findElement(By.id("articleTranslateMenu"))).click();
+    const entry = await this._driver.findElement(By.xpath(
+      `//ul[@id='articleTranslationDropdown']//li[normalize-space(text())='Use ${service}:']` +
+      `//a[contains(concat(' ', normalize-space(@class), ' '), ' translate${fromLang}${toLang} ')]`
+    ));
+    await this._driver.wait(until.elementIsVisible(entry), 2000);
+    await entry.click();
+  }
+
   async waitMarkdownInputToBe(lang, text) {
     const ele =  await this._driver.findElement(By.id("markdown" + lang));
     // Sample for a fluent wait with selenium

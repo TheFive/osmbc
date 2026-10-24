@@ -44,6 +44,7 @@
     "version": "npm run changelog && git add CHANGELOG.md"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.135.0",
     "@mozilla/readability": "0.6.x",
     "archiver": "8.0.0",
     "async": "3.2.x",
@@ -52,7 +53,7 @@
     "bootstrap-select": "^1.14.0-beta3",
     "cheerio": "1.2.0",
     "commander": "15.0.0",
-    "compression": "1.8.1",
+    "compression": "1.8.2",
     "connect-pg-simple": "10.0.x",
     "debug": "4.4.x",
     "diff": "9.0.0",

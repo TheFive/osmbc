@@ -6,6 +6,7 @@ import async from "async";
 
 
 import express from "express";
+import { FORBIDDEN } from "http-status-codes";
 import auth from "../routes/auth.js";
 
 
@@ -14,6 +15,7 @@ import config from "../config.js";
 
 import configModule from "../model/config.js";
 import logModule from "../model/logModule.js";
+import firstDraft from "../model/firstDraft.js";
 const debug = _debug("OSMBC:routes:config");
 const router     = express.Router();
 
@@ -110,8 +112,15 @@ function postConfigId(req, res, next) {
 }
 
 
-router.get("/:name", auth.checkRole("full"), renderConfigName);
-router.post("/:name", auth.checkRole("full"), postConfigId);
+// the First Draft prompt is only for the group in FirstDraftConfig.visibleFor
+function checkFirstDraftAccess(req, res, next) {
+  if (req.params.name !== "firstdraftprompt") return next();
+  if (firstDraft.isVisibleFor(req.user)) return next();
+  res.status(FORBIDDEN).send("First Draft is not enabled for " + req.user.OSMUser);
+}
+
+router.get("/:name", auth.checkRole("full"), checkFirstDraftAccess, renderConfigName);
+router.post("/:name", auth.checkRole("full"), checkFirstDraftAccess, postConfigId);
 
 
 
