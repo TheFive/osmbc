@@ -318,3 +318,13 @@ Done (2026-10-23):
 For the product owner:
 - History log: choose visible columns.
 - Liked: "make comment" button on the right of the review page.
+
+## Merge of master 4.4.11/4.4.12 (2026-10-24)
+
+- First Draft (Claude) came as a navbar dropdown with `d-none d-sm-block`
+  and the languages of the desktop pair — on phones a hidden function
+  (class A) and the wrong languages. Like Translate: in mobile mode the menu
+  is replaced by "First Draft <url>" buttons at the empty text field of the
+  mobile language (and of the second language when shown); desktop keeps
+  the menu.
+

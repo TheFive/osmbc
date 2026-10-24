@@ -216,6 +216,30 @@ class ArticlePage extends StandardPage {
     return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
   }
 
+  // First Draft: shown buttons at the empty text field (small screens)
+  async getFirstDraftButtons() {
+    const result = [];
+    for (const b of await this._driver.findElements(By.css("button.firstDraftItem"))) {
+      if (await b.isDisplayed()) result.push((await b.getAttribute("data-lang")) + " " + (await b.getAttribute("data-url")));
+    }
+    return result;
+  }
+
+  async isFirstDraftMenuShown() {
+    return (await this._driver.findElements(By.id("articleFirstDraftMenu"))).length > 0;
+  }
+
+  async tapFirstDraft(lang) {
+    await this.assertPage();
+    const button = await this._driver.findElement(By.css(`button.firstDraftItem[data-lang='${lang}']`));
+    await this.tap(button);
+    await this._driver.wait(async () => (await button.findElements(By.css(".firstDraftDone:not(.d-none), .firstDraftError:not(.d-none)"))).length > 0, 5000, "First Draft did not finish");
+  }
+
+  async getMarkdown(lang) {
+    return this._driver.findElement(By.id("markdown" + lang)).getAttribute("value");
+  }
+
   async isLanguageFlagsShown() {
     return this._driver.findElement(By.id("languageFlags")).isDisplayed();
   }

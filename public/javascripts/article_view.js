@@ -119,8 +119,12 @@ function init() {
 
     .trigger("change");
   initSecondLanguage();
-  $("#articleFirstDraftDropdown")
-    .on("click", ".firstDraftItem", firstDraft);
+  // First Draft: menu entries (desktop) and buttons at the text field
+  // (small screens); mousedown keeps the focus in the text field, on touch
+  // screens the tap was lost otherwise
+  $(document)
+    .on("click", ".firstDraftItem", firstDraft)
+    .on("mousedown", "button.firstDraftItem", function(event) { event.preventDefault(); });
   // $('[data-bs-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;

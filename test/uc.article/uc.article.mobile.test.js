@@ -8,6 +8,8 @@ import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import util from "../../util/util.js";
 import ArticlePage from "../PageObjectModel/articlePage.js";
+import firstDraft from "../../model/firstDraft.js";
+import sinon from "sinon";
 
 const osmbcLink = util.osmbcLink;
 
@@ -158,6 +160,39 @@ describe("uc.article save bar", function() {
     const articlePage = new ArticlePage(driver);
     await driver.get(osmbcLink("/article/" + articleId));
     should(await articlePage.getShownHelpTexts()).eql([]);
+  });
+  describe("First Draft", function() {
+    let draftArticle;
+    beforeEach(async function() {
+      // only users in FirstDraftConfig.visibleFor (config.test.yaml) see it
+      await userModule.createNewUser({ OSMUser: "TestUser", access: "full", mainLang: "DE", secondLang: "EN", email: "t@b.c" });
+      draftArticle = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Party", collection: "https://news.example.org/party" });
+      firstDraft.fortestonly.setClient({ beta: { messages: { create: sinon.stub().resolves({ stop_reason: "end_turn", content: [{ type: "text", text: "Die Bonner Gruppe hat Bänke kartiert." }] }) } } });
+      nock("https://news.example.org").get("/party")
+        .reply(200, "<html><body><article><p>The Bonn group mapped all benches in the city park, forty people joined.</p></article></body></html>", { "Content-Type": "text/html" });
+    });
+    afterEach(function() {
+      firstDraft.fortestonly.setClient(null);
+      sinon.restore();
+    });
+    it("should offer First Draft at the empty text field on a phone", async function() {
+      driver = await testutil.getNewDriver("TestUser", { device: "phone" });
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + draftArticle.id));
+      should(await articlePage.isFirstDraftMenuShown()).be.False();
+      should(await articlePage.getFirstDraftButtons()).eql(["DE https://news.example.org/party"]);
+      should(await articlePage.tapTargetsTooSmall("button.firstDraftItem")).eql([]);
+      should(await articlePage.hasHorizontalScroll()).be.False();
+      await articlePage.tapFirstDraft("DE");
+      should(await articlePage.getMarkdown("DE")).eql("Die Bonner Gruppe hat Bänke kartiert.");
+    });
+    it("should keep the First Draft menu on a desktop", async function() {
+      driver = await testutil.getNewDriver("TestUser");
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + draftArticle.id));
+      should(await articlePage.isFirstDraftMenuShown()).be.True();
+      should(await articlePage.getFirstDraftButtons()).eql([]);
+    });
   });
   it("should not show the insert buttons on a desktop", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });

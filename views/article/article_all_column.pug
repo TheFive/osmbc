@@ -17,6 +17,7 @@ block markdownArea
         div.col
           div.osmbc-language-column
             if layout.mobileView
+              +mobileFirstDraftButtons(lang)
               +mobileTranslateButtons(lang)
             +markdownWithPreview(lang)
     if layout.mobileView

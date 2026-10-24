@@ -95,6 +95,25 @@ mixin mobileTranslateButtons(lang)
           each service in services
             span.badge.text-bg-success.d-none(class="translateDone" + source + lang + " " + service)="translated from " + source
 
+//- Small screens: First Draft at the empty text field, one button per
+//- collected url (like Translate, the menu is desktop only). Click handling
+//- and status: firstDraft() in article_view.js.
+mixin mobileFirstDraftButtons(lang)
+  if (layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0 && !article["markdown" + lang] && article.isChangeAllowed("markdown" + lang))
+    div.d-flex.flex-wrap.gap-2.my-2
+      each url in firstDraftUrls
+        - let shortUrl = url.replace(/^https?:\/\/(www\.)?/, "")
+        - if (shortUrl.length > 30) shortUrl = shortUrl.substring(0, 27) + "..."
+        button.btn.btn-outline-primary.firstDraftItem.text-start(type="button" data-lang=lang data-url=url title=url)
+          span.firstDraftLabel="First Draft "
+          small=shortUrl
+          span.ms-1.firstDraftWait.d-none
+            i.fa.fa-spinner.fa-spin
+          span.ms-1.firstDraftDone.d-none
+            i.fa.fa-check
+          span.ms-1.firstDraftError.d-none.text-danger
+            i.fa.fa-times
+
 //- Small screens: the second language of the desktop pair on demand,
 //- below the mobile language and editable (X11). "Translate → second" shows
 //- it and translates in one tap; article_view.js shows the button while the
@@ -110,6 +129,7 @@ mixin mobileSecondLanguage(lang, second)
       button.btn.btn-outline-primary.d-none#translateToSecondLang(type="button" data-from=lang data-to=second data-service=services[0] onmousedown="event.preventDefault();")="Translate → " + second
   div.col-12.d-none#secondLanguage
     div.osmbc-language-column
+      +mobileFirstDraftButtons(second)
       +mobileTranslateButtons(second)
       +markdownWithPreview(second)
 
@@ -222,7 +242,8 @@ mixin translationMenu
 
 mixin firstDraftMenu
   //- First Draft: one entry per displayed, empty language markdown and collected url
-  if (layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0)
+  //- small screens: First Draft buttons at the text field replace this menu
+  if (!layout.mobileView && layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0)
     - let fdLanguages = layout.user.getLanguages()
     - if (layout.user.getLanguageSet() === "Active") fdLanguages = layout.activeLanguages
     - fdLanguages = fdLanguages.filter((l) => l && !article["markdown" + l] && article.isChangeAllowed("markdown" + l))
