@@ -1162,7 +1162,8 @@ router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
-router.post("/firstdraft/:lang", allowFullAccess, postFirstDraft);
+// who may use it decides FirstDraftConfig.visibleFor (also guests)
+router.post("/firstdraft/:lang", allowGuestAccess, postFirstDraft);
 router.post("/urlexist", allowGuestAccess, urlExist);
 router.post("/checkfeatureimage", allowFullAccess, checkFeatureImage);
 router.get("/readability", allowFullAccess, getExternalText);

@@ -91,6 +91,16 @@ describe("router/firstDraft", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "First Draft is not enabled for Hallo"
       }));
+    // guests (created on login) pass the role check, visibleFor decides
+    it("should deny a guest user outside the group",
+      testutil.checkPostUrlWithUser({
+        url: url,
+        form: form,
+        username: "GuestUser",
+        password: "GuestUser",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "First Draft is not enabled for GuestUser"
+      }));
   });
 
   describe("route GET /config/firstdraftprompt", function() {

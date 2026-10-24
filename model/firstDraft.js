@@ -20,7 +20,7 @@ const debug = _debug("OSMBC:model:firstDraft");
 //   apiKey: sk-ant-...         (optional, otherwise ANTHROPIC_API_KEY)
 //   model: claude-opus-5-5     (optional)
 //   effort: medium             (optional, low|medium|high|xhigh|max)
-//   visibleFor:                (OSM user names, or "full" for everybody)
+//   visibleFor:                (who sees First Draft, see isVisibleFor)
 //     - TheFive
 //
 // The prompt itself is the config text "firstdraftprompt" (admin page).
@@ -50,12 +50,24 @@ function active() {
   return (typeof firstDraftConfig.apiKey === "string" || typeof process.env.ANTHROPIC_API_KEY === "string");
 }
 
-function isVisibleFor(user) {
+// FirstDraftConfig.visibleFor, to roll the function out step by step:
+//   list of OSM user names   only these users
+//   "full"                   all full users
+//   "guest"                  all full and guest users
+//   missing, null, "", []    nobody
+// "full" and "guest" ignore case; any other value means nobody.
+function isVisibleForValue(visibleFor, user) {
   if (!user) return false;
-  const visibleFor = firstDraftConfig.visibleFor;
-  if (visibleFor === "full") return user.access === "full";
-  if (!Array.isArray(visibleFor)) return false;
-  return visibleFor.indexOf(user.OSMUser) >= 0;
+  if (Array.isArray(visibleFor)) return visibleFor.indexOf(user.OSMUser) >= 0;
+  if (typeof visibleFor !== "string") return false;
+  const value = visibleFor.trim().toLowerCase();
+  if (value === "full") return user.access === "full";
+  if (value === "guest") return user.access === "full" || user.access === "guest";
+  return false;
+}
+
+function isVisibleFor(user) {
+  return isVisibleForValue(firstDraftConfig.visibleFor, user);
 }
 
 async function loadPageText(url) {
@@ -148,6 +160,7 @@ const firstDraft = {
   isVisibleFor: isVisibleFor,
   createDraft: createDraft,
   fortestonly: {
+    isVisibleForValue: isVisibleForValue,
     setClient: setClient,
     loadPageText: loadPageText
   }

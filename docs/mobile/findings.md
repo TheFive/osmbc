@@ -345,4 +345,8 @@ offered here, to the users in `FirstDraftConfig.visibleFor`.
   schema `{ markdown, title }`); it replaces the page title unless the user
   changed the title field. The title instruction is a fixed sentence in
   `model/firstDraft.js`, not part of the admin-editable prompt.
+- Roll-out by `FirstDraftConfig.visibleFor`: a list of OSM users; `"full"`
+  all full users; `"guest"` full and guest users (case ignored); missing or
+  empty: nobody. The draft route follows it (also guests); the prompt admin
+  page stays full-only.
 

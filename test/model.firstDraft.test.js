@@ -45,6 +45,36 @@ describe("model/firstDraft", function() {
       should(firstDraft.isVisibleFor({ OSMUser: "Hallo", access: "full" })).be.false();
       should(firstDraft.isVisibleFor(null)).be.false();
     });
+    describe("values of visibleFor", function() {
+      const visible = firstDraft.fortestonly.isVisibleForValue;
+      const full = { OSMUser: "Full", access: "full" };
+      const guest = { OSMUser: "Guest", access: "guest" };
+      const denied = { OSMUser: "Denied", access: "denied" };
+      it("should allow only the users of a list", function() {
+        should(visible(["Full", "Guest"], full)).be.true();
+        should(visible(["Full", "Guest"], guest)).be.true();
+        should(visible(["Other"], full)).be.false();
+        should(visible([], full)).be.false();
+      });
+      it("should allow nobody if missing or empty", function() {
+        for (const value of [undefined, null, "", "  ", {}, 1, "nobody"]) {
+          should(visible(value, full)).be.false(JSON.stringify(value));
+        }
+      });
+      it("should allow all full users with full", function() {
+        for (const value of ["full", "FULL", " Full "]) {
+          should(visible(value, full)).be.true(value);
+          should(visible(value, guest)).be.false(value);
+        }
+      });
+      it("should allow full and guest users with guest", function() {
+        for (const value of ["guest", "GUEST", "Guest"]) {
+          should(visible(value, full)).be.true(value);
+          should(visible(value, guest)).be.true(value);
+          should(visible(value, denied)).be.false(value);
+        }
+      });
+    });
   });
 
   describe("createDraft", function() {
