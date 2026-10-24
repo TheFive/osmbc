@@ -11,7 +11,7 @@
 #
 # CHANGELOG.md is fully regenerated from the 4.4.9 tag onwards
 # (`npm run changelog`); everything before that is the static
-# CHANGELOG-ARCHIVE.md from the old github_changelog_generator setup.
+# docs/CHANGELOG-ARCHIVE.md from the old github_changelog_generator setup.
 
 [changelog]
 header = """
@@ -46,7 +46,7 @@ body = """
 """
 footer = """
 Older releases (up to 4.4.9, generated from GitHub issues/PRs by the
-previous tool): see [CHANGELOG-ARCHIVE.md](CHANGELOG-ARCHIVE.md).
+previous tool): see [CHANGELOG-ARCHIVE.md](docs/CHANGELOG-ARCHIVE.md).
 """
 trim = true
 

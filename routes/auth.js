@@ -140,7 +140,7 @@ function initialise(app) {
 
   // Initialise all login mechisms based on config file
   if (authConfig.htaccess.enabled) {
-    const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: join(config.getDirName(), "test_pwd") });
+    const strategy = new LocalHtpasswdStrategy({ name: "htpasswd", file: join(config.getDirName(), "test", "test_pwd") });
     passport.use(strategy);
   }
   if (authConfig.openstreetmap_oauth20.enabled) {

@@ -5,6 +5,7 @@
     - [Examples of use (for after)](#examples-of-use-for-after)
   3. [Node's global modules](#3---nodes-global-modules)
   4. [Node's local modules](#4---nodes-local-modules)
+    - [Production server](#production-server)
     - [Locking versions](#locking-versions)
   5. [Database](#5---database)
     - [Creating tables and views](#creating-tables-and-views)
@@ -168,6 +169,21 @@ $ npm install
 ```
 
 Depending on machine configuration, you may need doing this as root.
+
+### Production server
+
+On a production server install exactly the versions from `package-lock.json`
+and leave out the development tools (mocha, selenium-webdriver, nyc, eslint, …):
+
+```console
+$ npm ci --omit=dev
+```
+
+Run this after every `git pull` of a new release as well. A plain `npm ci`
+or `npm install` also installs the dev dependencies (about 800 instead of
+about 330 packages), which the server never uses but which still show up in
+`npm audit` and deprecation warnings. Nothing OSMBC runs at runtime needs them,
+including `postinstall.js`.
 
 ### Locking versions
 

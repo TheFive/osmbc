@@ -34,7 +34,7 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   gets its own dedicated worktree (see "Development workflow" below), a
   worktree's `config.development.yaml` can just directly hold whatever
   DB/port that branch needs — no per-branch overlay/switching required.
-- The `npm test*` scripts run through `scripts/run-tests.mjs`: each run
+- The `npm test*` scripts run through `tools/run-tests.mjs`: each run
   gets a free port, its own database `osmbc_test_<port>` and a temp
   directory (mail log, `.sync-state.json`), passed via `OSMBC_TEST_*` env
   variables that `config.js` lays over `config.test.yaml` (the file itself
@@ -104,7 +104,7 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
 - New feature/fix work (e.g. implementing a GitHub issue) belongs on its
   own branch created off `master`, not committed directly to `master` —
   part of the GitHub-Flow model being adopted (see
-  `RELEASE_PROCESS_CHECKLIST.md`). Small, purely internal process/tooling
+  `docs/RELEASE_PROCESS_CHECKLIST.md`). Small, purely internal process/tooling
   changes the user is actively directing turn-by-turn (like the
   Conventional Commits rollout itself) are the exception and can go
   straight to `master`.
@@ -113,7 +113,7 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   branches and must not be opened for them. Branch → commit → merge
   straight into `master` locally and push (see "Closing out a finished
   feature/fix branch" below); do not run `gh pr create`. PRs (and their
-  squash-merge handling from `RELEASE_PROCESS_CHECKLIST.md`) are reserved
+  squash-merge handling from `docs/RELEASE_PROCESS_CHECKLIST.md`) are reserved
   for actual external contributors, who are a different situation
   entirely (someone else's branch, not yours to merge unilaterally).
 - That feature/fix branch gets its **own new worktree/folder** — never
@@ -129,7 +129,7 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   issue links) — applies to every commit made in this repo, including ones
   Claude makes on the user's behalf. A `commit-msg` hook
   (`git-hooks/CommitMsg.sh`) can enforce this locally once installed (see
-  `README Developer.md`), but don't rely on the hook being installed —
+  `docs/development.md`), but don't rely on the hook being installed —
   write commit messages in this format regardless.
 - **Closing out a finished feature/fix branch:** merge into `master` and
   push first, then — before removing anything — check the worktree for

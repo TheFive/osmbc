@@ -120,6 +120,13 @@ DeeplProConfig:
 blogTranslationVisibleFor:
   - TheFive
   - TheOther
+
+# First Draft (Claude summary of a collected link).
+FirstDraftConfig:
+  apiKey: Test Key Fake
+  model: claude-opus-5-5
+  visibleFor:
+    - TestUser
 urlWoErrorWhileEdit: []
 
 # Automatic workflow transitions.

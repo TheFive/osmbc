@@ -162,6 +162,32 @@ mixin translationMenu
 
 
 
+mixin firstDraftMenu
+  //- First Draft: one entry per displayed, empty language markdown and collected url
+  if (layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0)
+    - let fdLanguages = layout.user.getLanguages()
+    - if (layout.user.getLanguageSet() === "Active") fdLanguages = layout.activeLanguages
+    - fdLanguages = fdLanguages.filter((l) => l && !article["markdown" + l] && article.isChangeAllowed("markdown" + l))
+    if (fdLanguages.length > 0)
+      li.dropdown.navbar-item#firstDraft.d-none.d-sm-block
+        a.nav-link.dropdown-toggle#articleFirstDraftMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") First Draft
+        ul.dropdown-menu#articleFirstDraftDropdown(aria-labelledby="articleFirstDraftMenu" style="overflow-y: auto;")
+          each lang in fdLanguages
+            each url in firstDraftUrls
+              - let shortUrl = url.replace(/^https?:\/\/(www\.)?/, "")
+              - if (shortUrl.length > 50) shortUrl = shortUrl.substring(0, 47) + "..."
+              li
+                a.dropdown-item.firstDraftItem(href="#" data-lang=lang data-url=url title=url)
+                  span.firstDraftLabel=lang + " -> "
+                  small.text-body-secondary=shortUrl
+                  span.ms-1.firstDraftWait.d-none
+                    i.fa.fa-spinner.fa-spin
+                  span.ms-1.firstDraftDone.d-none
+                    i.fa.fa-check
+                  span.ms-1.firstDraftError.d-none.text-danger
+                    i.fa.fa-times
+
+
 block append scripts_to_load
   script(src=layout.htmlroot + "/javascripts/markdown-it.min.js?osmbc_v=" + layout.osmbc_version)
   script(src=layout.htmlroot + "/javascripts/markdown-it-emoji.min.js?osmbc_v=" + layout.osmbc_version)

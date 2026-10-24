@@ -7,7 +7,7 @@ import http from "http";
 import https from "https";
 import fs from "fs";
 
-import config from "./config.js";
+import config from "../config.js";
 import serveIndex from 'serve-index';
 const app = express();
 
