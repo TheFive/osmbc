@@ -127,7 +127,7 @@ a map of *where to look*, not a restatement of every field.
 | `DeeplProConfig` | DeepL API auth/endpoints for machine translation. |
 | `copyLanguageFromAnother` | Per-language "translate from this other language instead" fallback map. |
 | `blogTranslationVisibleFor` | Restricts the blog-translation feature to specific OSM usernames. |
-| `manyTranslationVisibleFor` | List of OSM usernames (or `"full"` for every user with full access) who get the "translate into many languages" menu in the article editor; each user still has to enable it via their own `translationServicesMany` setting. Missing = nobody. |
+| `manyTranslationEnabled` | `false` switches off the "translate into many languages" menu in the article editor (and the matching profile setting). Missing or `true` = available for every user, who still has to enable it via their own `translationServicesMany` setting ("Translation Services Used (One to Many)"). |
 | `ReviewInWP`, `urlWoErrorWhileEdit` | Misc per-language/per-URL editorial-workflow exceptions. |
 | `"media folder"` | Local-vs-published media path mapping used by markdown/export sanitizing (note the key needs quoting — it contains a space). |
 | `"Feature Image Base URL"` | **Required** (OSMBC refuses to start without it), e.g. `https://weeklyosm.eu`. When an editor saves a `Picture` article, its feature image must be a relative path (`/wp-content/...`) and must exist under this base url, otherwise the save is rejected. This keeps a broken `featureImage` out of the Hugo export. Migration/sync writes (API, `wp-reconcile`) are not checked. |

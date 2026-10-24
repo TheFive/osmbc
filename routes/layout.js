@@ -169,7 +169,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
     const markdown = osmbcMarkdown({ target: "editor" });
 
-    const manyTranslationVisibleFor = config.getValue("manyTranslationVisibleFor");
+    const manyTranslationEnabled = config.getValue("manyTranslationEnabled", { default: true }) !== false;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
     const helpMenu = configModule.getConfig("helpmenu");
     const exportProfilesRaw = config.getValue("ExportProfiles", { mustExist: true });
@@ -210,7 +210,7 @@ function prepareRenderLayout(req, res, next) {
       language2_locale: language.momentLocale(req.user.getSecondLang()),
       md_renderInline: (text) => markdown.renderInline(text ?? ""),
       getAvatar: _getAvatar,
-      manyTranslationVisibleFor: manyTranslationVisibleFor,
+      manyTranslationEnabled: manyTranslationEnabled,
       blogTranslationVisibleFor: blogTranslationVisibleFor,
       exportProfiles: exportProfiles
     });

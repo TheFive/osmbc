@@ -146,7 +146,7 @@ mixin translationMenu
                   - all.push(b);
                   if (layout.user.useOneTranslation(tService))
                     +articleTranslateMenu(a, b, tService)
-            if (layout.manyTranslationVisibleFor === "full" || (Array.isArray(layout.manyTranslationVisibleFor) && layout.manyTranslationVisibleFor.indexOf(layout.user.OSMUser)>=0))  
+            if (layout.manyTranslationEnabled)
               if (all.length > 1)
                 if (layout.user.useManyTranslation(tService))  
                   +articleTranslateMenu(a, all, tService)

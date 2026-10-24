@@ -234,7 +234,10 @@ function postUserId(req, res, next) {
   if (typeof (changes.translationServices) === "undefined") {
     changes.translationServices = [];
   }
-  if (typeof (changes.translationServicesMany) === "undefined") {
+  if (config.getValue("manyTranslationEnabled", { default: true }) === false) {
+    // field is hidden in the form, keep the stored value
+    delete changes.translationServicesMany;
+  } else if (typeof (changes.translationServicesMany) === "undefined") {
     changes.translationServicesMany = [];
   }
   if (typeof (changes.mailBlogLanguageStatusChange) === "string") {

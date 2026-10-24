@@ -106,9 +106,8 @@ userIsOldInDays: 60
 WelcomeRefreshInSeconds: 0
 createGuestUsersAutomatic: true
 
-# OSM users who see "translate into many languages" (or "full").
-manyTranslationVisibleFor:
-  - TestUser
+# "Translate into many languages" menu in the article editor (default: true).
+manyTranslationEnabled: true
 
 User-Agent: Hello i am Kitty
 
