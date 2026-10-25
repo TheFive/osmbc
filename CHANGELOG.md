@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.4.14](https://github.com/TheFive/osmbc/tree/4.4.14) (2026-10-25)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.13...4.4.14)
+
+**Features:**
+
+- **BREAKING** article: offer translate into many languages to all users
+manyTranslationVisibleFor replaced by the boolean
+manyTranslationEnabled (default true).
+- blog: auto-translate open languages at a configured time
+- admin: show upcoming automatic actions
+
+**Fixed bugs:**
+
+- **BREAKING** security: remove server-side script plugin
+config key scripts is gone; set
+manyTranslationVisibleFor to keep the many-languages translate menu.
+- deps: drop express-fileupload, sanitize-filename and glob
+- test: write the export log of a test run to its temp directory
+- blog: auto-translate only once per blog and language
+
 ## [4.4.13](https://github.com/TheFive/osmbc/tree/4.4.13) (2026-10-24)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.12...4.4.13)
