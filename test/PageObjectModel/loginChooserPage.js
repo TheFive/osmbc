@@ -1,6 +1,7 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
+import { untilStale } from "./page.js";
 
 import util from "../../util/util.js";
 
@@ -26,7 +27,7 @@ class LoginChooserPage extends Page {
   async clickHtAccessLogin() {
     const button = await this._driver.findElement(By.id("htaccesLoginButton"));
     await button.click();
-    await this._driver.wait(until.stalenessOf(button), 2000);
+    await this._driver.wait(untilStale(button), 2000);
   }
 }
 export default LoginChooserPage;

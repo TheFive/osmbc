@@ -1,6 +1,7 @@
 import util from "../../util/util.js";
 
 import { By, Key, until } from "selenium-webdriver";
+import { untilStale } from "./page.js";
 
 
 import StandardPage from "./standardPage.js";
@@ -48,7 +49,7 @@ class ArticlePage extends StandardPage {
     await this.scrollIntoView(button);
 
     await button.click();
-    await this._driver.wait(until.stalenessOf(ele));
+    await this._driver.wait(untilStale(ele));
   }
 
 
@@ -107,14 +108,14 @@ class ArticlePage extends StandardPage {
     await this.assertPage();
     const saveButton = await this._driver.findElement(By.css("button#saveButton"));
     await (saveButton).click();
-    await this._driver.wait(until.stalenessOf(saveButton), 2000);
+    await this._driver.wait(untilStale(saveButton), 2000);
   }
 
   async clickNoTranslationButton() {
     await this.assertPage();
     const noTranslationButton = await this._driver.findElement(By.css("button#noTranslationButton"));
     await (noTranslationButton).click();
-    await this._driver.wait(until.stalenessOf(noTranslationButton), 2000);
+    await this._driver.wait(untilStale(noTranslationButton), 2000);
   }
 
   async clickAddComment() {
@@ -125,7 +126,7 @@ class ArticlePage extends StandardPage {
     await this.scrollIntoView(addCommentButton);
     await this._waitForBootstrapOverlaysToDisappear();
     await (addCommentButton).click();
-    await this._driver.wait(until.stalenessOf(addCommentButton), 2000);
+    await this._driver.wait(untilStale(addCommentButton), 2000);
   }
 
   async selectAndPasteTextInMarkdown(lang, from, to, text) {

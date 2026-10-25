@@ -1,12 +1,29 @@
 import should from "should";
 import assert from "node:assert/strict";
 
-import { Key, By, until } from "selenium-webdriver";
+import { Key, By, until, Condition, error as webdriverError } from "selenium-webdriver";
 
 // Modifier for clipboard/select-all shortcuts: Command on macOS, Control
 // elsewhere (e.g. Linux on GitHub Actions). The browser runs on the same
 // machine as the tests, so the Node platform decides.
 export const cmdCtrl = process.platform === "darwin" ? Key.COMMAND : Key.CONTROL;
+
+// until.stalenessOf, but also counts chromedriver's "Node with given id does
+// not belong to the document" as stale: while the old document is being
+// replaced, chromedriver sometimes answers that (500) instead of a stale
+// element error (404), and until.stalenessOf throws it.
+export function untilStale(element) {
+  return new Condition("element to become stale", async function() {
+    try {
+      await element.getTagName();
+      return false;
+    } catch (e) {
+      if (e instanceof webdriverError.StaleElementReferenceError) return true;
+      if (e instanceof webdriverError.WebDriverError && /does not belong to the document/.test(e.message)) return true;
+      throw e;
+    }
+  });
+}
 
 export default class Page {
   constructor(driver) {
@@ -26,7 +43,7 @@ export default class Page {
     assert(this._navbarBrand);
     // wait for Old Marker to be obsolete. Own timeout, so a lost click fails
     // here with a clear message instead of running into the mocha timeout.
-    await this._driver.wait(until.stalenessOf(this._navbarBrand), 10000, "Page did not reload within 10s");
+    await this._driver.wait(untilStale(this._navbarBrand), 10000, "Page did not reload within 10s");
     // the old DOM is gone, wait for the new page and remember its marker, so
     // a second waitForPageReload does not return on the already stale one.
     // Not this.assertPage(): the reload may lead to another page type
@@ -46,7 +63,7 @@ export default class Page {
     } else {
       await element.click();
     }
-    await this._driver.wait(until.stalenessOf(element), 10000, "Click did not lead to a new page within 10s");
+    await this._driver.wait(untilStale(element), 10000, "Click did not lead to a new page within 10s");
   }
 
   async _checkUrl(url) {
@@ -98,7 +115,7 @@ export default class Page {
       // full implicit timeout when (as usual) there is no overlay at all
       const overlays = await this._driver.executeScript("return Array.from(document.querySelectorAll('.modal-backdrop, .dropdown-menu.show, .offcanvas.show'));");
       for (const overlay of overlays) {
-        await this._driver.wait(until.stalenessOf(overlay), 2000); // Warte bis zu 2s pro Overlay
+        await this._driver.wait(untilStale(overlay), 2000); // Warte bis zu 2s pro Overlay
       }
     } catch (e) {
       // Keine Overlays gefunden, weiter

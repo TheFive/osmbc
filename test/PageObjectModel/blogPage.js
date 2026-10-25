@@ -1,6 +1,7 @@
 "use strict;";
 
 import { By, until, error as webdriverError } from "selenium-webdriver";
+import { untilStale } from "./page.js";
 import util from "../../util/util.js";
 import StandardPage from "./standardPage.js";
 import should from "should";
@@ -43,7 +44,7 @@ class BlogPage extends StandardPage {
     // await this._driver.wait(until.elementIsEnabled(clickEditBlogDetail)); // Zusätzlich: Warte auf Aktivierung
     await clickEditBlogDetail.click();
     // await this._driver.executeScript("arguments[0].click();", clickEditBlogDetail); // JavaScript-Klick als Fallback
-    await this._driver.wait(until.stalenessOf(clickEditBlogDetail)); // Warte, bis das Element nicht mehr im DOM ist
+    await this._driver.wait(untilStale(clickEditBlogDetail)); // Warte, bis das Element nicht mehr im DOM ist
   }
 
   async clickReadyReview(blog, lang) {
@@ -55,7 +56,7 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const closeLang = await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`));
     await (closeLang).click();
-    await (this._driver.wait(until.stalenessOf(closeLang)));
+    await (this._driver.wait(untilStale(closeLang)));
   }
 
   async clickStartPersonalReview(lang) {
@@ -115,7 +116,7 @@ class BlogPage extends StandardPage {
     // already used for every other form-submit action in this file.
     const submitButton = await this.#findVisibleElement(buttonSelector);
     await submitButton.click();
-    await this._driver.wait(until.stalenessOf(submitButton));
+    await this._driver.wait(untilStale(submitButton));
     await this.assertPage();
   }
 

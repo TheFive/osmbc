@@ -1,6 +1,7 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
+import { untilStale } from "./page.js";
 import util from "../../util/util.js";
 
 import StandardPage from "./standardPage.js";
@@ -31,7 +32,7 @@ class BlogDetailPage extends StandardPage {
     await this.assertPage();
     const input = await this._driver.findElement(By.css("input[value='OK']"));
     await (input).click();
-    await this._driver.wait(until.stalenessOf(input));
+    await this._driver.wait(untilStale(input));
   }
 }
 

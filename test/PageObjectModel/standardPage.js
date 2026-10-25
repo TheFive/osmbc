@@ -1,6 +1,7 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
+import { untilStale } from "./page.js";
 
 import Page from "../../test/PageObjectModel/page.js";
 
@@ -15,7 +16,7 @@ export default class StandardPage extends Page {
     await this.assertPage();
     const blogMenu = await this._driver.findElement(By.css("a[href='/blog/" + blog + "']"));
     await blogMenu.click();
-    await this._driver.wait(until.stalenessOf(blogMenu));
+    await this._driver.wait(untilStale(blogMenu));
   }
 
   async clickInboxMenu(blog) {
@@ -32,7 +33,7 @@ export default class StandardPage extends Page {
     await this.assertPage();
     const collectButton = await this._driver.findElement(By.css("#collect"));
     await (collectButton).click();
-    await this._driver.wait(until.stalenessOf(collectButton));
+    await this._driver.wait(untilStale(collectButton));
   }
 
   async clickUserIcon() {
