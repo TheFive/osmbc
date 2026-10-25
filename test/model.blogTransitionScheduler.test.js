@@ -292,6 +292,49 @@ describe("model/blogTransitionScheduler", function() {
       });
     });
 
+    it("translates only once per language although the sweep repeats within the window", function(done) {
+      useTransitionConfig({});
+      const deepl = nockDeepl("DE");
+      importBlogs([
+        { name: "WN100", status: "closed", closeDE: true },
+        { name: "WN101", status: "edit", endDate: dueEndDate() }
+      ], null, function(err) {
+        should.not.exist(err);
+        runTransitionSweep(function(err) {
+          should.not.exist(err);
+          should(deepl.isDone()).be.true();
+          // an editor empties the translation, the next sweep must not translate again
+          articleModule.findOne({ blog: "WN101" }, function(err, article) {
+            should.not.exist(err);
+            article.setAndSave({ OSMUser: "editor" }, { version: article.version, markdownDE: "" }, function(err) {
+              should.not.exist(err);
+              runTransitionSweep(function(err) {
+                should.not.exist(err);
+                logModule.find({ table: "blog", property: "translation with deeplPro" }, function(err, logs) {
+                  should.not.exist(err);
+                  should(logs.length).eql(1);
+                  logModule.find({ table: "blog", property: "autoTranslated" }, function(err, markerLogs) {
+                    should.not.exist(err);
+                    should(markerLogs.length).eql(0);
+                    blogModule.findOne({ name: "WN101" }, function(err, blog) {
+                      should.not.exist(err);
+                      should(Object.keys(blog.autoTranslated)).eql(["DE"]);
+                      getUpcomingActions(function(err, upcoming) {
+                        should.not.exist(err);
+                        should(upcoming.autoTranslate.blogs[0].translate).eql([]);
+                        should(upcoming.autoTranslate.blogs[0].translated).eql(["DE"]);
+                        done();
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
     it("looks two blogs back with previousBlogs 2", function(done) {
       useTransitionConfig({ previousBlogs: 2 });
       const deepl = nockDeepl("DE");
@@ -464,7 +507,7 @@ describe("model/blogTransitionScheduler", function() {
               sourceLanguage: "EN",
               previousBlogs: 2,
               problem: null,
-              blogs: [{ name: "WN101", ts: endTs + 3 * 86400000, translate: ["DE"], inactive: ["FR", "ES"], done: ["PT-PT"] }]
+              blogs: [{ name: "WN101", ts: endTs + 3 * 86400000, translate: ["DE"], inactive: ["FR", "ES"], translated: [], done: ["PT-PT"] }]
             });
             should(upcoming.autoLanguageClose).eql({
               enabled: true,

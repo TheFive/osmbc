@@ -182,10 +182,12 @@ function planLanguageClose(blog, ruleConfig) {
   return plan;
 }
 
-// translate only languages with an active team, that closed one of the previous blogs
+// translate only languages with an active team, that closed one of the previous blogs,
+// and only once per blog and language (marker autoTranslated)
 function planTranslate(blog, previousBlogs, ruleConfig) {
-  const plan = { translate: [], inactive: [], done: [] };
+  const plan = { translate: [], inactive: [], translated: [], done: [] };
   ruleConfig.languages.forEach(function(lang) {
+    if (blog.autoTranslated && blog.autoTranslated[lang]) return plan.translated.push(lang);
     if (!blog.isEditable(lang)) return plan.done.push(lang);
     if (previousBlogs.some((previous) => previous["close" + lang] === true)) return plan.translate.push(lang);
     plan.inactive.push(lang);
@@ -254,10 +256,18 @@ function runAutoTranslateRule(callback) {
 
         eachSeries(planTranslate(blog, previousBlogs, ruleConfig).translate, function(lang, cbLanguage) {
           debug("Auto translate language %s for blog %s", lang, blog.name);
-          blog.translateAllArticles({ OSMUser: ruleConfig.actorUser }, ruleConfig.sourceLanguage, lang, ruleConfig.service, function(err) {
+          const actor = { OSMUser: ruleConfig.actorUser };
+          blog.translateAllArticles(actor, ruleConfig.sourceLanguage, lang, ruleConfig.service, function(err) {
             // a problem in one language should not stop the others
-            if (err) config.logger.error(err);
-            cbLanguage();
+            if (err) {
+              config.logger.error(err);
+              return cbLanguage();
+            }
+            // the sweep runs every minute within the window, translate only once
+            blog.markAsAutoTranslated(actor, lang, function(err) {
+              if (err) config.logger.error(err);
+              cbLanguage();
+            });
           });
         }, cbBlog);
       });

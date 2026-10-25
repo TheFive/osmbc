@@ -975,6 +975,18 @@ class Blog {
     });
   }
 
+  // markAsAutoTranslated(user, lang, callback)
+  // Notes that the scheduler rule Transition.AutoTranslate has translated lang,
+  // so it runs only once per blog and language. Operational field like
+  // exportedBy (see markAsExported below): not in the changes log, the
+  // "translation with ..." blog log entry is the editor facing trace.
+  markAsAutoTranslated(user, lang, callback) {
+    debug("markAsAutoTranslated");
+    const updated = Object.assign({}, (this.autoTranslated && typeof this.autoTranslated === "object") ? this.autoTranslated : {});
+    updated[lang] = new Date().toISOString();
+    this.setAndSave(user, { autoTranslated: updated }, callback);
+  }
+
   // markAsExported(user, exportProfile, lang, callback)
   // Sets the export marker for the given exportProfile and lang.
   // Goes through setAndSave, same as every other blog mutation - "every

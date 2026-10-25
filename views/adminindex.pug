@@ -1,7 +1,11 @@
 extends adminlayout
 
+//- within the coming week the weekday is enough, the date only from the next week on (or when past)
 mixin upcomingTime(ts, tz)
-  time(datetime=new Date(ts).toISOString(), data-localtime="", data-tz=tz)= layout.moment(ts).tz(tz).format("ddd, YYYY-MM-DD HH:mm z")
+  - var m = layout.moment(ts).tz(tz)
+  - var days = m.clone().startOf("day").diff(layout.moment().tz(tz).startOf("day"), "days")
+  - var text = (days === 0) ? m.format("[today] HH:mm z") : (days > 0 && days < 7) ? m.format("ddd HH:mm z") : m.format("ddd, YYYY-MM-DD HH:mm z")
+  time(datetime=new Date(ts).toISOString(), data-localtime="", data-tz=tz)= text
 
 block content
   .row
@@ -115,6 +119,8 @@ block content
                         div= "translate from " + upcoming.autoTranslate.sourceLanguage + ": " + (b.translate.join(", ") || "none")
                         if b.inactive.length > 0
                           div.text-muted= "skipped, not closed in the last " + upcoming.autoTranslate.previousBlogs + " blogs: " + b.inactive.join(", ")
+                        if b.translated.length > 0
+                          div.text-muted= "already auto translated: " + b.translated.join(", ")
                         if b.done.length > 0
                           div.text-muted= "already closed/exported: " + b.done.join(", ")
                 if !upcoming.autoLanguageClose.enabled
@@ -133,9 +139,13 @@ block content
                       td
                         +upcomingTime(b.ts, tz)
                       td
-                        div= "close: " + (b.close.join(", ") || "none")
-                        if b.waiting.length > 0
-                          div.text-muted= "waiting for reviews: " + b.waiting.map((w) => w.lang + " (" + w.reviews + "/" + upcoming.autoLanguageClose.minReviews + ")").join(", ")
+                        - var minReviews = upcoming.autoLanguageClose.minReviews
+                        div= minReviews + (minReviews === 1 ? " review" : " reviews") + " needed, close: " + (b.close.join(", ") || "none")
+                        //- languages still waiting, grouped by their review count (most reviews first)
+                        - for (var n = minReviews - 1; n >= 0; n--)
+                          - var langs = b.waiting.filter((w) => w.reviews === n).map((w) => w.lang)
+                          if langs.length > 0
+                            div.text-muted= n + (n === 1 ? " review: " : " reviews: ") + langs.join(", ")
                         if b.done.length > 0
                           div.text-muted= "already closed/exported: " + b.done.join(", ")
       div

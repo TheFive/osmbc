@@ -8,7 +8,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (Number.isNaN(date.getTime())) return;
     const span = document.createElement("span");
     span.className = "text-muted";
-    span.textContent = " (local: " + date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short", timeZoneName: "short" }) + ")";
+    // same rule as the server side text: weekday only within the coming week
+    const days = Math.round((new Date(date).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 86400000);
+    const options = (days >= 0 && days < 7)
+      ? { weekday: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" }
+      : { weekday: "short", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZoneName: "short" };
+    span.textContent = " (local: " + date.toLocaleString(undefined, options) + ")";
     element.after(span);
   });
 });
