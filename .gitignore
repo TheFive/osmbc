@@ -66,3 +66,7 @@ wp-reconcile/blog-sync-merger/.sync-state.json
 tempDB/
 __pycache__/
 osmbc-blogsync-key
+
+# editor swap files (vim), may contain secrets of open config files
+*.swp
+*.swo
