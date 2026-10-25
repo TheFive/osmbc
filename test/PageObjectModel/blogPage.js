@@ -48,7 +48,7 @@ class BlogPage extends StandardPage {
 
   async clickReadyReview(blog, lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath(`//button[text()="Set ${blog}(${lang}) ready for review"]`))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath(`//button[text()="Set ${blog}(${lang}) ready for review"]`)));
   }
 
   async clickClose(blog, lang) {
@@ -121,7 +121,7 @@ class BlogPage extends StandardPage {
 
   async clickDidExport(lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`)));
   }
 
   async clickShowNumbersCheckbox() {
@@ -234,23 +234,21 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const fullTab = await this._driver.findElement(By.xpath(`//a[contains(@class,'nav-link') and normalize-space(.)='${mode}']`));
     await this.scrollIntoView(fullTab);
-    await (fullTab).click();
-    await this._driver.wait(until.stalenessOf(fullTab));
+    await this._clickAndWaitForNavigation(fullTab);
   }
 
   async clickStatisticView() {
     await this.assertPage();
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
     await this._waitForBootstrapOverlaysToDisappear();
-    await this._driver.executeScript("arguments[0].click();", statisticView);
-    await this._driver.wait(until.stalenessOf(statisticView));
+    await this._clickAndWaitForNavigation(statisticView, true);
   }
 
   async clickEditView() {
     await this.assertPage();
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
     await this._waitForBootstrapOverlaysToDisappear();
-    await this._driver.executeScript("arguments[0].click();", editView);
+    await this._clickAndWaitForNavigation(editView, true);
   }
 
   async triggerOnChange(articleShown) {

@@ -32,7 +32,7 @@ class MainPage extends StandardPage {
   async clickLinkToAdminPage() {
     await this.assertPage();
     const link = await this._driver.findElement(By.id("adminlink"));
-    await link.click();
+    await this._clickAndWaitForNavigation(link);
   }
 
   async hasLinkToAdminPage() {
@@ -56,13 +56,12 @@ class MainPage extends StandardPage {
   async clickBlogInList(blog) {
     await this.assertPage();
     const blogButton = await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"));
-    await blogButton.click();
-    await this._driver.wait(until.stalenessOf(blogButton));
+    await this._clickAndWaitForNavigation(blogButton);
   }
 
   async clickBlogList() {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath("//a[text()='(more)']"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath("//a[text()='(more)']")));
   }
 
   async waitForInitialisation() {

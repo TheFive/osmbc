@@ -23,7 +23,6 @@ export default class BlogListPage extends StandardPage {
   async clickBlogInList(blog) {
     await this.assertPage();
     const blogButton = await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"));
-    await (blogButton).click();
-    await (this._driver.wait(until.stalenessOf(blogButton)));
+    await this._clickAndWaitForNavigation(blogButton);
   }
 }

@@ -24,7 +24,7 @@ export default class SearchAndCollectPage extends StandardPage {
     const ele =  await this._driver.findElement(By.css("input#searchField"));
     await (ele).sendKeys(await this.getCtrlA());
     await (ele).sendKeys(text);
-    await (await this._driver.findElement(By.css("button[name='SearchNow']"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.css("button[name='SearchNow']")));
   }
 
   async fillTitleInput(text) {

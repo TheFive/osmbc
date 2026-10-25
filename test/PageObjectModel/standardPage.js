@@ -20,12 +20,12 @@ export default class StandardPage extends Page {
 
   async clickInboxMenu(blog) {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("inbox"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.id("inbox")));
   }
 
   async clickMyArticlesMenu() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("a.nav-link#myArticles"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.css("a.nav-link#myArticles")));
   }
 
   async clickCollect() {

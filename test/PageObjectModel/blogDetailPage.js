@@ -18,7 +18,7 @@ class BlogDetailPage extends StandardPage {
 
   async clickEdit() {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("edit"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.id("edit")));
   }
 
   async selectStatus(status) {

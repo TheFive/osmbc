@@ -33,7 +33,7 @@ class AdminPage extends Page {
     const menu = await this._driver.findElement(By.xpath('//*[@id="navbarSupportedContent"]/ul[1]/li[1]'));
     await menu.click();
     const link = await this._driver.findElement(By.id("createUser"));
-    await link.click();
+    await this._clickAndWaitForNavigation(link);
   }
 
   async clickCreateBlogMenu(options) {
@@ -44,10 +44,10 @@ class AdminPage extends Page {
     const menu = await this._driver.findElement(By.xpath('//*[@id="navbarSupportedContent"]/ul[1]/li[2]'));
     await menu.click();
     const link = await this._driver.findElement(By.css("a#createblog"));
-    await link.click();
+    await this._clickAndWaitForNavigation(link);
     if (options.confirm) {
       const link = await this._driver.findElement(By.id("createBlog"));
-      await link.click();
+      await this._clickAndWaitForNavigation(link);
     }
   }
 }

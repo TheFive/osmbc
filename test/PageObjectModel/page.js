@@ -36,6 +36,19 @@ export default class Page {
 
 
 
+  // Click an element that leads to another page and wait until the old page
+  // is gone, so the next step does not act on the page being unloaded.
+  // Leaves the reload marker alone: a following waitForPageReload() still
+  // returns as soon as the new page is there.
+  async _clickAndWaitForNavigation(element, useScript = false) {
+    if (useScript) {
+      await this._driver.executeScript("arguments[0].click();", element);
+    } else {
+      await element.click();
+    }
+    await this._driver.wait(until.stalenessOf(element), 10000, "Click did not lead to a new page within 10s");
+  }
+
   async _checkUrl(url) {
     return (await this._driver.getCurrentUrl() === url);
   }

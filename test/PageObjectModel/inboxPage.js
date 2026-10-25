@@ -26,7 +26,7 @@ class InboxPage extends StandardPage {
 
   async clickFirstArticleShown() {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath("//i[contains(@class,'fa-edit')][1]"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath("//i[contains(@class,'fa-edit')][1]")));
   }
 }
 export default InboxPage;
