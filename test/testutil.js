@@ -671,6 +671,12 @@ async function getNewDriver(username) {
   // Disable popup dialogs
   chromeOptions.addArguments("disable-blink-features=AutomationControlled");
 
+  // Keep the browser off the internet. Article texts embed images from
+  // blog.openstreetmap.de etc.; every click that loads a page waits for
+  // them, so a slow external host stalled tests into the mocha timeout.
+  // Server-side requests are mocked with nock and not affected.
+  chromeOptions.addArguments("host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1");
+
 
 
   // Pick the chromedriver port ourselves on 127.0.0.1. selenium probes a
@@ -700,7 +706,9 @@ async function getNewDriver(username) {
   // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
-  await driver.manage().setTimeouts({ implicit: 700, script: 700 });
+  // pageLoad below the mocha timeout, so a hanging load fails with a stack
+  // trace of the step instead of a bare "Timeout of 20000ms exceeded"
+  await driver.manage().setTimeouts({ implicit: 700, script: 700, pageLoad: 10000 });
   try {
     await driver.get(osmbcLink("/osmbc"));
     await loginChooserPage.clickHtAccessLogin();
