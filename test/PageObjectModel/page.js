@@ -24,8 +24,14 @@ export default class Page {
   async waitForPageReload() {
     // check that old marker is set
     assert(this._navbarBrand);
-    // wait for Old Marker to be obsolete
-    await this._driver.wait(until.stalenessOf(this._navbarBrand));
+    // wait for Old Marker to be obsolete. Own timeout, so a lost click fails
+    // here with a clear message instead of running into the mocha timeout.
+    await this._driver.wait(until.stalenessOf(this._navbarBrand), 10000, "Page did not reload within 10s");
+    // the old DOM is gone, wait for the new page and remember its marker, so
+    // a second waitForPageReload does not return on the already stale one.
+    // Not this.assertPage(): the reload may lead to another page type
+    // (e.g. admin -> create user).
+    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 5000);
   }
 
 
@@ -44,11 +50,8 @@ export default class Page {
 
   async _assertUrlStartsWith(url) {
     const myUrl = await this._driver.getCurrentUrl();
-    if (typeof url === "string") {
-      url = [url];
-    } else {
-      url.forEach(url => { should(url).containEql(myUrl); });
-    }
+    if (typeof url === "string") url = [url];
+    assert(url.some(u => myUrl.startsWith(u)), `URL ${myUrl} does not start with ${url.join(" or ")}`);
   }
 
   // to go to a URL
@@ -78,7 +81,9 @@ export default class Page {
   async _waitForBootstrapOverlaysToDisappear() {
     // Prüfe auf mögliche Overlays (z. B. Bootstrap-Modal oder Dropdown) und warte, bis sie verschwinden
     try {
-      const overlays = await this._driver.findElements(By.css(".modal-backdrop, .dropdown-menu.show, .offcanvas.show"));
+      // querySelectorAll instead of findElements: findElements waits the
+      // full implicit timeout when (as usual) there is no overlay at all
+      const overlays = await this._driver.executeScript("return Array.from(document.querySelectorAll('.modal-backdrop, .dropdown-menu.show, .offcanvas.show'));");
       for (const overlay of overlays) {
         await this._driver.wait(until.stalenessOf(overlay), 2000); // Warte bis zu 2s pro Overlay
       }

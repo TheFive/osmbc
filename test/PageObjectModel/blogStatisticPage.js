@@ -17,7 +17,7 @@ export default class BlogStatisticPage extends StandardPage {
 
   async assertPage() {
     await super.assertPage();
-    await this._assertUrlStartsWith(osmbcLink("stat.html"));
+    await this._assertUrlStartsWith(osmbcLink("/blog/"));
   }
 
   async clickStatisticItem(blog, user, datatype) {

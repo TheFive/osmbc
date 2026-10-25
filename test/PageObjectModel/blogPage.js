@@ -203,6 +203,14 @@ class BlogPage extends StandardPage {
     await (editForm).sendKeys(newArticleText);
   }
 
+  // Leaving a changed edit field submits its form (onLeaveText in
+  // views/blog/blog_mixin.pug), which reloads the whole page. Wait for it,
+  // or the next step races the reload into a StaleElementReferenceError.
+  async clickOnArticleToSaveEdit(articleText) {
+    await this.clickOnArticle(articleText);
+    await this.waitForPageReload();
+  }
+
   async getEditForm(articleShown) {
     await this.assertPage();
     let editForm;
@@ -227,6 +235,7 @@ class BlogPage extends StandardPage {
     const fullTab = await this._driver.findElement(By.xpath(`//a[contains(@class,'nav-link') and normalize-space(.)='${mode}']`));
     await this.scrollIntoView(fullTab);
     await (fullTab).click();
+    await this._driver.wait(until.stalenessOf(fullTab));
   }
 
   async clickStatisticView() {
@@ -234,6 +243,7 @@ class BlogPage extends StandardPage {
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
     await this._waitForBootstrapOverlaysToDisappear();
     await this._driver.executeScript("arguments[0].click();", statisticView);
+    await this._driver.wait(until.stalenessOf(statisticView));
   }
 
   async clickEditView() {

@@ -55,7 +55,9 @@ class MainPage extends StandardPage {
 
   async clickBlogInList(blog) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"))).click();
+    const blogButton = await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"));
+    await blogButton.click();
+    await this._driver.wait(until.stalenessOf(blogButton));
   }
 
   async clickBlogList() {
