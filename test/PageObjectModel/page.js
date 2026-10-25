@@ -35,7 +35,7 @@ export default class Page {
     // A preceding action may still be mid-navigation (old DOM gone, new one
     // not rendered yet) - poll instead of a single findElement, or a slow
     // page load races this into a spurious NoSuchElementError.
-    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 5000);
+    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 10000);
   }
 
   async waitForPageReload() {
@@ -47,8 +47,9 @@ export default class Page {
     // the old DOM is gone, wait for the new page and remember its marker, so
     // a second waitForPageReload does not return on the already stale one.
     // Not this.assertPage(): the reload may lead to another page type
-    // (e.g. admin -> create user).
-    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 5000);
+    // (e.g. admin -> create user). 10 s: saving and rendering the big blog
+    // pages took longer than 5 s under load.
+    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 10000);
   }
 
 

@@ -660,7 +660,7 @@ function useRealTimeWaits(driver) {
     const timer = setTimeout(function() { expired = true; }, timeout);
     const checkExpired = function(d) {
       if (expired) {
-        const text = (typeof message === "function") ? message() : (message || `Waiting for ${description}`);
+        const text = (typeof message === "function") ? message() : (message || description);
         throw new webdriverError.TimeoutError(`${text}\nWait timed out after ${timeout}ms`);
       }
       return fn(d);

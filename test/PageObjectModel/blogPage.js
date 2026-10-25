@@ -64,7 +64,10 @@ class BlogPage extends StandardPage {
     const button = await this.#findVisibleElement(`button[id^='reviewButton${lang}']`);
     await this.scrollIntoView(button);
     await this._waitForBootstrapOverlaysToDisappear();
-    await button.click();
+    // "Start Personal Review" submits a form: wait for the new page first,
+    // the old one can already show textareas of earlier review comments
+    await this._clickAndWaitForNavigation(button);
+    await this.assertPage();
     await this._driver.wait(async () => {
       const field = await this.#findVisibleElement(`textarea[id^='reviewComment${lang}']`).catch(() => null);
       return !!field;
