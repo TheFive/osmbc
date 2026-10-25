@@ -14,6 +14,7 @@ import articleModule from "../model/article.js";
 import moment from "moment";
 import auth from "../routes/auth.js";
 import translator from "../model/translator.js";
+import blogTransitionScheduler from "../model/blogTransitionScheduler.js";
 
 const debug = _debug("OSMBC:routes:index");
 
@@ -106,7 +107,8 @@ function renderAdminHome(req, res, next) {
   async.auto({
     historie: logModule.find.bind(logModule, { table: "IN(usert,config)" }, { column: "id", desc: true, limit: 20 }),
     longAbsent: userModule.find.bind(userModule, { lastAccess: "<" + date, access: "full" }),
-    deeplUsage: usageTemp
+    deeplUsage: usageTemp,
+    upcoming: blogTransitionScheduler.getUpcomingActions
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");
@@ -115,7 +117,8 @@ function renderAdminHome(req, res, next) {
       layout: res.rendervar.layout,
       longAbsent: result.longAbsent,
       changes: result.historie,
-      deeplUsage: result.deeplUsage
+      deeplUsage: result.deeplUsage,
+      upcoming: result.upcoming
     });
   }
   );

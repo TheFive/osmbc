@@ -7,7 +7,7 @@ import config from "../config.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
-import { runTransitionSweep } from "../model/blogTransitionScheduler.js";
+import { runTransitionSweep, getUpcomingActions } from "../model/blogTransitionScheduler.js";
 
 describe("model/blogTransitionScheduler", function() {
   let originalGetValue;
@@ -64,9 +64,8 @@ describe("model/blogTransitionScheduler", function() {
       return originalGetValue.call(config, key, subkey, options);
     };
 
-    const oldDate = new Date();
-    oldDate.setDate(oldDate.getDate() - 3);
-    oldDate.setMinutes(oldDate.getMinutes() - 30);
+    // milliseconds like the rule, setDate() would be off by an hour across a DST change
+    const oldDate = new Date(Date.now() - (3 * 24 * 60 + 30) * 60 * 1000);
 
     const blog = blogModule.create({
       name: "WN900",
@@ -202,7 +201,7 @@ describe("model/blogTransitionScheduler", function() {
   });
 
   describe("AutoTranslate", function() {
-    function useTransitionConfig(autoTranslate, autoLanguageClose) {
+    function useTransitionConfig(autoTranslate, autoLanguageClose, autoEditEnabled) {
       originalGetValue = config.getValue;
       config.getValue = function(key, subkey, options) {
         if (key === "Transition") {
@@ -210,7 +209,7 @@ describe("model/blogTransitionScheduler", function() {
             enabled: true,
             scheduleCron: "*/1 * * * *",
             runOnStart: true,
-            AutoEditMode: { enabled: false },
+            AutoEditMode: { enabled: autoEditEnabled === true },
             AutoLanguageClose: autoLanguageClose || { enabled: false },
             AutoTranslate: Object.assign({
               enabled: true,
@@ -228,10 +227,8 @@ describe("model/blogTransitionScheduler", function() {
       };
     }
     function dueEndDate() {
-      const date = new Date();
-      date.setDate(date.getDate() - 3);
-      date.setMinutes(date.getMinutes() - 30);
-      return date.toISOString();
+      // milliseconds like the rule, setDate() would be off by an hour across a DST change
+      return new Date(Date.now() - (3 * 24 * 60 + 30) * 60 * 1000).toISOString();
     }
     function importBlogs(blogs, articles, cb) {
       testutil.importData({
@@ -425,6 +422,134 @@ describe("model/blogTransitionScheduler", function() {
             should(blog.closeDE).eql(true);
             done();
           });
+        });
+      });
+    });
+
+    describe("getUpcomingActions", function() {
+      const closeConfig = {
+        enabled: true,
+        delayDays: 2,
+        minReviews: 2,
+        blogStatusFilter: ["edit"],
+        onlyIfNotExported: true,
+        languages: ["DE", "FR"]
+      };
+      function inDays(days) {
+        const date = new Date();
+        date.setDate(date.getDate() + days);
+        return date.toISOString();
+      }
+      const reviews = [
+        { user: "reviewerA", text: "ok", timestamp: new Date() },
+        { user: "reviewerB", text: "ok", timestamp: new Date() }
+      ];
+
+      it("lists translate, skipped and done languages and close candidates without changing anything", function(done) {
+        useTransitionConfig({}, closeConfig);
+        const endDate = inDays(1);
+        importBlogs([
+          { name: "WN100", status: "closed", closeDE: true },
+          { name: "WN101", status: "edit", endDate: endDate, "closePT-PT": true, reviewCommentDE: reviews }
+        ], null, function(err) {
+          should.not.exist(err);
+          getUpcomingActions(function(err, upcoming) {
+            should.not.exist(err);
+            should(upcoming.enabled).be.true();
+            should(upcoming.timezone).be.a.String();
+            should(upcoming.autoEdit).eql({ enabled: false, blogs: [] });
+            const endTs = new Date(endDate).getTime();
+            should(upcoming.autoTranslate).eql({
+              enabled: true,
+              sourceLanguage: "EN",
+              previousBlogs: 2,
+              problem: null,
+              blogs: [{ name: "WN101", ts: endTs + 3 * 86400000, translate: ["DE"], inactive: ["FR", "ES"], done: ["PT-PT"] }]
+            });
+            should(upcoming.autoLanguageClose).eql({
+              enabled: true,
+              minReviews: 2,
+              blogs: [{ name: "WN101", ts: endTs + 2 * 86400000, close: ["DE"], waiting: [{ lang: "FR", reviews: 0 }], done: [] }]
+            });
+            blogModule.findOne({ name: "WN101" }, function(err, blog) {
+              should.not.exist(err);
+              should(blog.version).eql(1);
+              should(blog.closeDE).not.equal(true);
+              articleModule.find({}, function(err, articles) {
+                should.not.exist(err);
+                should(articles[0].version).eql(1);
+                done();
+              });
+            });
+          });
+        });
+      });
+
+      it("predicts open blogs as edit blogs only when Auto Edit is on", function(done) {
+        useTransitionConfig({}, null, true);
+        const endDate = inDays(2);
+        importBlogs([
+          { name: "WN100", status: "closed", closeDE: true },
+          { name: "WN101", status: "open", endDate: endDate }
+        ], null, function(err) {
+          should.not.exist(err);
+          getUpcomingActions(function(err, upcoming) {
+            should.not.exist(err);
+            should(upcoming.autoEdit.blogs).eql([{ name: "WN101", ts: new Date(endDate).getTime(), overdue: false }]);
+            should(upcoming.autoTranslate.blogs.map((b) => b.name)).eql(["WN101"]);
+            should(upcoming.autoLanguageClose).eql({ enabled: false, minReviews: 2, blogs: [] });
+            config.getValue = originalGetValue;
+            useTransitionConfig({}, null, false);
+            getUpcomingActions(function(err, upcoming) {
+              should.not.exist(err);
+              should(upcoming.autoEdit).eql({ enabled: false, blogs: [] });
+              should(upcoming.autoTranslate.blogs).eql([]);
+              done();
+            });
+          });
+        });
+      });
+
+      it("leaves out blogs whose window has passed", function(done) {
+        useTransitionConfig({}, closeConfig);
+        importBlogs([
+          { name: "WN100", status: "closed", closeDE: true },
+          { name: "WN101", status: "edit", endDate: inDays(-6) }
+        ], null, function(err) {
+          should.not.exist(err);
+          getUpcomingActions(function(err, upcoming) {
+            should.not.exist(err);
+            should(upcoming.autoTranslate.blogs).eql([]);
+            should(upcoming.autoLanguageClose.blogs).eql([]);
+            done();
+          });
+        });
+      });
+
+      it("reports a configuration problem of Auto Translate", function(done) {
+        useTransitionConfig({ sourceLanguage: "XX" });
+        importBlogs([{ name: "WN101", status: "edit", endDate: inDays(1) }], null, function(err) {
+          should.not.exist(err);
+          getUpcomingActions(function(err, upcoming) {
+            should.not.exist(err);
+            should(upcoming.autoTranslate.problem).match(/sourceLanguage/);
+            should(upcoming.autoTranslate.blogs).eql([]);
+            done();
+          });
+        });
+      });
+
+      it("returns only the switch when transitions are off", function(done) {
+        originalGetValue = config.getValue;
+        config.getValue = function(key, subkey, options) {
+          if (key === "Transition") return { enabled: false };
+          return originalGetValue.call(config, key, subkey, options);
+        };
+        getUpcomingActions(function(err, upcoming) {
+          should.not.exist(err);
+          should(upcoming.enabled).be.false();
+          should(Object.keys(upcoming)).eql(["enabled", "timezone"]);
+          done();
         });
       });
     });
