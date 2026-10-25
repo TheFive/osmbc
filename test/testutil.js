@@ -19,6 +19,7 @@ import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
 
 import { Builder, Browser } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
+import portprober from "selenium-webdriver/net/portprober.js";
 // import safari from "selenium-webdriver/safari.js";
 
 import util from "../util/util.js";
@@ -672,9 +673,16 @@ async function getNewDriver(username) {
 
 
 
+  // Pick the chromedriver port ourselves on 127.0.0.1. selenium probes a
+  // free port on "::" only, which on macOS can hand out a port a Chrome
+  // DevTools server already listens on at 127.0.0.1 - the session request
+  // then gets an empty 404 ("newSession: ") from Chrome instead of
+  // chromedriver.
+  const service = new chrome.ServiceBuilder().setPort(await portprober.findFreePort("127.0.0.1"));
+
   let driver;
   try {
-    driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
+    driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).setChromeService(service).build();
   } catch (err) {
     const diagnostics = [
       `platform=${process.platform}`,
