@@ -17,7 +17,7 @@ import { execFileSync } from "child_process";
 import LoginPage from "../test/PageObjectModel/loginPage.js";
 import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
 
-import { Builder, Browser } from "selenium-webdriver";
+import { Builder, Browser, Condition, WebElementCondition, error as webdriverError } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
 import portprober from "selenium-webdriver/net/portprober.js";
 // import safari from "selenium-webdriver/safari.js";
@@ -644,6 +644,36 @@ function getWrappedAxiosClient(options) {
   };
 }
 
+// selenium's driver.wait measures its timeout with Date.now(). The UI tests
+// freeze Date with mockdate, so every wait(condition, timeout) polled until
+// the mocha timeout instead of failing after its own timeout. Measure the
+// timeout with a real timer instead (setTimeout is not mocked).
+function useRealTimeWaits(driver) {
+  const seleniumWait = driver.wait.bind(driver);
+  driver.wait = function(condition, timeout = 0, message = undefined, pollTimeout = 200) {
+    if (!timeout || !(condition instanceof Condition || typeof condition === "function")) {
+      return seleniumWait(condition, timeout, message, pollTimeout);
+    }
+    const description = (condition instanceof Condition) ? condition.description() : "condition";
+    const fn = (condition instanceof Condition) ? condition.fn : condition;
+    let expired = false;
+    const timer = setTimeout(function() { expired = true; }, timeout);
+    const checkExpired = function(d) {
+      if (expired) {
+        const text = (typeof message === "function") ? message() : (message || `Waiting for ${description}`);
+        throw new webdriverError.TimeoutError(`${text}\nWait timed out after ${timeout}ms`);
+      }
+      return fn(d);
+    };
+    let wrapped = checkExpired;
+    if (condition instanceof WebElementCondition) wrapped = new WebElementCondition(description, checkExpired);
+    else if (condition instanceof Condition) wrapped = new Condition(description, checkExpired);
+    const result = seleniumWait(wrapped, 0, message, pollTimeout);
+    result.then(() => clearTimeout(timer), () => clearTimeout(timer));
+    return result;
+  };
+}
+
 async function getNewDriver(username) {
   const chromeOptions = new chrome.Options();
   const isHeadless = process.env.TEST_HEADLESS === "TRUE";
@@ -704,6 +734,7 @@ async function getNewDriver(username) {
     throw improvedError;
   }
   // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
+  useRealTimeWaits(driver);
   const loginPage = new LoginPage(driver);
   const loginChooserPage = new LoginChooserPage(driver);
   // pageLoad below the mocha timeout, so a hanging load fails with a stack
