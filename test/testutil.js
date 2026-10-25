@@ -648,6 +648,18 @@ function getWrappedAxiosClient(options) {
 // freeze Date with mockdate, so every wait(condition, timeout) polled until
 // the mocha timeout instead of failing after its own timeout. Measure the
 // timeout with a real timer instead (setTimeout is not mocked).
+// where the browser is when a wait times out - is the page still loading,
+// an error page, or the page the test expected?
+async function describePage(driver) {
+  try {
+    const url = await driver.getCurrentUrl();
+    const state = await driver.executeScript("return document.readyState + ' | ' + document.title + ' | ' + (document.body ? document.body.innerText.slice(0, 200) : '(no body)');");
+    return `Page: ${url} | ${String(state).replace(/\s+/g, " ")}`;
+  } catch (err) {
+    return `Page: not readable (${err.message})`;
+  }
+}
+
 function useRealTimeWaits(driver) {
   const seleniumWait = driver.wait.bind(driver);
   driver.wait = function(condition, timeout = 0, message = undefined, pollTimeout = 200) {
@@ -658,10 +670,10 @@ function useRealTimeWaits(driver) {
     const fn = (condition instanceof Condition) ? condition.fn : condition;
     let expired = false;
     const timer = setTimeout(function() { expired = true; }, timeout);
-    const checkExpired = function(d) {
+    const checkExpired = async function(d) {
       if (expired) {
         const text = (typeof message === "function") ? message() : (message || description);
-        throw new webdriverError.TimeoutError(`${text}\nWait timed out after ${timeout}ms`);
+        throw new webdriverError.TimeoutError(`${text}\nWait timed out after ${timeout}ms\n${await describePage(d)}`);
       }
       return fn(d);
     };
