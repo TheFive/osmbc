@@ -148,8 +148,78 @@ class BlogPage extends StandardPage {
     await this.tap(await this._driver.findElement(By.css(`[data-inline-editor='div${articleId}']`)));
   }
 
-  async typeInlineText(articleId, text) {
-    await (await this._driver.findElement(By.id("markdown" + articleId))).sendKeys(text);
+  async typeInlineText(articleId, ...keys) {
+    await (await this._driver.findElement(By.id("markdown" + articleId))).sendKeys(...keys);
+  }
+
+  async tapInlineCancel(articleId) {
+    await this.tap(await this._driver.findElement(By.id("inlineCancel" + articleId)));
+  }
+
+  async tapInlineSave(articleId) {
+    await this.tap(await this._driver.findElement(By.id("inlineSave" + articleId)));
+  }
+
+  // distance of the article text from the navbar's lower edge, and its flash
+  // ("saved", "cancelled" or null)
+  // (measured after the navbar has slid in or out, 0.2 s)
+  async getArticlePosition(articleId) {
+    return this._driver.executeAsyncScript(`
+      const done = arguments[arguments.length - 1];
+      const text = document.querySelector("[data-inline-editor='div${articleId}']");
+      const flash = ["saved", "cancelled"].find(h => text.classList.contains("osmbc-flash-" + h)) || null;
+      setTimeout(() => {
+        const navbar = document.getElementById("fixedNavbar").getBoundingClientRect();
+        done({ belowNavbar: Math.round(text.getBoundingClientRect().top - Math.max(0, navbar.bottom)), flash: flash });
+      }, 400);`);
+  }
+
+  async scrollToEnd() {
+    await this._driver.executeScript("window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });");
+  }
+
+  async isBackToTopShown() {
+    const buttons = await this._driver.findElements(By.id("toTop"));
+    return buttons.length > 0 && buttons[0].isDisplayed();
+  }
+
+  // returns the scroll position afterwards
+  async tapBackToTop() {
+    await this.tap(await this._driver.findElement(By.id("toTop")));
+    return this._driver.executeScript("return window.scrollY;");
+  }
+
+  // "Save", or "Open Editor" while the article has no text
+  async getInlineSaveLabel(articleId) {
+    return (await this._driver.findElement(By.id("inlineSave" + articleId))).getText();
+  }
+
+  // the Save button labelled "Open Editor": opens the article page
+  async clickInlineOpenEditor(articleId) {
+    const button = await this._driver.findElement(By.id("inlineSave" + articleId));
+    await this.tap(button);
+    await this._driver.wait(until.stalenessOf(button), 5000, "article page not opened");
+  }
+
+  // the article text as shown in the review view (tap target of the editor)
+  async getArticleText(articleId) {
+    return (await this._driver.findElement(By.id("preview" + articleId))).getText();
+  }
+
+  // vertical centres of the comment icons, the votes and the open button
+  // above an article (mobile mode), to check they sit in one line
+  async getArticleBarCentres(articleId) {
+    return this._driver.executeScript(`
+      const open = document.querySelector("a.osmbc-article-open[href$='/article/${articleId}']");
+      const bar = open.closest(".osmbc-article-bar");
+      return [bar.querySelector(".osmbc-article-comments"), document.getElementById("voteLabels${articleId}"), open]
+        .map(e => { const r = e.getBoundingClientRect(); return Math.round(r.top + r.height / 2); });`);
+  }
+
+  async getCommentLink(articleId) {
+    const open = await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`));
+    const bar = await open.findElement(By.xpath("ancestor::*[contains(@class,'osmbc-article-bar')]"));
+    return (await bar.findElement(By.css("a.osmbc-article-comments"))).getAttribute("href");
   }
 
   // "Display Votes" option of the view; the page reloads with the votes

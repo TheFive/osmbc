@@ -223,7 +223,7 @@ while layout.user["blogSetting"+v]
                 </div>
                 <div class="card-body">
                   <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
-                    <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Save</button></div>
+                    <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Open Editor</button></div>
                   </form>
                   <p></p>
                 </div>
@@ -410,12 +410,21 @@ while layout.user["blogSetting"+v]
 
 
       var openEditor = null;
+      // preview as last saved, per editor id: Cancel puts it back. Rendering
+      // the old text again would lose what the server shows for an empty
+      // text (the title)
+      var savedPreview = {};
 
       // a tap on an article text opens its inline editor (or closes the open
       // one); links in the text do not navigate
       $(document).on("click", "[data-inline-editor]", function(event) {
         event.preventDefault();
         if (!openEditor) {
+          // review/full: the tapped text is the preview (overview: the title)
+          var preview = this.querySelector(".preview");
+          if (preview && !(this.dataset.inlineEditor in savedPreview)) {
+            savedPreview[this.dataset.inlineEditor] = preview.innerHTML;
+          }
           openEditor = document.getElementById(this.dataset.inlineEditor);
           openEditor.classList.toggle("d-none");
           fitToContentIn(openEditor);
@@ -423,6 +432,7 @@ while layout.user["blogSetting"+v]
           openEditor.classList.toggle("d-none");
           openEditor = null;
         }
+        updateToTop();
       });
 
       window.onload = function() {
@@ -492,10 +502,62 @@ while layout.user["blogSetting"+v]
         }
       }
 
-      function closeInlineEditor(id, column) {
+      // how: "saved" or "cancelled" when closed by the buttons
+      function closeInlineEditor(id, column, how) {
         var editor = document.getElementById(column + "div" + id);
         editor.classList.add("d-none");
         if (openEditor === editor) openEditor = null;
+        if (how && isMobile) showClosedArticle(column + "div" + id, how);
+        updateToTop();
+      }
+
+      var isMobile = document.documentElement.classList.contains("osmbc-mobile");
+
+      // phones: after Save/Cancel the article is at the top of the screen, to
+      // read it again; a short flash shows which one it was
+      function showClosedArticle(editorId, how) {
+        var text = document.querySelector("[data-inline-editor='" + editorId + "']");
+        if (!text) return;
+        // the navbar shows when scrolling up and hides when scrolling down
+        // (layout.pug), so leave room for it only when going up
+        var y = text.getBoundingClientRect().top + window.scrollY;
+        if (y < window.scrollY) y -= document.getElementById("fixedNavbar").offsetHeight;
+        window.scrollTo({
+          top: Math.max(0, y),
+          behavior: "instant"
+        });
+        text.classList.remove("osmbc-flash-saved", "osmbc-flash-cancelled");
+        void text.offsetWidth; // restarts the animation
+        text.classList.add("osmbc-flash-" + how);
+      }
+      $(document).on("animationend", ".osmbc-inline-edit", function() {
+        this.classList.remove("osmbc-flash-saved", "osmbc-flash-cancelled");
+      });
+
+      // phones: "back to top" button, bottom left, after scrolling one screen;
+      // hidden while an editor is open (it would cover its Cancel)
+      var toTop = null;
+      if (isMobile) {
+        toTop = document.createElement("button");
+        toTop.type = "button";
+        toTop.id = "toTop";
+        toTop.className = "btn btn-secondary osmbc-to-top d-none";
+        toTop.setAttribute("aria-label", "Back to top");
+        toTop.innerHTML = '<i class="fa fa-arrow-up"></i>';
+        toTop.addEventListener("click", function() {
+          window.scrollTo({
+            top: 0,
+            behavior: "instant"
+          });
+        });
+        document.body.appendChild(toTop);
+        window.addEventListener("scroll", updateToTop, {
+          passive: true
+        });
+      }
+
+      function updateToTop() {
+        if (toTop) toTop.classList.toggle("d-none", window.scrollY < window.innerHeight || openEditor !== null);
       }
 
       function saveInlineEditor(id, column, close) {
@@ -508,7 +570,12 @@ while layout.user["blogSetting"+v]
         var oldField = document.getElementById(column + "oldMarkdown" + id);
         var field = document.getElementById(column + "markdown" + id);
         if (oldField.value === field.value) {
-          if (close) closeInlineEditor(id, column);
+          // "Open Editor": no text yet, nothing to save
+          if (close && field.value === "") {
+            window.location.href = "/article/" + id;
+            return Promise.resolve();
+          }
+          if (close) closeInlineEditor(id, column, "saved");
           return Promise.resolve();
         }
         var value = field.value;
@@ -525,8 +592,10 @@ while layout.user["blogSetting"+v]
         }).then(function(res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
           oldField.value = value;
+          savedPreview[column + "div" + id] = convert(value);
+          updateSaveLabel(id, column);
           inlineStatus(id, column, "saved", "text-bg-success");
-          if (close) closeInlineEditor(id, column);
+          if (close) closeInlineEditor(id, column, "saved");
         }).catch(function(err) {
           console.error(err);
           inlineStatus(id, column, "not saved – please reload the page", "text-bg-danger");
@@ -539,8 +608,29 @@ while layout.user["blogSetting"+v]
       function cancelInlineEditor(id, column) {
         if (!column) column = "";
         document.getElementById(column + "markdown" + id).value = document.getElementById(column + "oldMarkdown" + id).value;
-        onchangeMarkdown(id, column);
-        closeInlineEditor(id, column);
+        var key = column + "div" + id;
+        if (key in savedPreview) {
+          var pv = document.getElementById(column + "preview" + id);
+          pv.innerHTML = savedPreview[key];
+          $(pv).trigger("change");
+        } else {
+          onchangeMarkdown(id, column);
+        }
+        updateSaveLabel(id, column);
+        closeInlineEditor(id, column, "cancelled");
+      }
+
+      // also for text pasted without a key (long press on a phone)
+      $(document).on("input", "form[id*='EditArticle'] textarea[name='markdown']", function() {
+        var m = this.form.id.match(/^(.*)EditArticle(\d+)$/);
+        if (m) updateSaveLabel(m[2], m[1]);
+      });
+
+      // "Open Editor" while there is no text, neither saved nor typed
+      function updateSaveLabel(id, column) {
+        var empty = document.getElementById(column + "oldMarkdown" + id).value === "" &&
+          document.getElementById(column + "markdown" + id).value === "";
+        document.getElementById(column + "inlineSave" + id).textContent = empty ? "Open Editor" : "Save";
       }
 
 
@@ -570,6 +660,7 @@ while layout.user["blogSetting"+v]
 
         pv.innerHTML = convert(md);
         $(pv).trigger("change");
+        updateSaveLabel(id, column);
 
       }
 

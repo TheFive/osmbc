@@ -84,7 +84,7 @@ block blogcontent
         - if (disableNewerMarkdown && a["markdown"+left_lang] && !a["markdown"+right_lang]) enable = false;
         if enable
           .row
-            div(class=firstColSize).d-flex.flex-nowrap
+            div(class=firstColSize).d-flex.flex-nowrap.osmbc-article-bar
               span
                 +articleIcons(a,{showNumbers:showNumbers,showMail:showMail,predecessorId:predecessorId, openAtEnd: layout.mobileView})
                 - predecessorId = a.id
@@ -116,7 +116,7 @@ block blogcontent
                     form(name="lEditArticle",id="lEditArticle" +a.id, action=layout.htmlroot+"/article/" + a.id +"/setMarkdown/" + left_lang, method="post")
                       textarea.form-control(name="markdown" id="lmarkdown" + a.id rows=7 data-fit-content onchange=`onLeaveText(${a.id},'l');` onkeyup=`onchangeMarkdown(${a.id},'l');` spellcheck = "true" lang=left_lang)=a["markdown" + left_lang]
                       textarea.d-none.form-control(name="oldMarkdown"  id="loldMarkdown" +a.id rows=7 )=a["markdown" + left_lang]
-                      +inlineEditorButtons(a.id, "l")
+                      +inlineEditorButtons(a.id, "l", !a["markdown" + left_lang])
                     form(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
                       if a.isTranslatedAutomated(left_lang)
                           textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
@@ -146,7 +146,7 @@ block blogcontent
                       form(name="rEditArticle",id="rEditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + right_lang, method="post")
                         textarea.form-control(name="markdown" id="rmarkdown" + a.id rows=7 data-fit-content onchange=`onLeaveText(${a.id},'r');` onkeyup=`onchangeMarkdown(${a.id},'r');` spellcheck="true" lang=right_lang)=a["markdown" + right_lang]
                         textarea.d-none.form-control(name="oldMarkdown"  id="roldMarkdown" + a.id rows=7 )=a["markdown" + right_lang]
-                        +inlineEditorButtons(a.id, "r")
+                        +inlineEditorButtons(a.id, "r", !a["markdown" + right_lang])
                       form(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
                         if a.isTranslatedAutomated(right_lang)
                             textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
@@ -184,20 +184,23 @@ block blogcontent
               h4(style="color:grey")=(cat) ? cat[right_lang] : k
       each a in futureArticles[k]
         .row
-          div(class=firstColSize)
+          //- mobile: one bar with the open button at its end, as above
+          div(class=firstColSize class=layout.mobileView ? "d-flex osmbc-article-bar" : undefined)
             div
-              +articleIcons(a,{showNumbers: showNumbers, showMail: showMail})
+              +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, openAtEnd: layout.mobileView})
             div
               if (showCollector && a.author && a.author.collection)
                 each b in a.author.collection.split(",")
                   +userLabel(b,"osmbc-label-collect")
               if (showEditor && a.author && a.author["markdown" + lang])
                 each b in a.author["markdown"+lang].split(",")
-                  +userLabel(collector,"osmbc-label-markdown")
+                  +userLabel(b,"osmbc-label-markdown")
 
             div
               if (showLanguages)
                 +languageDisplay(a)
+            if layout.mobileView
+              +articleOpenButton(a)
 
           div(class=secondColSize)
             .row

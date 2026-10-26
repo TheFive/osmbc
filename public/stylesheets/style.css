@@ -445,6 +445,48 @@ table {
 .osmbc-mobile .osmbc-tap-square {
   min-width: 44px;
 }
+/* blog views: the bar above an article text (comment icons, votes, open
+   button) in one line; the comment icons have a fixed width, also when
+   there are none, so the votes line up */
+.osmbc-mobile .osmbc-article-bar {
+  align-items: center;
+}
+.osmbc-mobile .osmbc-article-comments {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  min-height: 44px;
+  padding-left: 0;
+  padding-right: 0;
+}
+/* blog views: after Save/Cancel the article flashes (light blue: saved,
+   grey: cancelled) */
+@keyframes osmbc-flash-saved {
+  from { background-color: var(--bs-primary-bg-subtle); }
+  to { background-color: transparent; }
+}
+@keyframes osmbc-flash-cancelled {
+  from { background-color: var(--bs-secondary-bg-subtle); }
+  to { background-color: transparent; }
+}
+.osmbc-flash-saved {
+  animation: osmbc-flash-saved 1.5s ease-out;
+}
+.osmbc-flash-cancelled {
+  animation: osmbc-flash-cancelled 1.5s ease-out;
+}
+/* blog views: "back to top", bottom left (Save sits on the right) */
+.osmbc-to-top {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 1020;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  opacity: .85;
+}
 .osmbc-mobile .form-check {
   min-height: 44px;
   padding-top: .625rem;

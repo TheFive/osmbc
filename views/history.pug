@@ -4,21 +4,24 @@ extends layout
 block content
   h1
     | History
-  row
-      table.table
-        thead
-          tr
-            - date ="";
-            - if (params.date)  date = "/"+date;
-            form(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
-              div.form-group
-                input.col-sm-2(type='text',id='user',name='user',placeholder='user',value=params.user)
-                input.col-sm-2(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
-                input.col-sm-2(type='text',id='table',name='table',placeholder='table',value=params.table)
-                input.col-sm-2(type='text',id='oid',name='oid',placeholder='Object Id' value=params.oid)
-                input.col-sm-2(type='text',id='property',name='property',placeholder='property' value=params.property)
-                input.col-sm-2(type='text',id='date',name='date',placeholder='date' value=params.date  )
-                input(type='submit',class='btn btn-secondary')
+  div
+      - date ="";
+      - if (params.date)  date = "/"+date;
+      form.row.g-2.mb-3(action=layout.htmlroot+'/changes/log' + date,method='get',id='form')
+        div.col-6.col-md-2
+          input.form-control(type='text',id='user',name='user',placeholder='user',value=params.user)
+        div.col-6.col-md-2
+          input.form-control(type='text',id='blog',name='blog',placeholder='blog',value=params.blog)
+        div.col-6.col-md-2
+          input.form-control(type='text',id='table',name='table',placeholder='table',value=params.table)
+        div.col-6.col-md-2
+          input.form-control(type='text',id='oid',name='oid',placeholder='Object Id' value=params.oid)
+        div.col-6.col-md-2
+          input.form-control(type='text',id='property',name='property',placeholder='property' value=params.property)
+        div.col-6.col-md-2
+          input.form-control(type='text',id='date',name='date',placeholder='date' value=params.date  )
+        div.col-12
+          button.btn.btn-secondary(type='submit') Filter
       p
         |only displaying changes
         span.osmbc-inserted
@@ -27,67 +30,68 @@ block content
           |  removed text
         |  use the % sql like notation e.g. WN29% for all WN starting with 29.
         |  click on a markdown?? line to open a preview of the change.
-      table.table.table-sm
-        thead
-          tr
-            th=""
-            th=""
-            th user
-            th blog
-            th table
-            th oid
-            th property
-            th what
-            th when
+      div.table-responsive
+        table.table.table-sm
+          thead
+            tr
+              th=""
+              th=""
+              th user
+              th blog
+              th table
+              th oid
+              th property
+              th what
+              th when
 
 
-        tbody
-          if (history)
-            each change in history
+          tbody
+            if (history)
+              each change in history
 
-             //- rows with a text change open the full text below (osmbc_staff.js);
-             //- a tap on a link in the row only follows the link
-             tr(data-history-toggle=(change.property && change.property.substring(0, 8) === "markdown") ? change.id : undefined)
-               td
-                 if change.property && change.property.substring(0, 8) === "markdown"
-                   button.btn.btn-link.osmbc-tap-square.p-0(type="button" aria-label="Show text")
-                     i.fa.fa-caret-right(class="class_" + change.id)
-                     i.fa.fa-caret-down.d-none(class="class_" + change.id)
-               td
-                 a(href=layout.htmlroot+'/changes/' + change.id)
-                   i.fa.fa-info-circle
-               td=change.user
-               td
-                 if change.table == "blog"
-                   a(href=layout.htmlroot+"/blog/" + change.oid)=change.blog
-                 else
-                   span=change.blog
-               td=change.table
-               td
-                 if change.table == "article"
-                   a(href=layout.htmlroot+"/article/" + change.oid)=change.oid
-                 else
-                   if change.table == "usert"
-                     a(href=layout.htmlroot+"/usert/" + change.oid)=change.oid
-                   else
-                     if change.table == "blog"
-                     else
-                       span=change.oid
-               td=change.property
-               td
-                 |!{change.htmlDiffText(60)}
-               td=layout.moment(change.timestamp).locale(layout.user_locale).format("L")
-             if change.property && change.property.substring(0,8)==="markdown"
-               tr.d-none(class="class_" + change.id)
+               //- rows with a text change open the full text below (osmbc_staff.js);
+               //- a tap on a link in the row only follows the link
+               tr(data-history-toggle=(change.property && change.property.substring(0, 8) === "markdown") ? change.id : undefined)
                  td
-                 td(colspan="6").bg-info
-                   |!{layout.md_renderInline(change.from)}
-                 td(colspan="4").bg-warning
-                   |!{layout.md_renderInline(change.to)}
+                   if change.property && change.property.substring(0, 8) === "markdown"
+                     button.btn.btn-link.osmbc-tap-square.p-0(type="button" aria-label="Show text")
+                       i.fa.fa-caret-right(class="class_" + change.id)
+                       i.fa.fa-caret-down.d-none(class="class_" + change.id)
+                 td
+                   a(href=layout.htmlroot+'/changes/' + change.id)
+                     i.fa.fa-info-circle
+                 td=change.user
+                 td
+                   if change.table == "blog"
+                     a(href=layout.htmlroot+"/blog/" + change.oid)=change.blog
+                   else
+                     span=change.blog
+                 td=change.table
+                 td
+                   if change.table == "article"
+                     a(href=layout.htmlroot+"/article/" + change.oid)=change.oid
+                   else
+                     if change.table == "usert"
+                       a(href=layout.htmlroot+"/usert/" + change.oid)=change.oid
+                     else
+                       if change.table == "blog"
+                       else
+                         span=change.oid
+                 td=change.property
+                 td
+                   |!{change.htmlDiffText(60)}
+                 td=layout.moment(change.timestamp).locale(layout.user_locale).format("L")
+               if change.property && change.property.substring(0,8)==="markdown"
+                 tr.d-none(class="class_" + change.id)
+                   td
+                   td(colspan="6").bg-info
+                     |!{layout.md_renderInline(change.from)}
+                   td(colspan="4").bg-warning
+                     |!{layout.md_renderInline(change.to)}
 
 
 
-          
+            
 
 
-  
+    

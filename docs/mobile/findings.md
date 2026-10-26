@@ -316,8 +316,42 @@ Done (2026-10-23):
   the access log.
 
 For the product owner:
-- History log: choose visible columns.
+- History log: choose visible columns. Put back (2026-10-26): the table
+  scrolls in itself now, wait whether someone misses it.
 - Liked: "make comment" button on the right of the review page.
+
+## Beta.4 feedback (2026-10-25/26, one editor, Android)
+
+Done (2026-10-26):
+- Cancel in the inline editor of an article without text emptied the row:
+  the server shows the title for an empty text, Cancel rendered the empty
+  text again. Cancel now puts back the preview as last saved.
+- While the text is empty (saved and typed), Save is "Open Editor" and
+  opens the article (product owner's idea instead of the editor's third
+  "Edit" button). Typing turns it into Save; emptying a text that had
+  content stays Save.
+- Review/full on phones: comment icons, votes and the open button in one
+  line (the icons sat higher than the 44 px buttons and moved the votes);
+  the comment icons have a fixed width, also without comments, so the votes
+  line up; a tap on them opens the article at its comments.
+- Full view, "Future Articles": the open button at the end of the row as
+  above (the edit icon sat on the left).
+- Article page: space above "no translation to rest" (the hint texts above
+  it are hidden on phones).
+- History: filter fields as a form grid, the table scrolls in itself. The
+  table was wider than the screen, so the page scrolled sideways and the
+  header's language button sat outside the screen. Likely the "language
+  pops up when opening the menu" in the editor's video (opening the panel
+  stops the page scroll for a moment); not checked against the video.
+- Blog views on phones: after Save/Cancel the article is at the top of the
+  screen (to read the result again) and flashes for 1.5 s, light blue after
+  Save, grey after Cancel. A "back to top" button bottom left after one
+  screen of scrolling, hidden while an editor is open.
+
+Open:
+- Prefilled review comments ("fix UK spelling", "move links to verbs" …,
+  2026-10-25): a new feature for all languages, not mobile. Ask the other
+  language teams first; who maintains the texts (config per language?).
 
 ## Merge of master 4.4.11/4.4.12 (2026-10-24)
 

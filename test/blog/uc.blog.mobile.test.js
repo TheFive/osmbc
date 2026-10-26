@@ -31,9 +31,9 @@ describe("uc/blog mobile inline editor", function() {
     return field;
   }
 
-  async function waitForStatus(text) {
+  async function waitForStatus(text, id = articleId) {
     await driver.wait(async function() {
-      const status = await driver.findElements(By.id("saveStatus" + articleId));
+      const status = await driver.findElements(By.id("saveStatus" + id));
       return status.length > 0 && (await status[0].getText()) === text;
     }, 5000, "status '" + text + "' not shown");
   }
@@ -182,6 +182,80 @@ describe("uc/blog mobile inline editor", function() {
       // give a wrongly triggered background save the chance to arrive
       await driver.sleep(500);
       should(await storedMarkdown()).eql("Alter Text");
+    });
+    it("should keep the title of an article without text on Cancel", async function() {
+      const empty = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Nur ein Titel" });
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN1/review"));
+      should(await blogPage.getArticleText(empty.id)).containEql("Nur ein Titel");
+
+      await blogPage.openInlineEditor(empty.id);
+      await blogPage.tapInlineCancel(empty.id);
+
+      should(await blogPage.getArticleText(empty.id)).containEql("Nur ein Titel");
+    });
+    describe("in a long issue", function() {
+      let last;
+      beforeEach(async function() {
+        for (let i = 0; i < 12; i++) {
+          last = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "T" + i, markdownDE: ("Ein langer Satz " + i + ". ").repeat(12) });
+        }
+      });
+      it("should show the article at the top and flash it after Save and Cancel", async function() {
+        const blogPage = new BlogPage(driver);
+        await driver.get(osmbcLink("/blog/WN1/review"));
+        await blogPage.openInlineEditor(last.id);
+        await blogPage.typeInlineText(last.id, " Neu.");
+        await blogPage.tapInlineSave(last.id);
+        await waitForStatus("saved", last.id);
+        let pos = await blogPage.getArticlePosition(last.id);
+        should(pos.flash).eql("saved");
+        should(Math.abs(pos.belowNavbar)).be.below(3);
+
+        await blogPage.openInlineEditor(last.id);
+        await blogPage.tapInlineCancel(last.id);
+        pos = await blogPage.getArticlePosition(last.id);
+        should(pos.flash).eql("cancelled");
+        should(Math.abs(pos.belowNavbar)).be.below(3);
+      });
+      it("should bring back to the top with the button", async function() {
+        const blogPage = new BlogPage(driver);
+        await driver.get(osmbcLink("/blog/WN1/review"));
+        should(await blogPage.isBackToTopShown()).be.False();
+        await blogPage.scrollToEnd();
+        should(await blogPage.isBackToTopShown()).be.True();
+        should(await blogPage.tapBackToTop()).eql(0);
+      });
+    });
+    it("should offer Open Editor instead of Save while an article has no text", async function() {
+      const empty = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Nur ein Titel" });
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN1/review"));
+      await blogPage.openInlineEditor(empty.id);
+      should(await blogPage.getInlineSaveLabel(empty.id)).eql("Open Editor");
+
+      await blogPage.typeInlineText(empty.id, "Erster Satz");
+      should(await blogPage.getInlineSaveLabel(empty.id)).eql("Save");
+      await blogPage.typeInlineText(empty.id, Key.chord(cmdCtrl, "a"), Key.BACK_SPACE);
+      should(await blogPage.getInlineSaveLabel(empty.id)).eql("Open Editor");
+
+      await blogPage.clickInlineOpenEditor(empty.id);
+      should(await driver.getCurrentUrl()).endWith("/article/" + empty.id);
+    });
+    it("should show comment icons, votes and open button in one line", async function() {
+      const article = await articleModule.createNewArticle({
+        blog: "WN1", categoryEN: "Mapping", title: "Mit Kommentar", markdownDE: "Text",
+        commentList: [{ user: "test", text: "@DE bitte prüfen", timestamp: new Date().toISOString() }]
+      });
+      const user = await userModule.findOne({ OSMUser: "TheFive" });
+      await new Promise((resolve, reject) => user.setAndSave({ OSMUser: "TheFive" }, { OSMUser: "TheFive", option: { review: { showMail: "true", showVote_pro: "true" } } }, err => err ? reject(err) : resolve()));
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN1/review"));
+
+      const [comments, votes, open] = await blogPage.getArticleBarCentres(article.id);
+      should(Math.abs(comments - open)).be.below(3);
+      should(Math.abs(votes - open)).be.below(3);
+      should(await blogPage.getCommentLink(article.id)).endWith("/article/" + article.id + "#commentArea");
     });
   });
   // cells hidden on phones must still be table cells on a desktop (X6)

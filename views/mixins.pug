@@ -143,6 +143,22 @@ mixin articleOpenButton(a)
   a.btn.btn-link.osmbc-tap-square.ms-auto.osmbc-article-open(href=layout.htmlroot + "/article/" + a.id aria-label="Open article")
     i.fa.fa-edit
 
+mixin commentIcons(a)
+  - shown = false
+  if a.isMentioned(layout.user.OSMUser)
+      i.fa.fa-comment.small-margin.osmbc-color-user
+      - shown=true
+  if a.isMentioned(layout.user.getMainLang())
+      i.fa.fa-comment.small-margin.osmbc-color-lang
+      - shown=true
+  if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
+      i.fa.fa-comment.small-margin.osmbc-color-lang2
+      - shown=true
+  if !shown
+    i.fa.fa-comment.small-margin(style="color:grey")
+  if !a.getCommentRead(layout.user.OSMUser)
+    i.fa.fa-envelope.small-margin
+
 mixin articleIcons(a,options)
   div.d-flex.flex-nowrap
     - numCol = 0;
@@ -153,21 +169,16 @@ mixin articleIcons(a,options)
       span.d-none.d-sm-inline.badge.osmbc-label-collect.small-margin=numCol
       span.d-none.d-sm-inline.badge.osmbc-label-markdown.small-margin=numEd
     if options.showMail
-      if a.getCommentMention()
-        - shown = false
-        if a.isMentioned(layout.user.OSMUser)
-            i.fa.fa-comment.small-margin.osmbc-color-user
-            - shown=true
-        if a.isMentioned(layout.user.getMainLang())
-            i.fa.fa-comment.small-margin.osmbc-color-lang
-            - shown=true
-        if layout.user.getSecondLang() && a.isMentioned(layout.user.getSecondLang())
-            i.fa.fa-comment.small-margin.osmbc-color-lang2
-            - shown=true
-        if !shown
-          i.fa.fa-comment.small-margin(style="color:grey")
-        if !a.getCommentRead(layout.user.OSMUser)
-          i.fa.fa-envelope.small-margin
+      //- openAtEnd (mobile): the comment icons open the article's comments,
+      //- an empty placeholder keeps the votes of all rows in line
+      if options.openAtEnd
+        if a.getCommentMention()
+          a.btn.btn-link.text-decoration-none.osmbc-article-comments(href=layout.htmlroot + "/article/" + a.id + "#commentArea" aria-label="Open comments")
+            +commentIcons(a)
+        else
+          span.osmbc-article-comments
+      else if a.getCommentMention()
+        +commentIcons(a)
     //- openAtEnd: the view shows articleOpenButton at the end of the row instead
     if !options.openAtEnd
       a(href=layout.htmlroot+"/article/" + a.id)

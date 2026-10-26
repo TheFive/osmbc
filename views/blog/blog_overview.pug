@@ -59,7 +59,7 @@ mixin displayOverviewRow(a)
             form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
               textarea.form-control(name="markdown" id="markdown" + a.id rows=7 data-fit-content onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
               textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
-              +inlineEditorButtons(a.id, "")
+              +inlineEditorButtons(a.id, "", !a["markdown" + lang])
             p
               if a.author && a.author.collection
                 span="Collected: "

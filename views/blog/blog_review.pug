@@ -39,7 +39,7 @@ block blogcontent
       for a in articles[c.EN]
         if a["markdown"+lang]!=="no translation"
           .row
-            div(class=firstColSize).d-flex.flex-nowrap
+            div(class=firstColSize).d-flex.flex-nowrap.osmbc-article-bar
               span
                 +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId, openAtEnd: layout.mobileView})
                 - predecessorId = a.id
@@ -72,7 +72,7 @@ block blogcontent
                 form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")
                   textarea.form-control(name="markdown" id="markdown"+a.id rows=7 data-fit-content onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang=lang)=a["markdown"+lang]
                   textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
-                  +inlineEditorButtons(a.id, "")
+                  +inlineEditorButtons(a.id, "", !a["markdown" + lang])
                 form(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
                   if a.isTranslatedAutomated(lang)
                       textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
