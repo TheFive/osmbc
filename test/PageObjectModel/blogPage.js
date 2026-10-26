@@ -41,14 +41,12 @@ class BlogPage extends StandardPage {
     await this._waitForBootstrapOverlaysToDisappear();
     // await this._driver.wait(until.elementIsVisible(clickEditBlogDetail)); // Warte auf Sichtbarkeit
     // await this._driver.wait(until.elementIsEnabled(clickEditBlogDetail)); // Zusätzlich: Warte auf Aktivierung
-    await clickEditBlogDetail.click();
-    // await this._driver.executeScript("arguments[0].click();", clickEditBlogDetail); // JavaScript-Klick als Fallback
-    await this._driver.wait(until.stalenessOf(clickEditBlogDetail)); // Warte, bis das Element nicht mehr im DOM ist
+    await this._clickAndWaitForNavigation(clickEditBlogDetail);
   }
 
   async clickReadyReview(blog, lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath(`//button[text()="Set ${blog}(${lang}) ready for review"]`))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath(`//button[text()="Set ${blog}(${lang}) ready for review"]`)));
   }
 
   // Close and Did Export ask first
@@ -60,9 +58,10 @@ class BlogPage extends StandardPage {
   async clickClose(blog, lang) {
     await this.assertPage();
     const closeLang = await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`));
-    await (closeLang).click();
+    await closeLang.click();
     await this.#acceptConfirmation();
-    await (this._driver.wait(until.stalenessOf(closeLang)));
+    await this._waitUntilStale(closeLang, "Close did not lead to a new page within 10s");
+    await this._waitForNewPage();
   }
 
   // Close, but answer the confirmation with Cancel
@@ -78,7 +77,10 @@ class BlogPage extends StandardPage {
     const button = await this.#findVisibleElement(`button[id^='reviewButton${lang}']`);
     await this.scrollIntoView(button);
     await this._waitForBootstrapOverlaysToDisappear();
-    await button.click();
+    // "Start Personal Review" submits a form: wait for the new page first,
+    // the old one can already show textareas of earlier review comments
+    await this._clickAndWaitForNavigation(button);
+    await this.assertPage();
     await this._driver.wait(async () => {
       const field = await this.#findVisibleElement(`textarea[id^='reviewComment${lang}']`).catch(() => null);
       return !!field;
@@ -105,6 +107,8 @@ class BlogPage extends StandardPage {
 
       try {
         await checkbox.click();
+        // the checkbox stores the user config and reloads the page
+        await this.waitForPageReload();
         return;
       } catch (e) {
         if (!(e instanceof webdriverError.ElementClickInterceptedError) || attempt === 1) {
@@ -129,15 +133,17 @@ class BlogPage extends StandardPage {
     // flaky. Wait for staleness of the button instead, the same pattern
     // already used for every other form-submit action in this file.
     const submitButton = await this.#findVisibleElement(buttonSelector);
-    await submitButton.click();
-    await this._driver.wait(until.stalenessOf(submitButton));
+    await this._clickAndWaitForNavigation(submitButton);
     await this.assertPage();
   }
 
   async clickDidExport(lang) {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`))).click();
+    const button = await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`));
+    await button.click();
     await this.#acceptConfirmation();
+    await this._waitUntilStale(button, "Did Export did not lead to a new page within 10s");
+    await this._waitForNewPage();
   }
 
   // Small screens (mobile mode)
@@ -196,9 +202,7 @@ class BlogPage extends StandardPage {
 
   // the Save button labelled "Open Editor": opens the article page
   async clickInlineOpenEditor(articleId) {
-    const button = await this._driver.findElement(By.id("inlineSave" + articleId));
-    await this.tap(button);
-    await this._driver.wait(until.stalenessOf(button), 5000, "article page not opened");
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("inlineSave" + articleId)));
   }
 
   // the article text as shown in the review view (tap target of the editor)
@@ -227,7 +231,8 @@ class BlogPage extends StandardPage {
     const selector = `div[name="choose_showVote_${vote}"]`;
     const before = await this._driver.findElement(By.css(selector));
     await this.#clickACheckbox(selector);
-    await this._driver.wait(until.stalenessOf(before), 5000, "page not reloaded");
+    await this._waitUntilStale(before, "page not reloaded");
+    await this._waitForNewPage();
   }
 
   // vote label of an article (chosen under "Display Votes"); waits for the redraw
@@ -235,13 +240,13 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const label = await this._driver.findElement(By.id(`vote_${vote}_${articleId}`));
     await this.tap(label);
-    await this._driver.wait(until.stalenessOf(label), 3000, "vote label not redrawn");
+    await this._waitUntilStale(label, "vote label not redrawn");
   }
 
   // the button at the end of the article's row
   async clickOpenArticle(articleId) {
     await this.assertPage();
-    await this.tap(await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`)));
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`)));
   }
 
   // edit button of an own review comment (n-th comment of the language)
@@ -253,9 +258,7 @@ class BlogPage extends StandardPage {
 
   async clickStopReview(lang) {
     await this.assertPage();
-    const button = await this._driver.findElement(By.id("reviewButtonCancel" + lang));
-    await this.tap(button);
-    await this._driver.wait(until.stalenessOf(button), 3000, "page not reloaded");
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("reviewButtonCancel" + lang)));
   }
 
   async isExportMenuShown() {
@@ -341,6 +344,20 @@ class BlogPage extends StandardPage {
     await (editForm).sendKeys(newArticleText);
   }
 
+  // Leaving a changed edit field submits its form (onLeaveText in
+  // views/blog/blog_mixin.pug), which reloads the whole page. Wait for it,
+  // or the next step races the reload into a StaleElementReferenceError.
+  // leaving the text field saves the inline editor in the background; waits
+  // for "saved" and reloads, so the page shows what the server stored
+  async clickOnArticleToSaveEdit(articleText) {
+    await this.clickOnArticle(articleText);
+    await this.waitForInlineSaved();
+    const page = await this._driver.findElement(By.css("html"));
+    await this._driver.navigate().refresh();
+    await this._waitUntilStale(page, "page not reloaded");
+    await this._waitForNewPage();
+  }
+
   async getEditForm(articleShown) {
     await this.assertPage();
     let editForm;
@@ -369,21 +386,21 @@ class BlogPage extends StandardPage {
     await this.assertPage();
     const fullTab = await this._driver.findElement(By.xpath(`//a[contains(@class,'nav-link') and normalize-space(.)='${mode}']`));
     await this.scrollIntoView(fullTab);
-    await (fullTab).click();
+    await this._clickAndWaitForNavigation(fullTab);
   }
 
   async clickStatisticView() {
     await this.assertPage();
     const statisticView = await this._driver.findElement(By.xpath(`//a[text()="[Statistic]"]`));
     await this._waitForBootstrapOverlaysToDisappear();
-    await this._driver.executeScript("arguments[0].click();", statisticView);
+    await this._clickAndWaitForNavigation(statisticView, true);
   }
 
   async clickEditView() {
     await this.assertPage();
     const editView = await this._driver.findElement(By.xpath(`//a[text()="[Edit Blog Detail]"]`));
     await this._waitForBootstrapOverlaysToDisappear();
-    await this._driver.executeScript("arguments[0].click();", editView);
+    await this._clickAndWaitForNavigation(editView, true);
   }
 
   async triggerOnChange(articleShown) {

@@ -16,7 +16,7 @@ export default class SearchAndCollectPage extends StandardPage {
 
   async assertPage() {
     await super.assertPage();
-    await this._assertUrlStartsWith(osmbcLink(["/article/create", "/article/search"]));
+    await this._assertUrlStartsWith([osmbcLink("/article/create"), osmbcLink("/article/search")]);
   }
 
   async fillAndStartSearch(text) {
@@ -24,7 +24,7 @@ export default class SearchAndCollectPage extends StandardPage {
     const ele =  await this._driver.findElement(By.css("input#searchField"));
     await (ele).sendKeys(await this.getCtrlA());
     await (ele).sendKeys(text);
-    await (await this._driver.findElement(By.css("button[name='SearchNow']"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.css("button[name='SearchNow']")));
   }
 
   async fillTitleInput(text) {
@@ -44,8 +44,7 @@ export default class SearchAndCollectPage extends StandardPage {
   async clickOK() {
     await this.assertPage();
     const okButton = await this._driver.findElement(By.css("button#OK"));
-    await (okButton).click();
-    await this._driver.wait(until.stalenessOf(okButton));
+    await this._clickAndWaitForNavigation(okButton);
   }
 
   // small screens: the search button in the same row as the field
@@ -91,16 +90,12 @@ export default class SearchAndCollectPage extends StandardPage {
 
   async clickSaveWithDraft() {
     await this.assertPage();
-    const button = await this._driver.findElement(By.id("OKWithDraft"));
-    await this.tap(button);
-    await this._driver.wait(until.stalenessOf(button), 5000, "not saved");
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("OKWithDraft")));
   }
 
   async clickSaveLinkOnly() {
     await this.assertPage();
-    const button = await this._driver.findElement(By.id("OK"));
-    await this.tap(button);
-    await this._driver.wait(until.stalenessOf(button), 5000, "not saved");
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("OK")));
   }
 
   async getOkButton() {

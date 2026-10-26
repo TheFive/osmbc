@@ -133,7 +133,10 @@ function initialise(callback) {
   if (env === "test") {
     if (process.env.OSMBC_TEST_PORT) configuration.serverport = Number(process.env.OSMBC_TEST_PORT);
     if (process.env.OSMBC_TEST_DB) configuration.postgres.database = process.env.OSMBC_TEST_DB;
-    if (process.env.OSMBC_TEST_TMPDIR) configuration.maillog_directory = process.env.OSMBC_TEST_TMPDIR;
+    if (process.env.OSMBC_TEST_TMPDIR) {
+      configuration.maillog_directory = process.env.OSMBC_TEST_TMPDIR;
+      configuration.exportlog_directory = process.env.OSMBC_TEST_TMPDIR;
+    }
   }
 
   // Do some tests with the types

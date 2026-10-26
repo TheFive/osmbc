@@ -81,10 +81,10 @@ function translateDeeplPro(options, callback) {
   debug("translateDeeplPro");
 
   if (typeof deeplConfig.authKey === "undefined") {
-    return new Error("No Deepl Key registered");
+    return callback(new Error("No Deepl Key registered"));
   }
   if (typeof deeplConfig.url === "undefined") {
-    return new Error("No Deepl Url registered configured");
+    return callback(new Error("No Deepl Url registered configured"));
   }
 
 

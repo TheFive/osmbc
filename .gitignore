@@ -14,7 +14,6 @@ package-lock.json
 test/uc.access/stylesheets
 maillogTest.log
 yarn.lock
-script_logs
 
 # Ignore all temporary files for comparison
 *_actual.html
@@ -67,3 +66,7 @@ wp-reconcile/blog-sync-merger/.sync-state.json
 tempDB/
 __pycache__/
 osmbc-blogsync-key
+
+# editor swap files (vim), may contain secrets of open config files
+*.swp
+*.swo

@@ -12,14 +12,10 @@ import pretty from "pretty";
 
 import http from "http";
 import axios from "axios";
-import { execFileSync } from "child_process";
 
-import LoginPage from "../test/PageObjectModel/loginPage.js";
-import LoginChooserPage from "../test/PageObjectModel/loginChooserPage.js";
+import { getNewDriver, safeQuit } from "./browser.js";
 
-import { Builder, Browser } from "selenium-webdriver";
-import chrome from "selenium-webdriver/chrome.js";
-// import safari from "selenium-webdriver/safari.js";
+
 
 import util from "../util/util.js";
 
@@ -40,22 +36,6 @@ import { initialiseMailReceiver, mailReceiverUpdateUser } from "../notification/
 import messageCenter from "../notification/messageCenter.js";
 const osmbcLink = util.osmbcLink;
 const debug = _debug("OSMBC:test:testutil");
-
-function readVersionCommand(command, args = []) {
-  try {
-    return execFileSync(command, args, { encoding: "utf8" }).trim();
-  } catch (_err) {
-    return "not found";
-  }
-}
-
-function readChromeVersion() {
-  if (process.platform === "darwin") {
-    return readVersionCommand("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", ["--version"]);
-  }
-  return readVersionCommand("google-chrome", ["--version"]);
-}
-
 
 // set Test Standard to ignore prototypes for should
 should.config.checkProtoEql = false;
@@ -643,133 +623,10 @@ function getWrappedAxiosClient(options) {
   };
 }
 
-// Devices for getNewDriver(username, { device }). "phone" emulates a
-// typical Android phone (most editors use Firefox on Android, the layout
-// is the same in Chrome's emulation).
-const testDevices = {
-  phone: {
-    deviceMetrics: { width: 390, height: 844, pixelRatio: 3, touch: true },
-    userAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36"
-  },
-  // the "desktop view" of a phone browser: desktop user agent, ~980px wide,
-  // just below Bootstrap's lg breakpoint, on a phone screen (412px)
-  desktopView: {
-    deviceMetrics: { width: 980, height: 2120, pixelRatio: 1, touch: true },
-    userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
-    screen: { width: 412, height: 915 },
-    view: "desktop"
-  }
-};
-
-async function getNewDriver(username, options = {}) {
-  const chromeOptions = new chrome.Options();
-  const isHeadless = process.env.TEST_HEADLESS === "TRUE";
-  const isLinux = process.platform === "linux";
-
-  if (isHeadless) chromeOptions.addArguments("headless=new");
-  if (options.device) {
-    if (!testDevices[options.device]) throw new Error("Unknown test device " + options.device);
-    const { deviceMetrics, userAgent, screen } = testDevices[options.device];
-    // mobile emulation always makes the screen as wide as the viewport, a
-    // device with its own screen size is set up by DevTools below
-    if (screen) chromeOptions.addArguments("user-agent=" + userAgent);
-    else chromeOptions.setMobileEmulation({ deviceMetrics, userAgent });
-  } else {
-    chromeOptions.addArguments("window-size=1920,1080");
-  }
-  chromeOptions.addArguments("disable-search-engine-choice-screen");
-  chromeOptions.addArguments("disable-infobars");
-
-  // try to disable passwort Manager Popup
-  // https://stackoverflow.com/questions/69799196/chrome-arguments-to-disable-save-password-prompt
-  chromeOptions.addArguments("guest");
-  // End try disable passwort Manager Popup
-
-  // Linux CI often needs these flags; on macOS headed mode they can crash renderer startup.
-  if (isLinux) {
-    chromeOptions.addArguments("no-sandbox");
-    chromeOptions.addArguments("disable-dev-shm-usage");
-  }
-  if (isHeadless && isLinux) {
-    chromeOptions.addArguments("disable-gpu");
-  }
-
-  // Disable popup dialogs
-  chromeOptions.addArguments("disable-blink-features=AutomationControlled");
-
-
-
-  let driver;
-  try {
-    driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
-  } catch (err) {
-    const diagnostics = [
-      `platform=${process.platform}`,
-      `arch=${process.arch}`,
-      `TEST_HEADLESS=${process.env.TEST_HEADLESS || "unset"}`,
-      `chrome=${readChromeVersion()}`,
-      `chromedriver=${readVersionCommand("chromedriver", ["--version"])}`
-    ].join(", ");
-
-    const webdriverMessage = (err && err.message) ? err.message : String(err);
-    const improvedError = new Error(`Failed to create WebDriver (${webdriverMessage}). Diagnostics: ${diagnostics}`);
-    console.error(improvedError.message);
-    throw improvedError;
-  }
-  // const driver = await new Builder().forBrowser(Browser.SAFARI).setChromeOptions(chromeOptions).build();
-  const device = options.device && testDevices[options.device];
-  if (device && device.screen) {
-    // a viewport wider than the screen, like a phone browser's desktop view
-    await driver.sendDevToolsCommand("Emulation.setDeviceMetricsOverride", {
-      width: device.deviceMetrics.width,
-      height: device.deviceMetrics.height,
-      deviceScaleFactor: device.deviceMetrics.pixelRatio,
-      mobile: false,
-      screenWidth: device.screen.width,
-      screenHeight: device.screen.height
-    });
-    if (device.deviceMetrics.touch) await driver.sendDevToolsCommand("Emulation.setTouchEmulationEnabled", { enabled: true });
-  }
-  const loginPage = new LoginPage(driver);
-  const loginChooserPage = new LoginChooserPage(driver);
-  await driver.manage().setTimeouts({ implicit: 700, script: 700 });
-  try {
-    await driver.get(osmbcLink("/osmbc"));
-    await loginChooserPage.clickHtAccessLogin();
-
-
-
-    await loginPage.assertPage();
-    await loginPage.typeUsername(username);
-    await loginPage.typePassword(username);
-    await loginPage.clickOK();
-    // set the cookie the layout script would set (small test devices work in
-    // mobile mode, one language), so no test waits for its reload
-    if (device) await driver.manage().addCookie({ name: "osmbc_view", value: device.view || "mobile", path: "/" });
-  } catch (err) {
-    console.error(err);
-    // Ensure driver is properly closed on error
-    if (driver) {
-      try {
-        await driver.quit();
-      } catch (quitErr) {
-        console.error("Error quitting driver:", quitErr.message);
-      }
-    }
-    throw err;
-  }
-  return driver;
-}
-
-async function safeQuit(driver) {
-  if (!driver) return;
-  try {
-    await driver.quit();
-  } catch (err) {
-    const quitMessage = (err && err.message) ? err.message : String(err);
-    debug(`safeQuit ignored quit error: ${quitMessage}`);
-  }
-}
+// selenium's driver.wait measures its timeout with Date.now(). The UI tests
+// freeze Date with mockdate, so every wait(condition, timeout) polled until
+// the mocha timeout instead of failing after its own timeout. Measure the
+// timeout with a real timer instead (setTimeout is not mocked).
 
 
 const testutil = {

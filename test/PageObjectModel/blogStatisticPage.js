@@ -17,15 +17,15 @@ export default class BlogStatisticPage extends StandardPage {
 
   async assertPage() {
     await super.assertPage();
-    await this._assertUrlStartsWith(osmbcLink("stat.html"));
+    await this._assertUrlStartsWith(osmbcLink("/blog/"));
   }
 
   async clickStatisticItem(blog, user, datatype) {
     await this.assertPage();
 
 
-    await (await this._driver.findElement(By.css("a[href='/article/list?blog=" + blog +
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.css("a[href='/article/list?blog=" + blog +
     "&user=" + user +
-    "&property=" + datatype + "%']"))).click();
+    "&property=" + datatype + "%']")));
   }
 }

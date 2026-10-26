@@ -10,9 +10,9 @@ const debug = _debug("OSMBC:notification:messageCenter");
 // Blog fields that are purely operational (not editorial content) and
 // therefore must not turn a setAndSave() call into a Postgres changes-log
 // row that editors see in the blog history tab. See
-// Blog.prototype.markAsExported in model/blog.js and
+// Blog.prototype.markAsExported / markAsAutoTranslated in model/blog.js and
 // notification/exportReceiver.js.
-const OPERATIONAL_ONLY_BLOG_FIELDS = ["exportedBy"];
+const OPERATIONAL_ONLY_BLOG_FIELDS = ["exportedBy", "autoTranslated"];
 
 function isEditorialBlogChange(user, blog, change) {
   const keys = Object.keys(change).filter((k) => typeof change[k] !== "undefined");

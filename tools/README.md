@@ -1,9 +1,7 @@
 # Tools
 
 Scripts for maintaining and testing OSMBC. They are run by hand or from
-`npm` scripts and are not part of the running application. (Scripts that
-editors start from the OSMBC web UI live in `scripts/`, configured via
-`scripts.scriptFilePath`.)
+`npm` scripts and are not part of the running application.
 
 Run them from the repository root.
 

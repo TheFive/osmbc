@@ -43,7 +43,8 @@ The `npm` scripts run through `tools/run-tests.mjs`. For every run it
 
 1. picks a free port for the test server,
 2. creates the database `osmbc_test_<port>`,
-3. creates a temp directory for the mail log and the blog sync state file,
+3. creates a temp directory for the mail log, the export log and the blog
+   sync state file,
 4. starts the tests with these values in `OSMBC_TEST_PORT`,
    `OSMBC_TEST_DB`, `OSMBC_TEST_TMPDIR` and `OSMBC_SYNC_STATE_FILE`
    (`config.js` and `syncState.js` read them; `config.test.yaml` is not

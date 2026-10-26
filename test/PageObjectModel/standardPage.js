@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
 
 import Page from "../../test/PageObjectModel/page.js";
 
@@ -14,25 +14,23 @@ export default class StandardPage extends Page {
   async clickBlogMenu(blog) {
     await this.assertPage();
     const blogMenu = await this._driver.findElement(By.css("a[href='/blog/" + blog + "']"));
-    await blogMenu.click();
-    await this._driver.wait(until.stalenessOf(blogMenu));
+    await this._clickAndWaitForNavigation(blogMenu);
   }
 
   async clickInboxMenu(blog) {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("inbox"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.id("inbox")));
   }
 
   async clickMyArticlesMenu() {
     await this.assertPage();
-    await (await this._driver.findElement(By.css("a.nav-link#myArticles"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.css("a.nav-link#myArticles")));
   }
 
   async clickCollect() {
     await this.assertPage();
     const collectButton = await this._driver.findElement(By.css("#collect"));
-    await (collectButton).click();
-    await this._driver.wait(until.stalenessOf(collectButton));
+    await this._clickAndWaitForNavigation(collectButton);
   }
 
   // small screens: the app name at the top of the menu panel leads home
@@ -46,9 +44,7 @@ export default class StandardPage extends Page {
       const cls = await panel.getAttribute("class");
       return cls.includes("show") && !cls.includes("showing");
     }, 3000, "menu panel did not open");
-    const home = await this._driver.findElement(By.id("menuHome"));
-    await this.tap(home);
-    await this._driver.wait(until.stalenessOf(home), 5000, "home page not loaded");
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("menuHome")));
   }
 
   async clickUserIcon() {

@@ -42,7 +42,7 @@ class ArticlePage extends StandardPage {
     await this.assertPage();
     const button = await this._driver.findElement(By.css("#EditComment" + number));
     await this.tap(button);
-    await this._driver.wait(until.stalenessOf(button), 3000, "comment area not redrawn");
+    await this._waitUntilStale(button, "comment area not redrawn");
   }
 
   async typeCommentText(text) {
@@ -63,7 +63,8 @@ class ArticlePage extends StandardPage {
     await this.scrollIntoView(button);
 
     await button.click();
-    await this._driver.wait(until.stalenessOf(ele));
+    await this._waitUntilStale(ele);
+    await this._waitForNewPage();
   }
 
 
@@ -121,15 +122,13 @@ class ArticlePage extends StandardPage {
   async clickSave() {
     await this.assertPage();
     const saveButton = await this._driver.findElement(By.css("button#saveButton"));
-    await (saveButton).click();
-    await this._driver.wait(until.stalenessOf(saveButton), 2000);
+    await this._clickAndWaitForNavigation(saveButton);
   }
 
   async clickNoTranslationButton() {
     await this.assertPage();
     const noTranslationButton = await this._driver.findElement(By.css("button#noTranslationButton"));
-    await (noTranslationButton).click();
-    await this._driver.wait(until.stalenessOf(noTranslationButton), 2000);
+    await this._clickAndWaitForNavigation(noTranslationButton);
   }
 
   async clickAddComment() {
@@ -139,8 +138,7 @@ class ArticlePage extends StandardPage {
     // Scroll the comment section into view to ensure the button is clickable
     await this.scrollIntoView(addCommentButton);
     await this._waitForBootstrapOverlaysToDisappear();
-    await (addCommentButton).click();
-    await this._driver.wait(until.stalenessOf(addCommentButton), 2000);
+    await this._clickAndWaitForNavigation(addCommentButton);
   }
 
   async selectAndPasteTextInMarkdown(lang, from, to, text) {
@@ -253,7 +251,7 @@ class ArticlePage extends StandardPage {
     await this.assertPage();
     const envelope = await this._driver.findElement(By.css("#commentArea button[aria-label='Mark as read']"));
     await this.tap(envelope);
-    await this._driver.wait(until.stalenessOf(envelope), 3000, "comment area not redrawn");
+    await this._waitUntilStale(envelope, "comment area not redrawn");
   }
 
   async tapAddComment(text) {
@@ -263,7 +261,7 @@ class ArticlePage extends StandardPage {
     await field.sendKeys(text);
     const button = await this._driver.findElement(By.css("button[name='AddComment']"));
     await this.tap(button);
-    await this._driver.wait(until.stalenessOf(button), 3000, "comment area not redrawn");
+    await this._waitUntilStale(button, "comment area not redrawn");
   }
 
   // the n-th vote button next to the article's form (0 = first)

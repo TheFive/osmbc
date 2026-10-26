@@ -27,9 +27,7 @@ class InboxPage extends StandardPage {
   // small screens: the envelope of the first unread comment
   async clickMarkFirstCommentRead() {
     await this.assertPage();
-    const envelope = await this._driver.findElement(By.css("a[aria-label='Mark as read']"));
-    await this.tap(envelope);
-    await this._driver.wait(until.stalenessOf(envelope), 3000, "inbox not reloaded");
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.css("a[aria-label='Mark as read']")));
   }
 
   async countUnreadComments() {
@@ -38,7 +36,7 @@ class InboxPage extends StandardPage {
 
   async clickFirstArticleShown() {
     await this.assertPage();
-    await (await this._driver.findElement(By.xpath("//i[contains(@class,'fa-edit')][1]"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath("//i[contains(@class,'fa-edit')][1]")));
   }
 }
 export default InboxPage;

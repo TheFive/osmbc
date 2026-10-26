@@ -73,13 +73,6 @@ mixin toolMenu
     li.dropdown.nav-item.active
       a.nav-link.dropdown-toggle#toolsMenuDropdown(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false") Tools
       div.dropdown-menu(aria-labelledby="toolsMenuDropdown")
-        if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))
-          div.dropdown-divider
-          a.dropdown-header="Script Plugins (TEST PHASE)"
-          a.dropdown-item(href=layout.htmlroot + "/tool/scripts/execute")="Execute Scripts"
-          a.dropdown-item(href=layout.htmlroot + "/tool/scripts/log")="Script Results"
-
-        div.dropdown-divider
         a.dropdown-header Editorial Tools
         a.dropdown-item(href="https://mattermost.openstreetmap.de") Mattermost for Editorial Team
         

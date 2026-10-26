@@ -224,7 +224,7 @@ mixin translationMenu
                     - all.push(b);
                     if (layout.user.useOneTranslation(tService))
                       +articleTranslateMenu(a, b, tService)
-              if (layout.scriptUser === "full" || (Array.isArray(layout.scriptUser) && layout.scriptUser.indexOf(layout.user.OSMUser)>=0))  
+              if (layout.manyTranslationEnabled)
                 if (all.length > 1)
                   if (layout.user.useManyTranslation(tService))  
                     +articleTranslateMenu(a, all, tService)

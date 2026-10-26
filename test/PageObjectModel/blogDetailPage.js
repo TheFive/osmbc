@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
 import util from "../../util/util.js";
 
 import StandardPage from "./standardPage.js";
@@ -18,7 +18,7 @@ class BlogDetailPage extends StandardPage {
 
   async clickEdit() {
     await this.assertPage();
-    await (await this._driver.findElement(By.id("edit"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.id("edit")));
   }
 
   async selectStatus(status) {
@@ -30,8 +30,7 @@ class BlogDetailPage extends StandardPage {
   async clickOK() {
     await this.assertPage();
     const input = await this._driver.findElement(By.css("input[value='OK']"));
-    await (input).click();
-    await this._driver.wait(until.stalenessOf(input));
+    await this._clickAndWaitForNavigation(input);
   }
 }
 

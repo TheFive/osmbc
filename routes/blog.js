@@ -320,9 +320,6 @@ function renderBlogTab(req, res, next) {
 
 
   const votes = configModule.getConfig("votes");
-  let reviewScripts = {};
-  const scripts = config.getValue("scripts");
-  if (scripts && scripts.review) reviewScripts = scripts.review;
 
   if (!tab) tab = req.session.lasttab;
   if (!tab) tab = "Overview";
@@ -427,7 +424,6 @@ function renderBlogTab(req, res, next) {
       right_lang: rightLang,
       renderer: renderer,
       reviewInWP: reviewInWP,
-      reviewScripts: reviewScripts,
       util: util,
       categories: blog.getCategories(),
       apiAuthors: apiAuthors

@@ -179,7 +179,7 @@ function prepareRenderLayout(req, res, next) {
     if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
     const markdown = osmbcMarkdown({ target: "editor" });
 
-    const scriptUser = config.getValue("scripts").user;
+    const manyTranslationEnabled = config.getValue("manyTranslationEnabled", { default: true }) !== false;
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
     const firstDraftVisible = firstDraft.isVisibleFor(req.user);
     const helpMenu = configModule.getConfig("helpmenu");
@@ -224,7 +224,7 @@ function prepareRenderLayout(req, res, next) {
       language2_locale: language.momentLocale(req.user.getSecondLang()),
       md_renderInline: (text) => markdown.renderInline(text ?? ""),
       getAvatar: _getAvatar,
-      scriptUser: scriptUser,
+      manyTranslationEnabled: manyTranslationEnabled,
       blogTranslationVisibleFor: blogTranslationVisibleFor,
       firstDraftVisible: firstDraftVisible,
       exportProfiles: exportProfiles

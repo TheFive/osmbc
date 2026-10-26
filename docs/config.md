@@ -122,12 +122,12 @@ a map of *where to look*, not a restatement of every field.
 | `auth` | `htaccess` (basic-auth escape hatch) and `openstreetmap_oauth20` (the real login: `authorizationURL`, `tokenURL`, `clientID`, `clientSecret`, `callbackURL`, `scope`). **When `serverport`/`url` change, `auth.openstreetmap_oauth20.callbackURL` must be updated to match too** — OSM's own OAuth app registration has to agree with it, easy to miss (see `CLAUDE.local.md`, "Whenever the port changes, three places need to match"). |
 | `allowGuest`, `createGuestUsersAutomatic`, `DefineRole` | Login/role behavior for users without (or before) an OSM-verified account. |
 | `WelcomeInterval`, `userIsOldInDays`, `WelcomeRefreshInSeconds` | Home-screen "recently active"/"welcome" display tuning, not data-affecting. |
-| `scripts` | Paths + allowed users for the in-app scripted-review tooling (`scriptFilePath`/`logFilePath`, matched by `*FileFilter` globs). |
-| `Transition` | The automatic workflow scheduler (`AutoEditMode`, `AutoLanguageClose`) — `enabled: false` in `config.test.yaml` so tests don't race a live cron. |
+| `Transition` | The automatic workflow scheduler (`AutoEditMode`, `AutoTranslate`, `AutoLanguageClose`), see [Automatic transitions](#automatic-transitions-transition) below. `enabled: false` in `config.test.yaml` so tests don't race a live cron. |
 | `limitValues` | Express-`helmet` rate limiting (`limitWindowsMs`, `limitMaxCount`, `trustProxy`) — found to matter for a real bulk-write batch: a fast unpaced client can trip this within seconds (see `CLAUDE.local.md`, 2026-09-04 full-range Blog-Sync-Merger run). |
 | `DeeplProConfig` | DeepL API auth/endpoints for machine translation. |
 | `copyLanguageFromAnother` | Per-language "translate from this other language instead" fallback map. |
 | `blogTranslationVisibleFor` | Restricts the blog-translation feature to specific OSM usernames. |
+| `manyTranslationEnabled` | `false` switches off the "translate into many languages" menu in the article editor (and the matching profile setting). Missing or `true` = available for every user, who still has to enable it via their own `translationServicesMany` setting ("Translation Services Used (One to Many)"). |
 | `FirstDraftConfig` | "First Draft" menu in the article view: Claude summarises a collected link into an empty language markdown. `apiKey` (else `ANTHROPIC_API_KEY`), `model` (default `claude-opus-5-5`), `effort` (default `medium`), `visibleFor` (list of OSM usernames, or `full`). Only these users see the menu and the admin config text `firstdraftprompt` (the system prompt). |
 | `ReviewInWP`, `urlWoErrorWhileEdit` | Misc per-language/per-URL editorial-workflow exceptions. |
 | `"media folder"` | Local-vs-published media path mapping used by markdown/export sanitizing (note the key needs quoting — it contains a space). |
@@ -135,6 +135,80 @@ a map of *where to look*, not a restatement of every field.
 | `"Blog Title For Export"`, `Hugo.DateAdjust` | Export-time title/date-offset knobs. |
 | `"link-attributes"` | Per-render-target (`editor`/`production`) HTML attributes markdown-it adds to links. |
 | `ExportProfiles` | Full renderer/bundling/GUI-menu definition per export profile — see [docs/export-profiles.md](export-profiles.md), the dedicated reference for this one. |
+
+## Automatic transitions (`Transition`)
+
+`model/blogTransitionScheduler.js` runs a sweep on the `scheduleCron`
+schedule. Each sweep runs three rules in this order: Auto Edit, Auto
+Translate, Auto Language Close. Translate runs before close because a closed
+language can't be edited any more.
+
+```yaml
+Transition:
+  enabled: true              # false = no scheduler at all (tests, a second instance on the same DB)
+  scheduleCron: "*/1 * * * *"
+  runOnStart: true           # run one sweep right after start
+  AutoEditMode:
+    enabled: true
+  AutoTranslate:
+    enabled: true
+    sourceLanguage: EN
+    previousBlogs: 2
+    translateAt: { weekday: SUN, hour: 20, minute: 0 }
+  AutoLanguageClose:
+    enabled: true
+    minReviews: 2
+    closeAt: { weekday: MON, hour: 12, minute: 0 }
+```
+
+**When a rule is due.** Auto Translate and Auto Language Close are due
+per blog. A rule is due `delayDays` after the blog's `endDate`. If
+`translateAt` or `closeAt` is set, it is due instead at the first time
+with that weekday and hour after `endDate`. `weekday` is `SUN`…`SAT` or
+0–6, and `hour`/`minute` default to 12:00. The time is calculated in the
+timezone of the server process. An invalid value makes the rule fall back
+to `delayDays`. A rule acts only within one hour after its due time, so a
+blog whose window was missed (e.g. server down) is not processed later.
+
+| `AutoEditMode` | Default | |
+|---|---|---|
+| `enabled` | `true` | An `open` blog switches to `edit` once its `endDate` has passed. If no open blog is left, a new one is created. |
+
+| `AutoTranslate` | Default | |
+|---|---|---|
+| `enabled` | `false` | |
+| `sourceLanguage` | — | **Required**, one of `languages`. Without it the rule does not run (one warning in the log). |
+| `service` | `deeplPro` | Translator from `model/translator.js`. It must be active, e.g. `DeeplProConfig.authKey` set. |
+| `languages` | `ALL` | Target languages, `sourceLanguage` is always left out. |
+| `previousBlogs` | `2` | A language is translated only if it was closed (`close<LANG>`) in one of this many blogs before (`WN<n-1>` … `WN<n-previousBlogs>`), i.e. it has an active team. |
+| `blogStatusFilter` | `[edit]` | Blog status the rule looks at. |
+| `delayDays`, `translateAt` | `3`, — | Due time, see above. |
+| `actorUser` | `autotranslate` | Name in the blog log entry "translation with &lt;service&gt;". The article history shows the translator user (e.g. `deeplPro API Call`). |
+
+Only empty articles are translated. Articles in the source language with
+`no translation`, `Upcoming Events` and `--unpublished--` are skipped, and
+languages that are closed or exported in the blog are left out. After a
+language is translated, the blog gets the marker `autoTranslated.<LANG>`
+(timestamp). The rule runs only once per blog and language, also when a
+translation is emptied or the language is reopened later. Like `exportedBy`,
+the marker is an operational field and is not written to the change history.
+
+| `AutoLanguageClose` | Default | |
+|---|---|---|
+| `enabled` | `false` | |
+| `minReviews` | `2` | Number of different reviewers a language needs, the same for all languages. |
+| `onlyIfNotExported` | `true` | Leave languages that are already exported alone. |
+| `languages` | `ALL` | |
+| `blogStatusFilter` | `[edit]` | |
+| `delayDays`, `closeAt` | `3`, — | Due time, see above. |
+| `actorUser` | `autoclose-review` | Name in the close log entry. |
+
+**Preview.** The admin page (`/osmbc/admin`) shows read-only what the next
+runs will do: per blog the due time (server timezone, plus the browser's
+local time if it differs), the languages that will be translated, those
+skipped because they were not closed in the previous blogs, those already
+translated/closed, and per close candidate the languages grouped by their
+review count.
 
 A few keys are flagged `POTENTIALLY_UNUSED` directly in the yaml files'
 own comments (not found in any static `getValue(...)` call at last check) -

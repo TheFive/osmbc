@@ -1,5 +1,12 @@
 extends adminlayout
 
+//- within the coming week the weekday is enough, the date only from the next week on (or when past)
+mixin upcomingTime(ts, tz)
+  - var m = layout.moment(ts).tz(tz)
+  - var days = m.clone().startOf("day").diff(layout.moment().tz(tz).startOf("day"), "days")
+  - var text = (days === 0) ? m.format("[today] HH:mm z") : (days > 0 && days < 7) ? m.format("ddd HH:mm z") : m.format("ddd, YYYY-MM-DD HH:mm z")
+  time(datetime=new Date(ts).toISOString(), data-localtime="", data-tz=tz)= text
+
 block content
   .row
     .col-md-4
@@ -56,6 +63,91 @@ block content
           - d= d.toISOString();
           - d= d.substring(0,7);
           a(href=layout.htmlroot+"/changes/log?table=config&date="+d) [changes]
+      if upcoming
+        div#upcomingActions
+          h4="Upcoming automatic actions"
+          if !upcoming.enabled
+            p="Automatic transitions are switched off (Transition.enabled)."
+          else
+            - var tz = upcoming.timezone
+            table.table.table-sm
+              thead
+                tr
+                  th Rule
+                  th Blog
+                  th When
+                  th What
+              tbody
+                if !upcoming.autoEdit.enabled
+                  tr
+                    td Auto Edit
+                    td(colspan=3) off
+                else if upcoming.autoEdit.blogs.length === 0
+                  tr
+                    td Auto Edit
+                    td(colspan=3) no open blog with end date
+                else
+                  each b in upcoming.autoEdit.blogs
+                    tr
+                      td Auto Edit
+                      td= b.name
+                      td
+                        +upcomingTime(b.ts, tz)
+                        if b.overdue
+                          |  (overdue, next run)
+                      td open → edit, a new blog is created if none is open
+                if !upcoming.autoTranslate.enabled
+                  tr
+                    td Auto Translate
+                    td(colspan=3) off
+                else if upcoming.autoTranslate.problem
+                  tr
+                    td Auto Translate
+                    td(colspan=3)= upcoming.autoTranslate.problem
+                else if upcoming.autoTranslate.blogs.length === 0
+                  tr
+                    td Auto Translate
+                    td(colspan=3) no blog due
+                else
+                  each b in upcoming.autoTranslate.blogs
+                    tr
+                      td Auto Translate
+                      td= b.name
+                      td
+                        +upcomingTime(b.ts, tz)
+                      td
+                        div= "translate from " + upcoming.autoTranslate.sourceLanguage + ": " + (b.translate.join(", ") || "none")
+                        if b.inactive.length > 0
+                          div.text-muted= "skipped, not closed in the last " + upcoming.autoTranslate.previousBlogs + " blogs: " + b.inactive.join(", ")
+                        if b.translated.length > 0
+                          div.text-muted= "already auto translated: " + b.translated.join(", ")
+                        if b.done.length > 0
+                          div.text-muted= "already closed/exported: " + b.done.join(", ")
+                if !upcoming.autoLanguageClose.enabled
+                  tr
+                    td Auto Close
+                    td(colspan=3) off
+                else if upcoming.autoLanguageClose.blogs.length === 0
+                  tr
+                    td Auto Close
+                    td(colspan=3) no blog due
+                else
+                  each b in upcoming.autoLanguageClose.blogs
+                    tr
+                      td Auto Close
+                      td= b.name
+                      td
+                        +upcomingTime(b.ts, tz)
+                      td
+                        - var minReviews = upcoming.autoLanguageClose.minReviews
+                        div= minReviews + (minReviews === 1 ? " review" : " reviews") + " needed, close: " + (b.close.join(", ") || "none")
+                        //- languages still waiting, grouped by their review count (most reviews first)
+                        - for (var n = minReviews - 1; n >= 0; n--)
+                          - var langs = b.waiting.filter((w) => w.reviews === n).map((w) => w.lang)
+                          if langs.length > 0
+                            div.text-muted= n + (n === 1 ? " review: " : " reviews: ") + langs.join(", ")
+                        if b.done.length > 0
+                          div.text-muted= "already closed/exported: " + b.done.join(", ")
       div
         h4="Long Absent"
         p
@@ -119,3 +211,6 @@ block content
   
 
   div.footer
+
+block scripts_to_load
+  script(src=layout.htmlroot + "/javascripts/localtime.js?osmbc_v=" + layout.osmbc_version)
