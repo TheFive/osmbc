@@ -38,7 +38,7 @@ describe("uc/collect with First Draft", function() {
     // the page is read for the title and for the draft
     nock("https://news.example.org").get("/party").times(2)
       .reply(200, "<html><head><title>Bench party</title></head><body><article><p>The Bonn group mapped all benches in the city park, forty people joined.</p></article></body></html>", { "Content-Type": "text/html" });
-    create = sinon.stub().resolves({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ markdown: draft, title: "Bänke im Bonner Stadtpark" }) }] });
+    create = sinon.stub().resolves({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ markdown: draft, title: "Bänke im Bonner Stadtpark", category: "Mapping" }) }] });
     firstDraft.fortestonly.setClient({ beta: { messages: { create: create } } });
     testutil.startServerSync();
     await testutil.clearDB();
@@ -71,6 +71,8 @@ describe("uc/collect with First Draft", function() {
     should(article.markdownDE).eql("Angepasster Entwurf.");
     // Claude's compact title replaces the page title
     should(article.title).eql("Bänke im Bonner Stadtpark");
+    // and Claude's category the "no category yet"
+    should(article.categoryEN).eql("Mapping");
   });
   it("should save the link only", async function() {
     driver = await testutil.getNewDriver("TestUser");

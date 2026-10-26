@@ -59,18 +59,18 @@ describe("router/firstDraft", function() {
       should(response.status).eql(HttpStatus.OK);
       should(response.data).eql("The Bonn group [mapped](https://news.example.org/party) all benches.");
     });
-    it("should return markdown and title as JSON with withTitle", async function () {
+    it("should return markdown, title and category as JSON with withTitle", async function () {
       nock("https://news.example.org").get("/party")
         .reply(200, "<html><body><article><p>The Bonn group mapped all benches in the city park, forty people joined.</p></article></body></html>",
           { "Content-Type": "text/html" });
-      create.resolves({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping" }) }] });
+      create.resolves({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping", category: "Mapping" }) }] });
 
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const response = await client.post(url, { url: form.url, withTitle: "true" });
 
       should(response.status).eql(HttpStatus.OK);
-      should(response.data).eql({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping" });
+      should(response.data).eql({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping", category: "Mapping" });
     });
     it("should report a failure with an error status", async function () {
       nock("https://news.example.org").get("/party").reply(500, "broken");

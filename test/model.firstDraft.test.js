@@ -77,6 +77,20 @@ describe("model/firstDraft", function() {
     });
   });
 
+  describe("categoryChoice", function() {
+    it("should offer the categories with a description, without internal ones", function() {
+      const choice = firstDraft.fortestonly.categoryChoice();
+      should(choice.fallback).eql("-- no category yet --");
+      const names = choice.offered.map((c) => c.name);
+      should(names).containEql("Mapping");
+      should(names).containEql("Other “geo” things");
+      for (const name of ["-- no category yet --", "Picture", "About us", "Weekly exercise:", "Upcoming Events", "Releases", "--unpublished--"]) {
+        should(names).not.containEql(name);
+      }
+      should(choice.offered.find((c) => c.name === "Imports").description).eql("discussions, announcements about imports");
+    });
+  });
+
   describe("createDraft", function() {
     it("should send prompt, url and page text to Claude and return the text", async function() {
       nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html; charset=utf-8" });
@@ -103,18 +117,32 @@ describe("model/firstDraft", function() {
 
       should(create.firstCall.args[0].messages[0].content).containEql("Target language: DE (German)");
     });
-    it("should ask for a title with a JSON schema and return markdown and title", async function() {
+    it("should ask for title and category with a JSON schema and return them with the markdown", async function() {
       nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
-      create.resolves(claudeAnswer(JSON.stringify({ markdown: "The Bonn group mapped all benches.\n", title: " Bench mapping in Bonn " })));
+      create.resolves(claudeAnswer(JSON.stringify({ markdown: "The Bonn group mapped all benches.\n", title: " Bench mapping in Bonn ", category: "Community" })));
 
       const draft = await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party", withTitle: true });
 
-      should(draft).eql({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping in Bonn" });
+      should(draft).eql({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping in Bonn", category: "Community" });
       const params = create.firstCall.args[0];
       should(params.output_config.format.type).eql("json_schema");
-      should(params.output_config.format.schema.required).eql(["markdown", "title"]);
+      const schema = params.output_config.format.schema;
+      should(schema.required).eql(["markdown", "title", "category"]);
+      should(schema.properties.category.enum[0]).eql("-- no category yet --");
+      should(schema.properties.category.enum).containEql("Mapping");
       should(params.output_config.effort).eql("medium");
-      should(params.messages[0].content).containEql("compact working title");
+      const message = params.messages[0].content;
+      should(message).containEql("compact working title");
+      should(message).containEql("- Mapping: Quality assurance, editors");
+      should(message).containEql("use \"-- no category yet --\"");
+    });
+    it("should fall back to no category for an unknown category", async function() {
+      nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+      create.resolves(claudeAnswer(JSON.stringify({ markdown: "Text", title: "Title", category: "Picture" })));
+
+      const draft = await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party", withTitle: true });
+
+      should(draft.category).eql("-- no category yet --");
     });
     it("should not ask for a title without withTitle", async function() {
       nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });

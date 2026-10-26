@@ -1,8 +1,9 @@
 /* global markdownit, fitToContent, addSpinnerAndSubmit */
 
 // First Draft while collecting (collect.pug): the collector gets a draft of
-// the markdown in their language (and a compact title, which replaces the
-// page title unless the user changed it) and saves the link only, or the
+// the markdown in their language (and a compact title and a category, which
+// replace the page title and "no category" unless the user changed them)
+// and saves the link only, or the
 // link with the (edited) draft. The draft is made for a new link right away, for a link
 // that was found in other articles only on request.
 
@@ -22,6 +23,9 @@
   const title = document.getElementById("title");
   // the page's own title, replaced by Claude's unless the user changed it
   const pageTitle = title ? title.value : "";
+  const category = document.getElementById("categoryEN");
+  // the category the page starts with ("-- no category yet --")
+  const startCategory = category ? category.value : "";
 
   function showPreview() {
     preview.innerHTML = md.render(field.value);
@@ -42,6 +46,11 @@
       if (title && draft.title && title.value === pageTitle) {
         title.value = draft.title;
         title.dispatchEvent(new Event("change"));
+      }
+      if (category && draft.category && category.value === startCategory &&
+          Array.from(category.options).some(function (o) { return o.value === draft.category; })) {
+        category.value = draft.category;
+        category.dispatchEvent(new Event("change"));
       }
       field.value = draft.markdown;
       field.disabled = false;
