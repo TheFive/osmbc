@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
 import util from "../../util/util.js";
 
 import StandardPage from "./standardPage.js";
@@ -16,7 +16,7 @@ export default class SearchAndCollectPage extends StandardPage {
 
   async assertPage() {
     await super.assertPage();
-    await this._assertUrlStartsWith(osmbcLink(["/article/create", "/article/search"]));
+    await this._assertUrlStartsWith([osmbcLink("/article/create"), osmbcLink("/article/search")]);
   }
 
   async fillAndStartSearch(text) {
@@ -24,7 +24,7 @@ export default class SearchAndCollectPage extends StandardPage {
     const ele =  await this._driver.findElement(By.css("input#searchField"));
     await (ele).sendKeys(await this.getCtrlA());
     await (ele).sendKeys(text);
-    await (await this._driver.findElement(By.css("button[name='SearchNow']"))).click();
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.css("button[name='SearchNow']")));
   }
 
   async fillTitleInput(text) {
@@ -44,8 +44,7 @@ export default class SearchAndCollectPage extends StandardPage {
   async clickOK() {
     await this.assertPage();
     const okButton = await this._driver.findElement(By.css("button#OK"));
-    await (okButton).click();
-    await this._driver.wait(until.stalenessOf(okButton));
+    await this._clickAndWaitForNavigation(okButton);
   }
 
   async getOkButton() {

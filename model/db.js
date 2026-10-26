@@ -36,7 +36,11 @@ const pgConfig = {
   host: pgConfigValues.server,
   port: pgConfigValues.port,
   max: 10,
-  connectionTimeoutMillis: 1000,
+  // how long a query may wait for a free client. The blog pages send bursts
+  // of queries that fill all 10 clients; with 1 s, a short delay in
+  // working off that queue ended in "timeout exceeded when trying to
+  // connect" error pages (seen in the UI tests).
+  connectionTimeoutMillis: 10000,
   idleTimeoutMillis: 1000,
   allowExitOnIdle: true
 };

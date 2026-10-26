@@ -204,7 +204,6 @@ describe("uc/blog", function() {
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.cickMode("Full");
-        await blogPage.waitForPageReload();
 
         await testutil.expectHtml(driver, "blog", "blog_wn290_full");
 
@@ -213,7 +212,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle(previousText);
 
         await blogPage.typeEditForm(previousText, "Changed Text in full review");
-        await blogPage.clickOnArticle("Digitalcourage suggests");
+        await blogPage.clickOnArticleToSaveEdit("Digitalcourage suggests");
         should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in full review");
       });
       it("should show Overview and Edit Article", async function() {
@@ -225,17 +224,11 @@ describe("uc/blog", function() {
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview");
 
         await blogPage.clickShowVisibleLanguagesCheckbox();
-        await blogPage.waitForPageReload();
         await blogPage.clickShowNumbersCheckbox();
-        await blogPage.waitForPageReload();
         await blogPage.clickShowCollectorCheckbox();
-        await blogPage.waitForPageReload();
         await blogPage.clickShowEditorCheckbox();
-        await blogPage.waitForPageReload();
         await blogPage.clickShowColoredUserCheckbox();
-        await blogPage.waitForPageReload();
         await blogPage.clickShowLanguagesCheckbox();
-        await blogPage.waitForPageReload();
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_overview_withglab");
 
@@ -248,7 +241,7 @@ describe("uc/blog", function() {
         await blogPage.typeEditForm("jeden Tag...", "Changed Text");
 
 
-        await blogPage.clickOnArticle("jeden Tag...");
+        await blogPage.clickOnArticleToSaveEdit("jeden Tag...");
 
 
         await blogPage.clickBlogMenu("WN290");
@@ -265,7 +258,6 @@ describe("uc/blog", function() {
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.cickMode("Review");
-        await blogPage.waitForPageReload();
 
         await testutil.expectHtml(driver, errors, "blog", "blog_wn290_review");
 
@@ -276,7 +268,7 @@ describe("uc/blog", function() {
         await blogPage.clickOnArticle(previousText);
 
         await blogPage.typeEditForm(previousText, "Changed Text in Review review");
-        await blogPage.clickOnArticle("Im Forum wird darüber");
+        await blogPage.clickOnArticleToSaveEdit("Im Forum wird darüber");
 
         should(await blogPage.getEditFormContent("Changed Text")).eql("Changed Text in Review review");
         should(errors).eql([]);
@@ -299,7 +291,6 @@ describe("uc/blog", function() {
         await osmbcApp.getMainPage().clickBlogInList("WN290");
         const blogPage = osmbcApp.getBlogPage();
         await blogPage.clickEditView();
-        await blogPage.waitForPageReload();
         await testutil.expectHtml(driver, "blog", "blog_wn290_edit");
       });
       it("should show the Blog List", async function() {

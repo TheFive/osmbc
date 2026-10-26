@@ -2,11 +2,9 @@
 
 
 import testutil from "../testutil.js";
-import config from "../../config.js";
 import should from "should";
 import sinon from "sinon";
 import mockdate from "mockdate";
-import fs from "fs";
 
 
 import userModule from "../../model/user.js";
@@ -16,8 +14,6 @@ import { MailReceiverForTestOnly } from "../../notification/mailReceiver.js";
 
 import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 
-import util from "../../util/util.js";
-const osmbcLink = util.osmbcLink;
 
 
 
@@ -36,7 +32,6 @@ describe("views/user", function() {
     await articleModule.createNewArticle({ blog: "blog", collection: "test" });
     testutil.startServerSync();
     driver = await testutil.getNewDriver("TheFive");
-    driver.executeScript(fs.readFileSync("./node_modules/timemachine/timemachine.js", "UTF8"));
   });
   afterEach(async function() {
     mockdate.reset();
@@ -66,7 +61,7 @@ describe("views/user", function() {
 
 
     // TheFive creates the user test a second time
-    await driver.get(osmbcLink("/osmbc/admin"));
+    await osmbcApp.openAdminPage();
     await adminPage.assertPage();
     await adminPage.clickCreateUserMenu();
 
@@ -99,7 +94,6 @@ describe("views/user", function() {
 
     await adminPage.assertPage();
     await adminPage.clickCreateUserMenu();
-    await adminPage.waitForPageReload();
     await userPage.assertPage();
     await userPage.fillOSMUser("TestUser");
     await userPage.selectPrimaryLanguage("DE");
@@ -107,12 +101,12 @@ describe("views/user", function() {
     await userPage.clickSave();
 
     // looking at user test shows, that username can be changed
-    await driver.get(osmbcLink("/usert/2"));
+    await osmbcApp.openUserPage(2);
     await testutil.expectHtml(driver, errors, "user", "userNameChange");
 
     // Testuser logs in and looks at homepage
     const testDriver = await testutil.getNewDriver("TestUser");
-    await testDriver.get(osmbcLink("/usert/2"));
+    await new OsmbcApp(testDriver).openUserPage(2);
     await testutil.expectHtml(testDriver, errors, "user", "userNoNameChange");
     await testutil.safeQuit(testDriver);
     should(errors).eql([]);
@@ -132,7 +126,6 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
-    await userPage.waitForPageReload();
 
 
 
@@ -161,7 +154,6 @@ describe("views/user", function() {
     await userPage.selectPrimaryLanguage("DE");
     await userPage.selectAccess("full");
     await userPage.clickSave();
-    await userPage.waitForPageReload();
 
 
 
@@ -196,7 +188,7 @@ describe("views/user", function() {
   it("should not validate a usermail if wrong user logged in", async function() {
     await userModule.createNewUser({ OSMUser: "TestValidate", emailInvalidation: "test@test.org", emailValidationKey: "123456789" });
     const osmbcApp = new OsmbcApp(driver);
-    await driver.get(osmbcLink("/usert/2?validation=123456789"));
+    await osmbcApp.openMailValidationLink(2, "123456789");
     should(await osmbcApp.getErrorPage().getErrorTitle()).eql("Wrong User: expected >TestValidate< given >TheFive<");
   });
   it("should validate a usermail if correct user logged in", async function() {
@@ -209,7 +201,7 @@ describe("views/user", function() {
     // Check Homepage for Missing Email Warning
     should(await osmbcApp.getMainPage().getMailAlertText()).eql("Please enter your email to receive comments and feedback here: Go to User Configuration");
 
-    await driver.get(osmbcLink("/usert/1"));
+    await osmbcApp.openUserPage(1);
     const userPage = osmbcApp.getUserPage();
     await userPage.fillEMail("test@test.org");
     await userPage.clickSave();
@@ -218,19 +210,15 @@ describe("views/user", function() {
 
     // find verification link in email
     const mail = mailChecker.getCall(0).args[0].text;
-    let link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
-    // link should be https, but for test cases use http
-    // and the port of this test run (config "url" is fixed to 35043)
-
+    const link = mail.substring(mail.indexOf("[") + 1, mail.indexOf("]"));
     should(link).startWith("https://");
-    link = link.replace(/^https:\/\/localhost:\d+/, "http://localhost:" + config.getServerPort());
 
     // Check Homepage for Missing Verification Warning
     await osmbcApp.openMainPage();
 
     should(await osmbcApp.getMainPage().getMailAlertText()).eql("Waiting for email verification, have a look at the email with the title '[OSMBC] Welcome to OSMBC' in your inbox. Go to User Configuration");
 
-    await driver.get(link);
+    await osmbcApp.openLinkFromMail(link);
     result = await userModule.findById(1);
 
     // check that validation of email was done

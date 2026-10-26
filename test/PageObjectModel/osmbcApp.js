@@ -13,6 +13,7 @@ import InboxPage from "../../test/PageObjectModel/inboxPage.js";
 import BlogStatisticPage from "../../test/PageObjectModel/blogStatisticPage.js";
 import { By, until } from "selenium-webdriver";
 import util from "../../util/util.js";
+import config from "../../config.js";
 
 const osmbcLink = util.osmbcLink;
 
@@ -29,6 +30,20 @@ export default class OsmbcApp {
   async openMainPage() {
     await this._driver.get(osmbcLink("/osmbc"));
     await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 5000);
+  }
+
+  async openUserPage(userId) {
+    await this._driver.get(osmbcLink("/usert/" + userId));
+  }
+
+  async openMailValidationLink(userId, validationKey) {
+    await this._driver.get(osmbcLink(`/usert/${userId}?validation=${validationKey}`));
+  }
+
+  // Links in mails point to the configured url (https, fixed port); the
+  // test server of this run listens on http and its own port.
+  async openLinkFromMail(link) {
+    await this._driver.get(link.replace(/^https:\/\/localhost:\d+/, "http://localhost:" + config.getServerPort()));
   }
 
   async openUserListPage(filter) {
