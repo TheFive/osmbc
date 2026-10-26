@@ -12,7 +12,7 @@ export const cmdCtrl = process.platform === "darwin" ? Key.COMMAND : Key.CONTROL
 // not belong to the document" as stale: while the old document is being
 // replaced, chromedriver sometimes answers that (500) instead of a stale
 // element error (404), and until.stalenessOf throws it.
-export function untilStale(element) {
+function untilStale(element) {
   return new Condition("element to become stale", async function() {
     try {
       await element.getTagName();
@@ -38,33 +38,46 @@ export default class Page {
     this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 10000);
   }
 
+  // Waits for the reload of the current page, e.g. after a script that
+  // calls location.reload(). The page must have been asserted before the
+  // action (every action method starts with assertPage), that is the marker
+  // whose disappearance shows the reload.
   async waitForPageReload() {
-    // check that old marker is set
     assert(this._navbarBrand);
-    // wait for Old Marker to be obsolete. Own timeout, so a lost click fails
-    // here with a clear message instead of running into the mocha timeout.
-    await this._driver.wait(untilStale(this._navbarBrand), 10000, "Page did not reload within 10s");
-    // the old DOM is gone, wait for the new page and remember its marker, so
-    // a second waitForPageReload does not return on the already stale one.
-    // Not this.assertPage(): the reload may lead to another page type
-    // (e.g. admin -> create user). 10 s: saving and rendering the big blog
-    // pages took longer than 5 s under load.
-    this._navbarBrand = await this._driver.wait(until.elementLocated(By.css("a.navbar-brand")), 10000);
+    await this._waitUntilStale(this._navbarBrand, "Page did not reload within 10s");
+    await this._waitForNewPage();
   }
 
-
-
-  // Click an element that leads to another page and wait until the old page
-  // is gone, so the next step does not act on the page being unloaded.
-  // Leaves the reload marker alone: a following waitForPageReload() still
-  // returns as soon as the new page is there.
+  // Click an element that leads to another page. Returns when the new page
+  // is loaded, so the next step neither acts on the page being unloaded nor
+  // has to wait itself.
   async _clickAndWaitForNavigation(element, useScript = false) {
     if (useScript) {
       await this._driver.executeScript("arguments[0].click();", element);
     } else {
       await element.click();
     }
-    await this._driver.wait(untilStale(element), 10000, "Click did not lead to a new page within 10s");
+    await this._waitUntilStale(element, "Click did not lead to a new page within 10s");
+    await this._waitForNewPage();
+  }
+
+  async _waitUntilStale(element, message = "Element did not disappear within 10s") {
+    await this._driver.wait(untilStale(element), 10000, message);
+  }
+
+  // The old document is gone - wait until the new one is parsed. Not the
+  // navbar: error pages have none. Whether it is the expected page is the
+  // next action's assertPage.
+  async _waitForNewPage() {
+    const driver = this._driver;
+    await driver.wait(async function() {
+      try {
+        return (await driver.executeScript("return document.readyState")) !== "loading";
+      } catch (e) {
+        // the document is just being replaced
+        return false;
+      }
+    }, 10000, "New page did not load within 10s");
   }
 
   async _checkUrl(url) {

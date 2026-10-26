@@ -1,7 +1,6 @@
 "use strict;";
 
 import { By } from "selenium-webdriver";
-import { untilStale } from "./page.js";
 
 import Page from "../../test/PageObjectModel/page.js";
 import util from "../../util/util.js";
@@ -33,8 +32,7 @@ class LoginPage extends Page {
 
   async clickOK() {
     const submitButton = await this._driver.findElement(By.id("submitbutton"));
-    await (submitButton).click();
-    await this._driver.wait(untilStale(submitButton), 2000);
+    await this._clickAndWaitForNavigation(submitButton);
   }
 }
 export default LoginPage;

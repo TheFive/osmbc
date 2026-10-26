@@ -1,7 +1,6 @@
 "use strict;";
 
 import { By } from "selenium-webdriver";
-import { untilStale } from "./page.js";
 import util from "../../util/util.js";
 
 import StandardPage from "./standardPage.js";
@@ -45,8 +44,7 @@ export default class SearchAndCollectPage extends StandardPage {
   async clickOK() {
     await this.assertPage();
     const okButton = await this._driver.findElement(By.css("button#OK"));
-    await (okButton).click();
-    await this._driver.wait(untilStale(okButton));
+    await this._clickAndWaitForNavigation(okButton);
   }
 
   async getOkButton() {

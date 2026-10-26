@@ -1,7 +1,6 @@
 "use strict;";
 
 import { By } from "selenium-webdriver";
-import { untilStale } from "./page.js";
 import util from "../../util/util.js";
 
 import Page from "./page.js";
@@ -96,7 +95,8 @@ class UserPage extends Page {
     await this.assertPage();
     const saveButton = await this._driver.findElement(By.id("save"));
     await this._safeClick(saveButton);
-    await (this._driver.wait(untilStale(saveButton)));
+    await this._waitUntilStale(saveButton);
+    await this._waitForNewPage();
   }
 
   async getUserName() {
