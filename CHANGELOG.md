@@ -1,8 +1,8 @@
 # Changelog
 
-## [4.5.0-beta.6](https://github.com/TheFive/osmbc/tree/4.5.0-beta.6) (2026-10-26)
+## [4.5.0](https://github.com/TheFive/osmbc/tree/4.5.0) (2026-11-13)
 
-[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.14...4.5.0-beta.6)
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.14...4.5.0)
 
 **Features:**
 
@@ -25,6 +25,7 @@
 - article: let First Draft suggest a compact title when collecting
 - article: roll out First Draft by user list, full or guest
 - mobile: beta.4 feedback — open editor, back to top, one icon line
+- firstdraft: suggest the category when collecting
 
 **Fixed bugs:**
 
