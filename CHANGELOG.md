@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.5.1](https://github.com/TheFive/osmbc/tree/4.5.1) (2026-11-13)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.5.0...4.5.1)
+
+**Fixed bugs:**
+
+- deps: update follow-redirects to 1.16.3
+
 ## [4.5.0](https://github.com/TheFive/osmbc/tree/4.5.0) (2026-11-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.14...4.5.0)
