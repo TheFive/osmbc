@@ -180,8 +180,11 @@ class BlogPage extends StandardPage {
       }, 400);`);
   }
 
+  // returns after the page has handled the scroll event (it fires in the next frame)
   async scrollToEnd() {
-    await this._driver.executeScript("window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });");
+    await this._driver.executeAsyncScript(`const done = arguments[arguments.length - 1];
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+      requestAnimationFrame(() => requestAnimationFrame(done));`);
   }
 
   async isBackToTopShown() {
