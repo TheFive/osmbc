@@ -82,9 +82,25 @@ mixin toolMenu
 
 
 
+//- Small screens (mobile mode, see routes/layout.js): the header shows where
+//- the user is (the issue) and the one mobile language instead of the app name.
+mixin mobileHeader
+  - var contextBlog = (typeof blog !== "undefined" && blog && blog.name) ? blog.name : ((typeof article !== "undefined" && article && article.blog) ? article.blog : null)
+  if contextBlog
+    a.navbar-brand.ms-2.me-auto.text-truncate(href=layout.htmlroot + "/blog/" + contextBlog)=contextBlog
+  else
+    +homeButton("navbar-brand ms-2 me-auto")
+  div.dropdown
+    button.btn.badge.rounded-pill.osmbc-badge-lang.dropdown-toggle.fs-6#mobileLangMenu(type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Language you work in on this device")=layout.mobileLang
+    ul.dropdown-menu.dropdown-menu-end(aria-labelledby="mobileLangMenu")
+      each l in layout.mobileLanguages
+        li
+          a.dropdown-item(href="#" id="mobileLang_" + l class=(l === layout.mobileLang) ? "active" : "" data-mobile-lang=l)=l
+
 block all
   doctype html
-  html(lang='en')
+  //- osmbc-mobile: CSS rules for mobile mode (style.css), absent on desktop
+  html(lang='en' class=(typeof layout !== "undefined" && layout && layout.mobileView) ? "osmbc-mobile" : undefined)
     head
       meta(charset='utf-8')
       meta(name='viewport', content='width=device-width, initial-scale=1')
@@ -92,6 +108,31 @@ block all
       meta(name='author', content='')
       link(rel='icon', href='/favicon.ico')
       title=(layout)?layout.title:appName
+      script(nonce=cspNonce).
+        // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
+        // the save bar. The server reads the cookie; if it rendered the other
+        // mode, reload once (not again if the cookie does not stick).
+        // The "desktop view" of a phone browser (~980px, below lg) stays
+        // desktop: its viewport is much wider than the screen.
+        (function () {
+          var rendered = "#{(typeof layout !== "undefined" && layout && layout.mobileView) ? "mobile" : "desktop"}";
+          var desktopView = window.screen.width > 0 && window.innerWidth > window.screen.width * 1.2;
+          var wanted = (!desktopView && window.matchMedia("(max-width: 991.98px)").matches) ? "mobile" : "desktop";
+          if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
+            document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
+          }
+          if (wanted === rendered) {
+            // a later switch on the same page must be able to reload again
+            try { window.sessionStorage.removeItem("osmbcViewReload"); } catch (e) {}
+            return;
+          }
+          if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+          try {
+            if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
+            window.sessionStorage.setItem("osmbcViewReload", location.href);
+          } catch (e) { return; }
+          location.reload();
+        })();
       // Bootstrap core CSS
       link(href=layout.htmlroot + "/stylesheets/bootstrap.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
       link(href=layout.htmlroot + "/stylesheets/bootstrap-select.min.css?osmbc_v=" + layout.osmbc_version, rel='stylesheet')
@@ -117,24 +158,38 @@ block all
             - listall = listall.concat(layout.listOfOpenBlog)
 
           
-          button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+          button.navbar-toggler(type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation")
             span.navbar-toggler-icon
-          +homeButton("navbar-brand")  
-          div.collapse.navbar-collapse#navbarSupportedContent
-            ul.navbar-nav
-              +collectMenu
-              +inboxMenu
-              
-              +tbcMenu
-              +myGuestArticleMenu
-              +firstBlogOfList(listall,2)
-              +articleMenu    
-              +toolMenu
-              block additionalMenuMain    
-            ul.navbar-nav.ms-auto
-              +helpMenu(layout.helpMenu)
-              block additionalMenuRight
-              +userAvatar
+          if (layout && layout.mobileView)
+            +mobileHeader
+          else
+            +homeButton("navbar-brand")  
+          //- below lg the menu is a side panel (offcanvas), from lg on a normal menu bar
+          div.offcanvas.offcanvas-start#navbarSupportedContent(tabindex="-1" aria-labelledby="navbarSupportedContentLabel")
+            div.offcanvas-header
+              //- mobile mode: the header shows the issue instead of the app name,
+              //- so the way home is here
+              h5.offcanvas-title#navbarSupportedContentLabel
+                if (layout && layout.mobileView)
+                  a.osmbc-menu-home#menuHome(href=htmlroot + '/osmbc.html')=appName
+                else
+                  =appName
+              button.btn-close(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+            div.offcanvas-body.flex-grow-1
+              ul.navbar-nav
+                +collectMenu
+                +inboxMenu
+                
+                +tbcMenu
+                +myGuestArticleMenu
+                +firstBlogOfList(listall,2)
+                +articleMenu    
+                +toolMenu
+                block additionalMenuMain    
+              ul.navbar-nav.ms-auto
+                +helpMenu(layout.helpMenu)
+                block additionalMenuRight
+                +userAvatar
 
 
       .container-fluid
@@ -170,6 +225,36 @@ block all
 
         // Init This Window with jQuery ready Callback
         window.htmlroot = "!{layout.htmlroot}";
+
+      script(nonce=cspNonce).
+        // keep the content below the fixed navbar, whatever its height
+        (function () {
+          // an adopted style sheet does not change the DOM (style.css has a fallback)
+          var navbar = document.getElementById("fixedNavbar");
+          if (window.CSSStyleSheet && document.adoptedStyleSheets && window.ResizeObserver) {
+            var sheet = new CSSStyleSheet();
+            document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
+            var fit = function () { sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }"); };
+            fit();
+            new ResizeObserver(fit).observe(navbar);
+          }
+          // small screens: hide the bar when scrolling down, show it when scrolling up
+          var lastY = window.scrollY;
+          window.addEventListener("scroll", function () {
+            var y = window.scrollY;
+            var hide = window.matchMedia("(max-width: 991.98px)").matches && y > lastY && y > navbar.offsetHeight;
+            navbar.classList.toggle("osmbc-navbar-hidden", hide);
+            lastY = y;
+          }, { passive: true });
+          // close the side panel after choosing an entry (also for script actions)
+          var panel = document.getElementById("navbarSupportedContent");
+          panel.addEventListener("click", function (event) {
+            var entry = event.target.closest(".dropdown-item, .nav-link:not(.dropdown-toggle)");
+            if (!entry) return;
+            var instance = window.bootstrap.Offcanvas.getInstance(panel);
+            if (instance) instance.hide();
+          });
+        })();
 
       block scripts_to_load 
 

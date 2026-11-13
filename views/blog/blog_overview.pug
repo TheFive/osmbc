@@ -11,22 +11,23 @@ mixin displayOverviewRow(a)
   if enable
     tr
       td
-        +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId})
+        +articleIcons(a,{showNumbers: showNumbers, showMail: showMail, predecessorId: predecessorId, openAtEnd: layout.mobileView})
         - predecessorId = a.id
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
         div.d-flex.flex-nowrap
           if showVisibleLanguages
             +languageDisplay(a,{short: true})
-          span(id="voteLabels"+ a.id)
-            +voteDisplay(a,showVotes)
+          if !layout.mobileView
+            span(id="voteLabels"+ a.id)
+              +voteDisplay(a,showVotes)
 
 
       td
-        div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
+        div.osmbc-inline-edit(data-inline-editor=`div${a.id}`)
           +previewDiv(a, lang)
             ul.no-margin
               |!{renderer.articleTitle(lang,a)}
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
         if (showCollector && a.author && a.author.collection)
           each b in a.author.collection.split(",")
             +userLabel(b,"osmbc-label-collect")
@@ -34,23 +35,31 @@ mixin displayOverviewRow(a)
           each b in a.author["markdown"+lang].split(",")
             +userLabel(b,"osmbc-label-markdown")
 
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
         if (showLanguages)
           +languageDisplay(a)
+      if layout.mobileView
+        //- phones: the chosen votes (options below) and the open button
+        td
+          div.d-flex.flex-nowrap.align-items-center
+            span(id="voteLabels"+ a.id)
+              +voteDisplay(a,showVotes)
+            +articleOpenButton(a)
 
 
 
     tr
       td
-      td.d-none.d-md-block
+      td.d-none.d-md-table-cell
       td
         div.card.d-none(id="div" + a.id)
           div.card-header
             ul.preview(id="preview" + a.id)
           div.card-body
             form(name="EditArticle",id="EditArticle" + a.id, action=`${layout.htmlroot}/article/${a.id}/setMarkdown/${lang}`, method="post")
-              textarea.form-control(name="markdown" id="markdown" + a.id rows=7 onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
+              textarea.form-control(name="markdown" id="markdown" + a.id rows=7 data-fit-content onchange=`onLeaveText(${a.id});` onkeyup=`onchangeMarkdown(${a.id})` spellcheck = "true" lang=lang)=a["markdown" + lang]
               textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
+              +inlineEditorButtons(a.id, "", !a["markdown" + lang])
             p
               if a.author && a.author.collection
                 span="Collected: "
@@ -122,11 +131,11 @@ block blogcontent
       if (articles[c.EN])
         tr
           td
-          td.d-none.d-md-block
+          td.d-none.d-md-table-cell
           td
             |!{renderer.categoryTitle(lang,c)}
-          td.d-none.d-md-block
-          td.d-none.d-md-block
+          td.d-none.d-md-table-cell
+          td.d-none.d-md-table-cell
         for a in articles[c.EN]
           +displayOverviewRow(a)
         - delete articles[c.EN]
@@ -134,7 +143,7 @@ block blogcontent
     - for(c in articles)
       tr
         td
-        td.d-none.d-md-block
+        td.d-none.d-md-table-cell
           h1="Wrong Categorie "+c
       for a in articles[c]
         +displayOverviewRow(a)
@@ -142,14 +151,14 @@ block blogcontent
     if futureArticles
       tr
         td
-        td.d-none.d-md-block
+        td.d-none.d-md-table-cell
         td
           h1="Future Articles"
       for c,k in futureArticles
 
         tr
           td
-          td.d-none.d-md-block
+          td.d-none.d-md-table-cell
           td
             h4(style="color:grey")=k
         each a in futureArticles[k]

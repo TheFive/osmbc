@@ -6,7 +6,37 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>TESTBC</title><!-- Bootstrap core CSS-->
+    <title>TESTBC</title>
+    <script nonce="">
+      // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
+      // the save bar. The server reads the cookie; if it rendered the other
+      // mode, reload once (not again if the cookie does not stick).
+      // The "desktop view" of a phone browser (~980px, below lg) stays
+      // desktop: its viewport is much wider than the screen.
+      (function() {
+        var rendered = "desktop";
+        var desktopView = window.screen.width > 0 && window.innerWidth > window.screen.width * 1.2;
+        var wanted = (!desktopView && window.matchMedia("(max-width: 991.98px)").matches) ? "mobile" : "desktop";
+        if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
+          document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
+        }
+        if (wanted === rendered) {
+          // a later switch on the same page must be able to reload again
+          try {
+            window.sessionStorage.removeItem("osmbcViewReload");
+          } catch (e) {}
+          return;
+        }
+        if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+        try {
+          if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
+          window.sessionStorage.setItem("osmbcViewReload", location.href);
+        } catch (e) {
+          return;
+        }
+        location.reload();
+      })();
+    </script><!-- Bootstrap core CSS-->
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/bootstrap-select.min.css" rel="stylesheet">
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet">
@@ -15,47 +45,52 @@
 
   <body><!-- Fixed navbar-->
     <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
-      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="navbar-brand" href="/osmbc.html">TESTBC</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav">
-            <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
-            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
-            <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
-            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
-              <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
-                <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
-              </div>
-            </li>
-            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
-              <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown"><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
-                <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
-              </div>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
-                <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
-              </div>
-            </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">EN</a>
-                <div class="dropdown-divider"> </div><a class="dropdown-item" id="langset_Active" onclick="chooseLanguageSet('Active' ,'set')">Active</a>
-              </div>
-            </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">EN</a>
-                <div class="dropdown-divider"></div>
-                <form class="p-1">
-                  <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
-                    <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
-                  </div>
-                </form>
-              </div>
-            </li>
-            <li><img onclick="location.href='/usert/1';" style="height:40px;width:40px"></li>
-          </ul>
+      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="navbar-brand" href="/osmbc.html">TESTBC</a>
+        <div class="offcanvas offcanvas-start" id="navbarSupportedContent" tabindex="-1" aria-labelledby="navbarSupportedContentLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="navbarSupportedContentLabel">TESTBC</h5><button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body flex-grow-1">
+            <ul class="navbar-nav">
+              <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
+              <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
+              <li class="navbar-item active"></li>
+              <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
+              <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
+                <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
+                  <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
+                </div>
+              </li>
+              <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+                <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown"><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
+                  <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
+                </div>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+              <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+                  <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+                </div>
+              </li>
+              <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">EN</a>
+                  <div class="dropdown-divider"> </div><a class="dropdown-item" id="langset_Active" onclick="chooseLanguageSet('Active' ,'set')">Active</a>
+                </div>
+              </li>
+              <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">EN</a>
+                  <div class="dropdown-divider"></div>
+                  <form class="p-1">
+                    <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
+                      <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
+                    </div>
+                  </form>
+                </div>
+              </li>
+              <li><a class="nav-link d-flex align-items-center gap-2" id="userAvatar" href="/usert/1" title="TheFive"><img class="osmbc-avatar" src="/images/avatar.svg" alt="" style="height:40px;width:40px"><span class="d-lg-none">TheFive</span></a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
@@ -64,11 +99,11 @@
       <div>
         <form name="search" action="/article/searchandcreate" method="get">
           <div class="row">
-            <div class="col-3"></div>
-            <div class="col-6"><input class="form-control" id="searchField" type="text" name="search" value="new Info">
+            <div class="d-none d-md-block col-md-3"></div>
+            <div class="col col-md-6"><input class="form-control" id="searchField" type="text" name="search" value="new Info">
               <p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>
             </div>
-            <div class="col"><button class="btn btn-lg btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
+            <div class="col-auto col-md"><button class="btn btn-lg btn-primary" id="searchButton" name="SearchNow" type="submit" disabled="">Search</button></div>
           </div>
         </form>
       </div>
@@ -122,7 +157,7 @@
                 <div class="col-md-7">
                   <p class="osmbc-help-text" id="categoryDisplay">If you do not have any idea, which category to use.</p>
                 </div>
-                <div class="col-md-5"><button class="btn btn-lg btn-primary" onclick="javascript:window.addSpinnerAndSubmit('#OK')" id="OK" disabled="">OK<!--span(style="visibility:hidden" id="OK-Spinner")i(class="fa fa-solid fa-spinner fa-pulse")--></button><a class="btn btn-secondary" href="/article/create" role="button">Cancel</a></div>
+                <div class="col-md-5 d-flex align-items-center gap-2"><button class="btn btn-lg btn-primary" id="OK" disabled="">OK</button><a class="btn btn-outline-secondary" href="/article/create" role="button">Cancel</a></div>
               </div>
             </div>
           </div>
@@ -146,6 +181,40 @@
       // Init This Window with jQuery ready Callback
       window.htmlroot = "";
     </script>
+    <script nonce="">
+      // keep the content below the fixed navbar, whatever its height
+      (function() {
+        // an adopted style sheet does not change the DOM (style.css has a fallback)
+        var navbar = document.getElementById("fixedNavbar");
+        if (window.CSSStyleSheet && document.adoptedStyleSheets && window.ResizeObserver) {
+          var sheet = new CSSStyleSheet();
+          document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
+          var fit = function() {
+            sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }");
+          };
+          fit();
+          new ResizeObserver(fit).observe(navbar);
+        }
+        // small screens: hide the bar when scrolling down, show it when scrolling up
+        var lastY = window.scrollY;
+        window.addEventListener("scroll", function() {
+          var y = window.scrollY;
+          var hide = window.matchMedia("(max-width: 991.98px)").matches && y > lastY && y > navbar.offsetHeight;
+          navbar.classList.toggle("osmbc-navbar-hidden", hide);
+          lastY = y;
+        }, {
+          passive: true
+        });
+        // close the side panel after choosing an entry (also for script actions)
+        var panel = document.getElementById("navbarSupportedContent");
+        panel.addEventListener("click", function(event) {
+          var entry = event.target.closest(".dropdown-item, .nav-link:not(.dropdown-toggle)");
+          if (!entry) return;
+          var instance = window.bootstrap.Offcanvas.getInstance(panel);
+          if (instance) instance.hide();
+        });
+      })();
+    </script>
     <script src="/javascripts/markdown-it.min.js"></script>
     <script nonce="">
       window.onload = init;
@@ -153,7 +222,7 @@
         "-- no category yet --": "If you do not have any idea, which category to use.",
         "[Actual Category]": "This category does not have to exist in every blog. Use this category for actual events like SOTM",
         "About us": "Use seldom, then on the top",
-        "Weekly exerciseEN:": "Category for the German weekly exercise",
+        "Weekly exercise:": "Category for the German weekly exercise",
         "Mapping": "Quality assurance, editors, maps for mapper, tools for mapping, tagging",
         "Community": "articles from the community, that does not fit in any other category",
         "Imports": "discussions, announcements about imports",
@@ -161,7 +230,7 @@
         "Events": "Announcements, reports about an event",
         "Humanitarian OSM": "Information about HOT & Missing maps",
         "Maps": "Changes on osm.org and osm.de maps, osm based special maps, no 08/15 map!",
-        "#switch2OSM": "Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n",
+        "switch2OSM": "Information about well known websites or traffic rich websites, a good new rendering style, (commercial sites) companies having own (big geo) data, more features for displaying maps are offered\n",
         "Open Data": "Information about open data",
         "Licences": "Information about juridicial topics",
         "Software": "Programs for non programmers (without OSM editors)",
@@ -424,6 +493,9 @@
         categoryEN = document.getElementById("categoryEN");
         if (categoryEN) categoryEN.onchange = onchangeCategory;
         okButton = document.getElementById("OK");
+        if (okButton) okButton.addEventListener("click", function() {
+          addSpinnerAndSubmit("#OK");
+        });
         searchButton = document.getElementById("searchButton")
         title = document.getElementById("title");
         searchField = document.getElementById("searchField")
@@ -456,6 +528,9 @@
         if (t.length > 5) {
           okButton.disabled = false;
         }
+        // First Draft (collect_draft.js): saving with the draft needs a title
+        // and a draft
+        if (window.updateDraftSaveButton) window.updateDraftSaveButton();
       }
 
       function onchangeSearch() {

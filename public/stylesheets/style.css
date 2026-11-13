@@ -323,12 +323,13 @@ table {
 /* This style is used in blog full view to limit size of pictures */
 .preview > div.wp-caption > p.wp-caption-text > img {
   max-height: 350px;
-  max-width: 300px;
+  max-width: min(300px, 100%);
   object-fit: cover;
 }
-/* This style is used in blog full view to limit size of picture caption */
+/* This style is used in blog full view to limit size of picture caption.
+   Never wider than its cell (phones). */
 .preview > div.wp-caption  {
-  max-width: 320px;
+  max-width: min(320px, 100%);
 }
 
 .table-responsive .blog-status-table.blog-status-table-compact {
@@ -392,4 +393,212 @@ table {
 
 .blog-status-table.blog-status-table-compact tr.blog-status-row:hover td {
   background-color: #f9fbff;
+}
+
+/* Article view: one column per language. The minimum width only from lg
+   on, below it a column must not be wider than a phone screen. */
+.osmbc-language-column {
+  max-width: 900px;
+}
+@media (min-width: 992px) {
+  .osmbc-language-column {
+    min-width: 400px;
+  }
+}
+
+/* Small screens: the fixed navbar slides out when scrolling down (layout.pug).
+   Moved with top, not transform: a transform would move the menu panel too. */
+#fixedNavbar {
+  transition: top 0.2s;
+}
+#fixedNavbar.osmbc-navbar-hidden {
+  top: calc(-1 * var(--osmbc-navbar-height, 5rem));
+}
+
+/* Mobile mode (class osmbc-mobile on <html>, layout.pug): tap targets at
+   least 44 x 44 px (X10). Padding instead of min-height keeps the label in
+   the middle: 24px line + 2 x 9px padding + 2px border. Buttons styled as
+   badges keep their look and get their own hit area. */
+.osmbc-mobile .btn:not(.badge) {
+  --bs-btn-padding-y: .5625rem;
+}
+.osmbc-mobile .form-control:not(textarea),
+.osmbc-mobile .form-select {
+  min-height: 44px;
+}
+/* hint paragraphs take room on a small screen and are known after the first
+   days (X12); the start page legend (opens on demand) and the "Configure a
+   translation service" link (span/td/small/a) stay */
+.osmbc-mobile p.osmbc-help-text,
+.osmbc-mobile div.osmbc-help-text {
+  display: none !important;
+}
+/* vote labels in the blog views */
+.osmbc-mobile .osmbc-vote-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+/* icon-only buttons */
+.osmbc-mobile .osmbc-tap-square {
+  min-width: 44px;
+}
+/* blog views: the bar above an article text (comment icons, votes, open
+   button) in one line; the comment icons have a fixed width, also when
+   there are none, so the votes line up */
+.osmbc-mobile .osmbc-article-bar {
+  align-items: center;
+}
+.osmbc-mobile .osmbc-article-comments {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  min-height: 44px;
+  padding-left: 0;
+  padding-right: 0;
+}
+/* blog views: after Save/Cancel the article flashes (light blue: saved,
+   grey: cancelled) */
+@keyframes osmbc-flash-saved {
+  from { background-color: var(--bs-primary-bg-subtle); }
+  to { background-color: transparent; }
+}
+@keyframes osmbc-flash-cancelled {
+  from { background-color: var(--bs-secondary-bg-subtle); }
+  to { background-color: transparent; }
+}
+.osmbc-flash-saved {
+  animation: osmbc-flash-saved 1.5s ease-out;
+}
+.osmbc-flash-cancelled {
+  animation: osmbc-flash-cancelled 1.5s ease-out;
+}
+/* blog views: "back to top", bottom left (Save sits on the right) */
+.osmbc-to-top {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 1020;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  opacity: .85;
+}
+.osmbc-mobile .form-check {
+  min-height: 44px;
+  padding-top: .625rem;
+}
+
+/* blog views: the article text that opens the inline editor; a long word
+   (URL, tag like ref:penndot) wraps, else it widens the table past the
+   screen */
+.osmbc-mobile .osmbc-inline-edit {
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+
+/* blog views: tabs as tap targets */
+.osmbc-mobile .nav-tabs .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+/* article: room between the predecessor select and the vote buttons */
+.osmbc-mobile #voteButtons {
+  margin-top: .5rem;
+}
+
+/* start page: the blog status table only as wide as its content. The
+   blog names and the row of the mobile language are tap targets: 44px high,
+   32px wide so the numbers of a cell stay together. The other languages
+   stay compact, they are for reading the state. */
+.osmbc-mobile .table-responsive .blog-status-table.blog-status-table-compact {
+  min-width: 0;
+}
+.osmbc-mobile .blog-status-table.blog-status-table-compact .blog-status-header td,
+.osmbc-mobile .blog-status-table.blog-status-table-compact .osmbc-mobile-lang-row td {
+  padding-block: 0;
+}
+.osmbc-mobile .blog-status-header a,
+.osmbc-mobile .osmbc-mobile-lang-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 44px;
+}
+
+.osmbc-legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* text links (e.g. [changes], (more)) and the blog list links as tap
+   targets */
+.osmbc-mobile .osmbc-text-link,
+.osmbc-mobile .osmbc-bloglist td a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.osmbc-mobile .osmbc-bloglist td a {
+  min-width: 32px;
+}
+
+/* collection links: a long URL (plus the link check result) wraps */
+.osmbc-mobile #linkArea .badge {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
+  max-width: 100%;
+}
+
+/* header: menu button, language badge (hit area larger than the badge;
+   ::before, because ::after is Bootstrap's dropdown caret) and its menu */
+.osmbc-mobile .navbar-toggler {
+  min-width: 44px;
+  min-height: 44px;
+}
+.osmbc-mobile #mobileLangMenu {
+  position: relative;
+}
+.osmbc-mobile #mobileLangMenu::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+.osmbc-mobile #fixedNavbar .dropdown-item {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* menu panel (offcanvas, below lg only - also in the desktop view of a
+   phone browser) */
+@media (max-width: 991.98px) {
+  #navbarSupportedContent .nav-link,
+  #navbarSupportedContent .dropdown-item {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  #navbarSupportedContent .dropdown-menu .dropdown-item {
+    padding-inline-start: 1.5rem;
+  }
+  .osmbc-menu-home {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .offcanvas-header .btn-close {
+    box-sizing: border-box;
+    min-width: 44px;
+    min-height: 44px;
+  }
 }

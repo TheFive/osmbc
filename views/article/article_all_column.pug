@@ -9,16 +9,28 @@ block markdownArea
     - languages = layout.user.getLanguages()
     if layout.user.getLanguageSet() === "Active"
       - languages = layout.activeLanguages
+    //- small screens: one language only, the others are sources for Translate
+    if layout.mobileView
+      - languages = [layout.mobileLang]
     for lang of languages
       if (lang)
         div.col
-          div(style="min-width:400px;max-width:900px")
+          div.osmbc-language-column
+            if layout.mobileView
+              +mobileFirstDraftButtons(lang)
+              +mobileTranslateButtons(lang)
             +markdownWithPreview(lang)
+    if layout.mobileView
+      - const second = params.mobile_second_lang
+      if second
+        +mobileSecondLanguage(layout.mobileLang, second)
+      +translationSources([layout.mobileLang, second])
 
 
   // Language Flags All Column
 
-  .row#languageFlags
+  //- phones: no flags (rare use), hidden not removed: the preview reads img.flag
+  .row#languageFlags(class=layout.mobileView ? "d-none" : undefined)
     - for (lang in languageFlags)
       - if (["warning", "error", "emoji", "shortcut"].indexOf(lang) < 0)
         img.flag(id=lang,

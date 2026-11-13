@@ -39,9 +39,9 @@ block blogcontent
       for a in articles[c.EN]
         if a["markdown"+lang]!=="no translation"
           .row
-            div(class=firstColSize).d-flex.flex-nowrap
+            div(class=firstColSize).d-flex.flex-nowrap.osmbc-article-bar
               span
-                +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId})
+                +articleIcons(a,{showNumbers: showNumbers, showMail: showMail,predecessorId:predecessorId, openAtEnd: layout.mobileView})
                 - predecessorId = a.id
               span.d-none.d-md-block
                 if (showCollector && a.author && a.author.collection)
@@ -55,11 +55,14 @@ block blogcontent
               span.d-none.d-md-block
                 if (showLanguages)
                   +languageDisplay(a)
-                span(id="voteLabels" + a.id)
-                  +voteDisplay(a,showVotes)
+              //- the chosen votes (options below), on phones too
+              span(id="voteLabels" + a.id)
+                +voteDisplay(a,showVotes)
+              if layout.mobileView
+                +articleOpenButton(a)
 
             div(class=secondColSize)
-              div(onclick=`if (!openEditor) {openEditor = document.getElementById('div${a.id}');openEditor.classList.toggle('d-none');} else {openEditor.classList.toggle('d-none');openEditor = null;} return false;`)
+              div.osmbc-inline-edit(data-inline-editor=`div${a.id}`)
                 +previewDiv(a, lang)
                   ul
                     div.preview(id="preview" + a.id)
@@ -67,8 +70,9 @@ block blogcontent
 
               div.d-none(id="div" + a.id)
                 form(name="EditArticle",id="EditArticle" + a.id, action=layout.htmlroot+"/article/" + a.id + "/setMarkdown/" + lang, method="post")
-                  textarea.form-control(name="markdown" id="markdown"+a.id rows=7 onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang=lang)=a["markdown"+lang]
+                  textarea.form-control(name="markdown" id="markdown"+a.id rows=7 data-fit-content onchange="onLeaveText(" + a.id + ");" onkeyup="onchangeMarkdown(" + a.id + ")" spellcheck = "true" lang=lang)=a["markdown"+lang]
                   textarea.d-none.form-control(name="oldMarkdown"  id="oldMarkdown" + a.id rows=7 )=a["markdown" + lang]
+                  +inlineEditorButtons(a.id, "", !a["markdown" + lang])
                 form(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
                   if a.isTranslatedAutomated(lang)
                       textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]

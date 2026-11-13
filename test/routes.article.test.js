@@ -187,7 +187,7 @@ describe("router/article", function() {
       const body = await client.get(url);
 
       const json = body.data;
-      json["#voteButtons"].should.containEql("callAndRedraw(\'/article/2/setVote.unpublish\'");
+      json["#voteButtons"].should.containEql('data-call="/article/2/setVote.unpublish"');
       json["#voteButtonsList"].should.containEql('<i class="fa-lg fa fa-thumbs-up">');
     });
     it("should deny denied access user",
@@ -299,7 +299,14 @@ describe("router/article", function() {
       const body = await client.get(url);
 
       const json = body.data;
-      json["#vote_pro_2"].should.containEql('class="badge osmbc-btn-not-voted"');
+      json["#vote_pro_2"].should.containEql('class="badge osmbc-vote-label osmbc-btn-not-voted"');
+      json["#vote_pro_2"].should.containEql('data-call="/article/2/setVote.pro"');
+    });
+    it("should answer 404 for an unknown vote", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/article/" + id + "/nosuchvote");
+      should(body.status).eql(HttpStatus.NOT_FOUND);
     });
 
     it("should deny denied access user",

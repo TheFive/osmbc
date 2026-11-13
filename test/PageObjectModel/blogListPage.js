@@ -20,6 +20,18 @@ export default class BlogListPage extends StandardPage {
     await this._assertUrlStartsWith(osmbcLink("/blog/list"));
   }
 
+  // the language columns of the table
+  async getLanguageColumns() {
+    await this.assertPage();
+    const heads = await this._driver.findElements(By.css("table thead th"));
+    const texts = await Promise.all(heads.map(h => h.getText()));
+    return texts.filter(t => /^[A-Z]{2}$/.test(t));
+  }
+
+  async hasCloseBlogLink() {
+    return (await this._driver.findElements(By.xpath("//a[text()='Close Blog']"))).length > 0;
+  }
+
   async clickBlogInList(blog) {
     await this.assertPage();
     const blogButton = await this._driver.findElement(By.xpath("//td/a[text()='" + blog + "']"));

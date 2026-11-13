@@ -55,18 +55,18 @@ mixin articlePreview(lang)
 
 mixin articleTextanalyse(lang)
   if (lang === "DE") && (article["markdown" + lang])
-    a(href="#" onClick ="taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
+    a(href="#" class=layout.mobileView ? "osmbc-text-link" : undefined onClick ="taform = document.getElementById('textanalyseform');taf = document.getElementById('textanalysefield');taf.value = document.getElementById('previewDE').innerText; taf.parentElement.submit();") WORTLIGA Analyse (Aufruf einer externen Seite)
 
 mixin articleTranslateButton(langFrom,langTo)
   if (article["markdown" + langFrom] && !article["markdown" + langTo] && article.isChangeAllowed("markdown" + langTo))
-    button.btn.btn-small.btn-primary(
+    button.btn.btn-primary(
          class="translate"+langFrom+langTo name = "translate"+langFrom+langTo
          onClick =`window.translate('${langFrom}','${langTo}',window.mainTranslationService);return false;`
        ) Translate #{langFrom} -> #{langTo}
-    button.btn.btn-small.btn-warning.d-none(class="translateWait"+langFrom+langTo)
+    button.btn.btn-warning.d-none(class="translateWait"+langFrom+langTo)
       i.fa.fa-sync
       span=" Please Wait"
-    button.btn.btn-small.btn-danger.d-none(class="translateError"+langFrom+langTo)
+    button.btn.btn-danger.d-none(class="translateError"+langFrom+langTo)
       span="Error occured"
 
 
@@ -74,10 +74,90 @@ mixin articleTranslateButton(langFrom,langTo)
 mixin saveButton
   button.btn.btn-lg.btn-primary#saveButton(type = "button" onclick ="window.saveButton()") Save
 
+//- Small screens (one language): if that language is still empty, offer a
+//- translation from every language that already has text, EN first (most
+//- languages translate from English). Uses translate() in article_view.js.
+mixin mobileTranslateButtons(lang)
+  if (!article["markdown" + lang] && article.isChangeAllowed("markdown" + lang))
+    - const sources = layout.languages.filter((l) => l !== lang && article["markdown" + l] && article["markdown" + l] !== "no translation")
+    - sources.sort((a, b) => (a === "EN") ? -1 : (b === "EN") ? 1 : 0)
+    - const services = layout.user.getTranslations().filter((service) => layout.user.useOneTranslation(service))
+    if (sources.length > 0)
+      div.d-flex.flex-wrap.gap-2.my-2
+        if (services.length === 0)
+          a.osmbc-help-text(href=layout.htmlroot + "/usert/" + layout.user.id)="Configure a translation service to translate from " + sources.join(", ")
+        each source in sources
+          each service in services
+            button.btn.btn-outline-primary(type="button" class="translate" + source + lang onmousedown="event.preventDefault();" onclick=`window.translate('${source}','${lang}','${service}');`)
+              ="Translate from " + source + ((services.length > 1) ? " (" + service + ")" : "")
+          span.badge.text-bg-warning.d-none(class="translateWait" + source + lang)="please wait …"
+          span.badge.text-bg-danger.d-none(class="translateError" + source + lang)="translation from " + source + " failed"
+          each service in services
+            span.badge.text-bg-success.d-none(class="translateDone" + source + lang + " " + service)="translated from " + source
+
+//- Small screens: First Draft at the empty text field, one button per
+//- collected url (like Translate, the menu is desktop only). Click handling
+//- and status: firstDraft() in article_view.js.
+mixin mobileFirstDraftButtons(lang)
+  if (layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0 && !article["markdown" + lang] && article.isChangeAllowed("markdown" + lang))
+    div.d-flex.flex-wrap.gap-2.my-2
+      each url in firstDraftUrls
+        - let shortUrl = url.replace(/^https?:\/\/(www\.)?/, "")
+        - if (shortUrl.length > 30) shortUrl = shortUrl.substring(0, 27) + "..."
+        button.btn.btn-outline-primary.firstDraftItem.text-start(type="button" data-lang=lang data-url=url title=url)
+          span.firstDraftLabel="First Draft "
+          small=shortUrl
+          span.ms-1.firstDraftWait.d-none
+            i.fa.fa-spinner.fa-spin
+          span.ms-1.firstDraftDone.d-none
+            i.fa.fa-check
+          span.ms-1.firstDraftError.d-none.text-danger
+            i.fa.fa-times
+
+//- Small screens: the second language of the desktop pair on demand,
+//- below the mobile language and editable (X11). "Translate → second" shows
+//- it and translates in one tap; article_view.js shows the button while the
+//- mobile language has text and the second one is empty.
+mixin mobileSecondLanguage(lang, second)
+  - const services = layout.user.getTranslations().filter((service) => layout.user.useOneTranslation(service))
+  - const canTranslate = services.length > 0 && article.isChangeAllowed("markdown" + second)
+  div.d-flex.flex-wrap.gap-2.my-2.w-100
+    //- onmousedown keeps the focus in the text field: losing it resizes the
+    //- field (FitToContent) and moves the button away before the tap ends
+    button.btn.btn-outline-secondary#toggleSecondLang(type="button" data-lang=second onmousedown="event.preventDefault();")="Show " + second
+    if canTranslate
+      button.btn.btn-outline-primary.d-none#translateToSecondLang(type="button" data-from=lang data-to=second data-service=services[0] onmousedown="event.preventDefault();")="Translate → " + second
+  div.col-12.d-none#secondLanguage
+    div.osmbc-language-column
+      +mobileFirstDraftButtons(second)
+      +mobileTranslateButtons(second)
+      +markdownWithPreview(second)
+
+//- Texts of the other languages for Translate on small screens: hidden and
+//- disabled, so they are never submitted with the form.
+mixin translationSources(shown)
+  each source in layout.languages
+    if (shown.indexOf(source) < 0 && article["markdown" + source])
+      textarea.d-none(id="markdown" + source disabled)=article["markdown" + source]
+      div.d-none(id="preview" + source)=article["markdown" + source]
+
+//- Below lg (phones, and the "desktop view" of phone browsers) Save and
+//- last Version sit in a bar at the bottom of the screen, wherever the user
+//- is editing. It appears only when something is changed (showModified in
+//- article_view.js, which also handles the buttons). Save is the widest
+//- button, on the right under the thumb.
+mixin saveBar
+  div.d-lg-none
+    div.osmbc-save-bar.fixed-bottom.bg-light.border-top.px-3.py-2.d-flex.d-none.gap-2
+      button.btn.btn-outline-secondary#cancelButtonBar(type = "button" data-href=`${layout.htmlroot}/article/${article.id}?edit=false`) last Version
+      button.btn.btn-primary.flex-grow-1#saveButtonBar(type = "button") Save
+    //- room for the bar below the last content
+    div.osmbc-save-bar-spacer.d-none(style="height: 4rem;")
+
 mixin doublettesButton
   if articleReferences.count >= 1
     a(href="#doublettes")
-      div.button.btn.btn-lg.btn-danger=articleReferences.count + " doub."
+      div.button.btn.btn-lg.btn-danger.mb-2=articleReferences.count + " doub."
 
 
 
@@ -93,18 +173,14 @@ mixin noTranslationButton
       else
         - open = true;
     if open
-      p
-        button.btn.btn-small.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
+      p.mt-2
+        button.btn.btn-secondary#noTranslationButton(type = "button" onclick =" window.setNoTranslation(); ") no translation to rest
 
 mixin markdownWithPreview(lang)
   - labelClass = ""
   - if (params.left_lang === lang) labelClass = "osmbc-label-lang";
   - if (params.right_lang === lang) labelClass = "osmbc-label-lang2";
-  span.badge.text-bg-secondary(
-      class=labelClass
-      draggable="true"
-      data-bs-toggle="tooltip" data-bs-placement="left" title="Drag me for copy full text"
-      ondragstart=`ondragstartLangLabel(event,'${lang}');`)="  " + lang + "  "
+  span.badge.text-bg-secondary(class=labelClass)="  " + lang + "  "
   span.badge.text-bg-danger(style="display:none" id="markdown" + lang + "_unsaved" )="unsaved"
 
 
@@ -127,36 +203,38 @@ mixin articleTranslateMenu(langFrom,langTo,service)
 
 
 mixin translationMenu
-  - let emptyMenu = true
-  li.dropdown.navbar-item#translation.d-none.d-sm-block
-    a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
-    ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
-      - let tsList = layout.user.getTranslations()
-      each tService in tsList
-        - emptyMenu = false
-        li.dropdown-header="Use " + tService +":"
-          - list = []
-          - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
-          - let nothingToTranslate = true
-          each a in list
-            - all = []
-            each b in list
-              if (a !== b && a !== null && b !== null)
-                if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
-                  - all.push(b);
-                  if (layout.user.useOneTranslation(tService))
-                    +articleTranslateMenu(a, b, tService)
-            if (layout.manyTranslationEnabled)
-              if (all.length > 1)
-                if (layout.user.useManyTranslation(tService))  
-                  +articleTranslateMenu(a, all, tService)
+  //- small screens: Translate buttons at the text field replace this menu
+  if !layout.mobileView
+    - let emptyMenu = true
+    li.dropdown.navbar-item#translation.d-none.d-sm-block
+      a.nav-link.dropdown-toggle#articleTranslateMenu(href='#', data-bs-toggle='dropdown',role='button',aria-haspopup="true",aria-expanded="false") Translate
+      ul.dropdown-menu#articleTranslationDropdown(aria-labelledby="articleTranslateMenu" style="overflow-y: auto;")
+        - let tsList = layout.user.getTranslations()
+        each tService in tsList
+          - emptyMenu = false
+          li.dropdown-header="Use " + tService +":"
+            - list = []
+            - for ( i=0;layout.user.getLang(i);i++) {list.push(layout.user.getLang(i));}
+            - let nothingToTranslate = true
+            each a in list
+              - all = []
+              each b in list
+                if (a !== b && a !== null && b !== null)
+                  if (article["markdown" + a] && !article["markdown" + b] && article.isChangeAllowed("markdown" + b))
+                    - all.push(b);
+                    if (layout.user.useOneTranslation(tService))
+                      +articleTranslateMenu(a, b, tService)
+              if (layout.manyTranslationEnabled)
+                if (all.length > 1)
+                  if (layout.user.useManyTranslation(tService))  
+                    +articleTranslateMenu(a, all, tService)
                 
 
 
-      .dropdown-divider
-      a.dropdown-item(
-        onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';"
-      )="Configure your Translation services"
+        .dropdown-divider
+        a.dropdown-item(
+          onclick="location.href='" + layout.htmlroot + "/usert/" + layout.user.id + "';"
+        )="Configure your Translation services"
         
 
 
@@ -164,7 +242,8 @@ mixin translationMenu
 
 mixin firstDraftMenu
   //- First Draft: one entry per displayed, empty language markdown and collected url
-  if (layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0)
+  //- small screens: First Draft buttons at the text field replace this menu
+  if (!layout.mobileView && layout.firstDraftVisible && firstDraftUrls && firstDraftUrls.length > 0)
     - let fdLanguages = layout.user.getLanguages()
     - if (layout.user.getLanguageSet() === "Active") fdLanguages = layout.activeLanguages
     - fdLanguages = fdLanguages.filter((l) => l && !article["markdown" + l] && article.isChangeAllowed("markdown" + l))
@@ -206,10 +285,6 @@ block append scripts_to_execute
     emojiShortcut = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.shortcut)))}`)));
     emojiList =     JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(languageFlags.emoji)))}`)));
     linkAttributes = JSON.parse(decodeURIComponent(window.atob(`!{btoa(encodeURIComponent(JSON.stringify(linkAttributes)))}`)));
-    leftLang = "!{params.left_lang}";
-    rightLang = "!{params.right_lang}";
-    lang3 = "!{params.lang3}";
-    lang4 = "!{params.lang4}";
     userLanguages =  JSON.parse('!{JSON.stringify(layout.user.langArray)}');
     blogStartDate = '!{ (blog) ? blog.startDate : new Date().toISOString()}'
     translationServices = JSON.parse('!{JSON.stringify(translationServices)}');

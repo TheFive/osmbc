@@ -6,7 +6,37 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
-    <title>TESTBC</title><!-- Bootstrap core CSS-->
+    <title>TESTBC</title>
+    <script nonce="">
+      // Mobile mode = below Bootstrap's lg breakpoint, like the menu panel and
+      // the save bar. The server reads the cookie; if it rendered the other
+      // mode, reload once (not again if the cookie does not stick).
+      // The "desktop view" of a phone browser (~980px, below lg) stays
+      // desktop: its viewport is much wider than the screen.
+      (function() {
+        var rendered = "desktop";
+        var desktopView = window.screen.width > 0 && window.innerWidth > window.screen.width * 1.2;
+        var wanted = (!desktopView && window.matchMedia("(max-width: 991.98px)").matches) ? "mobile" : "desktop";
+        if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) {
+          document.cookie = "osmbc_view=" + wanted + "; path=/; max-age=31536000; SameSite=Lax";
+        }
+        if (wanted === rendered) {
+          // a later switch on the same page must be able to reload again
+          try {
+            window.sessionStorage.removeItem("osmbcViewReload");
+          } catch (e) {}
+          return;
+        }
+        if (document.cookie.indexOf("osmbc_view=" + wanted) < 0) return;
+        try {
+          if (window.sessionStorage.getItem("osmbcViewReload") === location.href) return;
+          window.sessionStorage.setItem("osmbcViewReload", location.href);
+        } catch (e) {
+          return;
+        }
+        location.reload();
+      })();
+    </script><!-- Bootstrap core CSS-->
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/bootstrap-select.min.css" rel="stylesheet">
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet">
@@ -15,47 +45,52 @@
 
   <body><!-- Fixed navbar-->
     <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
-      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="navbar-brand" href="/osmbc.html">TESTBC</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav">
-            <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
-            <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
-            <li class="navbar-item active"></li>
-            <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbc-badge-lang">1</span><span class="badge rounded-pill osmbc-badge-lang2">1</span></a></li>
-            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
-              <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
-                <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
-              </div>
-            </li>
-            <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
-              <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown"><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
-                <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
-              </div>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
-                <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
-              </div>
-            </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
-                <div class="dropdown-divider"> </div><a class="dropdown-item" id="langset_Active" onclick="chooseLanguageSet('Active' ,'set')">Active</a>
-              </div>
-            </li>
-            <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
-                <div class="dropdown-divider"></div>
-                <form class="p-1">
-                  <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
-                    <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
-                  </div>
-                </form>
-              </div>
-            </li>
-            <li><img onclick="location.href='/usert/2';" style="height:40px;width:40px"></li>
-          </ul>
+      <div class="container-fluid"><button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><a class="navbar-brand" href="/osmbc.html">TESTBC</a>
+        <div class="offcanvas offcanvas-start" id="navbarSupportedContent" tabindex="-1" aria-labelledby="navbarSupportedContentLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="navbarSupportedContentLabel">TESTBC</h5><button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body flex-grow-1">
+            <ul class="navbar-nav">
+              <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
+              <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox <span class="badge rounded-pill osmbc-badge-lang">2</span></a></li>
+              <li class="navbar-item active"></li>
+              <li class="navbar-item active"><a class="nav-link" href="/blog/WN290">WN290<span class="badge rounded-pill osmbc-badge-lang">1</span><span class="badge rounded-pill osmbc-badge-lang2">1</span></a></li>
+              <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
+                <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
+                  <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
+                </div>
+              </li>
+              <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="toolsMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
+                <div class="dropdown-menu" aria-labelledby="toolsMenuDropdown"><a class="dropdown-header">Editorial Tools</a><a class="dropdown-item" href="https://mattermost.openstreetmap.de">Mattermost for Editorial Team</a>
+                  <div class="dropdown-divider"></div><a class="dropdown-header">About The Team</a><a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1LAoVqxf3GkE3a-P6zmrT7_D-Q7SMIAFXoK4MizoMThM/edit?usp=sharing">Google List of Skills</a>
+                </div>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+              <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a>
+                  <div class="dropdown-divider"></div><a class="dropdown-header">WeeklyOSM &amp; Wochennotiz</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Vision-%26-Rules">Vision &amp; rules</a><a class="dropdown-item" href="https://osmbc.openstreetmap.de/osmww/wiki/Editorial-Meeting">Editorial Meetings</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/Wochennotiz">Wochennotiz in OSM Wiki</a><a class="dropdown-item" href="https://wiki.openstreetmap.org/wiki/WeeklyOSM">Weekly in OSM Wiki</a><a class="dropdown-item" href="https://framacalc.org/WN_DEnglisch">Glossary</a>
+                </div>
+              </li>
+              <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang" id="language" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DE</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language"><a class="dropdown-item disabled">DE</a><a class="dropdown-item" id="lang_EN" onclick="chooseLanguage('lang','EN')">EN</a><a class="dropdown-item" id="lang_ES" onclick="chooseLanguage('lang','ES')">ES</a>
+                  <div class="dropdown-divider"> </div><a class="dropdown-item" id="langset_Active" onclick="chooseLanguageSet('Active' ,'set')">Active</a>
+                </div>
+              </li>
+              <li class="dropdown nav-item"><a class="nav-link dropdown-toggle osmbc-badge-lang2" id="language2" href="#" style="color:white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EN</a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="language2"><a class="dropdown-item" id="lang2_none" onclick="chooseLanguage('lang2','none')">none</a><a class="dropdown-item disabled">DE</a><a class="dropdown-item disabled">EN</a><a class="dropdown-item" id="lang2_ES" onclick="chooseLanguage('lang2','ES')">ES</a>
+                  <div class="dropdown-divider"></div>
+                  <form class="p-1">
+                    <div class="form-group"><input class="input form-control" id="newSetToBeSaved" type="text">
+                      <div class="btn btn-primary" id="saveNewSet" onclick="chooseLanguageSet('','save')">Add Set</div>
+                    </div>
+                  </form>
+                </div>
+              </li>
+              <li><a class="nav-link d-flex align-items-center gap-2" id="userAvatar" href="/usert/2" title="TheFive"><img class="osmbc-avatar" src="/images/avatar.svg" alt="" style="height:40px;width:40px"><span class="d-lg-none">TheFive</span></a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
@@ -119,9 +154,9 @@
               <td><span class="badge small-margin osmbc-label-reviewblog">wambacher</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span><span class="badge small-margin osmbc-label-reviewblog">Peda</span><span class="badge small-margin osmbc-label-reviewblog">Nakaner</span><span class="badge small-margin osmbc-label-reviewblog">TheFive</span><span class="badge small-margin osmbc-label-reviewblog">Nakaner</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=DE';"></i><span> </span><i class="fa fa-exclamation-triangle"></i></td>
               <td>
-                <div class="div"><button class="btn btn-lg btn-warning" id="didexport" onclick="window.setLangStatus(&quot;DE&quot;,&quot;markexported&quot;,this);">Did Export (DE)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="didexport" data-lang-status="markexported" data-lang="DE" data-confirm="Mark WN290 (DE) as exported?">Did Export (DE)</button></div>
               </td>
-              <td><button class="btn btn-warning" id="deletereviewbutton" onclick="window.setLangStatus(&quot;DE&quot;,&quot;deleteallreviews&quot;,this);">Delete Review</button></td>
+              <td><button class="btn btn-warning" id="deletereviewbutton" data-lang-status="deleteallreviews" data-lang="DE" data-confirm="Delete all reviews of WN290 (DE)?">Delete Review</button></td>
             </tr>
             <tr>
               <td><span class="badge text-bg-secondary">EN</span></td>
@@ -135,9 +170,9 @@
               <td><span class="badge small-margin osmbc-label-reviewblog">bogzab</span><span class="badge small-margin osmbc-label-reviewblog">elpbatista</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span><span class="badge small-margin osmbc-label-reviewblog">jinalfoflia</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i><span> </span><i class="fa fa-exclamation-triangle"></i></td>
               <td>
-                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;closelang&quot;,this);">Close WN290(EN)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" data-lang-status="closelang" data-lang="EN" data-confirm="Close WN290 (EN)?">Close WN290(EN)</button></div>
               </td>
-              <td><button class="btn btn-warning" id="deletereviewbutton" onclick="window.setLangStatus(&quot;EN&quot;,&quot;deleteallreviews&quot;,this);">Delete Review</button></td>
+              <td><button class="btn btn-warning" id="deletereviewbutton" data-lang-status="deleteallreviews" data-lang="EN" data-confirm="Delete all reviews of WN290 (EN)?">Delete Review</button></td>
             </tr>
             <tr>
               <td><span class="badge text-bg-secondary">ES</span></td>
@@ -151,9 +186,9 @@
               <td><span class="badge small-margin osmbc-label-reviewblog">aalih</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=ES';"></i></td>
               <td>
-                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;closelang&quot;,this);">Close WN290(ES)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" data-lang-status="closelang" data-lang="ES" data-confirm="Close WN290 (ES)?">Close WN290(ES)</button></div>
               </td>
-              <td><button class="btn btn-warning" id="deletereviewbutton" onclick="window.setLangStatus(&quot;ES&quot;,&quot;deleteallreviews&quot;,this);">Delete Review</button></td>
+              <td><button class="btn btn-warning" id="deletereviewbutton" data-lang-status="deleteallreviews" data-lang="ES" data-confirm="Delete all reviews of WN290 (ES)?">Delete Review</button></td>
             </tr>
           </tbody>
         </table>
@@ -396,6 +431,40 @@
       // Init This Window with jQuery ready Callback
       window.htmlroot = "";
     </script>
+    <script nonce="">
+      // keep the content below the fixed navbar, whatever its height
+      (function() {
+        // an adopted style sheet does not change the DOM (style.css has a fallback)
+        var navbar = document.getElementById("fixedNavbar");
+        if (window.CSSStyleSheet && document.adoptedStyleSheets && window.ResizeObserver) {
+          var sheet = new CSSStyleSheet();
+          document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
+          var fit = function() {
+            sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }");
+          };
+          fit();
+          new ResizeObserver(fit).observe(navbar);
+        }
+        // small screens: hide the bar when scrolling down, show it when scrolling up
+        var lastY = window.scrollY;
+        window.addEventListener("scroll", function() {
+          var y = window.scrollY;
+          var hide = window.matchMedia("(max-width: 991.98px)").matches && y > lastY && y > navbar.offsetHeight;
+          navbar.classList.toggle("osmbc-navbar-hidden", hide);
+          lastY = y;
+        }, {
+          passive: true
+        });
+        // close the side panel after choosing an entry (also for script actions)
+        var panel = document.getElementById("navbarSupportedContent");
+        panel.addEventListener("click", function(event) {
+          var entry = event.target.closest(".dropdown-item, .nav-link:not(.dropdown-toggle)");
+          if (!entry) return;
+          var instance = window.bootstrap.Offcanvas.getInstance(panel);
+          if (instance) instance.hide();
+        });
+      })();
+    </script>
     <script src="/javascripts/markdown-it.min.js"></script>
     <script src="/javascripts/markdown-it-emoji.min.js"></script>
     <script src="/javascripts/markdown-it-sup.min.js"></script>
@@ -407,6 +476,30 @@
 
 
       var openEditor = null;
+      // preview as last saved, per editor id: Cancel puts it back. Rendering
+      // the old text again would lose what the server shows for an empty
+      // text (the title)
+      var savedPreview = {};
+
+      // a tap on an article text opens its inline editor (or closes the open
+      // one); links in the text do not navigate
+      $(document).on("click", "[data-inline-editor]", function(event) {
+        event.preventDefault();
+        if (!openEditor) {
+          // review/full: the tapped text is the preview (overview: the title)
+          var preview = this.querySelector(".preview");
+          if (preview && !(this.dataset.inlineEditor in savedPreview)) {
+            savedPreview[this.dataset.inlineEditor] = preview.innerHTML;
+          }
+          openEditor = document.getElementById(this.dataset.inlineEditor);
+          openEditor.classList.toggle("d-none");
+          fitToContentIn(openEditor);
+        } else {
+          openEditor.classList.toggle("d-none");
+          openEditor = null;
+        }
+        updateToTop();
+      });
 
       window.onload = function() {
         window.mdRender = window.markdownit();
@@ -449,14 +542,161 @@
 
 
 
-      function onLeaveText(id, column) {
-        if (!column) column = "";
+      // Inline editors save in the background, without reloading the page.
+      // Leaving the text field saves (desktop habit), Save also closes the
+      // editor, Cancel goes back to the last saved text.
+      var inlineSaves = {};
 
-        var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
-        var newValue = document.getElementById(column + "markdown" + id).value;
-        if (oldValue === newValue) return;
-        form = document.getElementById(column + 'EditArticle' + id);
-        form.submit();
+      function onLeaveText(id, column) {
+        saveInlineEditor(id, column, false);
+      }
+
+      function inlineStatus(id, column, text, cls) {
+        var editor = document.getElementById(column + "div" + id);
+        var status = document.getElementById(column + "saveStatus" + id);
+        if (!status) {
+          status = document.createElement("span");
+          status.id = column + "saveStatus" + id;
+          editor.insertAdjacentElement("afterend", status);
+        }
+        status.className = "badge " + cls;
+        status.textContent = text;
+        if (cls === "text-bg-success") {
+          setTimeout(function() {
+            if (status.textContent === text) status.className = "d-none";
+          }, 4000);
+        }
+      }
+
+      // how: "saved" or "cancelled" when closed by the buttons
+      function closeInlineEditor(id, column, how) {
+        var editor = document.getElementById(column + "div" + id);
+        editor.classList.add("d-none");
+        if (openEditor === editor) openEditor = null;
+        if (how && isMobile) showClosedArticle(column + "div" + id, how);
+        updateToTop();
+      }
+
+      var isMobile = document.documentElement.classList.contains("osmbc-mobile");
+
+      // phones: after Save/Cancel the article is at the top of the screen, to
+      // read it again; a short flash shows which one it was
+      function showClosedArticle(editorId, how) {
+        var text = document.querySelector("[data-inline-editor='" + editorId + "']");
+        if (!text) return;
+        // the navbar shows when scrolling up and hides when scrolling down
+        // (layout.pug), so leave room for it only when going up
+        var y = text.getBoundingClientRect().top + window.scrollY;
+        if (y < window.scrollY) y -= document.getElementById("fixedNavbar").offsetHeight;
+        window.scrollTo({
+          top: Math.max(0, y),
+          behavior: "instant"
+        });
+        text.classList.remove("osmbc-flash-saved", "osmbc-flash-cancelled");
+        void text.offsetWidth; // restarts the animation
+        text.classList.add("osmbc-flash-" + how);
+      }
+      $(document).on("animationend", ".osmbc-inline-edit", function() {
+        this.classList.remove("osmbc-flash-saved", "osmbc-flash-cancelled");
+      });
+
+      // phones: "back to top" button, bottom left, after scrolling one screen;
+      // hidden while an editor is open (it would cover its Cancel)
+      var toTop = null;
+      if (isMobile) {
+        toTop = document.createElement("button");
+        toTop.type = "button";
+        toTop.id = "toTop";
+        toTop.className = "btn btn-secondary osmbc-to-top d-none";
+        toTop.setAttribute("aria-label", "Back to top");
+        toTop.innerHTML = '<i class="fa fa-arrow-up"></i>';
+        toTop.addEventListener("click", function() {
+          window.scrollTo({
+            top: 0,
+            behavior: "instant"
+          });
+        });
+        document.body.appendChild(toTop);
+        window.addEventListener("scroll", updateToTop, {
+          passive: true
+        });
+      }
+
+      function updateToTop() {
+        if (toTop) toTop.classList.toggle("d-none", window.scrollY < window.innerHeight || openEditor !== null);
+      }
+
+      function saveInlineEditor(id, column, close) {
+        if (!column) column = "";
+        var key = column + id;
+        if (inlineSaves[key]) return inlineSaves[key].then(function() {
+          return saveInlineEditor(id, column, close);
+        });
+        var form = document.getElementById(column + "EditArticle" + id);
+        var oldField = document.getElementById(column + "oldMarkdown" + id);
+        var field = document.getElementById(column + "markdown" + id);
+        if (oldField.value === field.value) {
+          // "Open Editor": no text yet, nothing to save
+          if (close && field.value === "") {
+            window.location.href = "/article/" + id;
+            return Promise.resolve();
+          }
+          if (close) closeInlineEditor(id, column, "saved");
+          return Promise.resolve();
+        }
+        var value = field.value;
+        inlineStatus(id, column, "saving …", "text-bg-secondary");
+        // keepalive: the save completes even if the user leaves the page right away
+        inlineSaves[key] = fetch(form.action, {
+          method: "POST",
+          keepalive: true,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json"
+          },
+          body: new URLSearchParams(new FormData(form))
+        }).then(function(res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          oldField.value = value;
+          savedPreview[column + "div" + id] = convert(value);
+          updateSaveLabel(id, column);
+          inlineStatus(id, column, "saved", "text-bg-success");
+          if (close) closeInlineEditor(id, column, "saved");
+        }).catch(function(err) {
+          console.error(err);
+          inlineStatus(id, column, "not saved – please reload the page", "text-bg-danger");
+        }).finally(function() {
+          delete inlineSaves[key];
+        });
+        return inlineSaves[key];
+      }
+
+      function cancelInlineEditor(id, column) {
+        if (!column) column = "";
+        document.getElementById(column + "markdown" + id).value = document.getElementById(column + "oldMarkdown" + id).value;
+        var key = column + "div" + id;
+        if (key in savedPreview) {
+          var pv = document.getElementById(column + "preview" + id);
+          pv.innerHTML = savedPreview[key];
+          $(pv).trigger("change");
+        } else {
+          onchangeMarkdown(id, column);
+        }
+        updateSaveLabel(id, column);
+        closeInlineEditor(id, column, "cancelled");
+      }
+
+      // also for text pasted without a key (long press on a phone)
+      $(document).on("input", "form[id*='EditArticle'] textarea[name='markdown']", function() {
+        var m = this.form.id.match(/^(.*)EditArticle(\d+)$/);
+        if (m) updateSaveLabel(m[2], m[1]);
+      });
+
+      // "Open Editor" while there is no text, neither saved nor typed
+      function updateSaveLabel(id, column) {
+        var empty = document.getElementById(column + "oldMarkdown" + id).value === "" &&
+          document.getElementById(column + "markdown" + id).value === "";
+        document.getElementById(column + "inlineSave" + id).textContent = empty ? "Open Editor" : "Save";
       }
 
 
@@ -486,8 +726,15 @@
 
         pv.innerHTML = convert(md);
         $(pv).trigger("change");
+        updateSaveLabel(id, column);
 
       }
+
+      // vote labels (voteLabel in mixins.pug)
+      $(document).on("click", ".osmbc-vote-label[data-call]", function(event) {
+        event.preventDefault();
+        callAndRedraw(this.dataset.call, this.dataset.redraw);
+      });
 
       function callAndRedraw(call, redraw) {
         $.get("" + call, function(data) {
@@ -526,20 +773,40 @@
         });
       }
 
-      function setLangStatus(lang, status, button) {
-        $(button).prop('disabled', true);
-        $(button).prop('html', "wait ...");
+      // review comments (blogheader.pug): edit an own comment, Review only with
+      // a text, stop the personal review
+      $(document).on("click", "[data-edit-review]", function() {
+        const key = this.dataset.editReview;
+        document.getElementById("editReview" + key).classList.remove("d-none");
+        document.getElementById("reviewLeftText" + key).classList.add("d-none");
+        fitToContentIn("#editReview" + key);
+      });
+      $(document).on("input", "[data-review-text]", function() {
+        document.getElementById("reviewButton" + this.dataset.reviewText).disabled = (this.value === "");
+      });
+      $(document).on("click", "[data-review-stop]", function() {
+        const lang = this.dataset.reviewStop;
+        document.getElementById("reviewComment" + lang).value = "delete";
+        document.getElementById("review" + lang).submit();
+      });
+
+      // status buttons of a language (blogReviewButtons); Close and Did Export
+      // ask first
+      $(document).on("click", "[data-lang-status]", function() {
+        const button = $(this);
+        if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        button.prop("disabled", true);
+        button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus", {
-          action: status,
-          lang: lang
-        }, function(data) {
+          action: button.data("lang-status"),
+          lang: button.data("lang")
+        }, function() {
           location.reload();
         }).fail(function(err) {
           console.error("Trouble setting Language Status");
           console.error(err);
         });
-
-      }
+      });
     </script>
   </body>
 

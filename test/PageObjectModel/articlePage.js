@@ -37,6 +37,21 @@ class ArticlePage extends StandardPage {
     await (ele).sendKeys(text);
   }
 
+  // opens the edit form of an own comment (the comment area is redrawn)
+  async openEditComment(number) {
+    await this.assertPage();
+    const button = await this._driver.findElement(By.css("#EditComment" + number));
+    await this.tap(button);
+    await this._waitUntilStale(button, "comment area not redrawn");
+  }
+
+  async typeCommentText(text) {
+    await this.assertPage();
+    const field = await this._driver.findElement(By.id("comment"));
+    await this.tap(field);
+    await field.sendKeys(text);
+  }
+
   async editComment(number, text) {
     await this.assertPage();
     let ele = await this._driver.findElement(By.css("#EditComment" + number));
@@ -137,11 +152,141 @@ class ArticlePage extends StandardPage {
 
   async getValueFromLinkArea(link) {
     this.assertPage();
-    const ele = await this._driver.findElement(By.css(`div#linkArea>p>a[href='${link}']`));
+    const ele = await this._driver.findElement(By.css(`div#linkArea a.badge[href='${link}']`));
     const value = await ele.getText();
     const cssClass = await ele.getAttribute("class");
     const hasWarningClass = /(?:^|\s)(?:badge-danger|text-bg-danger)(?:\s|$)/.test(cssClass || "");
     return { text: value, warning: hasWarningClass };
+  }
+
+  // Small screens (mobile mode): one language, the second one on demand,
+  // Save in the bar at the bottom, insert buttons at the collection links.
+
+  // type at the end of the text, keeping what is there
+  async appendMarkdownInput(lang, text) {
+    await this.assertPage();
+    await this._driver.findElement(By.id("markdown" + lang)).sendKeys(text);
+  }
+
+  async isMarkdownShown(lang) {
+    return this._driver.findElement(By.id("markdown" + lang)).isDisplayed();
+  }
+
+  async getToggleSecondLanguageText() {
+    return this._driver.findElement(By.id("toggleSecondLang")).getText();
+  }
+
+  async clickToggleSecondLanguage() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.id("toggleSecondLang")));
+  }
+
+  async isTranslateToSecondLanguageShown() {
+    return this._driver.findElement(By.id("translateToSecondLang")).isDisplayed();
+  }
+
+  async clickTranslateToSecondLanguage() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.id("translateToSecondLang")));
+  }
+
+  async clickSaveBar() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.id("saveButtonBar")));
+  }
+
+  async isSaveBarShown() {
+    return this._driver.findElement(By.id("saveButtonBar")).isDisplayed();
+  }
+
+  // the first collection link's "+ Link" / "+ translated" button
+  async clickInsertLink() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("#linkArea button.insertLink")));
+  }
+
+  async clickInsertTranslatedLink() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("#linkArea button.insertTranslatedLink")));
+  }
+
+  async isInsertLinkShown() {
+    return this._driver.findElement(By.css("#linkArea button.insertLink")).isDisplayed();
+  }
+
+  // First Draft: shown buttons at the empty text field (small screens)
+  async getFirstDraftButtons() {
+    const result = [];
+    for (const b of await this._driver.findElements(By.css("button.firstDraftItem"))) {
+      if (await b.isDisplayed()) result.push((await b.getAttribute("data-lang")) + " " + (await b.getAttribute("data-url")));
+    }
+    return result;
+  }
+
+  async isFirstDraftMenuShown() {
+    return (await this._driver.findElements(By.id("articleFirstDraftMenu"))).length > 0;
+  }
+
+  async tapFirstDraft(lang) {
+    await this.assertPage();
+    const button = await this._driver.findElement(By.css(`button.firstDraftItem[data-lang='${lang}']`));
+    await this.tap(button);
+    await this._driver.wait(async () => (await button.findElements(By.css(".firstDraftDone:not(.d-none), .firstDraftError:not(.d-none)"))).length > 0, 5000, "First Draft did not finish");
+  }
+
+  async getMarkdown(lang) {
+    return this._driver.findElement(By.id("markdown" + lang)).getAttribute("value");
+  }
+
+  async isLanguageFlagsShown() {
+    return this._driver.findElement(By.id("languageFlags")).isDisplayed();
+  }
+
+  // comment area: number of comments marked unread (envelope)
+  async countUnreadComments() {
+    return (await this._driver.findElements(By.css("#commentArea button[aria-label='Mark as read']"))).length;
+  }
+
+  async clickMarkFirstUnreadCommentRead() {
+    await this.assertPage();
+    const envelope = await this._driver.findElement(By.css("#commentArea button[aria-label='Mark as read']"));
+    await this.tap(envelope);
+    await this._waitUntilStale(envelope, "comment area not redrawn");
+  }
+
+  async tapAddComment(text) {
+    await this.assertPage();
+    const field = await this._driver.findElement(By.id("comment"));
+    await this.tap(field);
+    await field.sendKeys(text);
+    const button = await this._driver.findElement(By.css("button[name='AddComment']"));
+    await this.tap(button);
+    await this._waitUntilStale(button, "comment area not redrawn");
+  }
+
+  // the n-th vote button next to the article's form (0 = first)
+  async clickTopVote(n) {
+    await this.assertPage();
+    const buttons = await this._driver.findElements(By.css("#voteButtons button"));
+    await this.tap(buttons[n]);
+  }
+
+  // the "⋯" menu of the first collection link (mobile mode): its entries
+  async openLinkMenu() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("#linkArea [data-bs-toggle='dropdown']")));
+    const entries = await this._driver.findElements(By.css("#linkArea .dropdown-menu.show .dropdown-item"));
+    return Promise.all(entries.map(e => e.getText()));
+  }
+
+  // select text in a markdown field, or place the cursor (no "to");
+  // from = "end" puts the cursor after the text
+  async setMarkdownSelection(lang, from, to) {
+    await this._driver.executeScript(`
+      const f = document.getElementById("markdown" + arguments[0]);
+      const from = (arguments[1] === "end") ? f.value.length : arguments[1];
+      f.focus();
+      f.setSelectionRange(from, arguments[2] ?? from);`, lang, from, to);
   }
 
   async getWarningMessage(lang) {

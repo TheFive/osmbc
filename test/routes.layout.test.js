@@ -25,7 +25,7 @@ describe("routes/layout", function() {
   it("should initialise all layout variables", function(bddone) {
     function getMainLang() { return "DE"; }
     function getSecondLang() { return null; }
-    const req = { query: {}, session: {}, user: { getMainLang: getMainLang, getSecondLang: getSecondLang, getLang3: getSecondLang, getLang4: getSecondLang, getLang: getSecondLang, language: "DE" } };
+    const req = { query: {}, session: {}, user: { getMainLang: getMainLang, getMobileLang: getMainLang, getLanguages: () => [], getSecondLang: getSecondLang, getLang3: getSecondLang, getLang4: getSecondLang, getLang: getSecondLang, language: "DE" } };
     const res = {};
     layout.prepareRenderLayout(req, res, function done() {
       const l = res.rendervar.layout;

@@ -6,9 +6,9 @@ mixin blogReviewButtons(lang)
     if (_rc)
       .div
         if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-          button.btn.btn-lg.btn-warning(id="closebutton" onclick=`window.setLangStatus("${lang}","closelang",this);`) Close #{blog.name}(#{lang})
+          button.btn.btn-lg.btn-warning(id="closebutton" data-lang-status="closelang" data-lang=lang data-confirm=`Close ${blog.name} (${lang})?`) Close #{blog.name}(#{lang})
         else
-          button.btn.btn-lg.btn-warning(id="didexport" onclick=`window.setLangStatus("${lang}","markexported",this);`) Did Export (#{lang})
+          button.btn.btn-lg.btn-warning(id="didexport" data-lang-status="markexported" data-lang=lang data-confirm=`Mark ${blog.name} (${lang}) as exported?`) Did Export (#{lang})
 
       if (blog["exported"+lang])
         .div
@@ -17,8 +17,18 @@ mixin blogReviewButtons(lang)
 
     else
       if blog.status != "open"
-        button.btn.btn-lg.btn-primary(id="readyreview" onclick=`window.setLangStatus("${lang}","startreview",this);`) Set #{blog.name}(#{lang}) ready for review
+        button.btn.btn-lg.btn-primary(id="readyreview" data-lang-status="startreview" data-lang=lang) Set #{blog.name}(#{lang}) ready for review
 
+
+//- Save and Cancel for the inline editors. onmousedown keeps the focus in
+//- the text field, so Cancel does not trigger the save on leaving it.
+//- Cancel at the start, Save at the end (under the thumb).
+//- empty: the article has no text yet. As long as the field stays empty,
+//- Save is "Open Editor" and opens the article (updateSaveLabel).
+mixin inlineEditorButtons(id, column, empty)
+  div.d-flex.gap-2.my-2
+    button.btn.btn-secondary(type="button" id=column + "inlineCancel" + id onmousedown="event.preventDefault();" onclick=`cancelInlineEditor(${id},'${column}');`) Cancel
+    button.btn.btn-primary.ms-auto(type="button" id=column + "inlineSave" + id onmousedown="event.preventDefault();" onclick=`saveInlineEditor(${id},'${column}',true);`)=empty ? "Open Editor" : "Save"
 
 block append scripts_to_load
   script(src=layout.htmlroot + "/javascripts/markdown-it.min.js?osmbc_v=" + layout.osmbc_version)
@@ -36,6 +46,30 @@ block append scripts_to_execute
      
 
     var openEditor = null;
+    // preview as last saved, per editor id: Cancel puts it back. Rendering
+    // the old text again would lose what the server shows for an empty
+    // text (the title)
+    var savedPreview = {};
+
+    // a tap on an article text opens its inline editor (or closes the open
+    // one); links in the text do not navigate
+    $(document).on("click", "[data-inline-editor]", function (event) {
+      event.preventDefault();
+      if (!openEditor) {
+        // review/full: the tapped text is the preview (overview: the title)
+        var preview = this.querySelector(".preview");
+        if (preview && !(this.dataset.inlineEditor in savedPreview)) {
+          savedPreview[this.dataset.inlineEditor] = preview.innerHTML;
+        }
+        openEditor = document.getElementById(this.dataset.inlineEditor);
+        openEditor.classList.toggle("d-none");
+        fitToContentIn(openEditor);
+      } else {
+        openEditor.classList.toggle("d-none");
+        openEditor = null;
+      }
+      updateToTop();
+    });
 
     window.onload = function () {
       window.mdRender = window.markdownit();
@@ -72,14 +106,143 @@ block append scripts_to_execute
 
 
 
-    function onLeaveText(id,column) {
-      if (!column) column="";
+    // Inline editors save in the background, without reloading the page.
+    // Leaving the text field saves (desktop habit), Save also closes the
+    // editor, Cancel goes back to the last saved text.
+    var inlineSaves = {};
 
-      var oldValue = document.getElementById(column + "oldMarkdown" + id).value;
-      var newValue = document.getElementById(column + "markdown" + id).value;
-      if (oldValue === newValue) return;
-      form = document.getElementById(column + 'EditArticle' + id);
-      form.submit();
+    function onLeaveText(id,column) {
+      saveInlineEditor(id, column, false);
+    }
+
+    function inlineStatus(id, column, text, cls) {
+      var editor = document.getElementById(column + "div" + id);
+      var status = document.getElementById(column + "saveStatus" + id);
+      if (!status) {
+        status = document.createElement("span");
+        status.id = column + "saveStatus" + id;
+        editor.insertAdjacentElement("afterend", status);
+      }
+      status.className = "badge " + cls;
+      status.textContent = text;
+      if (cls === "text-bg-success") {
+        setTimeout(function () { if (status.textContent === text) status.className = "d-none"; }, 4000);
+      }
+    }
+
+    // how: "saved" or "cancelled" when closed by the buttons
+    function closeInlineEditor(id, column, how) {
+      var editor = document.getElementById(column + "div" + id);
+      editor.classList.add("d-none");
+      if (openEditor === editor) openEditor = null;
+      if (how && isMobile) showClosedArticle(column + "div" + id, how);
+      updateToTop();
+    }
+
+    var isMobile = document.documentElement.classList.contains("osmbc-mobile");
+
+    // phones: after Save/Cancel the article is at the top of the screen, to
+    // read it again; a short flash shows which one it was
+    function showClosedArticle(editorId, how) {
+      var text = document.querySelector("[data-inline-editor='" + editorId + "']");
+      if (!text) return;
+      // the navbar shows when scrolling up and hides when scrolling down
+      // (layout.pug), so leave room for it only when going up
+      var y = text.getBoundingClientRect().top + window.scrollY;
+      if (y < window.scrollY) y -= document.getElementById("fixedNavbar").offsetHeight;
+      window.scrollTo({ top: Math.max(0, y), behavior: "instant" });
+      text.classList.remove("osmbc-flash-saved", "osmbc-flash-cancelled");
+      void text.offsetWidth; // restarts the animation
+      text.classList.add("osmbc-flash-" + how);
+    }
+    $(document).on("animationend", ".osmbc-inline-edit", function () {
+      this.classList.remove("osmbc-flash-saved", "osmbc-flash-cancelled");
+    });
+
+    // phones: "back to top" button, bottom left, after scrolling one screen;
+    // hidden while an editor is open (it would cover its Cancel)
+    var toTop = null;
+    if (isMobile) {
+      toTop = document.createElement("button");
+      toTop.type = "button";
+      toTop.id = "toTop";
+      toTop.className = "btn btn-secondary osmbc-to-top d-none";
+      toTop.setAttribute("aria-label", "Back to top");
+      toTop.innerHTML = '<i class="fa fa-arrow-up"></i>';
+      toTop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "instant" }); });
+      document.body.appendChild(toTop);
+      window.addEventListener("scroll", updateToTop, { passive: true });
+    }
+    function updateToTop() {
+      if (toTop) toTop.classList.toggle("d-none", window.scrollY < window.innerHeight || openEditor !== null);
+    }
+
+    function saveInlineEditor(id, column, close) {
+      if (!column) column = "";
+      var key = column + id;
+      if (inlineSaves[key]) return inlineSaves[key].then(function () { return saveInlineEditor(id, column, close); });
+      var form = document.getElementById(column + "EditArticle" + id);
+      var oldField = document.getElementById(column + "oldMarkdown" + id);
+      var field = document.getElementById(column + "markdown" + id);
+      if (oldField.value === field.value) {
+        // "Open Editor": no text yet, nothing to save
+        if (close && field.value === "") {
+          window.location.href = "!{layout.htmlroot}/article/" + id;
+          return Promise.resolve();
+        }
+        if (close) closeInlineEditor(id, column, "saved");
+        return Promise.resolve();
+      }
+      var value = field.value;
+      inlineStatus(id, column, "saving …", "text-bg-secondary");
+      // keepalive: the save completes even if the user leaves the page right away
+      inlineSaves[key] = fetch(form.action, {
+        method: "POST",
+        keepalive: true,
+        headers: { "X-Requested-With": "XMLHttpRequest", "Accept": "application/json" },
+        body: new URLSearchParams(new FormData(form))
+      }).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        oldField.value = value;
+        savedPreview[column + "div" + id] = convert(value);
+        updateSaveLabel(id, column);
+        inlineStatus(id, column, "saved", "text-bg-success");
+        if (close) closeInlineEditor(id, column, "saved");
+      }).catch(function (err) {
+        console.error(err);
+        inlineStatus(id, column, "not saved – please reload the page", "text-bg-danger");
+      }).finally(function () {
+        delete inlineSaves[key];
+      });
+      return inlineSaves[key];
+    }
+
+    function cancelInlineEditor(id, column) {
+      if (!column) column = "";
+      document.getElementById(column + "markdown" + id).value = document.getElementById(column + "oldMarkdown" + id).value;
+      var key = column + "div" + id;
+      if (key in savedPreview) {
+        var pv = document.getElementById(column + "preview" + id);
+        pv.innerHTML = savedPreview[key];
+        $(pv).trigger("change");
+      } else {
+        onchangeMarkdown(id, column);
+      }
+      updateSaveLabel(id, column);
+      closeInlineEditor(id, column, "cancelled");
+    }
+
+    // also for text pasted without a key (long press on a phone)
+    $(document).on("input", "form[id*='EditArticle'] textarea[name='markdown']", function () {
+      var m = this.form.id.match(/^(.*)EditArticle(\d+)$/);
+      if (m) updateSaveLabel(m[2], m[1]);
+    });
+
+    // "Open Editor" while there is no text, neither saved nor typed
+    function updateSaveLabel(id, column) {
+      var empty = document.getElementById(column + "oldMarkdown" + id).value === "" &&
+        document.getElementById(column + "markdown" + id).value === "";
+      document.getElementById(column + "inlineSave" + id).textContent = empty ? "Open Editor" : "Save";
     }
 
 
@@ -108,8 +271,15 @@ block append scripts_to_execute
 
       pv.innerHTML = convert(md);
       $(pv).trigger("change");
+      updateSaveLabel(id, column);
 
     }
+
+    // vote labels (voteLabel in mixins.pug)
+    $(document).on("click", ".osmbc-vote-label[data-call]", function (event) {
+      event.preventDefault();
+      callAndRedraw(this.dataset.call, this.dataset.redraw);
+    });
 
     function callAndRedraw(call, redraw) {
       $.get("!{layout.htmlroot}" + call, function (data) {
@@ -148,14 +318,34 @@ block append scripts_to_execute
       });
     } 
         
-    function setLangStatus(lang, status,button) {
-      $(button).prop('disabled', true);
-      $(button).prop('html', "wait ...");
-      jQuery.post(window.htmlroot + "/blog/!{blog.name}/setLangStatus",{action:status,lang:lang}, function (data) {
+    // review comments (blogheader.pug): edit an own comment, Review only with
+    // a text, stop the personal review
+    $(document).on("click", "[data-edit-review]", function () {
+      const key = this.dataset.editReview;
+      document.getElementById("editReview" + key).classList.remove("d-none");
+      document.getElementById("reviewLeftText" + key).classList.add("d-none");
+      fitToContentIn("#editReview" + key);
+    });
+    $(document).on("input", "[data-review-text]", function () {
+      document.getElementById("reviewButton" + this.dataset.reviewText).disabled = (this.value === "");
+    });
+    $(document).on("click", "[data-review-stop]", function () {
+      const lang = this.dataset.reviewStop;
+      document.getElementById("reviewComment" + lang).value = "delete";
+      document.getElementById("review" + lang).submit();
+    });
+
+    // status buttons of a language (blogReviewButtons); Close and Did Export
+    // ask first
+    $(document).on("click", "[data-lang-status]", function () {
+      const button = $(this);
+      if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+      button.prop("disabled", true);
+      button.text("wait ...");
+      jQuery.post(window.htmlroot + "/blog/!{blog.name}/setLangStatus", { action: button.data("lang-status"), lang: button.data("lang") }, function () {
         location.reload();
       }).fail(function (err) {
         console.error("Trouble setting Language Status");
         console.error(err);
       });
-    
-    }
+    });

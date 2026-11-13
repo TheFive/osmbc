@@ -49,10 +49,27 @@ class BlogPage extends StandardPage {
     await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath(`//button[text()="Set ${blog}(${lang}) ready for review"]`)));
   }
 
+  // Close and Did Export ask first
+  async #acceptConfirmation() {
+    await this._driver.wait(until.alertIsPresent(), 2000, "no confirmation asked");
+    await (await this._driver.switchTo().alert()).accept();
+  }
+
   async clickClose(blog, lang) {
     await this.assertPage();
     const closeLang = await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`));
-    await this._clickAndWaitForNavigation(closeLang);
+    await closeLang.click();
+    await this.#acceptConfirmation();
+    await this._waitUntilStale(closeLang, "Close did not lead to a new page within 10s");
+    await this._waitForNewPage();
+  }
+
+  // Close, but answer the confirmation with Cancel
+  async clickCloseAndCancel(blog, lang) {
+    await this.assertPage();
+    await (await this._driver.findElement(By.xpath(`//button[text()="Close ${blog}(${lang})"]`))).click();
+    await this._driver.wait(until.alertIsPresent(), 2000, "no confirmation asked");
+    await (await this._driver.switchTo().alert()).dismiss();
   }
 
   async clickStartPersonalReview(lang) {
@@ -122,7 +139,133 @@ class BlogPage extends StandardPage {
 
   async clickDidExport(lang) {
     await this.assertPage();
-    await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`)));
+    const button = await this._driver.findElement(By.xpath(`//button[text()="Did Export (${lang})"]`));
+    await button.click();
+    await this.#acceptConfirmation();
+    await this._waitUntilStale(button, "Did Export did not lead to a new page within 10s");
+    await this._waitForNewPage();
+  }
+
+  // Small screens (mobile mode)
+
+  // tap the article text: opens its inline editor
+  async openInlineEditor(articleId) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`[data-inline-editor='div${articleId}']`)));
+  }
+
+  async typeInlineText(articleId, ...keys) {
+    await (await this._driver.findElement(By.id("markdown" + articleId))).sendKeys(...keys);
+  }
+
+  async tapInlineCancel(articleId) {
+    await this.tap(await this._driver.findElement(By.id("inlineCancel" + articleId)));
+  }
+
+  async tapInlineSave(articleId) {
+    await this.tap(await this._driver.findElement(By.id("inlineSave" + articleId)));
+  }
+
+  // distance of the article text from the navbar's lower edge, and its flash
+  // ("saved", "cancelled" or null)
+  // (measured after the navbar has slid in or out, 0.2 s)
+  async getArticlePosition(articleId) {
+    return this._driver.executeAsyncScript(`
+      const done = arguments[arguments.length - 1];
+      const text = document.querySelector("[data-inline-editor='div${articleId}']");
+      const flash = ["saved", "cancelled"].find(h => text.classList.contains("osmbc-flash-" + h)) || null;
+      setTimeout(() => {
+        const navbar = document.getElementById("fixedNavbar").getBoundingClientRect();
+        done({ belowNavbar: Math.round(text.getBoundingClientRect().top - Math.max(0, navbar.bottom)), flash: flash });
+      }, 400);`);
+  }
+
+  // returns after the page has handled the scroll event (it fires in the next frame)
+  async scrollToEnd() {
+    await this._driver.executeAsyncScript(`const done = arguments[arguments.length - 1];
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+      requestAnimationFrame(() => requestAnimationFrame(done));`);
+  }
+
+  async isBackToTopShown() {
+    const buttons = await this._driver.findElements(By.id("toTop"));
+    return buttons.length > 0 && buttons[0].isDisplayed();
+  }
+
+  // returns the scroll position afterwards
+  async tapBackToTop() {
+    await this.tap(await this._driver.findElement(By.id("toTop")));
+    return this._driver.executeScript("return window.scrollY;");
+  }
+
+  // "Save", or "Open Editor" while the article has no text
+  async getInlineSaveLabel(articleId) {
+    return (await this._driver.findElement(By.id("inlineSave" + articleId))).getText();
+  }
+
+  // the Save button labelled "Open Editor": opens the article page
+  async clickInlineOpenEditor(articleId) {
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("inlineSave" + articleId)));
+  }
+
+  // the article text as shown in the review view (tap target of the editor)
+  async getArticleText(articleId) {
+    return (await this._driver.findElement(By.id("preview" + articleId))).getText();
+  }
+
+  // vertical centres of the comment icons, the votes and the open button
+  // above an article (mobile mode), to check they sit in one line
+  async getArticleBarCentres(articleId) {
+    return this._driver.executeScript(`
+      const open = document.querySelector("a.osmbc-article-open[href$='/article/${articleId}']");
+      const bar = open.closest(".osmbc-article-bar");
+      return [bar.querySelector(".osmbc-article-comments"), document.getElementById("voteLabels${articleId}"), open]
+        .map(e => { const r = e.getBoundingClientRect(); return Math.round(r.top + r.height / 2); });`);
+  }
+
+  async getCommentLink(articleId) {
+    const open = await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`));
+    const bar = await open.findElement(By.xpath("ancestor::*[contains(@class,'osmbc-article-bar')]"));
+    return (await bar.findElement(By.css("a.osmbc-article-comments"))).getAttribute("href");
+  }
+
+  // "Display Votes" option of the view; the page reloads with the votes
+  async clickShowVoteCheckbox(vote) {
+    const selector = `div[name="choose_showVote_${vote}"]`;
+    const before = await this._driver.findElement(By.css(selector));
+    await this.#clickACheckbox(selector);
+    await this._waitUntilStale(before, "page not reloaded");
+    await this._waitForNewPage();
+  }
+
+  // vote label of an article (chosen under "Display Votes"); waits for the redraw
+  async tapVoteLabel(articleId, vote) {
+    await this.assertPage();
+    const label = await this._driver.findElement(By.id(`vote_${vote}_${articleId}`));
+    await this.tap(label);
+    await this._waitUntilStale(label, "vote label not redrawn");
+  }
+
+  // the button at the end of the article's row
+  async clickOpenArticle(articleId) {
+    await this.assertPage();
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.css(`a.osmbc-article-open[href$='/article/${articleId}']`)));
+  }
+
+  // edit button of an own review comment (n-th comment of the language)
+  async clickEditReviewComment(lang, n) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`[data-edit-review='${lang}${n}']`)));
+    await this._driver.wait(until.elementIsVisible(await this._driver.findElement(By.id(`reviewComment${lang}${n}`))), 2000, "edit form not shown");
+  }
+
+  async clickStopReview(lang) {
+    await this.assertPage();
+    await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("reviewButtonCancel" + lang)));
+  }
+
+  async isExportMenuShown() {
+    return (await this._driver.findElements(By.id("dropdownExportLanguages"))).length > 0;
   }
 
   async clickShowNumbersCheckbox() {
@@ -207,9 +350,15 @@ class BlogPage extends StandardPage {
   // Leaving a changed edit field submits its form (onLeaveText in
   // views/blog/blog_mixin.pug), which reloads the whole page. Wait for it,
   // or the next step races the reload into a StaleElementReferenceError.
+  // leaving the text field saves the inline editor in the background; waits
+  // for "saved" and reloads, so the page shows what the server stored
   async clickOnArticleToSaveEdit(articleText) {
     await this.clickOnArticle(articleText);
-    await this.waitForPageReload();
+    await this.waitForInlineSaved();
+    const page = await this._driver.findElement(By.css("html"));
+    await this._driver.navigate().refresh();
+    await this._waitUntilStale(page, "page not reloaded");
+    await this._waitForNewPage();
   }
 
   async getEditForm(articleShown) {
@@ -223,6 +372,11 @@ class BlogPage extends StandardPage {
       editForm = await this._driver.findElement(By.xpath(`//li[text()[contains(.,'${articleShown}')]]/../../../../..//textarea[1]`));
     }
     return editForm;
+  }
+
+  // inline editors save in the background and show "saved" when done
+  async waitForInlineSaved() {
+    await this._driver.wait(until.elementLocated(By.xpath("//span[contains(@id,'saveStatus') and normalize-space(.)='saved']")), 5000);
   }
 
   async getEditFormContent(articleShown) {

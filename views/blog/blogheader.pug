@@ -57,7 +57,7 @@ mixin reviewBlog(reviewComments,lang)
                 i.text-body-secondary.small="Edit: "+layout.moment(comment.editstamp).fromNow()
               if layout.user.OSMUser === comment.user && (!blog["close"+lang])
                 span=" "
-                a(onclick=`document.getElementById('editReview${lang}${i}').classList.remove('d-none');document.getElementById('reviewLeftText${lang}${i}').classList.add('d-none');`)
+                button.btn.btn-link.osmbc-tap-square(type="button" data-edit-review=lang + i aria-label="Edit review comment" title="Edit review comment")
                   i.fa.fa-pencil
               if reviewStartTime
                 span=" "
@@ -68,14 +68,16 @@ mixin reviewBlog(reviewComments,lang)
             div.d-none(id="editReview"+lang+i)
               if (!blog["close"+lang])
                 form(id="editreview"+lang+i name="review"+lang+i, action=layout.htmlroot+"/blog/" + blog.name +"/editReviewComment/"+i, method="post")
-                  textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i)=comment.text
+                  textarea(rows=5,class="form-control",name ="text",id="reviewComment"+lang+i data-fit-content)=comment.text
                   input.d-none(type="text",name="lang" value = lang)
-                  button.btn.btn-lg.btn-primary(id="reviewButton"+lang+i type="submit") Change
+                  div.d-flex.flex-wrap.gap-2.mt-2
+                    button.btn.btn-primary(id="reviewButton"+lang+i type="submit") Change
           if comment.text == "reviewing..."
             if layout.user.OSMUser === comment.user
               - personalReviewStarted = true
             h3
-              div.badge.text-bg-warning
+              //- wraps on phones (the name and the time are longer than a screen)
+              div.badge.text-bg-warning.text-wrap.text-start
                 b.span=comment.user
                 span=" is reviewing since "+layout.moment(comment.timestamp).fromNow()
 
@@ -90,15 +92,15 @@ mixin reviewBlog(reviewComments,lang)
                         name ="text",
                         id="reviewComment"+lang
                         placeholder="Please Type your Review here"
-                        onkeyup="document.getElementById('reviewButton" + lang +"').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
+                        data-review-text=lang
+                        data-fit-content)
                   input.d-none(type="text",name="lang" value = lang)
 
-                  button.btn.btn-lg.btn-primary(id="reviewButton"+lang type="submit" disabled) Review
-                  button.btn.btn-lg.btn-secondary(
-                    id="reviewButtonCancel"+lang
-                    type="button"
-                    onclick="document.getElementById('reviewComment" + lang +"').value='delete';\
-                       document.getElementById('review" +  lang + "').submit();") cancel
+                  //- Stop review at the start, Review at the end (under the thumb)
+                  div.d-flex.flex-wrap.gap-2.mt-2
+                    //- ends the personal review (sends "delete")
+                    button.btn.btn-outline-secondary(id="reviewButtonCancel"+lang type="button" data-review-stop=lang) Stop review
+                    button.btn.btn-primary.ms-auto(id="reviewButton"+lang type="submit" disabled) Review
             else
               form(id="review" + lang name="review" + lang, action=layout.htmlroot+"/blog/" + blog.name +"/setReviewComment", method="post")
                 .col-md-8
@@ -107,8 +109,7 @@ mixin reviewBlog(reviewComments,lang)
                   name ="text",
                   value ="reviewing..."
                   id="reviewComment" + lang
-                  placeholder="Please Type your Review here"
-                  onkeyup="document.getElementById('reviewButton" + lang + "').disabled = (document.getElementById('reviewComment" + lang +"').value === '');")
+                  placeholder="Please Type your Review here")
                   input.d-none(type="text",name="lang" value = lang)
                 .col-md-4
                   button.btn.btn-lg.btn-primary(id="reviewButton" + lang type="submit") Start Personal Review
@@ -201,7 +202,8 @@ block content
         span.d-none.d-md-block=" ("+blog.getStatus(left_lang)+")"
 
 
-    .col-md-3
+    //- mobile: room between the status button and the tabs below
+    .col-md-3(class=layout.mobileView ? "mb-3" : undefined)
       +blogReviewButtons(left_lang)
     .col-md-3.d-none.d-md-block
       +blogReviewButtons(right_lang)
@@ -216,7 +218,7 @@ block content
 
   .row
     .col-md-12
-      ul.nav.nav-tabs
+      ul.nav.nav-tabs(class=layout.mobileView ? "nav-fill" : undefined)
         li.nav-item.d-none.d-md-block(role="presentation")
           a.nav-link(href="#filter")
             i.fa.fa-filter
@@ -247,58 +249,60 @@ block content
                 span=" "
                 i.fa.fa-exclamation-triangle
 
-        li.nav-item.dropdown.show
-          a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-bs-toggle='dropdown', data-bs-auto-close='outside', aria-haspopup="true",aria-expanded="false")
-            i.fa.fa-download
-          div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
-            - var closedLangs = []
-            - var sortedLanguages = layout.activeLanguages.slice().sort()
-            - var singleExportProfiles = []
-            - var allExportProfiles = []
-            - var useLanguageSubmenus = sortedLanguages.length > 3
-            each profile in layout.exportProfiles
-              if profile.langMode === "all"
-                - allExportProfiles.push(profile)
-              else
-                - singleExportProfiles.push(profile)
-            each lang in sortedLanguages
-              - if ( blog["close"+lang] === true) closedLangs.push(lang)
+        //- export is desktop only (BLOG-10)
+        if !layout.mobileView
+          li.nav-item.dropdown.show
+            a.nav-link.dropdown-toggle#dropdownExportLanguages(role="button", data-bs-toggle='dropdown', data-bs-auto-close='outside', aria-haspopup="true",aria-expanded="false")
+              i.fa.fa-download
+            div.dropdown-menu(aria-labelledby="dropdownExportLanguages")
+              - var closedLangs = []
+              - var sortedLanguages = layout.activeLanguages.slice().sort()
+              - var singleExportProfiles = []
+              - var allExportProfiles = []
+              - var useLanguageSubmenus = sortedLanguages.length > 3
+              each profile in layout.exportProfiles
+                if profile.langMode === "all"
+                  - allExportProfiles.push(profile)
+                else
+                  - singleExportProfiles.push(profile)
+              each lang in sortedLanguages
+                - if ( blog["close"+lang] === true) closedLangs.push(lang)
 
-            if (singleExportProfiles.length > 0)
-              h6.dropdown-header Export by language
-              if useLanguageSubmenus
-                each profile, profileIdx in singleExportProfiles
-                  button.dropdown-item(type="button", data-bs-toggle="collapse", data-bs-target="#export-profile-" + profileIdx, aria-expanded="false", aria-controls="export-profile-" + profileIdx)
-                    span=profile.label
-                  div.collapse(id="export-profile-" + profileIdx)
+              if (singleExportProfiles.length > 0)
+                h6.dropdown-header Export by language
+                if useLanguageSubmenus
+                  each profile, profileIdx in singleExportProfiles
+                    button.dropdown-item(type="button", data-bs-toggle="collapse", data-bs-target="#export-profile-" + profileIdx, aria-expanded="false", aria-controls="export-profile-" + profileIdx)
+                      span=profile.label
+                    div.collapse(id="export-profile-" + profileIdx)
+                      each lang in sortedLanguages
+                        a.dropdown-item.ps-4(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang + "&download=true&exportProfile=" + profile.name)
+                          span=lang
+                          if !(blog.getUnEdited(lang) == 0)
+                            span=" "
+                            i.fa.fa-exclamation-triangle
+                else
+                  each profile in singleExportProfiles
                     each lang in sortedLanguages
-                      a.dropdown-item.ps-4(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang + "&download=true&exportProfile=" + profile.name)
-                        span=lang
+                      a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang + "&download=true&exportProfile=" + profile.name)
+                        span=profile.label + ": " + lang
                         if !(blog.getUnEdited(lang) == 0)
                           span=" "
                           i.fa.fa-exclamation-triangle
-              else
-                each profile in singleExportProfiles
-                  each lang in sortedLanguages
-                    a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=" + lang + "&download=true&exportProfile=" + profile.name)
-                      span=profile.label + ": " + lang
+              - if (closedLangs.length > 0)
+                if (singleExportProfiles.length > 0)
+                  div.dropdown-divider
+                h6.dropdown-header Export all languages
+                each profile in allExportProfiles
+                  a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true&exportProfile=" + profile.name)
+                    span=profile.label + ": " + closedLangs.join(", ")
+                    each lang in closedLangs
                       if !(blog.getUnEdited(lang) == 0)
                         span=" "
                         i.fa.fa-exclamation-triangle
-            - if (closedLangs.length > 0)
-              if (singleExportProfiles.length > 0)
                 div.dropdown-divider
-              h6.dropdown-header Export all languages
-              each profile in allExportProfiles
-                a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/preview?lang=ALL&download=true&exportProfile=" + profile.name)
-                  span=profile.label + ": " + closedLangs.join(", ")
-                  each lang in closedLangs
-                    if !(blog.getUnEdited(lang) == 0)
-                      span=" "
-                      i.fa.fa-exclamation-triangle
-              div.dropdown-divider
-              a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/previewHeader")
-                span="Download corresponding Headers."
+                a.dropdown-item(href=layout.htmlroot+"/blog/" + blog.name + "/previewHeader")
+                  span="Download corresponding Headers."
                 
                     
               
@@ -315,14 +319,14 @@ block content
     .col-md-8
     .col-md-1
       p
-        a(href=layout.htmlroot+"/changes/log?blog=" + blog.name +"&table=blog") [changes]
+        a(href=layout.htmlroot+"/changes/log?blog=" + blog.name +"&table=blog" class=layout.mobileView ? "osmbc-text-link" : undefined) [changes]
     .col-md-1
       p
-        a(href=layout.htmlroot+"/blog/" + blog.name +"/stat") [Statistic]
+        a(href=layout.htmlroot+"/blog/" + blog.name +"/stat" class=layout.mobileView ? "osmbc-text-link" : undefined) [Statistic]
 
     .col-md-2
       p
-        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/" + blog.name) [Edit Blog Detail]
+        a#editBlogDetail(href=layout.htmlroot+"/blog/edit/" + blog.name class=layout.mobileView ? "osmbc-text-link" : undefined) [Edit Blog Detail]
 
 
 

@@ -136,8 +136,14 @@ function renderArticleId(req, res, next) {
   params.edit = req.query.edit;
   params.left_lang = req.user.getMainLang();
   params.right_lang = req.user.getSecondLang();
-  params.lang3 = req.user.getLang3();
-  params.lang4 = req.user.getLang4();
+  // small screens: one language only (see routes/layout.js)
+  if (req.mobileView) {
+    params.left_lang = req.user.getMobileLang();
+    params.right_lang = null;
+    // a second language to show on demand: the other one of the desktop pair
+    const pair = [req.user.getMainLang(), req.user.getSecondLang()];
+    params.mobile_second_lang = pair.find((l) => l && l !== params.left_lang) || null;
+  }
   params.editComment = null;
   let mainTranslationService = "deepl";
   const translationServices = ["deepl", "copy"];
@@ -360,7 +366,8 @@ function renderArticleIdVotesBlog(req, res, next) {
 
   const article = req.article;
   assert(article);
-  assert(vote);
+  // the route takes any second path part, e.g. a mistyped or relative url
+  if (!vote) return next();
 
   auto({ },
     function (err) {
@@ -429,7 +436,12 @@ function searchAndCreate(req, res, next) {
         title: title,
         collection: collection,
         categories: blogModule.getCategories(),
-        foundArticles: result
+        foundArticles: result,
+        // First Draft while collecting: the collector knows the page and can
+        // judge the draft right away; in the language the user writes in
+        firstDraftLang: (firstDraft.isVisibleFor(req.user) && firstDraft.active() && util.isURL(search))
+          ? ((req.mobileView) ? req.user.getMobileLang() : req.user.getMainLang())
+          : null
       });
     });
   });
@@ -687,6 +699,8 @@ function postSetMarkdown(req, res, next) {
     (cb) => article.setAndSave(req.user, change, cb)
   ], function(err) {
     if (err) return next(err);
+    // inline editors in the blog views save in the background
+    if (req.xhr) return res.json({ markdown: markdown });
     // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
@@ -1114,8 +1128,10 @@ function postFirstDraft(req, res) {
   if (!firstDraft.isVisibleFor(req.user)) {
     return res.status(FORBIDDEN).type("text/plain").send("First Draft is not enabled for " + req.user.OSMUser);
   }
-  firstDraft.createDraft({ lang: req.params.lang, url: req.body.url })
-    .then((text) => res.type("text/plain").send(text))
+  // withTitle (collect page): JSON { markdown, title, category }, else the markdown as text
+  const withTitle = req.body.withTitle === "true";
+  firstDraft.createDraft({ lang: req.params.lang, url: req.body.url, withTitle: withTitle })
+    .then((draft) => (withTitle) ? res.json(draft) : res.type("text/plain").send(draft))
     .catch((err) => res.status(BAD_GATEWAY).type("text/plain").send(err.message));
 }
 
@@ -1146,7 +1162,8 @@ router.get("/search", allowFullAccess, searchArticles);
 router.post("/create", allowGuestAccess, postArticle);
 router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateWithPlugin("deeplPro"));
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
-router.post("/firstdraft/:lang", allowFullAccess, postFirstDraft);
+// who may use it decides FirstDraftConfig.visibleFor (also guests)
+router.post("/firstdraft/:lang", allowGuestAccess, postFirstDraft);
 router.post("/urlexist", allowGuestAccess, urlExist);
 router.post("/checkfeatureimage", allowFullAccess, checkFeatureImage);
 router.get("/readability", allowFullAccess, getExternalText);

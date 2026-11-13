@@ -64,6 +64,33 @@ class MainPage extends StandardPage {
     await this._clickAndWaitForNavigation(await this._driver.findElement(By.xpath("//a[text()='(more)']")));
   }
 
+  // small screens: the badge legend is folded
+  async isBadgeLegendShown() {
+    return (await this._driver.findElement(By.css(".table.w-auto"))).isDisplayed();
+  }
+
+  async clickBadgeLegend() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("a.osmbc-legend-toggle")));
+    await this._driver.wait(until.elementIsVisible(await this._driver.findElement(By.id("badgeLegend"))), 3000, "legend did not open");
+  }
+
+  // height of each language row of the status table, by language
+  async getStatusRowHeights() {
+    return this._driver.executeScript(`
+      const result = {};
+      document.querySelectorAll(".blog-status-table tr.blog-status-row").forEach(tr => {
+        result[tr.querySelector(".blog-status-lang-head").textContent.trim()] = Math.round(tr.getBoundingClientRect().height);
+      });
+      return result;`);
+  }
+
+  // the link to the unwritten articles of a blog and language in the status table
+  async clickUnwrittenArticles(blog, lang) {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css(`.blog-status-table a[href$='blog=${blog}&unwrittenLang=${lang}']`)));
+  }
+
   async waitForInitialisation() {
     await this._driver.wait(until.elementLocated(By.css("a#adminlink")), 5000);
     await this.assertPage();

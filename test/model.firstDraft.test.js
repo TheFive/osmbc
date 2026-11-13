@@ -45,6 +45,50 @@ describe("model/firstDraft", function() {
       should(firstDraft.isVisibleFor({ OSMUser: "Hallo", access: "full" })).be.false();
       should(firstDraft.isVisibleFor(null)).be.false();
     });
+    describe("values of visibleFor", function() {
+      const visible = firstDraft.fortestonly.isVisibleForValue;
+      const full = { OSMUser: "Full", access: "full" };
+      const guest = { OSMUser: "Guest", access: "guest" };
+      const denied = { OSMUser: "Denied", access: "denied" };
+      it("should allow only the users of a list", function() {
+        should(visible(["Full", "Guest"], full)).be.true();
+        should(visible(["Full", "Guest"], guest)).be.true();
+        should(visible(["Other"], full)).be.false();
+        should(visible([], full)).be.false();
+      });
+      it("should allow nobody if missing or empty", function() {
+        for (const value of [undefined, null, "", "  ", {}, 1, "nobody"]) {
+          should(visible(value, full)).be.false(JSON.stringify(value));
+        }
+      });
+      it("should allow all full users with full", function() {
+        for (const value of ["full", "FULL", " Full "]) {
+          should(visible(value, full)).be.true(value);
+          should(visible(value, guest)).be.false(value);
+        }
+      });
+      it("should allow full and guest users with guest", function() {
+        for (const value of ["guest", "GUEST", "Guest"]) {
+          should(visible(value, full)).be.true(value);
+          should(visible(value, guest)).be.true(value);
+          should(visible(value, denied)).be.false(value);
+        }
+      });
+    });
+  });
+
+  describe("categoryChoice", function() {
+    it("should offer the categories with a description, without internal ones", function() {
+      const choice = firstDraft.fortestonly.categoryChoice();
+      should(choice.fallback).eql("-- no category yet --");
+      const names = choice.offered.map((c) => c.name);
+      should(names).containEql("Mapping");
+      should(names).containEql("Other “geo” things");
+      for (const name of ["-- no category yet --", "Picture", "About us", "Weekly exercise:", "Upcoming Events", "Releases", "--unpublished--"]) {
+        should(names).not.containEql(name);
+      }
+      should(choice.offered.find((c) => c.name === "Imports").description).eql("discussions, announcements about imports");
+    });
   });
 
   describe("createDraft", function() {
@@ -72,6 +116,43 @@ describe("model/firstDraft", function() {
       await firstDraft.createDraft({ lang: "DE", url: "https://news.example.org/party" });
 
       should(create.firstCall.args[0].messages[0].content).containEql("Target language: DE (German)");
+    });
+    it("should ask for title and category with a JSON schema and return them with the markdown", async function() {
+      nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+      create.resolves(claudeAnswer(JSON.stringify({ markdown: "The Bonn group mapped all benches.\n", title: " Bench mapping in Bonn ", category: "Community" })));
+
+      const draft = await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party", withTitle: true });
+
+      should(draft).eql({ markdown: "The Bonn group mapped all benches.", title: "Bench mapping in Bonn", category: "Community" });
+      const params = create.firstCall.args[0];
+      should(params.output_config.format.type).eql("json_schema");
+      const schema = params.output_config.format.schema;
+      should(schema.required).eql(["markdown", "title", "category"]);
+      should(schema.properties.category.enum[0]).eql("-- no category yet --");
+      should(schema.properties.category.enum).containEql("Mapping");
+      should(params.output_config.effort).eql("medium");
+      const message = params.messages[0].content;
+      should(message).containEql("compact working title");
+      should(message).containEql("- Mapping: Quality assurance, editors");
+      should(message).containEql("use \"-- no category yet --\"");
+    });
+    it("should fall back to no category for an unknown category", async function() {
+      nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+      create.resolves(claudeAnswer(JSON.stringify({ markdown: "Text", title: "Title", category: "Picture" })));
+
+      const draft = await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party", withTitle: true });
+
+      should(draft.category).eql("-- no category yet --");
+    });
+    it("should not ask for a title without withTitle", async function() {
+      nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+      create.resolves(claudeAnswer("Text"));
+
+      await firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party" });
+
+      const params = create.firstCall.args[0];
+      should(params.output_config.format).be.undefined();
+      should(params.messages[0].content).not.containEql("working title");
     });
     it("should fail if the page can not be loaded", async function() {
       nock("https://news.example.org").get("/missing").reply(404, "not found");

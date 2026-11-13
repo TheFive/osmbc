@@ -4,36 +4,39 @@ block additionalMenuRight
   +langMenu(2)
   
 mixin displayArticle(article,lang)
-  - upToComment = null
-  - if (article.commentRead) upToComment = article.commentRead[layout.user.OSMUser]
-  - if (!upToComment) upToComment = -1;
+  //- read up to this comment; 0 = the first one is read (stored as number
+  //- or as string from the route's query)
+  - var commentRead = article.commentRead ? article.commentRead[layout.user.OSMUser] : undefined
+  - upToComment = (commentRead === undefined || commentRead === null || commentRead === "" || isNaN(Number(commentRead))) ? -1 : Number(commentRead)
   - for ( i=parseInt(upToComment)+1;i<article.commentList.length;i++) {
   -  if ((layout.user.access === "guest") && (article.commentList[i].text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i")) < 0) ) upToComment = i;
   - }
   if ((upToComment < article.commentList.length - 1) || showRead)
-    .col-1
-      +articleIcons(article,{showMail: true})
-    .col-11
+    //- phones: no icon column, "Open article" as a button in the card header
+    if !layout.mobileView
+      .col-1
+        +articleIcons(article,{showMail: true})
+    div(class=layout.mobileView ? "col-12 mb-2" : "col-11")
       .card
-        .card-header
-          ul
+        .card-header(class=layout.mobileView ? "d-flex align-items-center" : undefined)
+          ul(class=layout.mobileView ? "mb-0 flex-grow-1" : undefined)
             |!{renderer.articleTitle(lang,article)}
+          if layout.mobileView
+            +articleOpenButton(article)
         if (article.commentList)
           .card-body
               each comment,i in article.commentList
                 if ((layout.user.access === "full") || (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i")) >= 0) || (comment.text.user === layout.user.OSMUser))
                   if (showRead || (i > upToComment))
-                        b
+                        //- mark as read at the end, as a button with a tap area
+                        div.d-flex.flex-wrap.align-items-center.column-gap-2
+                          b=comment.user
+                          span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
+                          if (comment.editstamp)
+                            i.text-body-secondary.small="edit: " + layout.moment(comment.editstamp).fromNow()
                           if (i > upToComment)
-                            a(href=layout.htmlroot + '/article/' + article.id +'/markCommentRead?index='+i)
+                            a.btn.btn-link.osmbc-tap-square.ms-auto(href=layout.htmlroot + '/article/' + article.id +'/markCommentRead?index='+i aria-label="Mark as read" title="Mark as read")
                               i.fa.fa-envelope
-                            span=" "
-                          span=comment.user
-                        span=" "
-                        span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
-                        if (comment.editstamp)
-                          span=" "
-                          i.text-body-secondary.small="edit: " + layout.moment(comment.editstamp).fromNow()
                         p
                           |!{layout.md_renderInline(comment.text)}
 

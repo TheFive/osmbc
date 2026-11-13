@@ -1,8 +1,8 @@
 
 
-/* global highlightWrongLinks, urlWoErrorWhileEdit */
+/* global highlightWrongLinks, urlWoErrorWhileEdit, fitToContentIn */
 
-/* exported myclick, ondragstartflag, ondragstartLangLabel, showRL */
+/* exported myclick, ondragstartflag */
 /* exported callAndRedraw, setNoTranslation, translate */
 
 
@@ -44,6 +44,35 @@ function init() {
 
   $("#linkArea")
     .change(highlightWrongLinks);
+  // buttons with data-redraw (votes, comment area): call data-call (if
+  // given), then redraw that part of the page; delegated, the parts are
+  // replaced when redrawn
+  $(document).on("click", "[data-redraw]:not([data-submit])", function(event) {
+    event.preventDefault();
+    callAndRedraw($(this).data("call") || null, $(this).data("redraw"));
+  });
+  // buttons with data-submit (comment area): post the form, then redraw.
+  // data-field: a text that must not be empty, or that gets data-append
+  $(document).on("click", "[data-submit]", function(event) {
+    event.preventDefault();
+    const button = $(this);
+    const field = $(button.data("field"));
+    if (button.data("append")) {
+      field.val(field.val() + button.data("append"));
+    } else if (field.length && field.val().trim() === "") return;
+    submitAndRedraw(button.data("submit"), button.data("redraw"));
+  });
+  // save bar below lg (article_mixin.pug); mousedown keeps the focus in the
+  // text field, on touch screens the tap was lost otherwise
+  $(".osmbc-save-bar button")
+    .on("mousedown", function(event) { event.preventDefault(); });
+  $("#saveButtonBar")
+    .on("click", function() { saveButton(); });
+  $("#cancelButtonBar")
+    .on("click", function() {
+      disableUnchanged();
+      location.href = $(this).data("href");
+    });
   $(".preview")
     .change(highlightWrongLinks);
   $("#collection")
@@ -67,6 +96,7 @@ function init() {
     .keyup(showModified)
     .on("paste", pasteEvent)
     .on("drop", pasteEvent)
+    .on("focus", function() { lastMarkdownField = this; })
     .trigger("change");
   $("#title")
     .keyup(showModified);
@@ -88,16 +118,13 @@ function init() {
     .change(showHideUnpublishReason)
 
     .trigger("change");
-  $("#AddComment")
-    .change(FitToContent)
-    .keyup(FitToContent)
-    .trigger("change");
-  $("#editComment")
-    .change(FitToContent)
-    .keyup(FitToContent)
-    .trigger("change");
-  $("#articleFirstDraftDropdown")
-    .on("click", ".firstDraftItem", firstDraft);
+  initSecondLanguage();
+  // First Draft: menu entries (desktop) and buttons at the text field
+  // (small screens); mousedown keeps the focus in the text field, on touch
+  // screens the tap was lost otherwise
+  $(document)
+    .on("click", ".firstDraftItem", firstDraft)
+    .on("mousedown", "button.firstDraftItem", function(event) { event.preventDefault(); });
   // $('[data-bs-toggle="tooltip"]').tooltip();
   window.submitAndRedraw = submitAndRedraw;
   window.saveButton = saveButton;
@@ -297,9 +324,23 @@ function generateMarkdownLink2(par1, par2) {
   return null;
 }
 
+// Position of the text a drop inserted: the part between the common start
+// and the common end of the text before and after. null if the drop also
+// removed text (text moved inside the field).
+function droppedRange(beforeText, afterText) {
+  let start = 0;
+  while (start < beforeText.length && beforeText[start] === afterText[start]) start++;
+  let end = 0;
+  while (end < beforeText.length - start && end < afterText.length - start &&
+    beforeText[beforeText.length - 1 - end] === afterText[afterText.length - 1 - end]) end++;
+  if (start + end !== beforeText.length) return null;
+  return { start: start, end: afterText.length - end };
+}
+
 // Event Handler for pasting text to markdown field
-function pasteEvent() {
+function pasteEvent(event) {
   const mf = this;
+  const isDrop = event && event.type === "drop";
 
   // Generate a triple of text, start selection and end selection BEFORE Pasting new text
   const before = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
@@ -307,6 +348,14 @@ function pasteEvent() {
   setTimeout(function () {
     // Generate a triple of text, start selection and end selection AFTER Pasting new text
     const after = { text: mf.value, startselection: mf.selectionStart, endselection: mf.selectionEnd };
+    // A drop inserts where it is dropped, not at the cursor: the selection
+    // before the drop says nothing about where the new text is.
+    if (isDrop) {
+      const range = droppedRange(before.text, after.text);
+      if (!range) return $(mf).trigger("change");
+      before.startselection = before.endselection = range.start;
+      after.startselection = after.endselection = range.end;
+    }
     // And use the result, to generate the markdown link
     const r = generateMarkdownLink2(before, after);
 
@@ -447,9 +496,9 @@ function checkMarkdownError() {
 
 
 
-// Generate the automatic google translate link for an url
-// and a given language, used to show it in edit mode
-function generateGoogleTranslateLink(link, lang) {
+// The google translate link of an url for a given language,
+// as url and as markdown (with the "translated" emoji)
+function googleTranslateLink(link, lang) {
   let gttl = lang;
 
   if (lang === "JP") gttl = "JA";
@@ -472,8 +521,6 @@ function generateGoogleTranslateLink(link, lang) {
   gtl = gtl.replace("#ORIGIN#", origin);
   gtl = gtl.replace("#PATHNAME#", pathnameWithSearch);
 
-  window.linklist.push(gtl);
-
   let gtlMarkdown = ":??-s: >   [:#LANG#-t:](#ORIGIN#.translate.goog#PATHNAME#_x_tr_sl=auto&_x_tr_tl=#GTTL#)";
 
 
@@ -482,6 +529,16 @@ function generateGoogleTranslateLink(link, lang) {
   gtlMarkdown = gtlMarkdown.replace("#GTTL#", gttl);
   gtlMarkdown = gtlMarkdown.replace("#ORIGIN#", origin);
   gtlMarkdown = gtlMarkdown.replace("#PATHNAME#", pathnameWithSearch);
+  return { url: gtl, markdown: gtlMarkdown };
+}
+
+// Generate the automatic google translate link for an url
+// and a given language, used to show it in edit mode
+function generateGoogleTranslateLink(link, lang) {
+  const gt = googleTranslateLink(link, lang);
+  const gtl = gt.url;
+  const gtlMarkdown = gt.markdown;
+  window.linklist.push(gtl);
 
   // build DOM elements instead of an HTML string, the link comes from
   // the collection field and must not be interpreted as HTML or JavaScript
@@ -497,6 +554,88 @@ function dragstart(event, text) {
 }
 
 
+// The markdown field the link buttons insert into: the one edited last,
+// or the first one that can be edited.
+let lastMarkdownField = null;
+function insertTargetField() {
+  if (lastMarkdownField && !lastMarkdownField.readOnly && $(lastMarkdownField).is(":visible")) return lastMarkdownField;
+  return $(".markdownEdit:visible").not("[readonly]")[0];
+}
+
+// Insert text at the cursor of a markdown field, the tap alternative to
+// dragging a link (touch screens cannot drag). A link wraps the selected
+// text like pasting an url into a selection: [selection](link).
+function insertIntoMarkdown(mf, text, asLink) {
+  const start = asLink ? mf.selectionStart : mf.selectionEnd;
+  const end = mf.selectionEnd;
+  const before = { text: mf.value, startselection: start, endselection: end };
+  const newText = mf.value.substring(0, start) + text + mf.value.substring(end);
+  const pos = start + text.length;
+  let r = null;
+  if (asLink) r = generateMarkdownLink2(before, { text: newText, startselection: pos, endselection: pos });
+  if (!r) r = { text: newText, pos: pos };
+  mf.value = r.text;
+  mf.focus();
+  mf.selectionStart = mf.selectionEnd = r.pos;
+  $(mf).trigger("change");
+}
+
+// Small screens: show the second language on demand (X11). Whether it is
+// shown is remembered in the browser, it is a per viewer convenience.
+function initSecondLanguage() {
+  const toggle = $("#toggleSecondLang");
+  if (toggle.length === 0) return;
+  const second = toggle.data("lang");
+  const area = $("#secondLanguage");
+  const translateButton = $("#translateToSecondLang");
+  function show(shown) {
+    area.toggleClass("d-none", !shown);
+    toggle.text((shown ? "Hide " : "Show ") + second);
+    try { window.localStorage.setItem("osmbcShowSecondLang", shown ? "yes" : "no"); } catch (e) {}
+  }
+  function updateTranslateButton() {
+    const from = ($("#markdown" + translateButton.data("from")).val() || "").trim();
+    const to = ($("#markdown" + second).val() || "").trim();
+    // toggleClass needs a real boolean: anything else (e.g. "") toggles
+    translateButton.toggleClass("d-none", from === "" || to !== "");
+  }
+  let shown = false;
+  try { shown = window.localStorage.getItem("osmbcShowSecondLang") === "yes"; } catch (e) {}
+  show(shown);
+  toggle.on("click", function() { show(area.hasClass("d-none")); });
+  if (translateButton.length === 0) return;
+  // input, not keyup: it fires for every change of the text, also for
+  // pasting, dropping, autocorrect and the keyboard's word suggestions
+  $("#markdown" + translateButton.data("from") + ", #markdown" + second).on("input change", updateTranslateButton);
+  updateTranslateButton();
+  translateButton.on("click", function() {
+    show(true);
+    window.translate(translateButton.data("from"), second, translateButton.data("service"));
+  });
+}
+
+// Buttons below lg: insert the link, or its google translate link in the
+// language of the field. In mobile mode full size (tap targets), otherwise
+// small next to the link.
+function linkInsertButtons(link, mobile) {
+  function button(label, cls, onInsert) {
+    return $("<button>", { type: "button", class: "btn btn-outline-primary " + (mobile ? "" : "btn-sm py-0 me-1 ") + cls })
+      .text(label)
+      // keep the focus (and the cursor) in the markdown field
+      .on("mousedown", function(event) { event.preventDefault(); })
+      .on("click", function() {
+        const mf = insertTargetField();
+        if (mf) onInsert(mf);
+      });
+  }
+  const buttons = [
+    button("+ Link", "insertLink", function(mf) { insertIntoMarkdown(mf, link, true); }),
+    button("+ translated", "insertTranslatedLink", function(mf) { insertIntoMarkdown(mf, googleTranslateLink(link, mf.lang).markdown, false); })
+  ];
+  if (mobile) return buttons;
+  return $("<span>", { class: "d-lg-none" }).append(buttons);
+}
+
 // Collection is changed, so create a linkList
 // for the linkArea
 
@@ -504,9 +643,10 @@ function onchangeCollection() {
   const cl = $("#collection").val();
   const linkArea = $("#linkArea");
   const regexToken = regexUrlFromCollection;
+  const mobile = document.documentElement.classList.contains("osmbc-mobile");
   let linkList;
   window.linklist = [];
-  const result = $("<p>");
+  const result = $(mobile ? "<div>" : "<p>");
   function linkShortener(link) {
     if (link.length < 50) return link;
     return link.substr(0, 40) + " . . . " + link.substr(link.length - 5, 5);
@@ -518,6 +658,27 @@ function onchangeCollection() {
     return $("<a>", { href: "#" })
       .append($("<i>", { class: icon }), text("  "))
       .on("click", function() { clickAndLoadLinktext(this, field, link); });
+  }
+  // Mobile mode: one block per link, the link on its own line, below it the
+  // insert buttons and a menu with the other actions (tap targets, X10)
+  function mobileLinkBlock(link, badge) {
+    const menu = $("<ul>", { class: "dropdown-menu dropdown-menu-end" }).append(
+      $("<li>").append(linkTextLoader(link, "textContent", "fa fa-file-text").addClass("dropdown-item").append(text("Readable text"))),
+      $("<li>").append(linkTextLoader(link, "content", "fa fa-file-text-o").addClass("dropdown-item").append(text("Page content")))
+    );
+    window.userLanguages.forEach(function(lang) {
+      const translated = generateGoogleTranslateLink(link, lang).addClass("dropdown-item");
+      translated.text("Translated page (" + lang + ")");
+      menu.append($("<li>").append(translated));
+    });
+    const more = $("<div>", { class: "dropdown" }).append(
+      $("<button>", { type: "button", class: "btn btn-outline-secondary osmbc-tap-square", "data-bs-toggle": "dropdown", "aria-expanded": "false", "aria-label": "More for this link" }).text("⋯"),
+      menu
+    );
+    return $("<div>", { class: "mb-2" }).append(
+      $("<div>").append(badge),
+      $("<div>", { class: "d-flex flex-wrap gap-2 mt-1" }).append(linkInsertButtons(link, true), more)
+    );
   }
 
 
@@ -531,16 +692,22 @@ function onchangeCollection() {
     });
     if (found) continue;
     window.linklist.push(link);
-    result.append(text(" "), linkTextLoader(link, "textContent", "fa fa-file-text"));
-    result.append(text(" "), linkTextLoader(link, "content", "fa fa-file-text-o"));
 
     const isDoublette = window.articleReferences[link] && (window.articleReferences[link]).length > 0;
-    result.append($("<a>", { class: "badge " + (isDoublette ? "text-bg-danger" : "text-bg-secondary"), href: link, target: "_blank" })
-      .text(linkShortener(link) + (isDoublette ? " #(Check for Doublette)" : "")), text("\n"));
+    const badge = $("<a>", { class: "badge " + (isDoublette ? "text-bg-danger" : "text-bg-secondary"), href: link, target: "_blank" })
+      .text(linkShortener(link) + (isDoublette ? " #(Check for Doublette)" : ""));
+    if (mobile) {
+      result.append(mobileLinkBlock(link, badge));
+      continue;
+    }
+    result.append(text(" "), linkTextLoader(link, "textContent", "fa fa-file-text"));
+    result.append(text(" "), linkTextLoader(link, "content", "fa fa-file-text-o"));
+    result.append(badge, text("\n"));
 
     window.userLanguages.forEach(function(lang) {
       result.append(text(" "), generateGoogleTranslateLink(link, lang));
     });
+    result.append(text(" "), linkInsertButtons(link));
 
     result.append($("<br>"), text("\n"));
   }
@@ -592,10 +759,6 @@ function ondragstartflag (event, id) {
   event.dataTransfer.setData("TEXT", src);
 }
 
-function ondragstartLangLabel(event, lang) {
-  const v = $("#markdown" + lang).val();
-  event.dataTransfer.setData("TEXT", v);
-}
 
 
 // Fit to content event
@@ -609,16 +772,6 @@ function FitToContent() {
     textfield.style.height = adjustedHeight + "px";
   }
 }
-
-// Enable & Disable the different languages
-function showRL(what) {
-  $(".RL").addClass("hidden");
-  $(".RLOFF").removeClass("hidden");
-  if (what === window.leftLang) what = window.rightLang;
-  $(".RL-" + what).removeClass("hidden");
-  $(".RLOFF-" + what).addClass("hidden");
-}
-
 
 function syncPlaceholder() {
   const c = $("#categoryEN").val();
@@ -660,6 +813,8 @@ function showModified() {
   });
   $("#saveButton").prop("disabled", !modified);
   $("#cancelButton").prop("disabled", !modified);
+  // the save bar on small screens is only shown when there is something to save
+  $(".osmbc-save-bar, .osmbc-save-bar-spacer").toggleClass("d-none", !modified);
 
   if (modified) {
     $("#noTranslationButton").removeClass("visible");
@@ -693,6 +848,7 @@ function redrawFunc(redraw) {
   $.getJSON(window.htmlroot + redraw, function (json) {
     for (k in json) {
       $(k).html(json[k]);
+      fitToContentIn(k);
     }
   });
 }
@@ -754,8 +910,8 @@ function setNoTranslation() {
 function translate(langFrom, langToParam, service) {
   if (!Array.isArray(langToParam)) langToParam = [langToParam];
   langToParam.forEach(function(langTo) {
-    $(".translate" + langFrom + langTo).addClass("hidden");
-    $(".translateWait" + langFrom + langTo).removeClass("hidden");
+    $(".translate" + langFrom + langTo).addClass("d-none");
+    $(".translateWait" + langFrom + langTo).removeClass("d-none");
     const from =  langFrom.toLowerCase();
     const to = langTo.toLowerCase();
     let originalText = document.getElementById("preview" + langFrom).innerText;
@@ -765,18 +921,18 @@ function translate(langFrom, langToParam, service) {
     if (service !== "deepl") {
       jQuery.post(window.htmlroot + "/article/translate/" + service + "/" + from + "/" + to, { text: originalText }, function (data) {
         // data = data.replace(/] \(/g, "](");
-        $(".translateWait" + langFrom + langTo).addClass("hidden");
-        $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
+        $(".translateWait" + langFrom + langTo).addClass("d-none");
+        $(".translateDone" + langFrom + langTo + "." + service).removeClass("d-none");
         $("#markdown" + langTo).val(data).trigger("change");
       }).fail(function () {
-        $(".translateWait" + langFrom + langTo).addClass("hidden");
-        $(".translateError" + langFrom + langTo).removeClass("hidden");
+        $(".translateWait" + langFrom + langTo).addClass("d-none");
+        $(".translateError" + langFrom + langTo).removeClass("d-none");
       });
     } else {
       // service is deepl unpaid, just open the window
       window.open("https://www.deepl.com/translator#" + langFrom + "/" + langTo + "/" + originalText, "_blank");
-      $(".translateWait" + langFrom + langTo).addClass("hidden");
-      $(".translateDone" + langFrom + langTo + "." + service).removeClass("hidden");
+      $(".translateWait" + langFrom + langTo).addClass("d-none");
+      $(".translateDone" + langFrom + langTo + "." + service).removeClass("d-none");
     }
   });
 }

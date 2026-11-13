@@ -1,5 +1,52 @@
 # Changelog
 
+## [4.5.0-beta.6](https://github.com/TheFive/osmbc/tree/4.5.0-beta.6) (2026-10-26)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.14...4.5.0-beta.6)
+
+**Features:**
+
+- blog: add save and cancel buttons to the blog inline editors
+- layout: open the menu as a side panel on small screens [#1155](https://github.com/TheFive/osmbc/issues/1155)
+- article: keep save reachable in a bar at the bottom on small screens [#1155](https://github.com/TheFive/osmbc/issues/1155)
+- mobile: work in one language on small screens [#1154](https://github.com/TheFive/osmbc/issues/1154)
+- mobile: insert collection links by tapping instead of copying a language
+- mobile: show a second language on demand on the article page
+- mobile: tap-sized controls and no sideways scrolling on phones
+- mobile: tap-sized blog views, start page, collect and user page
+- mobile: tap-sized comment, review and inbox actions
+- mobile: tap-sized text links and blog list, no flags on phones
+- mobile: beta.3 feedback — menu from the left, save at the end
+- mobile: no sideways scroll in the blog overview, growing inline editor
+- mobile: growing comment fields, no hint texts on phones
+- mobile: chosen votes in the blog views on phones too
+- mobile: show First Draft as buttons at the text field on small screens
+- article: offer a First Draft when collecting a link
+- article: let First Draft suggest a compact title when collecting
+- article: roll out First Draft by user list, full or guest
+- mobile: beta.4 feedback — open editor, back to top, one icon line
+
+**Fixed bugs:**
+
+- article: show translate progress and done mark again
+- views: table cells in the blog overview and tap to copy a language text
+- mobile: keep the desktop view of phone browsers in desktop mode
+- mobile: way home from the menu panel
+- mobile: keep the blog status table on the start page
+- mobile: compact blog status table and folded legend on phones
+- mobile: only the mobile language row of the status table is tall
+- deps: update follow-redirects to 1.16.1
+- deps: update sanitize-html to 2.18.0
+- user: keep avatars on disk, placeholder while unknown
+- test: pick the chromedriver port on 127.0.0.1
+- test: wait for page reloads in the blog UI tests
+- test: keep the UI test browser off the internet
+- test: wait for the navigation of every page-loading click
+- test: measure driver.wait timeouts with a real timer
+- test: treat "node does not belong to the document" as stale
+- test: wait for the review form submit and slow page renders
+- db: wait up to 10 s for a free pool client
+
 ## [4.4.14](https://github.com/TheFive/osmbc/tree/4.4.14) (2026-10-25)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.4.13...4.4.14)
