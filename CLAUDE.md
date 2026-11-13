@@ -92,6 +92,13 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   reaching for a bare `save()` to dodge the broadcast — and instead get a
   `FilterReceiver`-wrapped or self-filtering receiver that ignores it.
 
+## Web UI
+
+- Before changing views, client scripts or `style.css`, read
+  `docs/ui-guidelines.md`: mobile mode (`osmbc-mobile` class, one language
+  at a time on phones), tap targets, no hidden functions, no inline event
+  handlers, phone tests through the page objects, and known traps.
+
 ## Development workflow
 
 - Prefer `git worktree` for working on unrelated things in parallel (e.g.
