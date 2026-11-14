@@ -4,6 +4,9 @@
   "private": false,
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "overrides": {
     "minimatch@9.0.9": {
       "brace-expansion": "2.1.7"
