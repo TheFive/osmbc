@@ -1,266 +1,270 @@
-# Installation Guide for OSMBC
+# Installing OSMBC
 
-  1. [Dependencies](#1---dependencies)
-  2. [Configuration files](#2---configuration-files)
-    - [Examples of use (for after)](#examples-of-use-for-after)
-  3. [Node's global modules](#3---nodes-global-modules)
-  4. [Node's local modules](#4---nodes-local-modules)
-    - [Production server](#production-server)
-    - [Locking versions](#locking-versions)
-  5. [Database](#5---database)
-    - [Creating tables and views](#creating-tables-and-views)
-    - [Import files from](#import-files-from)
+This guide installs OSMBC on a Linux server: Node.js runs the app as a
+systemd service, PostgreSQL holds the data, and a reverse proxy (nginx in
+the examples) terminates TLS. For a local development setup see
+[development.md](development.md).
 
-## 1 - Dependencies
+  1. [Requirements](#1-requirements)
+  2. [User and checkout](#2-user-and-checkout)
+  3. [Database](#3-database)
+  4. [Configuration](#4-configuration)
+  5. [Running as a service](#5-running-as-a-service)
+  6. [Reverse proxy](#6-reverse-proxy)
+  7. [Updating to a new release](#7-updating-to-a-new-release)
+  8. [Several instances on one server](#8-several-instances-on-one-server)
 
-Before you install OSMBC the following Software has to be installed.
+## 1. Requirements
 
-**a)** Postgres 9.3 or higher
+| Software | Version |
+|---|---|
+| Node.js | **22 or newer**, tested with 22.22.0 |
+| PostgreSQL | tested with 16.10 (OSMBC uses plain tables with a `jsonb` column, no extensions) |
+| git | any |
+| Reverse proxy with TLS | e.g. nginx |
 
-The system is tested and developed under `9.3`, as far as i know all features
-used should work with `9.4`. Development is taking place currently with verion 12.
-But no special features from versions > 9 are needed
+Check the Node.js version your distribution ships. Debian 13 (Trixie), for
+example, ships Node.js 20, which is too old; install Node.js 22 from
+another source such as the [NodeSource](https://github.com/nodesource/distributions)
+repository. Install only one Node.js on the server, so the service cannot
+start with a different version than the one you installed with.
 
-**b)** Node.JS 14.* or higher
+You also need:
 
-I try to develop OSMBC with a long term node version, do avoid regulary updates
+- an OAuth 2 application registered with an OpenStreetMap account
+  (OSM → My Settings → OAuth 2 applications), with the redirect URL
+  `https://<your host><htmlroot>/auth/openstreetmap_oauth20/callback`.
+  Users log in with their OSM account; OSMBC has no passwords of its own.
+- optional: an SMTP account for mail notifications, Mattermost/Slack
+  incoming webhooks, a DeepL API key for machine translation.
 
+Outgoing connections the server must be allowed to make: openstreetmap.org
+(login, user data), your SMTP server, the webhook and translation services
+you configure, and arbitrary http(s) URLs (OSMBC checks the links in
+articles and loads their titles).
 
-## 2 - Configuration files
+## 2. User and checkout
 
-OSMBC puts main configuration in a file with the name config.?.json, where ? can be
-test or development or production.
+Any user that can write the paths listed below can run OSMBC, but never
+run it as root. A system user of its own (`osmbc` in the examples) is
+recommended: it keeps the secrets in the config away from other services
+on the server, and a flaw in OSMBC can't reach their files. Install a
+tagged release, not a branch:
 
-The config.test.json is checked in and used in parallel for test on travis-ci server or the local machine.
-Insofar it is important, to use the same credentials on the local machine, than on travis-ci.
-Parallel you can create an own config config.testlocal.json and set NODE_ENV to testlocal to use
-your testfile.
+```sh
+sudo adduser --system --group --home /srv/osmbc osmbc
+sudo -u osmbc git clone https://github.com/TheFive/osmbc.git /srv/osmbc/app
+cd /srv/osmbc/app
+sudo -u osmbc git checkout 4.5.1        # the release you want
+sudo -u osmbc npm ci --omit=dev
+```
 
-The config.developent.json is not checked in, so it may contain the passwords to your postgres installation,
-and to the other integrated tools.
+`npm ci --omit=dev` installs exactly the versions from `package-lock.json`
+without the development tools (mocha, selenium-webdriver, nyc, eslint, …):
+about 330 instead of about 800 packages. Its `postinstall` step copies the
+browser libraries (Bootstrap, jQuery, …) into `public/`.
 
-The config.production.json should be used for a production environment, so you can have for each usage szenario
-an own config. config.development.json and config.production.json are listed in .gitignore, so that no passwords
-are pushed to github.
+At runtime OSMBC reads its config file and writes these files:
 
-To generate your first config file, please copy the config.test.json as start.
+| What | Default location | Set with |
+|---|---|---|
+| config file `config.production.yaml` | app directory | environment variable `OSMBC_CONFIG_DIR` |
+| caches: link check, avatars, geocoding (rebuilt when lost) | `<app>/cache/` | config key `cache_directory` |
+| public user profiles, written when a user saves their settings | `<app>/public/profile/` | config key `profile_directory` |
+| mail log, export log | — | config keys `maillog_directory`, `exportlog_directory` (always set them) |
 
+With the defaults, the app directory must stay writable for the service
+user. The application log itself goes to stdout and ends up in the
+systemd journal.
 
-```json
- "serverport": 35043,
-  
-  "postgres": {
-    "initialise": true,
-    "database" : "localhost:5432/osmbc",
-    "username" : "TheFive",
-    "password" : "thefive",
-    "connectstr" : "psql://test:test@localhost:5432/testdb"
-  },
-   "twitter":{
-    "consumer_key": "dummy",
-    "consumer_secret": "dummy",
-    "access_token": "dummy",
-    "access_token_secret": "dummy"
-    },
+### Keeping the app directory read-only (optional)
 
-  "slack":{
-    "blog":{
-      "DE":{
-        "hook":"https://hooks.slack.com/services/blogKey",
-        "channel":"#osmbcblog"
-      },
-      "default":{
-        "hook":"https://hooks.slack.com/services/blogKeyWeekly",
-        "channel":"#osmbcblog"
-      }
-    },
-    "article":{
-      "wn":{
-        "hook":"https://hooks.slack.com/services/articleKey",
-        "channel":"#osmbcarticle"
-      }
+To keep the code apart from config and data, so that the service user
+can't change the code, or to install each release into a new directory:
+
+```text
+/srv/osmbc/app/                    code, owned by root or a deploy user, read-only for osmbc
+/etc/osmbc/config.production.yaml  OSMBC_CONFIG_DIR=/etc/osmbc, readable by osmbc only
+/var/lib/osmbc/cache/              cache_directory, writable by osmbc
+/var/lib/osmbc/profile/            profile_directory, writable by osmbc
+/var/log/osmbc/                    maillog_directory, exportlog_directory, writable by osmbc
+```
+
+Run `git checkout` and `npm ci --omit=dev` as the owner of the code, not
+as the service user. OSMBC creates the cache and profile directories if
+they don't exist, but it needs write access to their parent directory.
+Public profiles stay reachable under `<htmlroot>/profile/` wherever
+`profile_directory` points.
+
+## 3. Database
+
+Create a database user and an empty database:
+
+```sh
+sudo -u postgres createuser --pwprompt osmbc
+sudo -u postgres createdb --owner osmbc osmbc
+```
+
+**Moving an existing instance:** restore a dump of the old database
+(`pg_dump --format=custom` → `pg_restore --no-owner --role=osmbc`) and
+continue with [Configuration](#4-configuration). Copy `public/profile/`
+from the old server as well, or the public profiles are missing until
+each user saves their settings again.
+
+**New instance:** first write the configuration (next section), then
+create the tables, views and indexes and the first user. The user name is
+your OSM user name; this user gets full access and can give access to
+others in the web UI:
+
+```sh
+cd /srv/osmbc/app
+sudo -u osmbc NODE_ENV=production node import/createdb.js \
+  --createTables --createView --createIndex --addUser <OSM user name> --verbose
+```
+
+To compare an existing database with the expected structure, run
+`import/createdb.js --verbose` without the create options;
+`--updateIndex` adds missing indexes.
+
+## 4. Configuration
+
+OSMBC reads `config.<NODE_ENV>.yaml` (or `.yml`/`.json`) from the app
+directory, or from the directory in `OSMBC_CONFIG_DIR`; on a server that
+is `config.production.yaml`. The log shows which file was read
+(`Reading Config from: …`). The file is not in git;
+it holds the database password and the other secrets. A missing required
+key stops the server at start with a "Missing Value" message that names
+the key.
+
+Start from `config.test.yaml` in the repository. [config.md](config.md)
+explains every section; [export-profiles.md](export-profiles.md) and
+[API.md](API.md) cover `ExportProfiles` and `apiKeys`. On a server, check
+at least these keys:
+
+| Key | Set to |
+|---|---|
+| `serverport` | the local port the proxy forwards to, e.g. `3000` |
+| `serverhostname` | `127.0.0.1`, so the app is only reachable through the proxy |
+| `serverkey`, `servercert` | leave out: TLS is done by the proxy |
+| `url`, `htmlroot` | public base URL (`https://osmbc.example.org`) and path prefix (`""`, or e.g. `/beta`, see [section 8](#8-several-instances-on-one-server)) |
+| `postgres` | `server`, `port`, `database`, `username`, `password` |
+| `auth.openstreetmap_oauth20` | `clientID`, `clientSecret`, `callbackURL` of your OSM OAuth application |
+| `auth.htaccess.enabled` | `false` (basic auth is a test aid) |
+| `SessionSecret`, `SessionName` | a long random secret; a name unique per instance on the same host |
+| `limitValues.trustProxy` | `1` behind one proxy, see [section 6](#6-reverse-proxy) |
+| `maillog_directory`, `exportlog_directory` | absolute paths to the log directory |
+| `cache_directory`, `profile_directory` | optional, see [section 2](#keeping-the-app-directory-read-only-optional) |
+| `SMTP`, `EmailSender` | your mail server, or `SMTP: {}` to only write the mail log |
+| `Transition.enabled` | `true` for the instance that runs the automatic workflow, `false` for any other instance on the same database |
+
+Secrets in the file: `postgres.password`, `SessionSecret`,
+`auth.openstreetmap_oauth20.clientSecret`, `apiKeys`, `SMTP`,
+`DeeplProConfig.authKey`, the webhook URLs under `slack`/`slacktool`, and
+the API keys of optional integrations. Make the file readable for the
+service user only (`chmod 600`).
+
+A release can rename or remove config keys; these changes are marked
+**BREAKING** in [CHANGELOG.md](../CHANGELOG.md).
+
+## 5. Running as a service
+
+Example `/etc/systemd/system/osmbc.service`:
+
+```ini
+[Unit]
+Description=OSMBC
+After=network.target postgresql.service
+
+[Service]
+User=osmbc
+Group=osmbc
+WorkingDirectory=/srv/osmbc/app
+Environment=NODE_ENV=production
+Environment=TZ=Europe/Berlin
+# only when the config is not in the app directory:
+# Environment=OSMBC_CONFIG_DIR=/etc/osmbc
+ExecStart=/usr/bin/node bin/www.js
+KillSignal=SIGINT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl enable --now osmbc
+journalctl -u osmbc -f
+```
+
+Notes:
+
+- Start `bin/www.js` directly. `npm start` always sets
+  `NODE_ENV=development`.
+- `KillSignal=SIGINT`: OSMBC shuts down cleanly on SIGINT; systemd's default
+  SIGTERM ends it without stopping the scheduler first.
+- `TZ`: the automatic workflow (`Transition`, e.g. "translate on Thursday
+  20:00") runs in the time zone of the process. Set the zone your editors
+  plan in; when moving a server, keep the zone of the old one.
+- The environment variables `PORT` and `HOSTNAME` override `serverport`
+  and `serverhostname`; `ANTHROPIC_API_KEY` is used when the config has no
+  key of its own. Don't set them unless you mean to.
+
+At start the log shows `Node: v22.… NPM: …` and
+`Server Listening on port:3000`.
+
+## 6. Reverse proxy
+
+Example nginx server block (TLS certificate lines left out):
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name osmbc.example.org;
+
+    # OSMBC accepts JSON bodies up to 10 MB (blog sync API); nginx's default is 1 MB
+    client_max_body_size 10m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
-  },
- 
-  "AppName":"TESTBC",
-  "languages":["DE","EN","ES"],
-  "callbackUrl":"http://localhost:3000/auth/openstreetmap/callback",
-  "OPENSTREETMAP_CONSUMER_KEY" : "######",
-  "OPENSTREETMAP_CONSUMER_SECRET" : "#####",
-  "htmlroot":"",
-  "bootstrap":"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5",
-  "EmailSender":"noreply@gmail.com",
-  "url":"https://testosm.bc",
-  "SMTP":"smtps not defined, as all mails should be mocked by sinon in test",
-  "sessionStore":"connect-pg-simple"
-
+}
 ```
 
-Where:
+Set `limitValues.trustProxy: 1` in the config to go with this block.
+Without it, OSMBC takes the proxy's address as every user's address (the
+rate limit then counts all users together) and `X-Forwarded-Proto` is
+ignored, so the session cookie is not marked `Secure`.
 
-- `serverport` is the port in that the node server is listening
-- `database` is the string of accesse to Postgres
-- `username` is the username on Postgres
-- `password` is the password on Postgres
-- `connectstr` is the string of access to Postgres
-	- **Overwrites `database`, `username` and `password`**
-- `callbackUrl` is the URL of callback for the OAuth mechanism
-	- **You must change the serverport**
-- `OPENSTREETMAP_CONSUMER_KEY` is the OAuth Key
-	- Generate it from your user properties in OSM
-- `OPENSTREETMAP_CONSUMER_SECRET`is the OAuth Secret
-	-  Generate it from your user properties in OSM
-- `htmlroot`is the root for the HTML path to be used to handle multiple instances in a same server
-	- e.g. `MYSERVER/<htmlroot>/osmbc.html`
-- `slack` There are two slack configurations, the blog and the article configuration.
-    - with the blog configuration you can have a slack hook per language to write 
-    - changes about the blog status (review...) in a separate slack channel for each
-    - language. Use default for all languages, that should use a common channel.
-    - the article part allowes to have multiple slack channels to write 
-    - all information about an article to.
-    - you can get the hook out of your slack integration. Channel is the channel name
-    - with @ or # as first character
-- `twitter` Put in your consumer secrets like offered by twitter.
-    - the twitter API is used to parse the tweets and expand all urls in a tweet.
--  `AppName` The name in the upper left corner of the APP and in each mail generated by the App.
--  `languages` the supported languages.
--  `bootstrap` root to bootstap, if you do not want to use the one our of the public folder.
--  `ReviewInWP` deprecated, Review is always started in OSMBC
--  `EmailSender` define the email adress of all outgoing emails.
--  `url`  the basic url
-    - - e.g. `url/<htmlroot>/osmbc.html`
-    
--  `smtp` smtp adress (with uername password) to send emails.
--  `sessionStore` used to configure the session store. 
-    - connect-pg-simple is recommended
-    - session-file-store is an alternative file based NPM Lib.
-	
-	
-
-Please configure your config files  `package.json` for npm start and npm test.
-
-### Examples of use (for after)
-
-The config module uses development as default configuration (if it is not set via `NODE_ENV` variable).
-
-```console
-$ npm start  # sets NODE_ENV=development
-```
-
-```console
-$ npm test  # sets NODE_ENV=test
-```
-
-## 3 - Node's global modules
-
-Please install the following node modules global:
-
-```console
-$ sudo npm install istanbul -g  # used for Codecoverage during npm test
-$ sudo npm install mocha -g  # used for tests during npm test
-```
-
-## 4 - Node's local modules
-
-After checkout of OSMBC please install all necessary modules in its directory doing there:
-
-```console
-$ npm install
-```
-
-Depending on machine configuration, you may need doing this as root.
-
-### Production server
-
-On a production server install exactly the versions from `package-lock.json`
-and leave out the development tools (mocha, selenium-webdriver, nyc, eslint, …):
-
-```console
-$ npm ci --omit=dev
-```
-
-Run this after every `git pull` of a new release as well. A plain `npm ci`
-or `npm install` also installs the dev dependencies (about 800 instead of
-about 330 packages), which the server never uses but which still show up in
-`npm audit` and deprecation warnings. Nothing OSMBC runs at runtime needs them,
-including `postinstall.js`.
-
-### Locking versions
-
-Probably you use a NodeJS newer than the supported by OSMBC. Especially if you use a rolling release distribution such as the Arch Linux that today have NodeJS v4.2.1.
-
-The solution for this is using `nvm` — _Node Version Manager_:
-
-1. Install the [nvm]
-    - On Arch Linux:
-    ```console
-    $ yaourt -S nvm
-    $ echo 'source /usr/share/nvm/init-nvm.sh' >> ~/.bashrc  # if yaourt was ok
-    ```
-    - If Ubuntu, see (in portuguese): [Como Instalar o Node.js em um Servidor Ubuntu 14.04][ubuntu-nvm-ref]
-    - If other distro, see the official instrutions at GitHub [creationix/nvm][nvm]
-    - If Windows, use [nvmw] or [nvm-windows]
-2. Choose the NodeJS version
-    - Our develepment machine uses the **`0.12.4`**
-    ```console
-    $ nvm install 0.12.4
-    ```
-3. Choose the Python version
-    - Switch to **2** at `npm install` if necessary:
-    ```console
-    $ rm -rf node_modules  # take care with the rm -rf
-    $ npm install --python=python2.7  # because I use Python 3 by default
-    ```
-
-[ubuntu-nvm-ref]: https://www.digitalocean.com/community/tutorials/como-instalar-o-node-js-em-um-servidor-ubuntu-14-04-pt
-[nvm]: https://github.com/creationix/nvm
-[nvmw]:  https://github.com/hakobera/nvmw
-[nvm-windows]: https://github.com/coreybutler/nvm-windows
-
-## 5 - Database
-
-The database can be installed using the two javascript files that are **in the folder `import`**.
-
-### Creating tables and views and the first user
-
-_→ See also: section about [Configuration files](#2---configuration-files), for database access_
+## 7. Updating to a new release
 
 ```sh
-NODE_ENV=???? node createdb.js  --createTable tablename --verbose
+cd /srv/osmbc/app
+sudo -u osmbc git fetch --tags
+sudo -u osmbc git checkout <new version>
+sudo -u osmbc npm ci --omit=dev
+sudo systemctl restart osmbc
 ```
 
-Where `???` is the configuration that you want to use (e.g. `development` or `test`).
-Use createdb.js with the --verbose option, to see the differences between the expected db structure & the real db structure.
-(For now there is a more detailed analyses of the indexes, no analyses for the rest).
-To create the full database run it with the option --createTable --createIndex --createView, this expects an empty database.
-If there are already tables and views you can drop them with --dropTable --dropIndex and --dropView. Please make sure to have a 
-backup of your productive data, before doing that.
+Before the update, check [CHANGELOG.md](../CHANGELOG.md) for config
+changes and back up the database. To roll back, check out the previous
+tag and repeat the last two steps.
 
-To update to the actual set of indexes just user --updateIndex. (--updateNAME option is for now only available for indexes).
+## 8. Several instances on one server
 
-A full working empty copy of OSMBC can be generated with:
-```sh
-NODE_ENV=???? node import/createdb.js  --createTables --dropTables --createView --createIndex --addUser OSMUSERNAME --verbose
-```
+A second instance (e.g. a test version under `/beta`) needs its own
+`config.production.yaml` and its own service. It can use its own app
+directory, or share the code with the main instance by pointing
+`OSMBC_CONFIG_DIR` to a different directory (then both always run the
+same release). It also needs:
 
-### Import files from
-
-There is a script to import all the weekly news down from [blog.openstreetmap.de](http://blog.openstreetmap.de).
-
-To import the first blog (the of number 268), call:
-
-```sh
-NODE_ENV=???? node download.js
-```
-
-For now the first (admin) user has to be created with psql. OSMBC offers only OAUTH authentification via OpenStreetMap, so you have to have a OSM Account and give that
-user access to your OSMBC instance.
-
-```psql
-insert into usert (data) values ('{"OSMUser":"?? your osm user name ??","access":"full"}');
-```
-
-But of course it will be better to ask the Weekly - Wochennotiz team, to get a SQL dump.
-
-
-
+- its own `serverport`, and `htmlroot: /beta` with the matching `url` and
+  `callbackURL` (a second OAuth application in OSM, or a second redirect URL)
+- its own `SessionName`
+- its own database, or, if it shares the database with the main instance,
+  `Transition.enabled: false` and no SMTP/webhooks, so automatic actions
+  and notifications don't run twice
+- a `location /beta/` block in nginx that forwards to its port

@@ -8,8 +8,8 @@ running for your own multi language blog project, this readme should give you so
 
 Following development tools are required
 
-* Postgres (>= 9.3, could be an actual version)
-* node js and npm (node version 14.x or higher)
+* PostgreSQL (tested with 16.10)
+* Node.js 22 or newer with npm (tested with 22.22.0)
 * main developer is using VS Code with some plugins to develop
 
 More info in the [Installation Guide](install.md).
