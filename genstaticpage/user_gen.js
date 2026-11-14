@@ -15,9 +15,9 @@ export function generateUserPage(osmUser, callback) {
   userModule.findOne({ OSMUser: osmUser }, function(err, user) {
     if (err) return callback(err);
 
-    const filePath = path.join(config.getDirName(), "public", "profile");
+    const filePath = config.getProfileDir();
     const fileName = path.join(filePath, osmUser + ".html");
-    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath);
+    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     // in case of forbidden public profile, remove it
     if (user.publicProfile !== "Yes") {

@@ -154,6 +154,8 @@ if ((app.get("env") === "test") && (process.env.MOCHA_WITH_MORGAN === "TRUE")) {
 // first register the unsecured path, with no cookie need.
 
 
+// public profiles may live outside public/ (config profile_directory)
+app.use(htmlRoot + "/profile", express.static(config.getProfileDir()));
 app.use(htmlRoot, express.static(join(config.getDirName(), "public")));
 
 
