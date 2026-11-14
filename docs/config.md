@@ -31,6 +31,17 @@ and reads the first one that exists. Known environments in this codebase:
 Missing file for the resolved `NODE_ENV` is fatal: `config.js` logs an
 error and calls `process.exit(1)` (see `initialise()`).
 
+### Optional second file for the editorial settings
+
+If the file sets `editorial_config` (a path, relative to the file's own
+directory), `config.js` reads that file too and merges it in with
+`mergeConfigs` from [util/configSplit.js](../util/configSplit.js): objects
+key by key, and a value present in both files is fatal (the error names
+it). `util/configSplit.js` also defines which keys are editorial;
+`tools/split-config.mjs` splits a single file by these rules. See
+[install.md](install.md#technical-and-editorial-settings-in-two-files-optional).
+The test config stays one file.
+
 ### `NODE_ENV=test`: fixed values, overridden per test run
 
 `config.test.yaml` names a fixed port and database, and the test
@@ -92,6 +103,7 @@ a map of *where to look*, not a restatement of every field.
 | `slacktool`, `slack` | Outbound Mattermost/Slack webhook endpoints for blog/article notifications. |
 | `SMTP`, `EmailSender`, `AllowedMailAddresses` | Outbound mail transport and sender/recipient allowlist. |
 | `maillog_*` | Where `MailReceiver` logs what it *would* send, independent of SMTP. |
+| `editorial_config` | Optional. Path of the second file with the editorial settings, see [above](#optional-second-file-for-the-editorial-settings). |
 | `cache_directory`, `profile_directory` | Optional. Where OSMBC writes its caches (default `cache`) and the public user profiles (default `public/profile`, served under `<htmlroot>/profile/`). Relative paths are resolved against the app directory. |
 | `apiKeys` | Shared API-key → label map, checked by `checkApiKey` (`routes/api.js`). Usually just a free-text description — **except** the Blog-Sync-Merger write endpoint (`POST /api/blogSync/:apiKey/:blog_id/apply`) attributes its writes using this same value as the OSMUser (`getBlogSyncUser`), and `notification/migrationFilter.js` suppresses mail/Slack for every value in this map. A key meant for that endpoint should get a name-shaped value (e.g. `dataAdmin-Alice`) instead of a description. See [docs/API.md](API.md#authentication) and [docs/API.md](API.md#post-apiblogsyncapikeyblog_idapply). |
 | `blogSyncReplaceMaxBlogNumber` | Optional (default `271`) — the WN-number ceiling above which the Blog-Sync-Merger's `mode: "replace"` is refused server-side, regardless of what the client asks for. See `wp-reconcile/blog-sync-merger/blogSyncMerger.js` `planReplace`. |
