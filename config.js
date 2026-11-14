@@ -7,6 +7,7 @@ import winston from "winston";
 import _debug from "debug";
 import { load as yamlLoad } from "js-yaml";
 import packageJson from "./package.json" with { type: "json" };
+import { mergeConfigs } from "./util/configSplit.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,6 +125,25 @@ function initialise(callback) {
   }
   logger.info("Reading Config from: " + baseConfig.fileName);
   configuration = baseConfig.data;
+
+  // optional second file with the editorial settings, see util/configSplit.js
+  if (configuration.editorial_config) {
+    const editorialFile = path.resolve(configurationDir, configuration.editorial_config);
+    let editorial;
+    try {
+      editorial = parseConfigFile(editorialFile, fs.readFileSync(editorialFile, "UTF8"));
+    } catch (err) {
+      logger.error("Could not read editorial config (editorial_config) " + editorialFile + ": " + err.message);
+      process.exit(1);
+    }
+    logger.info("Reading editorial Config from: " + editorialFile);
+    const merged = mergeConfigs(configuration, editorial);
+    if (merged.conflicts.length > 0) {
+      logger.error("Values set in both config files, remove them from one: " + merged.conflicts.join(", "));
+      process.exit(1);
+    }
+    configuration = merged.config;
+  }
 
   // per test run overrides, set by tools/run-tests.mjs so that several
   // test runs (worktrees) can run in parallel without sharing port, DB or files
