@@ -52,13 +52,10 @@ logger.stream = {
 
 
 
-// the configurationfile should be in the "running" directory
+// config.<env>.yaml is read from the app directory, or from OSMBC_CONFIG_DIR
+// if set (e.g. /etc/osmbc, so the app directory can stay read-only)
 const configurationBaseName = "config." + env;
-const configurationCandidates = [
-  path.resolve(__dirname, configurationBaseName + ".yaml"),
-  path.resolve(__dirname, configurationBaseName + ".yml"),
-  path.resolve(__dirname, configurationBaseName + ".json")
-];
+const configurationDir = process.env.OSMBC_CONFIG_DIR ? path.resolve(process.env.OSMBC_CONFIG_DIR) : __dirname;
 let configuration;
 
 function parseConfigFile(fileName, fileContent) {
@@ -120,9 +117,9 @@ function initialise(callback) {
     return;
   }
   debug("initialise");
-  const baseConfig = readConfigByBaseName(configurationBaseName, __dirname);
+  const baseConfig = readConfigByBaseName(configurationBaseName, configurationDir);
   if (!baseConfig) {
-    logger.error("No config file found for " + configurationBaseName + " (yaml/yml/json)");
+    logger.error("No config file found for " + configurationBaseName + " (yaml/yml/json) in " + configurationDir);
     process.exit(1);
   }
   logger.info("Reading Config from: " + baseConfig.fileName);
@@ -253,6 +250,17 @@ function getCallbackUrl() {
   return configuration.callbackUrl;
 };
 
+// Directories OSMBC writes into at runtime. Default inside the app
+// directory; set them to move all runtime data out of it. Relative
+// paths are resolved against the app directory.
+function getCacheDir() {
+  return path.resolve(__dirname, getValue("cache_directory", { default: "cache" }));
+}
+
+function getProfileDir() {
+  return path.resolve(__dirname, getValue("profile_directory", { default: path.join("public", "profile") }));
+}
+
 
 
 // deprecate Values
@@ -276,6 +284,9 @@ const config = {
   getCallbackUrl: getCallbackUrl,
   initialise: initialise,
   getDirName: () => { return __dirname; },
+  getConfigDir: () => { return configurationDir; },
+  getCacheDir: getCacheDir,
+  getProfileDir: getProfileDir,
   getServerHostname: getServerHostname
 };
 

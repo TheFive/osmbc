@@ -5,11 +5,11 @@ import { join } from "path";
 import config from "../config.js";
 
 
-const cacheDir  = join(config.getDirName(), "cache");
+const cacheDir = config.getCacheDir();
 
 function createDir(dir, callback) {
   if (existsSync(dir)) return callback();
-  return mkdir(dir, callback);
+  return mkdir(dir, { recursive: true }, callback);
 }
 
 class InternalCache {

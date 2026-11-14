@@ -59,8 +59,10 @@ if (process.env.HOSTNAME || config.getServerHostname()) hostname = (process.env.
 
 /* check node version */
 
-if (process.version < "v16.1.1") {
-  console.error("Node Version should be >= v16");
+// keep in sync with "engines" in package.json and docs/install.md
+const minNodeMajor = 22;
+if (Number(process.versions.node.split(".")[0]) < minNodeMajor) {
+  console.error(`Node version ${process.version} is too old, OSMBC needs ${minNodeMajor} or newer`);
   process.exit(1);
 }
 
