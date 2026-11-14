@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.6.0](https://github.com/TheFive/osmbc/tree/4.6.0) (2026-11-14)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.5.1...4.6.0)
+
+**Features:**
+
+- config: allow config, cache and profile directories outside the app directory
+- config: optional second file for the editorial settings
+
 ## [4.5.1](https://github.com/TheFive/osmbc/tree/4.5.1) (2026-11-13)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.5.0...4.5.1)
