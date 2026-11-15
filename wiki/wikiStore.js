@@ -69,6 +69,27 @@ export function validateMediaPath(mediaPath) {
   return { mediaPath, extension: match[1], contentType: MEDIA_TYPES[match[1]] };
 }
 
+// the content has to match the extension: no HTML or script uploaded as
+// .png, no scripts or event handlers in an SVG
+export function validateMediaContent(buffer, extension) {
+  const startsWith = (bytes) => bytes.every((b, i) => buffer[i] === b);
+  let ok;
+  switch (extension) {
+    case "png": ok = startsWith([0x89, 0x50, 0x4e, 0x47]); break;
+    case "jpg":
+    case "jpeg": ok = startsWith([0xff, 0xd8, 0xff]); break;
+    case "gif": ok = startsWith([0x47, 0x49, 0x46, 0x38]); break;
+    case "webp": ok = startsWith([0x52, 0x49, 0x46, 0x46]) && buffer.subarray(8, 12).toString("latin1") === "WEBP"; break;
+    case "svg": {
+      const text = buffer.toString("utf8");
+      ok = /<svg[\s>]/i.test(text) && !/<script|\son[a-z]+\s*=|javascript:|<foreignObject/i.test(text);
+      break;
+    }
+    default: ok = false;
+  }
+  if (!ok) throw invalid("File content does not match the type " + extension + " (or the SVG contains scripts)");
+}
+
 function validateRevision(rev) {
   if (typeof rev !== "string" || !REVISION.test(rev)) throw invalid("Invalid revision: " + rev);
   return rev;
@@ -388,6 +409,12 @@ export class WikiStore {
 
   // ---- media --------------------------------------------------------------
 
+  async mediaExists(mediaPath) {
+    validateMediaPath(mediaPath);
+    await this.init();
+    return fs.existsSync(this._absolute(MEDIA_DIR + "/" + mediaPath));
+  }
+
   async readMedia(mediaPath) {
     const { contentType } = validateMediaPath(mediaPath);
     await this.init();
@@ -398,12 +425,13 @@ export class WikiStore {
 
   // options: user, maxBytes, overwrite (default false)
   async saveMedia(mediaPath, buffer, options = {}) {
-    validateMediaPath(mediaPath);
+    const { extension } = validateMediaPath(mediaPath);
     const author = gitAuthor(options.user);
     if (!Buffer.isBuffer(buffer) || buffer.length === 0) throw invalid("Empty media file");
     if (options.maxBytes && buffer.length > options.maxBytes) {
       throw new WikiError("Media file too large (" + buffer.length + " bytes, max " + options.maxBytes + ")", 413);
     }
+    validateMediaContent(buffer, extension);
     const relative = MEDIA_DIR + "/" + mediaPath;
     return this._exclusive(async () => {
       const file = this._absolute(relative);

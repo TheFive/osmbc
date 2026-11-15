@@ -64,6 +64,54 @@
       event.returnValue = "";
     });
 
+    // image upload: the server stores the file and returns the Markdown,
+    // which is inserted at the cursor
+    const upload = document.getElementById("wikiUpload");
+    const uploadState = document.getElementById("wikiUploadState");
+    if (upload) {
+      upload.addEventListener("change", function () {
+        const file = upload.files && upload.files[0];
+        if (!file) return;
+        const maxBytes = Number(upload.dataset.maxBytes) || 0;
+        if (maxBytes && file.size > maxBytes) {
+          uploadState.textContent = "Too large (max " + Math.round(maxBytes / 1024 / 1024) + " MB)";
+          upload.value = "";
+          return;
+        }
+        uploadState.textContent = "Uploading " + file.name + " …";
+        const reader = new FileReader();
+        reader.onload = function () {
+          fetch(upload.dataset.uploadUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ page: pageId, fileName: file.name, data: reader.result })
+          })
+            .then(function (response) {
+              return response.json().then(function (data) {
+                if (!response.ok) throw new Error(data.error || ("Upload failed (" + response.status + ")"));
+                return data;
+              });
+            })
+            .then(function (data) {
+              const start = textarea.selectionStart;
+              const end = textarea.selectionEnd;
+              const text = textarea.value;
+              textarea.value = text.substring(0, start) + data.markdown + text.substring(end);
+              textarea.selectionStart = textarea.selectionEnd = start + data.markdown.length;
+              textarea.dispatchEvent(new Event("input"));
+              uploadState.textContent = "Uploaded " + data.mediaPath;
+            })
+            .catch(function (err) {
+              uploadState.textContent = err.message;
+            })
+            .then(function () { upload.value = ""; });
+        };
+        reader.onerror = function () { uploadState.textContent = "Could not read " + file.name; };
+        reader.readAsDataURL(file);
+      });
+    }
+
     updatePreview();
   }
 

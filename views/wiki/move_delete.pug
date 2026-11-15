@@ -1,0 +1,27 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    form#wikiMoveDeleteForm(method="post" action=wikiBase + "/" + pageId)
+      input(type="hidden" name="action" value=mode)
+      input(type="hidden" name="baseBlob" value=blob)
+      if mode === "move"
+        h1.h4 Move #{title}
+        .mb-3
+          label.form-label(for="wikiMoveTo") New page name
+          input.form-control#wikiMoveTo(type="text" name="to" value=pageId required)
+          div.form-text a-z, 0-9, _ and -, namespaces separated by /. Links to the old name are not changed.
+      else
+        h1.h4 Delete #{title}
+        p The page is removed from the wiki. Its history stays, it can be restored from there.
+      .mb-3
+        label.form-label(for="wikiMessage") Reason (optional)
+        input.form-control#wikiMessage(type="text" name="message" maxlength="200")
+      div.d-flex.flex-wrap.gap-2.justify-content-end
+        a.btn.btn-outline-secondary(href=wikiBase + "/" + pageId) Cancel
+        if mode === "move"
+          button.btn.btn-primary#wikiMoveSubmit(type="submit") Move
+        else
+          button.btn.btn-danger#wikiDeleteSubmit(type="submit") Delete

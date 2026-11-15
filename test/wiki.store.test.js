@@ -5,9 +5,11 @@ import path from "path";
 import should from "should";
 
 import {
-  WikiStore, WikiError, isValidPageId, validateMediaPath, blobHash,
+  WikiStore, WikiError, isValidPageId, validateMediaPath, validateMediaContent, blobHash,
   splitFrontMatter, pageAllowsAccess
 } from "../wiki/wikiStore.js";
+
+const PNG = (...rest) => Buffer.from([0x89, 0x50, 0x4e, 0x47, ...rest]);
 
 const silentLogger = { info: () => {}, error: () => {} };
 
@@ -140,7 +142,7 @@ describe("wiki/wikiStore", function() {
     it("should list pages with titles, without media", async function() {
       await store.savePage("start", "# Welcome\n", { user: "A" });
       await store.savePage("osmbc/review", "---\ntitle: Review rules\naccess: full\n---\n# Ignored\n", { user: "A" });
-      await store.saveMedia("logo.png", Buffer.from("png"), { user: "A" });
+      await store.saveMedia("logo.png", PNG(), { user: "A" });
       const pages = await store.listPages();
       should(pages.map(p => [p.id, p.title])).eql([["osmbc/review", "Review rules"], ["start", "Welcome"]]);
       should(pages[0].frontMatter.access).eql("full");
@@ -215,16 +217,39 @@ describe("wiki/wikiStore", function() {
 
   describe("media", function() {
     it("should save, read and protect media files", async function() {
-      await store.saveMedia("osmbc/shot.png", Buffer.from([1, 2, 3]), { user: "A", maxBytes: 10 });
+      await store.saveMedia("osmbc/shot.png", PNG(1, 2), { user: "A", maxBytes: 10 });
       const media = await store.readMedia("osmbc/shot.png");
       should(media.contentType).eql("image/png");
-      should(Array.from(media.buffer)).eql([1, 2, 3]);
+      should(Array.from(media.buffer)).eql([0x89, 0x50, 0x4e, 0x47, 1, 2]);
       should(await store.readMedia("osmbc/missing.png")).be.null();
-      await shouldReject(store.saveMedia("osmbc/shot.png", Buffer.from([4]), { user: "A" }), 409);
-      await store.saveMedia("osmbc/shot.png", Buffer.from([4]), { user: "A", overwrite: true });
+      should(await store.mediaExists("osmbc/shot.png")).be.true();
+      await shouldReject(store.saveMedia("osmbc/shot.png", PNG(4), { user: "A" }), 409);
+      await store.saveMedia("osmbc/shot.png", PNG(4), { user: "A", overwrite: true });
       await shouldReject(store.saveMedia("big.png", Buffer.alloc(11), { user: "A", maxBytes: 10 }), 413);
       await shouldReject(store.saveMedia("script.js", Buffer.from("x"), { user: "A" }), 400);
+      await shouldReject(store.saveMedia("fake.png", Buffer.from("<html>"), { user: "A" }), 400);
       should(git(store.directory, "log", "-1", "--format=%s")).eql("Replace media/osmbc/shot.png\n");
+    });
+  });
+
+  describe("media content", function() {
+    it("should accept matching content", function() {
+      validateMediaContent(PNG(), "png");
+      validateMediaContent(Buffer.from([0xff, 0xd8, 0xff, 0xe0]), "jpg");
+      validateMediaContent(Buffer.from("GIF89a"), "gif");
+      validateMediaContent(Buffer.from("RIFF\0\0\0\0WEBPVP8 "), "webp");
+      validateMediaContent(Buffer.from("<?xml version=\"1.0\"?><svg xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0\"/></svg>"), "svg");
+    });
+    it("should reject mismatching content and active SVG", function() {
+      for (const [content, ext] of [
+        ["<html>", "png"], ["GIF89a", "jpg"], ["RIFF0000WAVE", "webp"], ["no svg", "svg"],
+        ["<svg><script>alert(1)</script></svg>", "svg"],
+        ["<svg onload=\"alert(1)\"></svg>", "svg"],
+        ["<svg><a href=\"javascript:alert(1)\">x</a></svg>", "svg"],
+        ["<svg><foreignObject><div/></foreignObject></svg>", "svg"]
+      ]) {
+        should(() => validateMediaContent(Buffer.from(content), ext)).throw(WikiError);
+      }
     });
   });
 

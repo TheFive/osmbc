@@ -650,3 +650,25 @@ a.osmbc-wiki-missing {
 .osmbc-wiki-breadcrumb {
   overflow-wrap: anywhere;
 }
+.osmbc-wiki-diff {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+}
+.osmbc-wiki-diff-line {
+  padding: 0 0.5rem;
+}
+.osmbc-wiki-diff-added {
+  background-color: var(--bs-success-bg-subtle);
+}
+.osmbc-wiki-diff-removed {
+  background-color: var(--bs-danger-bg-subtle);
+  text-decoration: line-through;
+}
+.osmbc-wiki-diff-skip {
+  padding: 0 0.5rem;
+  color: var(--bs-secondary-color);
+}
+.osmbc-wiki-search-line {
+  overflow-wrap: anywhere;
+}

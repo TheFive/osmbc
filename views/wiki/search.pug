@@ -1,0 +1,27 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    +wikiSearch(wikiBase, query)
+    if query
+      if byName.length > 0
+        h2.h6 Page names
+        ul.list-unstyled#wikiSearchNames
+          each page in byName
+            li.mb-1
+              a(href=wikiBase + "/" + page.id)=page.title
+              span.text-muted.small.ms-2=page.id
+      h2.h6 Text (#{results.length} pages)
+      if results.length === 0
+        p#wikiSearchEmpty Nothing found.
+      ul.list-unstyled#wikiSearchResults
+        each result in results
+          li.mb-3
+            a(href=wikiBase + "/" + result.id)=result.title
+            span.text-muted.small.ms-2=result.id
+            each match in result.matches
+              div.small.text-muted.osmbc-wiki-search-line=match.text
+            if result.matchCount > result.matches.length
+              div.small.text-muted … #{result.matchCount - result.matches.length} more

@@ -1,0 +1,19 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    h1.h4 Changes to #{title}
+    p
+      | #{entry.date.substring(0, 16).replace("T", " ")}, #{entry.author}: #{entry.message}
+      br
+      span.osmbc-wiki-diff-added.px-1 +#{diff.added}
+      | 
+      span.osmbc-wiki-diff-removed.px-1 -#{diff.removed}
+      |  lines
+    div.d-flex.flex-wrap.gap-2.mb-3
+      a.btn.btn-outline-secondary(href=wikiBase + "/" + pageId + "?history") History
+      a.btn.btn-outline-secondary(href=wikiBase + "/" + pageId + "?rev=" + entry.rev) View this version
+    div.osmbc-wiki-diff.font-monospace.border.rounded#wikiDiff
+      | !{diff.html}

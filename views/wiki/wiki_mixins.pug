@@ -12,3 +12,9 @@ mixin wikiSidebar(sidebar)
   if sidebar
     aside.osmbc-wiki-sidebar.border-start.ps-lg-3.mt-4.mt-lg-0
       | !{sidebar}
+
+mixin wikiSearch(wikiBase, query)
+  form.d-flex.gap-2.mb-3.osmbc-wiki-search(method="get" action=wikiBase + "/_search" role="search")
+    input.form-control(type="search" name="q" value=query placeholder="Search the wiki" aria-label="Search the wiki")
+    button.btn.btn-outline-secondary(type="submit" aria-label="Search")
+      i.fa.fa-search

@@ -18,6 +18,12 @@ block content
         .col-lg-6.mb-3
           div.form-label Preview
           div.osmbc-wiki-content.osmbc-wiki-preview.border.rounded.p-2#wikiPreview
+      .mb-3.d-flex.flex-wrap.gap-2.align-items-center
+        label.btn.btn-outline-secondary.mb-0(for="wikiUpload")
+          i.fa.fa-image.me-1
+          | Insert image
+        input.visually-hidden#wikiUpload(type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" data-upload-url=uploadUrl data-max-bytes=maxUploadBytes)
+        span.text-muted.small#wikiUploadState
       if conflict
         .mb-3
           label.form-label(for="wikiCurrent") Current version (saved by someone else)

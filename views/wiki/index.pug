@@ -10,6 +10,7 @@ block content
         form.d-flex.flex-wrap.gap-2#wikiNewPage(method="get" action=wikiBase + "/_new")
           input.form-control.w-auto(type="text" name="id" placeholder="namespace/page_name" required aria-label="Name of the new page")
           button.btn.btn-primary(type="submit") New page
+    +wikiSearch(wikiBase, "")
     p.text-muted #{pageCount} pages
     each group in groups
       section.mb-3

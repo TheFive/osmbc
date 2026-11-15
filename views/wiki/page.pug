@@ -8,13 +8,29 @@ block content
         +wikiBreadcrumbs(breadcrumbs)
         if saved
           div.alert.alert-success.py-2#wikiSaved Saved.
+        if oldRevision
+          div.alert.alert-warning.py-2#wikiOldRevision
+            | Old version from #{oldRevision.date.substring(0, 10)} by #{oldRevision.author}: #{oldRevision.message}.
+            | 
+            a.alert-link(href=wikiBase + "/" + pageId) Current version
         if frontMatterError
           div.alert.alert-warning.py-2 The front matter of this page could not be read: #{frontMatterError}
         div.d-flex.flex-wrap.gap-2.justify-content-end.mb-2
           if frontMatter && frontMatter.access === "full"
-            span.badge.text-bg-secondary.align-self-center#wikiAccessBadge only full users
-          if canWrite
-            a.btn.btn-outline-secondary#wikiEdit(href=wikiBase + "/" + pageId + "?edit")
+            span.badge.text-bg-secondary.align-self-center.me-auto#wikiAccessBadge only full users
+          a.btn.btn-outline-secondary#wikiHistory(href=wikiBase + "/" + pageId + "?history")
+            i.fa.fa-history.me-1
+            | History
+          if canWrite && oldRevision
+            form.d-inline(method="post" action=wikiBase + "/" + pageId)
+              input(type="hidden" name="action" value="revert")
+              input(type="hidden" name="rev" value=oldRevision.rev)
+              input(type="hidden" name="baseBlob" value=currentBlob)
+              button.btn.btn-primary#wikiRestore(type="submit") Restore this version
+          else if canWrite
+            a.btn.btn-outline-secondary#wikiMove(href=wikiBase + "/" + pageId + "?move") Move
+            a.btn.btn-outline-secondary#wikiDelete(href=wikiBase + "/" + pageId + "?delete") Delete
+            a.btn.btn-primary#wikiEdit(href=wikiBase + "/" + pageId + "?edit")
               i.fa.fa-pencil.me-1
               | Edit
         if toc.length > 2
@@ -28,4 +44,5 @@ block content
         article.osmbc-wiki-content#wikiContent
           | !{html}
       .col-lg-3
+        +wikiSearch(wikiBase, "")
         +wikiSidebar(sidebar)
