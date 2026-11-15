@@ -8,10 +8,13 @@
 //
 // --authors     YAML map "e-mail or name: OSM user" for authors whose name
 //               in the history is not their OSM user name
-// --restricted  page that gets "access: full" (only full users see it);
-//               default osmbc/osm-user-name-mapping-list
+// --restricted  page id that gets "access: full" (only full users see it),
+//               can be given several times
 // --replace     delete the target first, only if it is a previous
 //               migration (git config osmbc.migration)
+//
+// Files with instance data (authors, the source repo) belong to the
+// operator, keep them outside the OSMBC directory.
 //
 // Needs pandoc. The target is a new git repo, set wiki.directory to it.
 
@@ -67,7 +70,7 @@ const result = await migrate({
   source: path.resolve(source),
   target: path.resolve(target),
   authors,
-  restricted: restricted.length ? restricted : ["osmbc/osm-user-name-mapping-list"],
+  restricted,
   log: (m) => console.log(m)
 });
 

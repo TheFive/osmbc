@@ -114,7 +114,7 @@ describe("wiki/dokuwikiMigration", function() {
       commit("move content to dokuwiki format", "osmuser <1@openstreetmap.org>", "2024-03-12T10:00:00+01:00");
       // DokuWiki era
       write("pages/meetings/notes_31.8.2016.txt", "====== Notes ======\n\n* first\n* second\n\n[[Picture Licenses]] [[osmbc:]] [[mail@example.org]]\n\n{{osmbc:shot.png?200}}\n");
-      write("pages/osmbc/osm-user-name-mapping-list.txt", "====== Mapping ======\n\nsecret\n");
+      write("pages/team/members.txt", "====== Mapping ======\n\nsecret\n");
       write("pages/osmbc/start.txt", "====== Start ======\n");
       write("media/osmbc/shot.png", "PNG");
       commit("Wiki page notes changed", "osmuser <1@openstreetmap.org>", "2026-07-07T15:00:00+02:00");
@@ -128,7 +128,7 @@ describe("wiki/dokuwikiMigration", function() {
         source: path.join(source, ".git"),
         target,
         authors: { "Real Name": "osmuser" },
-        restricted: ["osmbc/osm-user-name-mapping-list"]
+        restricted: ["team/members"]
       });
     }
 
@@ -158,7 +158,7 @@ describe("wiki/dokuwikiMigration", function() {
       should(notes).eql("# Notes\n\n- first\n- second\n\n" +
         "[Picture Licenses](/wiki/osmbc/picture-licenses) [osmbc](/wiki/osmbc/start) <mail@example.org>\n\n" +
         "![shot.png](/wiki/_media/osmbc/shot.png =200x)\n");
-      should(fs.readFileSync(path.join(target, "osmbc/osm-user-name-mapping-list.md"), "utf8")).startWith("---\naccess: full\n---\n# Mapping");
+      should(fs.readFileSync(path.join(target, "team/members.md"), "utf8")).startWith("---\naccess: full\n---\n# Mapping");
       should(fs.readFileSync(path.join(target, "media/osmbc/shot.png"), "utf8")).eql("PNG");
     });
 

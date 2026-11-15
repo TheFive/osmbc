@@ -1,12 +1,12 @@
 // Converts the git history of a DokuWiki "gitbacked" data repo into a wiki
 // repo for OSMBC (Markdown pages, same authors and dates).
 //
-// The source history has two eras:
-// - jingo (until 2024): Markdown files "Page-Name.md" in the repo root,
-//   links as [[Text|Page Name]]
-// - DokuWiki: pages/<ns>/<page>.txt, media/<ns>/<file> (for one commit in
-//   2024 the pages lay in the root as <ns>/<page>.txt)
-// The commit that turned the jingo pages into DokuWiki pages tells which
+// The source history may have two eras:
+// - optionally jingo before DokuWiki: Markdown files "Page-Name.md" in the
+//   repo root, links as [[Text|Page Name]]
+// - DokuWiki: pages/<ns>/<page>.txt, media/<ns>/<file> (pages directly in
+//   the root as <ns>/<page>.txt are read as well)
+// A commit that removes jingo pages and adds DokuWiki pages tells which
 // jingo page became which DokuWiki page, so a page keeps its whole history
 // in one file.
 //
@@ -113,8 +113,8 @@ export function createLinkContext(finalIds) {
 }
 
 // a link to a page that does not exist goes to the one page that fits:
-// 1. same name elsewhere (DokuWiki [[Onboarding]] in meetings/ meant
-//    osmbc/onboarding), 2. same path when "_", "-" and "." are ignored
+// 1. same name elsewhere (a relative [[Help]] in team/ that meant
+//    docs/help), 2. same path when "_", "-" and "." are ignored
 //    (online_meeting_2020 -> online-meeting-2020), 3. same name ignoring them
 function remapMissing(id, context) {
   if (!context || context.pageIds.has(id)) return id;
@@ -442,7 +442,7 @@ export function classifyPath(path) {
 }
 
 // jingo file name -> page id. Uses the commit(s) that removed jingo pages and
-// added DokuWiki pages at the same time (the 2024 conversion): renames found
+// added DokuWiki pages at the same time (the conversion): renames found
 // by git first, then the same name; the rest go to jingo/<name>.
 async function buildJingoIds(gitDir, commits, allJingoFiles) {
   const ids = new Map();
@@ -595,7 +595,7 @@ export async function migrate(options) {
       changes = await diffTree(source, commit.sha, commit.parents[0]);
     }
     const ops = new Map(); // output path -> Buffer | null (delete)
-    // deletions first: in the 2024 conversion a jingo page is removed and
+    // deletions first: in the jingo -> DokuWiki conversion a jingo page is removed and
     // its DokuWiki page added in the same commit, both map to one file
     for (const change of changes.filter(c => c.status === "D")) {
       sourceState.delete(change.path);
