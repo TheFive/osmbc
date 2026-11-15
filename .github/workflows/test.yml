@@ -40,6 +40,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # pandoc for the DokuWiki migration tests (test/wiki.migration.test.js
+      # skips them without it); same version as in docs/wiki.md
+      - name: Install pandoc
+        run: |
+          curl -sSLf -o "$RUNNER_TEMP/pandoc.deb" https://github.com/jgm/pandoc/releases/download/3.14/pandoc-3.14-1-amd64.deb
+          sudo dpkg -i "$RUNNER_TEMP/pandoc.deb"
+          pandoc --version | head -1
       # Chrome + chromedriver are preinstalled on ubuntu-latest (Selenium UI tests)
       # same tests as `npm test`, measured with c8 (V8 coverage, works with ESM)
       - run: npm run test:coverage

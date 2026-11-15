@@ -138,6 +138,18 @@ cp git-hooks/CommitMsg.sh .git/hooks/commit-msg
 static `docs/CHANGELOG-ARCHIVE.md`. Between releases the committed
 `CHANGELOG.md` is not updated; it is regenerated as part of each release.
 
+When the tests run:
+
+* while working: only the affected part, `npm test -- test/<file>` or
+  `npm run test:model` (a full run takes about 7 minutes locally);
+* on every push to `master`, `feature/**`, `fix/**`, `ci/**`: the full
+  suite with coverage in CI;
+* **before merging a branch into `master`:** the CI run of the branch's
+  last commit is green;
+* **before a release:** the CI run of the commit on `master` that the
+  release is cut from is green (`gh run list --branch master --limit 1`).
+  The release commit itself only changes version and changelog.
+
 To cut a release:
 
 ```
