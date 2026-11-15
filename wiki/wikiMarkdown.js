@@ -45,6 +45,18 @@ function resolveRelative(relative, currentId) {
   return segments.join("/");
 }
 
+// like DokuWiki: link targets are case-insensitive and spaces become "_",
+// so [x](Onboarding) and [x](My%20Page) reach onboarding / my_page
+function normaliseLinkTarget(pageId) {
+  let decoded = pageId;
+  try {
+    decoded = decodeURIComponent(pageId);
+  } catch (err) {
+    // keep it as it is, it is marked as missing anyway
+  }
+  return decoded.toLowerCase().replace(/\s+/g, "_");
+}
+
 // returns { href, pageId } or null if the link is not a wiki link
 export function resolveWikiLink(href, basePath, currentId) {
   if (typeof href !== "string" || href === "" || hasScheme(href) || href.startsWith("#")) return null;
@@ -60,6 +72,7 @@ export function resolveWikiLink(href, basePath, currentId) {
     pageId = resolveRelative(pathPart, currentId);
     if (pageId === null) return null;
   }
+  pageId = normaliseLinkTarget(pageId);
   if (pageId.startsWith("_")) return { href: basePath + "/" + pageId + suffix, pageId: null };
   return { href: basePath + "/" + pageId + suffix, pageId };
 }

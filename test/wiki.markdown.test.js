@@ -33,6 +33,8 @@ describe("wiki/wikiMarkdown", function() {
     should(resolveWikiLink("/wiki/osmbc/review", "/root/wiki", "start")).eql({ href: "/root/wiki/osmbc/review", pageId: "osmbc/review" });
     should(resolveWikiLink("review#rules", "/root/wiki", "osmbc/start")).eql({ href: "/root/wiki/osmbc/review#rules", pageId: "osmbc/review" });
     should(resolveWikiLink("../start", "/root/wiki", "osmbc/start")).eql({ href: "/root/wiki/start", pageId: "start" });
+    should(resolveWikiLink("Onboarding", "/root/wiki", "meetings/x")).eql({ href: "/root/wiki/meetings/onboarding", pageId: "meetings/onboarding" });
+    should(resolveWikiLink("/wiki/osmbc/My%20Page", "/root/wiki", "x")).eql({ href: "/root/wiki/osmbc/my_page", pageId: "osmbc/my_page" });
     should(resolveWikiLink("/wiki", "/root/wiki", "x")).eql({ href: "/root/wiki", pageId: null });
     should(resolveWikiLink("/wiki/_search?q=x", "/root/wiki", "x")).eql({ href: "/root/wiki/_search?q=x", pageId: null });
     for (const href of ["https://osm.org", "mailto:a@b.c", "//example.com/x", "#anchor", "/blog/WN850", "../../x", ""]) {
@@ -44,7 +46,7 @@ describe("wiki/wikiMarkdown", function() {
     const { html } = render("[ok](/wiki/osmbc/review) [missing](new_page) [bad](/wiki/Bad.Name) [ext](https://osm.org)");
     should(html).containEql("<a href=\"/root/wiki/osmbc/review\">ok</a>");
     should(html).containEql("<a href=\"/root/wiki/osmbc/new_page\" class=\"osmbc-wiki-missing\">missing</a>");
-    should(html).containEql("<a href=\"/root/wiki/Bad.Name\" class=\"osmbc-wiki-missing\">bad</a>");
+    should(html).containEql("<a href=\"/root/wiki/bad.name\" class=\"osmbc-wiki-missing\">bad</a>");
     should(html).containEql("<a href=\"https://osm.org\">ext</a>");
   });
 
