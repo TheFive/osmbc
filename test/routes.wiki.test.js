@@ -85,6 +85,11 @@ describe("routes/wiki", function() {
       should(res.data).containEql("osmbc/user_mapping");
       should(res.data).containEql("New page");
     });
+    it("should link the wiki from the default help menu (~/wiki)", async function () {
+      const res = await full.get(wikiLink);
+      should(res.data).match(/<a class="dropdown-item" href="([^"]*)">Wiki<\/a>/);
+      should(res.data.match(/<a class="dropdown-item" href="([^"]*)">Wiki<\/a>/)[1]).eql(config.htmlRoot() + "/wiki");
+    });
     it("should hide restricted pages and the new-page form from guests", async function () {
       const res = await guest.get(wikiLink);
       should(res.status).eql(HttpStatus.OK);
