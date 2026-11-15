@@ -12,7 +12,8 @@ Following development tools are required
 * Node.js 22 or newer with npm (tested with 22.22.0)
 * main developer is using VS Code with some plugins to develop
 
-More info in the [Installation Guide](install.md).
+More info in the [Installation Guide](install.md). How the code is organised:
+[Architecture](architecture.md).
 
 ## Tests
 
