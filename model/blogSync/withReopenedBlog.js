@@ -2,13 +2,12 @@
 // collection, and each markdown<LANG>) are guarded by
 // Article.prototype.isChangeAllowed() (model/article.js) once a blog - or
 // one of its languages - is closed/exported, by design, so a finished
-// issue can't be edited by accident. The Blog-Sync-Merger's safety net (a)
-// requires exactly the opposite: it only ever targets closed blogs.
+// issue can't be edited by accident. Bulk corrections through the blogSync
+// API (docs/API.md) need exactly the opposite: they only ever target
+// closed blogs.
 //
-// This mirrors the existing, already-proven `withReopenedBlog` precedent
-// from wp-reconcile/backport/fixManualReviewConflicts.js (sibling worktree
-// `osmbc`, branch `feature/wp-reconcile`): temporarily reopen the blog,
-// run the write, then restore the blog exactly as it was - including
+// So: temporarily reopen the blog, run the write, then restore the blog
+// exactly as it was - including
 // `exported<LANG>`, so the outstanding-export tracking is not disturbed
 // beyond the edit window.
 //
@@ -25,7 +24,7 @@
 // very batch's own markdown<LANG> patches for that language. Restoring to
 // the new value only *after* `action` has already run avoids that
 // entirely, without ever needing the open window widened.
-import language from "../../model/language.js";
+import language from "../language.js";
 
 export function withReopenedBlog(blog, user, action, callback, restoreOverrides = {}) {
   const langlist = language.getLanguages();

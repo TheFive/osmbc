@@ -1,7 +1,7 @@
 // Wraps a messageCenter receiver so that updateArticle/updateBlog events
 // authored by a migration-style user are suppressed before they reach it -
-// safety mechanism (c2) agreed for the Blog-Sync-Merger (see
-// CLAUDE.local.md): a bulk merge run touching many historical, already-
+// safety mechanism for the Blog-Sync-Merger and data admin bulk
+// corrections (docs/API.md, "Bulk corrections through the API"): a bulk run touching many historical, already-
 // closed WN issues must not spam editor mail/Slack notifications the way a
 // live human edit would.
 //
@@ -14,7 +14,7 @@
 // applyBlogSync attributes every write to the calling key's own `apiKeys`
 // value directly (see getBlogSyncUser - KISS, no second config map) - e.g.
 // a data admin's own automated run (a Python template hitting the same
-// endpoint, see CLAUDE.local.md 2026-09-05) shows up under whatever name
+// endpoint, see tools/dataAdminTemplate.py) shows up under whatever name
 // their key is configured with. The filter has to recognize ALL of those,
 // not just the historical hardcoded one - built directly from `apiKeys`
 // itself (a finite, already-explicit list one admin controls), not a

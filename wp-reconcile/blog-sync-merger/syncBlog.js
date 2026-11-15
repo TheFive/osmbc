@@ -45,7 +45,7 @@ import configModule from "../../model/config.js";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 
-import blogSyncMerger from "./blogSyncMerger.js";
+import blogSyncMerger from "../../model/blogSync/blogSyncMerger.js";
 import syncState from "./syncState.js";
 
 const localNetworks = new net.BlockList();

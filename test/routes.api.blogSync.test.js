@@ -119,7 +119,7 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
       should(articles.length).eql(0);
     });
 
-    // Real batch run incident (WN302, WN362, see CLAUDE.local.md): a blog
+    // Real batch run incident (WN302, WN362): a blog
     // with many articles across many languages produces an apply body well
     // over express.json()'s 100kb default, rejected with a 413 before ever
     // reaching this route - app.js now raises that limit for the whole app.
@@ -194,7 +194,7 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
     // config.test.yaml: apiKeys["testapikey.dataadmin"] = "dataAdmin-TestUser"
     // - a data admin's own key gets their own configured apiKeys value as
     // its attribution, not the shared wp-backport fallback (see
-    // routes/api.js getBlogSyncUser, CLAUDE.local.md 2026-09-05).
+    // routes/api.js getBlogSyncUser).
     it("should attribute a write to the calling key's own configured apiKeys value", async function() {
       const response = await axios.post(
         baseLink + "/api/blogSync/testapikey.dataadmin/WN100/apply",
@@ -300,7 +300,7 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
       should(article.markdownDE).eql("* changed by a real editor meanwhile");
     });
 
-    // Real WN275 dry/commit run incident (see CLAUDE.local.md,
+    // Real WN275 dry/commit run incident (see
     // blogSyncMerger.js BASE_TRACKED_FIELDS): Article.prototype.setAndSave
     // (model/article.js) refuses to set categoryEN to "--unpublished--"
     // unless the write itself carries a non-empty unpublishReason.

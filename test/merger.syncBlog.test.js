@@ -4,7 +4,7 @@ import fs from "fs";
 import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
-import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
+import blogSyncMerger from "../model/blogSync/blogSyncMerger.js";
 import { buildApplyBody, runSync, resolveMode, isLocalRemote } from "../wp-reconcile/blog-sync-merger/syncBlog.js";
 import syncState, { STATE_FILE } from "../wp-reconcile/blog-sync-merger/syncState.js";
 

@@ -27,7 +27,7 @@ server: the HTML pages and the JSON API come from the same app.
 | `public/` | static files; `public/javascripts/` holds the browser code (jQuery, no bundler) |
 | `help/` | user help pages (Markdown), shown inside the app |
 | `data/` | default contents for the editorial configs stored in the DB (see below) |
-| `wp-reconcile/` | command-line tools to sync a blog between two OSMBC instances |
+| `wp-reconcile/` | migration tools from WordPress (temporary, removed after the final reconciliation) |
 | `export/`, `import/`, `genstaticpage/` | small command-line and generation tools |
 | `test/` | mocha tests, Selenium UI tests (`uc.*`) and their page objects |
 | `tools/` | maintenance scripts for developers (test wrapper, coverage check, migrations) |
@@ -259,6 +259,7 @@ handlers …): [ui-guidelines.md](ui-guidelines.md).
 | add an editorial setting | a default in `data/`, an entry in `checkAndRepair` in `model/config.js` |
 | add a technical setting | `config.js` (`getValue`), document it in [config.md](config.md) |
 | add an API endpoint | `routes/api.js`, document it in [API.md](API.md) |
+| correct data in many closed issues at once | a script against the blogSync API, starting from `tools/dataAdminTemplate.py` ([API.md](API.md#bulk-corrections-through-the-api-data-admin)) |
 | test it | [development.md](development.md) "Tests"; UI tests only through `test/PageObjectModel/` |
 
 ## Further reading

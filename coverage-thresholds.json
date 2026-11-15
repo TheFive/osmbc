@@ -15,7 +15,7 @@
     "functions": 0
   },
   "genstaticpage": {
-    "lines": 58,
+    "lines": 62,
     "branches": 65,
     "functions": 99
   },
@@ -51,12 +51,12 @@
   },
   "wiki": {
     "lines": 95,
-    "branches": 83,
+    "branches": 84,
     "functions": 95
   },
   "wp-reconcile": {
-    "lines": 89,
-    "branches": 83,
-    "functions": 94
+    "lines": 82,
+    "branches": 80,
+    "functions": 92
   }
 }

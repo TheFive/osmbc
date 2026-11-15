@@ -79,14 +79,14 @@ curl -H "Authorization: Bearer $OSMBC_BLOGSYNC_APIKEY" "https://<host>/api/blogS
 
 With the key in the request path, it shows up in the target server's HTTP
 access logs. Keep it out of the *caller's* shell history and
-process list too: both `wp-reconcile/blog-sync-merger/syncBlog.js` and
-`wp-reconcile/blog-sync-merger/dataAdminTemplate.py` accept the key from
+process list too: both `tools/dataAdminTemplate.py` and the migration
+runner `wp-reconcile/blog-sync-merger/syncBlog.js` accept the key from
 the `OSMBC_BLOGSYNC_APIKEY` environment variable instead of `--api-key`:
 
 ```sh
 read -rs OSMBC_BLOGSYNC_APIKEY && export OSMBC_BLOGSYNC_APIKEY
-NODE_ENV=prodcopie node wp-reconcile/blog-sync-merger/syncBlog.js WN300 \
-  --remote-url https://<host><htmlroot> --max-blog-number 271
+python3 tools/dataAdminTemplate.py --remote-url https://<host><htmlroot> \
+  --min-blog-number 300 --max-blog-number 320
 ```
 
 An explicit `--api-key` still wins if both are set.
@@ -457,6 +457,60 @@ curl -o closedSince.zip \
   "https://<host>/api/blogPreviewDownload/<apiKey>/closedSince?exportProfile=HugoDownload&since=2026-01-01"
 ```
 
+## Bulk corrections through the API (data admin)
+
+The three `blogSync` endpoints below let a script change article data of
+**closed** issues from outside, e.g. "go through all issues and fix a
+broken link syntax in every language". They were built for the
+WordPress migration and are kept as a general tool.
+
+How a correction run works:
+
+1. `GET /api/blogSync/<blog>` — one call per issue returns every article
+   with the raw markdown of every language.
+2. The script decides which fields need a fix.
+3. `POST /api/blogSync/<blog>/apply` with one patch per article: the new
+   values (`changes`) and the values the script saw (`old`). With
+   `dryRun: true` nothing is written, the answer only counts.
+
+What protects the data:
+
+* Only issues with `status: "closed"` are accepted. Issues editors are
+  still working on are refused (`409`).
+* Every patch carries `old`. If an editor changed the field in the
+  meantime, that patch is reported under `conflicts` and not written; the
+  rest of the batch goes on.
+* Every change goes through `setAndSave`, so it is in the article's
+  history under the **name of the API key** (see setup below). Mail and
+  Mattermost/Slack notifications are suppressed for these names
+  (`notification/migrationFilter.js`).
+* A change can be reverted: `GET .../changelog` returns the history of one
+  field, and a second `apply` writes the old value back.
+
+Setup: the instance admin adds a key with a name-shaped value to
+`apiKeys` in the config; that value becomes the author in the history:
+
+```yaml
+apiKeys:
+  <a-fresh-random-key>: dataAdmin-Alice
+```
+
+Starting point for your own script: [`tools/dataAdminTemplate.py`](../tools/dataAdminTemplate.py)
+(Python, needs `requests`). It walks a range of issues, fixes one example
+markdown pattern (`](( url ))` → `](url)`), runs as a dry run unless
+`--commit` is given, and contains `rollback_property()` for the revert
+flow. Copy it and replace `compute_patches()` with your own check.
+
+The server code is in `routes/api.js` (`getBlogSync`, `applyBlogSync`,
+`getArticleChangelog`) and `model/blogSync/` (tracked fields, diff and
+merge planning, reopening a closed blog for the write).
+
+> Migration-only parts, to be removed after the final WordPress data
+> reconciliation: `mode: "replace"` (with the `blogSyncReplaceMaxBlogNumber`
+> config key) and the local-DB sync runner
+> `wp-reconcile/blog-sync-merger/syncBlog.js` with its state file and
+> `rollback.js`. Data admin scripts don't need them.
+
 ## `GET /api/blogSync/:apiKey/:blog_id`
 
 **Deprecated path variant** — use `GET /api/blogSync/:blog_id` with `Authorization: Bearer <key>`
@@ -464,11 +518,11 @@ instead (see "Key in the request header"); this `:apiKey` form will be
 removed. Both behave the same otherwise; the `apiKey` route parameter
 below exists only in the old form.
 
-Blog-Sync-Merger read endpoint (see `CLAUDE.local.md` in the `osmbc-develop`
-worktree for the full design). Unlike every `blogPreviewDownload` route
-above, this does **not** go through a renderer — it returns the raw,
-unrendered field values for a blog and all of its articles, which a local
-merge tool needs to compute a diff against another OSMBC instance.
+Read endpoint for bulk corrections (see "Bulk corrections through the
+API" above). Unlike every `blogPreviewDownload` route above, this does
+**not** go through a renderer — it returns the raw, unrendered field
+values for a blog and all of its articles, which a correction script (or
+the migration's merge tool) needs to compute its changes.
 
 ### Route parameter
 
@@ -489,7 +543,7 @@ merge tool needs to compute a diff against another OSMBC instance.
   }
   ```
   An article field OSMBC has no value for is serialized as `""`, never
-  omitted — `wp-reconcile/blog-sync-merger/blogSyncMerger.js`'s diff logic and `setAndSave`'s own
+  omitted — `model/blogSync/blogSyncMerger.js`'s diff logic and `setAndSave`'s own
   optimistic-concurrency check both rely on this sentinel rather than a
   JSON-dropped key.
 - `401` — invalid `apiKey`.
@@ -503,7 +557,7 @@ removed. Both behave the same otherwise; the `apiKey` route parameter
 below exists only in the old form.
 
 Blog-Sync-Merger write endpoint. Applies a merge plan (as computed by
-`wp-reconcile/blog-sync-merger/blogSyncMerger.js` against a local copy and a prior `GET
+`model/blogSync/blogSyncMerger.js` against a local copy and a prior `GET
 /blogSync` download) to this blog. Every write is attributed to a
 migration-style user: the calling API key's own `apiKeys` value
 (`routes/api.js` `getBlogSyncUser`) - KISS, that value is the identity,
@@ -511,7 +565,7 @@ nothing else to configure. `notification/migrationFilter.js` recognizes
 every configured `apiKeys` value and keeps it out of editor mail/Slack
 notifications while it remains fully visible in the Postgres changes-log
 audit trail. This is how a different data admin's own automated-change
-script (see `wp-reconcile/blog-sync-merger/dataAdminTemplate.py` for a
+script (see `tools/dataAdminTemplate.py` for a
 starting point) gets its own name in that audit trail instead of
 everything showing up as `wp-backport` - just give that admin their own
 entry in `apiKeys` (needed for authentication anyway) with a name-shaped
@@ -531,7 +585,7 @@ same value - not because of any special-casing here.
 |---|---|---|
 | `maxBlogNumber` | yes | Safety net: re-checked server-side against this blog's WN number — never trusted from a client-computed plan alone. |
 | `dryRun` | no | `true` → only re-validates eligibility and reports counts (`wouldCreate`/`wouldPatch`); no write of any kind happens. |
-| `creates` | no | `Array<{ localId, fields }>`. `fields.predecessorId`, if present, may reference another entry's `localId` in the same batch — resolved once real ids are known (two-phase create, see `wp-reconcile/blog-sync-merger/blogSyncMerger.js` `remapPredecessorIds`). |
+| `creates` | no | `Array<{ localId, fields }>`. `fields.predecessorId`, if present, may reference another entry's `localId` in the same batch — resolved once real ids are known (two-phase create, see `model/blogSync/blogSyncMerger.js` `remapPredecessorIds`). |
 | `patches` | no | `Array<{ id, changes, old }>`. `old` is passed straight through to `setAndSave`'s optimistic-concurrency check. |
 | `mode` | no | `"replace"` → old-era wholesale replace instead of a merge (see `blogSyncMerger.js` `planReplace`): every current live article of this blog is moved to `Trash` first, then `creates` is applied as the full replacement set, and `categories` is replaced unconditionally (no subsequence check). Only accepted for a blog at or below the `blogSyncReplaceMaxBlogNumber` config value (default `271`, i.e. the old era `wp-oldimport` rebuilt from scratch with fresh article ids so there is nothing to merge against) — rejected with `409` otherwise, never trusted from the client's own choice. `patches` is expected empty in this mode. |
 
@@ -547,7 +601,7 @@ check.
 Because `categoryEN`/`predecessorId`/`title` are themselves locked by
 `Article.prototype.isChangeAllowed` while the blog is closed, applying a
 non-dry-run batch temporarily reopens the blog and restores it (including
-`exported{LANG}`) once the batch finishes — see `wp-reconcile/blog-sync-merger/withReopenedBlog.js`.
+`exported{LANG}`) once the batch finishes — see `model/blogSync/withReopenedBlog.js`.
 
 ### Responses
 
@@ -580,7 +634,7 @@ point — by timestamp, by user, or by whatever the problem at hand calls
 for — rather than relying on a fixed server-side heuristic. One call also
 covers what a subsequent `apply` patch needs for its `old` claim, no
 separate `GET /blogSync` round-trip required. See
-`wp-reconcile/blog-sync-merger/dataAdminTemplate.py` `rollback_property()`
+`tools/dataAdminTemplate.py` `rollback_property()`
 for a full runnable example of the fetch-changelog → pick-revert-point →
 apply flow (or any other data admin's own automation against the `apply`
 endpoint above).

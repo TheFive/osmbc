@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Blog-Sync-Merger data-admin template.
+"""OSMBC data admin template: bulk corrections through the blogSync API.
+
+Overview and safety rules: docs/API.md, "Bulk corrections through the API".
 
 Goal: walk a range of WN issues, look at every article's markdown across
 every language, and patch the ones that need an automated fix - the shape
@@ -36,10 +38,10 @@ trail:
 
 Usage:
   pip install requests   # the only non-stdlib dependency
-  python3 dataAdminTemplate.py \\
+  python3 tools/dataAdminTemplate.py \\
       --remote-url https://osmbc.example.com --api-key <your-key> \\
       --min-blog-number 300 --max-blog-number 320   # dry-run, prints the plan per blog
-  python3 dataAdminTemplate.py ... --commit          # actually writes
+  python3 tools/dataAdminTemplate.py ... --commit          # actually writes
 
 The API key may also come from the OSMBC_BLOGSYNC_APIKEY environment
 variable instead of --api-key, so it stays out of the shell history and
@@ -121,7 +123,7 @@ def apply_remote(remote_url, api_key, blog_name, body, verify):
     - a conflict on one item (409-shaped, reported in the response's
       `conflicts`/`errors`) never aborts the rest of that blog's batch.
     - the blog is temporarily reopened and restored around the whole write
-      (see wp-reconcile/blog-sync-merger/withReopenedBlog.js) - normal,
+      (see model/blogSync/withReopenedBlog.js) - normal,
       expected, nothing your script needs to handle.
     """
     url, shown_url = blog_sync_urls(remote_url, api_key, f"/{quote(blog_name, safe='')}/apply")
@@ -235,7 +237,7 @@ def build_apply_body(max_blog_number, dry_run, patches, creates=None):
     `creates` (a list of {"localId": ..., "fields": {...}}) yourself if your
     use case also needs to create new ones - remember `fields.predecessorId`
     may reference another entry's own `localId` in the SAME batch (resolved
-    server-side once real ids are known, see blogSyncMerger.js
+    server-side once real ids are known, see model/blogSync/blogSyncMerger.js
     remapPredecessorIds) rather than a remote id you'd have to look up.
     """
     return {

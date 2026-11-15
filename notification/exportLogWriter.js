@@ -1,5 +1,5 @@
 // Plain rotating-text-file audit trail for bulk-export marker writes
-// (see CLAUDE.local.md, section "outstanding export").
+// (see docs/API.md, `blogPreviewDownload/outstanding`).
 //
 // Deliberately NOT a messageCenter receiver and NOT going through
 // setAndSave: marking a blog as exported is an operational record for
