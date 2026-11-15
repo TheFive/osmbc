@@ -1,5 +1,13 @@
 import globals from "globals";
 import mochaPlugin from "eslint-plugin-mocha";
+import jsdoc from "eslint-plugin-jsdoc";
+
+// application code, without tests and developer tools
+const appFiles = [
+  "app.js", "config.js", "bin/**/*.js", "export/**/*.js", "genstaticpage/**/*.js", "import/**/*.js",
+  "model/**/*.js", "notification/**/*.js", "render/**/*.js", "routes/**/*.js", "util/**/*.js",
+  "wiki/**/*.js", "wp-reconcile/**/*.js", "public/javascripts/**/*.js"
+];
 
 export default [
   {
@@ -39,6 +47,30 @@ export default [
       "no-useless-backreference": 2,
       "no-loss-of-precision": 2,
       "no-unreachable-loop": 2
+    }
+  },
+  {
+    // Readability: keep functions small enough to understand without help.
+    // Existing violations are listed in eslint-suppressions.json, so only
+    // new ones fail. See docs/development.md "Lint rules for readability".
+    files: appFiles,
+    plugins: { jsdoc },
+    rules: {
+      complexity: ["error", 15],
+      "max-depth": ["error", 4],
+      "max-lines-per-function": ["error", { max: 80, skipBlankLines: true, skipComments: true }],
+      "max-params": ["error", 5],
+      // exported functions, classes and methods get a JSDoc comment
+      "jsdoc/require-jsdoc": ["error", {
+        publicOnly: { esm: true, cjs: false },
+        require: { FunctionDeclaration: true, ClassDeclaration: true, MethodDefinition: true },
+        checkConstructors: false,
+        checkGetters: false,
+        checkSetters: false
+      }],
+      // a JSDoc comment that exists must match the code
+      "jsdoc/check-param-names": "error",
+      "jsdoc/check-tag-names": "error"
     }
   },
   {

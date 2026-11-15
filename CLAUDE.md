@@ -63,6 +63,17 @@ that matter most, in short:
   `slugalias.json` old-URL redirect mechanism), and `docs/API.md` for the
   caller-facing API that consumes it.
 
+## Readability rules (ESLint)
+
+- New or changed application code keeps the limits in `eslint.config.js`
+  (complexity 15, depth 4, 80 lines per function, 5 params) and gets a
+  JSDoc comment on every exported function/class/method (what it does,
+  what the caller must know — not a restatement of the name).
+- Never grow `eslint-suppressions.json` (no `--suppress-all`, no hand
+  edits) to get past a new violation; fix the code. After fixing old
+  violations run `npm run lint:prune` and commit the file. Details:
+  `docs/development.md` "Lint rules for readability".
+
 ## Web UI
 
 - Before changing views, client scripts or `style.css`, read

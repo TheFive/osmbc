@@ -241,6 +241,9 @@ handlers …): [ui-guidelines.md](ui-guidelines.md).
   Operational messages go to `config.logger` (winston).
 * **ES modules** (`"type": "module"`), relative imports with `.js`
   extension.
+* **Readability limits** checked by ESLint (function size, complexity,
+  JSDoc on exports): [development.md](development.md) "Lint rules for
+  readability".
 * **Commit messages** in Conventional Commits format:
   [CONTRIBUTING.md](../CONTRIBUTING.md).
 

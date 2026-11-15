@@ -152,7 +152,7 @@ class Renderer {
    * @param {Array<object>} pictureArticles - The articles belonging to the "Picture" category.
    * @returns {string} The front text markup.
    */
-  _generateFrontText(lang) {
+  _generateFrontText(lang, pictureArticles) {
     throw new Error("_generateFrontText() must be implemented by subclass");
   }
 
