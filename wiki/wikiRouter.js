@@ -49,6 +49,14 @@ export function normalisePageId(value) {
     .replace(/\s+/g, "_");
 }
 
+// forms send an existing folder ("" = top level) and a name; the name may
+// contain "/" to create a new folder below it
+export function pageIdFromFolderAndName(folder, name) {
+  if (!String(name || "").trim()) return "";
+  const prefix = typeof folder === "string" && folder.trim() ? folder.trim() + "/" : "";
+  return normalisePageId(prefix + String(name || "").trim().replace(/^\/+/, ""));
+}
+
 // uploaded "My Screenshot (1).PNG" -> "my_screenshot_1.png"
 export function normaliseMediaName(value) {
   const name = String(value || "").split(/[\\/]/).pop().toLowerCase();
@@ -201,6 +209,7 @@ export function createWikiRouter(options) {
     renderView(req, res, "index", {
       groups: groupByNamespace(pages),
       pageCount: pages.length,
+      folders: await existingFolders(),
       breadcrumbs: breadcrumbs(basePath, null)
     });
   }));
@@ -225,9 +234,12 @@ export function createWikiRouter(options) {
     });
   }));
 
-  // "new page" form on the index: /wiki/_new?id=ns/page
+  // "new page" form on the index: /wiki/_new?folder=ns&name=page
+  // (or ?id=ns/page)
   router.get("/_new", canWrite, (req, res, next) => {
-    const id = normalisePageId(req.query.id);
+    const id = typeof req.query.name === "string"
+      ? pageIdFromFolderAndName(req.query.folder, req.query.name)
+      : normalisePageId(req.query.id);
     if (!isValidPageId(id)) return next(new WikiError("Invalid wiki page name: " + id + " (allowed: a-z, 0-9, _ and -, namespaces separated by /)", 400));
     res.redirect(pageUrl(id) + "?edit");
   });
@@ -449,12 +461,9 @@ export function createWikiRouter(options) {
 
   async function movePage(req, res, id, current) {
     const body = req.body || {};
-    // the form sends a folder (existing one, "" = top level) and a name; the
-    // name may contain "/" to create a new subfolder
-    const target = typeof body.folder === "string"
-      ? (body.folder ? body.folder + "/" : "") + String(body.name || "")
-      : body.to;
-    const toId = normalisePageId(target);
+    const toId = typeof body.folder === "string"
+      ? pageIdFromFolderAndName(body.folder, body.name)
+      : normalisePageId(body.to);
     if (!isValidPageId(toId)) throw new WikiError("Invalid wiki page name: " + toId, 400);
     if (toId === id) return res.redirect(pageUrl(id));
     if (typeof body.baseBlob === "string" && body.baseBlob !== current.blob) {

@@ -128,12 +128,24 @@ for (const device of [undefined, "phone"]) {
       should(await wiki.getContentText()).containEql("Be nice.");
     });
 
-    it("should create a new page from the index", async function() {
+    it("should create a new page in an existing folder from the index", async function() {
       await app.openWikiPage();
       const wiki = app.getWikiPage();
-      await wiki.clickNewPage("howto/First Steps");
+      should(await wiki.getNewPageFolders()).containEql("osmbc");
+      await wiki.clickNewPage("osmbc", "First Steps");
       await wiki.setMarkdown("# First steps\n\nCollect an article.");
       await wiki.waitForPreview("Collect an article.");
+      await wiki.clickSave();
+      should(await wiki.isSavedShown()).be.true();
+      should(await store.exists("osmbc/first_steps")).be.true();
+    });
+
+    it("should create a new page in a new folder from the index", async function() {
+      await app.openWikiPage();
+      const wiki = app.getWikiPage();
+      await wiki.clickNewPage("", "howto/First Steps");
+      await wiki.setMarkdown("# First steps\n\nNew folder.");
+      await wiki.waitForPreview("New folder.");
       await wiki.clickSave();
       should(await wiki.isSavedShown()).be.true();
       should(await store.exists("howto/first_steps")).be.true();

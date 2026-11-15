@@ -45,12 +45,21 @@ export default class WikiPage extends StandardPage {
     return this._driver.executeScript("return [...document.querySelectorAll('#wikiSearchResults > li > span.text-muted, #wikiSearchNames > li > span.text-muted')].map(e => e.textContent.trim());");
   }
 
-  async clickNewPage(id) {
+  // folder: one of the existing folders ("" = top level); name may hold a
+  // new folder in front: "new_folder/page"
+  async clickNewPage(folder, name) {
     await this.assertPage();
-    const field = await this._find("#wikiNewPage input[name=id]");
+    const select = await this._find("#wikiNewFolder");
+    await this._driver.executeScript("arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('change'));", select, folder);
+    const field = await this._find("#wikiNewName");
     await this.tap(field);
-    await field.sendKeys(id);
-    await this._tapAndWaitForNavigation(await this._find("#wikiNewPage button[type=submit]"));
+    await field.sendKeys(name);
+    await this._tapAndWaitForNavigation(await this._find("#wikiNewSubmit"));
+  }
+
+  async getNewPageFolders() {
+    await this.assertPage();
+    return this._driver.executeScript("return [...document.querySelectorAll('#wikiNewFolder option')].map(o => o.value);");
   }
 
   // ---- page view ------------------------------------------------------------

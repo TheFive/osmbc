@@ -204,6 +204,14 @@ describe("routes/wiki", function() {
       should(res.headers.location).eql("/wiki/howto/my_page?edit");
       const bad = await full.get(wikiLink + "/_new?id=" + encodeURIComponent("a/../b"));
       should(bad.status).eql(HttpStatus.BAD_REQUEST);
+      const inFolder = await full.get(wikiLink + "/_new?folder=osmbc&name=" + encodeURIComponent("New Page"));
+      should(inFolder.headers.location).eql("/wiki/osmbc/new_page?edit");
+      const newFolder = await full.get(wikiLink + "/_new?folder=osmbc&name=" + encodeURIComponent("Sub/New Page"));
+      should(newFolder.headers.location).eql("/wiki/osmbc/sub/new_page?edit");
+      const topLevel = await full.get(wikiLink + "/_new?folder=&name=" + encodeURIComponent("Ideas/Page"));
+      should(topLevel.headers.location).eql("/wiki/ideas/page?edit");
+      const empty = await full.get(wikiLink + "/_new?folder=osmbc&name=");
+      should(empty.status).eql(HttpStatus.BAD_REQUEST);
     });
   });
 
