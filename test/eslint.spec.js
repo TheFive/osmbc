@@ -39,6 +39,9 @@ describe("ESLint", function() {
   it("should eslint util", async function() {
     await lintModule("util");
   });
+  it("should eslint wiki", async function() {
+    await lintModule("wiki");
+  });
   it("should eslint public/javascripts", async function() {
     await lintModule("public/javascripts");
   });

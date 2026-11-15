@@ -75,4 +75,43 @@ describe("config directories", function() {
     should(r.status).equal(0, r.stderr);
     should(r.value).eql([path.join(dataDir, "cache"), path.join(appDir, "relative", "profile")]);
   });
+
+  describe("wiki", function() {
+    it("should be off without wiki.directory", function() {
+      writeTestConfig(tmpDir, { wiki: undefined });
+      const r = runConfig({ OSMBC_CONFIG_DIR: tmpDir, OSMBC_TEST_TMPDIR: undefined }, "config.getWikiConfig()");
+      should(r.status).equal(0, r.stderr);
+      should(r.value).be.null();
+    });
+
+    it("should use the defaults for access and upload size", function() {
+      const wikiDir = path.join(tmpDir, "wikidata");
+      writeTestConfig(tmpDir, { wiki: { directory: wikiDir } });
+      const r = runConfig({ OSMBC_CONFIG_DIR: tmpDir, OSMBC_TEST_TMPDIR: undefined }, "config.getWikiConfig()");
+      should(r.status).equal(0, r.stderr);
+      should(r.value).eql({ directory: wikiDir, readAccess: ["full"], writeAccess: ["full"], autoPush: false, maxUploadBytes: 5242880, mattermost: null });
+    });
+
+    it("should move the wiki into the test run's temp directory", function() {
+      writeTestConfig(tmpDir, { wiki: { directory: "/somewhere/else", readAccess: ["full", "guest"] } });
+      const r = runConfig({ OSMBC_CONFIG_DIR: tmpDir, OSMBC_TEST_TMPDIR: tmpDir }, "config.getWikiConfig()");
+      should(r.status).equal(0, r.stderr);
+      should(r.value.directory).eql(path.join(tmpDir, "wiki"));
+      should(r.value.readAccess).eql(["full", "guest"]);
+    });
+
+    for (const [name, wiki] of [
+      ["a relative directory", { directory: "wikidata" }],
+      ["a directory inside the app", { directory: path.join(appDir, "wikidata") }],
+      ["the app directory itself", { directory: appDir }],
+      ["an unknown access level", { directory: "/srv/wiki", readAccess: ["denied"] }],
+      ["access that is not a list", { directory: "/srv/wiki", writeAccess: "full" }]
+    ]) {
+      it("should stop for " + name, function() {
+        writeTestConfig(tmpDir, { wiki });
+        const r = runConfig({ OSMBC_CONFIG_DIR: tmpDir, OSMBC_TEST_TMPDIR: undefined }, "config.getWikiConfig()");
+        should(r.status).equal(1, r.stderr);
+      });
+    }
+  });
 });

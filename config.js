@@ -153,6 +153,9 @@ function initialise(callback) {
     if (process.env.OSMBC_TEST_TMPDIR) {
       configuration.maillog_directory = process.env.OSMBC_TEST_TMPDIR;
       configuration.exportlog_directory = process.env.OSMBC_TEST_TMPDIR;
+      if (configuration.wiki) {
+        configuration.wiki = Object.assign({}, configuration.wiki, { directory: path.join(process.env.OSMBC_TEST_TMPDIR, "wiki") });
+      }
     }
   }
 
@@ -283,6 +286,46 @@ function getProfileDir() {
 
 
 
+// The editorial wiki (wiki/). Off unless wiki.directory is set. The
+// directory is a git repository of its own with instance content, so it
+// has to be an absolute path outside the app directory.
+const wikiAccessLevels = ["full", "guest"];
+
+function wikiConfigError(message) {
+  logger.error("Wrong value in config.*.(yaml|yml|json). Name: 'wiki': " + message);
+  process.exit(1);
+}
+
+function getWikiConfig() {
+  const wiki = getValue("wiki");
+  if (!wiki || !wiki.directory) return null;
+  if (typeof wiki.directory !== "string" || !path.isAbsolute(wiki.directory)) {
+    wikiConfigError("directory has to be an absolute path");
+  }
+  const directory = path.resolve(wiki.directory);
+  const relative = path.relative(__dirname, directory);
+  if (relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative))) {
+    wikiConfigError("directory has to be outside the app directory");
+  }
+  const access = (name, defaultValue) => {
+    const value = wiki[name] ?? defaultValue;
+    if (!Array.isArray(value) || !value.every(v => wikiAccessLevels.includes(v))) {
+      wikiConfigError(name + " has to be a list of " + wikiAccessLevels.join(", "));
+    }
+    return value;
+  };
+  return {
+    directory,
+    readAccess: access("readAccess", ["full"]),
+    writeAccess: access("writeAccess", ["full"]),
+    autoPush: wiki.autoPush === true,
+    maxUploadBytes: Number(wiki.maxUploadBytes) || 5 * 1024 * 1024,
+    mattermost: wiki.mattermost || null
+  };
+}
+
+
+
 // deprecate Values
 getValue("diableOldEditor", { deprecated: true });
 
@@ -307,6 +350,7 @@ const config = {
   getConfigDir: () => { return configurationDir; },
   getCacheDir: getCacheDir,
   getProfileDir: getProfileDir,
+  getWikiConfig: getWikiConfig,
   getServerHostname: getServerHostname
 };
 
