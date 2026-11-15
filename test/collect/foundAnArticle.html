@@ -534,9 +534,9 @@
         title = document.getElementById("title");
         searchField = document.getElementById("searchField")
         if (title) title.onchange = onchangeTitle;
-        if (title) title.onkeyup = onchangeTitle;
+        if (title) title.oninput = onchangeTitle;
         if (searchField) searchField.onchange = onchangeSearch;
-        if (searchField) searchField.onkeyup = onchangeSearch;
+        if (searchField) searchField.oninput = onchangeSearch;
         onchangeTitle();
         onchangeCategory();
         if (title) title.select();

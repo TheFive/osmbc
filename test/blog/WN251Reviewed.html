@@ -221,7 +221,7 @@ while layout.user["blogSetting"+v]
                   <ul class="preview" id="preview2"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(2);" onkeyup="onchangeMarkdown(2)" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
+                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(2);" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
                     <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Open Editor</button></div>
                   </form>
                   <p></p>
@@ -266,7 +266,7 @@ while layout.user["blogSetting"+v]
                   <ul class="preview" id="preview1"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(1);" onkeyup="onchangeMarkdown(1)" spellcheck="true" lang="DE">|Venue|Wo|Was|Online|Wann|Land|
+                  <form name="EditArticle" id="EditArticle1" action="/article/1/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown1" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(1);" spellcheck="true" lang="DE">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown1" rows="7">|Venue|Wo|Was|Online|Wann|Land|
 |-----|--|---|------|----|----|</textarea>
                     <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel1" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(1,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave1" onmousedown="event.preventDefault();" onclick="saveInlineEditor(1,'',true);">Save</button></div>
@@ -619,10 +619,11 @@ while layout.user["blogSetting"+v]
         closeInlineEditor(id, column, "cancelled");
       }
 
-      // also for text pasted without a key (long press on a phone)
+      // preview and save label; input, not keyup: also for text that phone
+      // keyboards change without a key (word suggestions, long press paste)
       $(document).on("input", "form[id*='EditArticle'] textarea[name='markdown']", function() {
         var m = this.form.id.match(/^(.*)EditArticle(\d+)$/);
-        if (m) updateSaveLabel(m[2], m[1]);
+        if (m) onchangeMarkdown(m[2], m[1]);
       });
 
       // "Open Editor" while there is no text, neither saved nor typed

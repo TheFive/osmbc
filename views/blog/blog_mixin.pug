@@ -232,10 +232,11 @@ block append scripts_to_execute
       closeInlineEditor(id, column, "cancelled");
     }
 
-    // also for text pasted without a key (long press on a phone)
+    // preview and save label; input, not keyup: also for text that phone
+    // keyboards change without a key (word suggestions, long press paste)
     $(document).on("input", "form[id*='EditArticle'] textarea[name='markdown']", function () {
       var m = this.form.id.match(/^(.*)EditArticle(\d+)$/);
-      if (m) updateSaveLabel(m[2], m[1]);
+      if (m) onchangeMarkdown(m[2], m[1]);
     });
 
     // "Open Editor" while there is no text, neither saved nor typed

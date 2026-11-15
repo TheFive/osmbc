@@ -138,6 +138,18 @@ export default class Page {
     await element.click();
   }
 
+  // Append text to a field the way a phone keyboard does for a word
+  // suggestion, autocorrect or the long press "Paste": the text changes
+  // ("input" event) without any key event. Chrome only (DevTools).
+  async _insertTextLikePhoneKeyboard(element, text) {
+    await this._driver.executeScript(`
+      const f = arguments[0];
+      f.scrollIntoView({ block: 'center', behavior: 'instant' });
+      f.focus();
+      f.setSelectionRange(f.value.length, f.value.length);`, element);
+    await this._driver.sendDevToolsCommand("Input.insertText", { text: text });
+  }
+
   // wait until the page's background requests (jQuery, e.g. the link check
   // that appends its result to the links) are done
   async waitForBackgroundRequests() {

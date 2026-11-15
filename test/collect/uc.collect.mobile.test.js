@@ -43,4 +43,14 @@ describe("uc/collect on small screens", function() {
     should(await collectPage.tapTargetsTooSmall("#searchField, #searchButton, #OK, #OK + a.btn")).eql([]);
     should(await collectPage.tapTargetsTooClose("#OK, #OK + a.btn")).eql([]);
   });
+  it("should enable OK for a title from the phone keyboard without key events", async function() {
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const collectPage = new SearchAndCollectPage(driver);
+    await driver.get(osmbcLink("/article/create"));
+    await collectPage.fillAndStartSearch("https://example.com/news");
+    await collectPage.clearTitle();
+    should(await collectPage.isOKEnabled()).be.False();
+    await collectPage.appendTitleWithPhoneKeyboard("A suggested title");
+    should(await collectPage.isOKEnabled()).be.True();
+  });
 });
