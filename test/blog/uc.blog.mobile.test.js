@@ -171,6 +171,21 @@ describe("uc/blog mobile inline editor", function() {
       should(await driver.executeScript("return window.noReloadMarker === true;")).be.True();
       should(await storedMarkdown()).eql("Neuer Text");
     });
+    it("should drop the auto translation marker after saving the text (#1175)", async function() {
+      const article = await articleModule.findById(articleId);
+      await new Promise((resolve, reject) => article.setAndSave({ OSMUser: "deeplPro API Call" }, { markdownDE: "Maschinentext", old: { markdownDE: "Alter Text" } }, (err) => (err ? reject(err) : resolve())));
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN1/review"));
+      should(await blogPage.isMarkedAutoTranslated(articleId)).be.True();
+
+      await blogPage.openInlineEditor(articleId);
+      await blogPage.typeInlineText(articleId, " Korrigiert.");
+      await blogPage.tapInlineSave(articleId);
+      await waitForStatus("saved");
+
+      should(await blogPage.isMarkedAutoTranslated(articleId)).be.False();
+      should(await storedMarkdown()).eql("Maschinentext Korrigiert.");
+    });
     it("should discard the change with Cancel", async function() {
       const field = await openEditor();
       await replaceText(field, "Verworfener Text");
