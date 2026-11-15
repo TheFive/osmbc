@@ -63,18 +63,21 @@ describe("config split", function() {
         languages: [{ lid: "DE" }],
         FirstDraftConfig: { apiKey: "secret", visibleFor: ["full"] },
         Transition: { enabled: true, scheduleCron: "* * * * *", AutoTranslate: { enabled: true } },
+        wiki: { directory: "/srv/wiki", autoPush: true, readAccess: ["full", "alice"], mattermost: { channel: "#wiki" } },
         somethingNew: 1
       });
       should(r.technical).eql({
         serverport: 3000,
         FirstDraftConfig: { apiKey: "secret" },
         Transition: { enabled: true, scheduleCron: "* * * * *" },
+        wiki: { directory: "/srv/wiki", autoPush: true },
         somethingNew: 1
       });
       should(r.editorial).eql({
         languages: [{ lid: "DE" }],
         FirstDraftConfig: { visibleFor: ["full"] },
-        Transition: { AutoTranslate: { enabled: true } }
+        Transition: { AutoTranslate: { enabled: true } },
+        wiki: { readAccess: ["full", "alice"], mattermost: { channel: "#wiki" } }
       });
       should(r.unknown).eql(["somethingNew"]);
     });

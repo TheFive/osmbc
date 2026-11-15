@@ -43,6 +43,17 @@ slack:
       channel: "#osmbcarticle"
       token: testtoken
 
+# Editorial wiki. tools/run-tests.mjs moves the directory into the
+# temp dir of each test run.
+wiki:
+  directory: /tmp/osmbc-wiki-test
+  readAccess: [full, guest]
+  writeAccess: [full]
+  mattermost:
+    team: osmde
+    channel: "#osmbcwiki"
+    mode: each
+
 logInfoTemplate: ":OSMUser [:date[clf]] ':method :url HTTP/:http-version' :status :res[content-length] ':referrer' ':user-agent'"
 SessionSecret: keyboard cat
 SessionName: session_name

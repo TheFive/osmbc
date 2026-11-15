@@ -1,0 +1,34 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    h1.h3.mb-3 Wiki
+    if canWrite
+      form.osmbc-wiki-newpage.mb-3#wikiNewPage(method="get" action=wikiBase + "/_new")
+        div.row.g-2.align-items-end
+          div.col-md-4
+            label.form-label.small(for="wikiNewFolder") Folder
+            select.form-select#wikiNewFolder(name="folder")
+              option(value="") (top level)
+              each folder in folders
+                option(value=folder)=folder
+          div.col-md-5
+            label.form-label.small(for="wikiNewName") New page name
+            input.form-control#wikiNewName(type="text" name="name" placeholder="page_name or new_folder/page_name" required)
+          div.col-md-3.d-grid
+            button.btn.btn-primary#wikiNewSubmit(type="submit") New page
+        div.form-text a-z, 0-9, _ and -. For a new folder write it in front of the name: new_folder/page_name.
+    +wikiSearch(wikiBase, "")
+    p.text-muted #{pageCount} pages
+    each group in groups
+      section.mb-3
+        h2.h5.osmbc-wiki-namespace= group.namespace || "(top level)"
+        ul.list-unstyled.ms-2
+          each page in group.pages
+            li.mb-1
+              a(href=wikiBase + "/" + page.id)=page.title
+              span.text-muted.small.ms-2=page.id
+              if page.frontMatter && page.frontMatter.access === "full"
+                span.badge.text-bg-secondary.ms-2 only full users

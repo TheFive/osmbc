@@ -378,10 +378,14 @@ mixin helpMenu(configarray)
           if item == "---"
             div.dropdown-divider
           else if item && item[0] && item[1]
+            //- "~/path" is a path inside this OSMBC (below htmlroot)
+            - const href = typeof item[1] === "string" && item[1].startsWith("~/") ? layout.htmlroot + item[1].substring(1) : item[1]
+            //- links into the wiki only for users who may read it
+            - const isWikiLink = typeof href === "string" && (href === layout.htmlroot + "/wiki" || href.startsWith(layout.htmlroot + "/wiki/"))
             if item[1] == "header"
               a.dropdown-header=item[0]
-            else
-              a.dropdown-item(href=item[1])=item[0]
+            else if !isWikiLink || layout.wikiReadable
+              a.dropdown-item(href=href)=item[0]
 
 mixin homeButton(addclass)
   a(href=htmlroot+'/osmbc.html' class=addclass)=appName

@@ -1,0 +1,16 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    .row
+      .col-lg-9
+        +wikiBreadcrumbs(breadcrumbs)
+        h1.h3=title
+        p#wikiMissing This page does not exist yet.
+        div.d-flex.flex-wrap.gap-2
+          a.btn.btn-outline-secondary(href=wikiBase) Wiki index
+          if canWrite
+            a.btn.btn-primary#wikiCreate(href=wikiBase + "/" + pageId + "?edit") Create this page
+      .col-lg-3
+        +wikiSidebar(sidebar)

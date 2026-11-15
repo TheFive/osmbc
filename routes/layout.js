@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { userHasAccess } from "../wiki/wikiStore.js";
 import { auto, each } from "async";
 import moment from "moment-timezone";
 
@@ -183,6 +184,8 @@ function prepareRenderLayout(req, res, next) {
     const blogTranslationVisibleFor = config.getValue("blogTranslationVisibleFor");
     const firstDraftVisible = firstDraft.isVisibleFor(req.user);
     const helpMenu = configModule.getConfig("helpmenu");
+    const wikiConfig = config.getWikiConfig();
+    const wikiReadable = !!wikiConfig && userHasAccess(wikiConfig.readAccess, req.user);
     const exportProfilesRaw = config.getValue("ExportProfiles", { mustExist: true });
     const exportProfiles = Object.keys(exportProfilesRaw)
       .filter((name) => exportProfilesRaw[name].guiEnabled === true)
@@ -219,6 +222,7 @@ function prepareRenderLayout(req, res, next) {
       mobileLanguages: mobileLanguages,
       style: style,
       helpMenu: helpMenu,
+      wikiReadable: wikiReadable,
       user_locale: language.momentLocale((req.user.language) ? req.user.language : req.user.getMainLang()),
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),

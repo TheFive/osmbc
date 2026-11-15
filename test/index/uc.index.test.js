@@ -111,7 +111,10 @@ describe("uc/index", function() {
 
         await (await driver.findElement(By.id("language"))).click();
 
-        await (await driver.findElement(By.id("lang_DE"))).click();
+        const langDeMenu = await driver.findElement(By.id("lang_DE"));
+        await langDeMenu.click();
+        // the snapshot is the page after the reload, not the one before
+        await driver.wait(until.stalenessOf(langDeMenu), 2000);
 
         await testutil.expectHtml(driver, "index", "switchedToEnglishAndGerman");
       });

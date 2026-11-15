@@ -33,7 +33,9 @@ export const editorialKeys = [
 // sub keys are editorial.
 export const mixedKeys = {
   FirstDraftConfig: ["apiKey"],
-  Transition: ["enabled", "scheduleCron", "runOnStart"]
+  Transition: ["enabled", "scheduleCron", "runOnStart"],
+  // who may read/write and the Mattermost channel are editorial
+  wiki: ["directory", "autoPush", "maxUploadBytes"]
 };
 
 // Top level keys the split script knows as technical. Unknown keys also go

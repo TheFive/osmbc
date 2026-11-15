@@ -1,0 +1,40 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    h1.h4= (isNew ? "Create " : "Edit ") + title
+    if conflict
+      div.alert.alert-danger#wikiConflict
+        | Someone saved this page while you were editing it. Your text is still in the editor below,
+        | the current version is shown under it. Merge them and save again.
+    form#wikiEditForm(method="post" action=wikiBase + "/" + pageId data-preview-url=previewUrl data-page-id=pageId)
+      input(type="hidden" name="baseBlob" value=baseBlob)
+      .row
+        .col-lg-6.mb-3
+          label.form-label(for="wikiMarkdown") Markdown
+          textarea.form-control.font-monospace#wikiMarkdown(name="markdown" rows=layout.mobileView ? 14 : 24 spellcheck="true")=markdown
+        .col-lg-6.mb-3
+          div.form-label Preview
+          div.osmbc-wiki-content.osmbc-wiki-preview.border.rounded.p-2#wikiPreview
+      .mb-3.d-flex.flex-wrap.gap-2.align-items-center
+        label.btn.btn-outline-secondary.mb-0(for="wikiUpload")
+          i.fa.fa-image.me-1
+          | Insert image
+        input.visually-hidden#wikiUpload(type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" data-upload-url=uploadUrl data-max-bytes=maxUploadBytes)
+        span.text-muted.small#wikiUploadState
+      if conflict
+        .mb-3
+          label.form-label(for="wikiCurrent") Current version (saved by someone else)
+          textarea.form-control.font-monospace#wikiCurrent(rows="12" readonly)=currentMarkdown
+      .mb-3
+        label.form-label(for="wikiMessage") What did you change? (optional)
+        input.form-control#wikiMessage(type="text" name="message" maxlength="200" value=message)
+      div.osmbc-wiki-savebar.d-flex.flex-wrap.gap-2.justify-content-end.align-items-center.py-2.bg-body.border-top
+        span.me-auto.text-muted#wikiSaveState
+        a.btn.btn-outline-secondary#wikiCancel(href=wikiBase + "/" + pageId) Cancel
+        button.btn.btn-primary#wikiSave(type="submit") Save
+
+block append scripts_to_load
+  script(src=layout.htmlroot + "/javascripts/wiki_edit.js?osmbc_v=" + layout.osmbc_version)

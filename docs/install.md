@@ -21,7 +21,7 @@ the examples) terminates TLS. For a local development setup see
 |---|---|
 | Node.js | **22 or newer**, tested with 22.22.0 |
 | PostgreSQL | tested with 16.10 (OSMBC uses plain tables with a `jsonb` column, no extensions) |
-| git | any |
+| git | any (also needed by the [wiki](wiki.md)) |
 | Reverse proxy with TLS | e.g. nginx |
 
 Check the Node.js version your distribution ships. Debian 13 (Trixie), for
@@ -156,6 +156,7 @@ at least these keys:
 | `limitValues.trustProxy` | `1` behind one proxy, see [section 6](#6-reverse-proxy) |
 | `maillog_directory`, `exportlog_directory` | absolute paths to the log directory |
 | `cache_directory`, `profile_directory` | optional, see [section 2](#keeping-the-app-directory-read-only-optional) |
+| `wiki.directory` | optional, switches on the [wiki](wiki.md): an absolute path outside the app directory, writable for the service user (e.g. `/srv/osmbc/wiki`) |
 | `SMTP`, `EmailSender` | your mail server, or `SMTP: {}` to only write the mail log |
 | `Transition.enabled` | `true` for the instance that runs the automatic workflow, `false` for any other instance on the same database |
 
@@ -304,6 +305,7 @@ tag and repeat the last two steps.
 | Database | PostgreSQL | **yes**, regularly: articles, blogs, users, change history, and the settings edited in the admin pages |
 | Editorial config | `editorial_config` file | **yes**, if you split the config |
 | Technical config | `config.production.yaml` | **yes**, or keep its source (e.g. the configuration management repository) including the secrets |
+| Wiki | `wiki.directory` | **yes**, if the wiki is on: a git repository with all pages, images and their history (copy the whole directory including `.git`, or push it to a remote) |
 | Public profiles | `profile_directory` (default `public/profile/`) | recommended; otherwise they come back only when each user saves their settings |
 | Mail log, export log | `maillog_directory`, `exportlog_directory` | optional, for tracing what was sent or exported |
 | Cache | `cache_directory` (default `cache/`) | no, rebuilt automatically |
@@ -319,7 +321,7 @@ sudo -u postgres pg_restore --no-owner --role=osmbc --dbname=osmbc osmbc-<date>.
 
 To restore a whole instance, install the same release
 ([section 2](#2-user-and-checkout)), restore the database, put the config
-files and public profiles back, then start the service.
+files, the wiki directory and public profiles back, then start the service.
 
 ## 9. Several instances on one server
 
@@ -335,6 +337,8 @@ same release). It also needs:
 - its own technical config; its `editorial_config` may point to the main
   instance's editorial file, so both use the same languages and export
   settings
+- its own `wiki.directory`, if the wiki is on (two instances must not
+  write into the same wiki repository)
 - its own database, or, if it shares the database with the main instance,
   `Transition.enabled: false` and no SMTP/webhooks, so automatic actions
   and notifications don't run twice

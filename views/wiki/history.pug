@@ -1,0 +1,28 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    h1.h4 History of #{title}
+    if !exists
+      p.alert.alert-warning.py-2 This page was deleted. Open an old version to restore it.
+    .table-responsive
+      table.table.table-sm.align-middle#wikiHistoryTable
+        thead
+          tr
+            th Date
+            th Author
+            th Change
+            th
+        tbody
+          each entry, index in history
+            tr
+              td.text-nowrap=entry.date.substring(0, 16).replace("T", " ")
+              td=entry.author
+              td=entry.message
+              td
+                div.d-flex.flex-wrap.gap-2
+                  a.btn.btn-sm.btn-outline-secondary(href=wikiBase + "/" + pageId + "?diff=" + entry.rev) Changes
+                  if index > 0 || !exists
+                    a.btn.btn-sm.btn-outline-secondary(href=wikiBase + "/" + pageId + "?rev=" + entry.rev) View

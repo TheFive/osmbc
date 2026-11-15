@@ -11,6 +11,7 @@ import BlogListPage from "../../test/PageObjectModel/blogListPage.js";
 import SearchAndCollectPage from "../../test/PageObjectModel/searchAndCollectPage.js";
 import InboxPage from "../../test/PageObjectModel/inboxPage.js";
 import BlogStatisticPage from "../../test/PageObjectModel/blogStatisticPage.js";
+import WikiPage from "../../test/PageObjectModel/wikiPage.js";
 import { By, until } from "selenium-webdriver";
 import util from "../../util/util.js";
 import config from "../../config.js";
@@ -44,6 +45,11 @@ export default class OsmbcApp {
   // test server of this run listens on http and its own port.
   async openLinkFromMail(link) {
     await this._driver.get(link.replace(/^https:\/\/localhost:\d+/, "http://localhost:" + config.getServerPort()));
+  }
+
+  // wiki index without id, else the page (path may carry ?edit etc.)
+  async openWikiPage(id) {
+    await this._driver.get(osmbcLink("/wiki" + (id ? "/" + id : "")));
   }
 
   async openUserListPage(filter) {
@@ -95,6 +101,10 @@ export default class OsmbcApp {
 
   getInboxPage() {
     return new InboxPage(this._driver);
+  }
+
+  getWikiPage() {
+    return new WikiPage(this._driver);
   }
 
   getStatisticPage() {
