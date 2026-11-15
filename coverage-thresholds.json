@@ -1,0 +1,62 @@
+{
+  "(root)": {
+    "lines": 88,
+    "branches": 76,
+    "functions": 59
+  },
+  "bin": {
+    "lines": 0,
+    "branches": 0,
+    "functions": 0
+  },
+  "export": {
+    "lines": 0,
+    "branches": 0,
+    "functions": 0
+  },
+  "genstaticpage": {
+    "lines": 58,
+    "branches": 65,
+    "functions": 99
+  },
+  "import": {
+    "lines": 0,
+    "branches": 0,
+    "functions": 0
+  },
+  "model": {
+    "lines": 92,
+    "branches": 79,
+    "functions": 93
+  },
+  "notification": {
+    "lines": 89,
+    "branches": 83,
+    "functions": 94
+  },
+  "render": {
+    "lines": 98,
+    "branches": 91,
+    "functions": 97
+  },
+  "routes": {
+    "lines": 90,
+    "branches": 73,
+    "functions": 94
+  },
+  "util": {
+    "lines": 88,
+    "branches": 81,
+    "functions": 94
+  },
+  "wiki": {
+    "lines": 95,
+    "branches": 83,
+    "functions": 95
+  },
+  "wp-reconcile": {
+    "lines": 89,
+    "branches": 83,
+    "functions": 94
+  }
+}

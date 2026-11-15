@@ -40,11 +40,13 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   variables that `config.js` lays over `config.test.yaml` (the file itself
   never changes). The database is dropped afterwards (`--keep` to inspect
   it). So parallel runs in different or the same worktree don't collide.
-  CI runs `npm test` too, so it uses the wrapper. Calling `mocha` directly
+  CI goes through the wrapper too. Calling `mocha` directly
   (without the wrapper, e.g. `test-github`)
   still uses the fixed values from `config.test.yaml` and is not safe to
-  run in parallel. Two `nyc` runs in the same worktree still share
-  `.nyc_output` (coverage report only).
+  run in parallel. `npm test` measures no coverage; `npm run
+  test:coverage` (c8) + `npm run coverage:check` do, CI runs those two
+  (floors per directory in `coverage-thresholds.json`, see
+  `docs/development.md` "Coverage").
 
 ## Export
 
@@ -138,8 +140,9 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   (`git-hooks/CommitMsg.sh`) can enforce this locally once installed (see
   `docs/development.md`), but don't rely on the hook being installed —
   write commit messages in this format regardless.
-- **Closing out a finished feature/fix branch:** merge into `master` and
-  push first, then — before removing anything — check the worktree for
+- **Closing out a finished feature/fix branch:** the branch's last CI run
+  must be green (`gh run list --branch <branch> --limit 1`). Then merge
+  into `master` and push first, then — before removing anything — check the worktree for
   untracked files (`git status --short --untracked-files=all`), especially
   stray `.md` notes, that might hold content that should have been folded
   into a commit instead of left on disk. Only after that's clean: remove

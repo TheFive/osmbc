@@ -1,0 +1,20 @@
+{
+  "all": true,
+  "include": [
+    "app.js",
+    "config.js",
+    "bin/**/*.js",
+    "export/**/*.js",
+    "genstaticpage/**/*.js",
+    "import/**/*.js",
+    "model/**/*.js",
+    "notification/**/*.js",
+    "render/**/*.js",
+    "routes/**/*.js",
+    "util/**/*.js",
+    "wiki/**/*.js",
+    "wp-reconcile/**/*.js"
+  ],
+  "reporter": ["text-summary", "json-summary", "lcov", "html"],
+  "reports-dir": "coverage"
+}
