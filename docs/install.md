@@ -61,7 +61,7 @@ sudo -u osmbc npm ci --omit=dev
 ```
 
 `npm ci --omit=dev` installs exactly the versions from `package-lock.json`
-without the development tools (mocha, selenium-webdriver, nyc, eslint, …):
+without the development tools (mocha, selenium-webdriver, c8, eslint, …):
 about 330 instead of about 800 packages. Its `postinstall` step copies the
 browser libraries (Bootstrap, jQuery, …) into `public/`.
 

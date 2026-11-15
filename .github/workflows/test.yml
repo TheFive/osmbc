@@ -41,7 +41,18 @@ jobs:
           cache: npm
       - run: npm ci
       # Chrome + chromedriver are preinstalled on ubuntu-latest (Selenium UI tests)
-      - run: npm test
+      # same tests as `npm test`, measured with c8 (V8 coverage, works with ESM)
+      - run: npm run test:coverage
+      # coverage per directory against coverage-thresholds.json, table in the job summary
+      - run: npm run coverage:check
+      - name: Upload coverage report
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+          if-no-files-found: ignore
       - name: Upload test diffs on failure
         if: failure()
         uses: actions/upload-artifact@v4

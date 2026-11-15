@@ -27,15 +27,37 @@ Tests use mocha; the files are in `test/`. Requirements:
 
 | Command | What runs |
 |---|---|
-| `npm test` | everything, with coverage (`nyc`) |
-| `npm run test:fast` | everything, without coverage |
+| `npm test` | everything, without coverage (`test:fast` is the same) |
 | `npm run test:model` | model, notification, render, util and merger tests |
 | `npm run test:router` | `test/routes.*.test.js` |
 | `npm run test:ui` | Selenium use case tests `test/**/uc.*.test.js` |
-| `npm run test:coverage` | everything, coverage with `c8` |
+| `npm run test:coverage` | everything, with coverage (`c8`), report in `coverage/` |
+| `npm run coverage:check` | coverage per directory against `coverage-thresholds.json` |
 
-Single files: `npm run test:fast -- test/model.blog.test.js`
+Single files: `npm test -- test/model.blog.test.js`
 (add `-g "<name part>"` for single tests).
+
+### Coverage
+
+Coverage is measured with [c8](https://github.com/bcoe/c8) (V8's own
+coverage, works with ES modules; settings in `.c8rc.json`). It is a
+separate run, `npm test` does not measure it. CI runs
+`npm run test:coverage` followed by `npm run coverage:check` and attaches
+the HTML report (`coverage/index.html`) as artifact `coverage-report`;
+the per-directory table is in the job summary.
+
+`coverage-thresholds.json` holds one floor per top-level directory
+(lines, branches, functions in %). It means "don't get worse", not a
+target: the check fails when a directory drops below its floor, for
+example because new code came without tests. After adding tests, raise
+the floors with `node tools/coverage-check.mjs --write` (it writes the
+current values rounded down, minus one point of headroom, because the UI
+tests don't hit exactly the same code in every run) and commit the file.
+Never lower a floor just to get CI green without saying why in the commit.
+
+More useful than the percentage is the list of untested code: open
+`coverage/index.html` and look for red branches in code you touch.
+`render/` has its own, stricter check (`npm run test:coverage:render:check`).
 
 ### Parallel test runs
 
@@ -54,7 +76,7 @@ The `npm` scripts run through `tools/run-tests.mjs`. For every run it
 
 So several test runs can run at the same time, in different worktrees or
 in the same one. CI uses the same scripts. Two `npm test` runs in the same
-worktree still share `.nyc_output`, so one coverage report can be wrong;
+worktree still write the same `coverage/` report (the last one wins);
 the tests themselves are not affected.
 
 To look at the database after a run, start the wrapper with `--keep`:
