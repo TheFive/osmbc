@@ -94,7 +94,7 @@ export default class WikiPage extends StandardPage {
   async clickCreate() { await this._tapNavigate("#wikiCreate"); }
 
   // the page's action buttons (for tap target checks)
-  static get actionButtons() { return "#wikiHistory, #wikiMove, #wikiDelete, #wikiEdit"; }
+  static get actionButtons() { return "#wikiHistory, #wikiMore, #wikiEdit"; }
 
   // ---- editor ------------------------------------------------------------------
 

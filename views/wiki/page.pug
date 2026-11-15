@@ -28,8 +28,11 @@ block content
               input(type="hidden" name="baseBlob" value=currentBlob)
               button.btn.btn-primary#wikiRestore(type="submit") Restore this version
           else if canWrite
-            a.btn.btn-outline-secondary#wikiMove(href=wikiBase + "/" + pageId + "?move") Move
-            a.btn.btn-outline-secondary#wikiDelete(href=wikiBase + "/" + pageId + "?delete") Delete
+            div.dropdown
+              button.btn.btn-outline-secondary.dropdown-toggle#wikiMore(type="button" data-bs-toggle="dropdown" aria-expanded="false") More
+              div.dropdown-menu.dropdown-menu-end
+                a.dropdown-item#wikiMove(href=wikiBase + "/" + pageId + "?move") Move / rename
+                a.dropdown-item.text-danger#wikiDelete(href=wikiBase + "/" + pageId + "?delete") Delete
             a.btn.btn-primary#wikiEdit(href=wikiBase + "/" + pageId + "?edit")
               i.fa.fa-pencil.me-1
               | Edit
