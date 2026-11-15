@@ -208,6 +208,12 @@ class BlogPage extends StandardPage {
     await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("inlineSave" + articleId)));
   }
 
+  // yellow marker: the text is an automated translation nobody has edited yet
+  async isMarkedAutoTranslated(articleId) {
+    return this._driver.executeScript(`return document.querySelector("[data-inline-editor='div${articleId}']")
+      .firstElementChild.classList.contains("osmbc-automated-translation");`);
+  }
+
   // the article text as shown in the review view (tap target of the editor)
   async getArticleText(articleId) {
     return (await this._driver.findElement(By.id("preview" + articleId))).getText();

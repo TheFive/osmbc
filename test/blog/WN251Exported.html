@@ -593,6 +593,7 @@ while layout.user["blogSetting"+v]
           if (!res.ok) throw new Error("HTTP " + res.status);
           oldField.value = value;
           savedPreview[column + "div" + id] = convert(value);
+          updateMarker(id, column, value);
           updateSaveLabel(id, column);
           inlineStatus(id, column, "saved", "text-bg-success");
           if (close) closeInlineEditor(id, column, "saved");
@@ -603,6 +604,21 @@ while layout.user["blogSetting"+v]
           delete inlineSaves[key];
         });
         return inlineSaves[key];
+      }
+
+      // marker of the saved text, as previewDiv (blogheader.pug) sets it after
+      // a reload; a text saved by the user is never an automated translation
+      function updateMarker(id, column, value) {
+        var wrapper = document.querySelector("[data-inline-editor='" + column + "div" + id + "']");
+        var marker = wrapper && wrapper.firstElementChild;
+        if (marker) {
+          marker.classList.remove("osmbc-automated-translation", "osmbc-not-formulated", "hide-text");
+          if (value === "") marker.classList.add("osmbc-not-formulated");
+          else if (value === "no translation") marker.classList.add("hide-text");
+        }
+        var editor = document.getElementById(column + "div" + id);
+        var ok = editor && editor.querySelector("button[id^='reviewTranslation']");
+        if (ok) ok.remove();
       }
 
       function cancelInlineEditor(id, column) {
