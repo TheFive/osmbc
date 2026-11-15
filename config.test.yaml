@@ -47,7 +47,7 @@ slack:
 # temp dir of each test run.
 wiki:
   directory: /tmp/osmbc-wiki-test
-  readAccess: [full]
+  readAccess: [full, guest]
   writeAccess: [full]
   mattermost:
     team: osmde

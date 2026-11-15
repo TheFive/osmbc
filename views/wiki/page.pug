@@ -1,0 +1,31 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    .row
+      .col-lg-9
+        +wikiBreadcrumbs(breadcrumbs)
+        if saved
+          div.alert.alert-success.py-2#wikiSaved Saved.
+        if frontMatterError
+          div.alert.alert-warning.py-2 The front matter of this page could not be read: #{frontMatterError}
+        div.d-flex.flex-wrap.gap-2.justify-content-end.mb-2
+          if frontMatter && frontMatter.access === "full"
+            span.badge.text-bg-secondary.align-self-center#wikiAccessBadge only full users
+          if canWrite
+            a.btn.btn-outline-secondary#wikiEdit(href=wikiBase + "/" + pageId + "?edit")
+              i.fa.fa-pencil.me-1
+              | Edit
+        if toc.length > 2
+          details.osmbc-wiki-toc.mb-3(open=!layout.mobileView)
+            summary Contents
+            ul.list-unstyled.mb-0
+              each entry in toc
+                if entry.level <= 3
+                  li(class="osmbc-wiki-toc-" + entry.level)
+                    a(href="#" + entry.id)=entry.text
+        article.osmbc-wiki-content#wikiContent
+          | !{html}
+      .col-lg-3
+        +wikiSidebar(sidebar)

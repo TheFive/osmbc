@@ -1,0 +1,23 @@
+extends ../layout
+include wiki_mixins
+
+block content
+  .osmbc-wiki
+    +wikiBreadcrumbs(breadcrumbs)
+    div.d-flex.flex-wrap.gap-2.align-items-start.mb-3
+      h1.h3.me-auto Wiki
+      if canWrite
+        form.d-flex.flex-wrap.gap-2#wikiNewPage(method="get" action=wikiBase + "/_new")
+          input.form-control.w-auto(type="text" name="id" placeholder="namespace/page_name" required aria-label="Name of the new page")
+          button.btn.btn-primary(type="submit") New page
+    p.text-muted #{pageCount} pages
+    each group in groups
+      section.mb-3
+        h2.h5.osmbc-wiki-namespace= group.namespace || "(top level)"
+        ul.list-unstyled.ms-2
+          each page in group.pages
+            li.mb-1
+              a(href=wikiBase + "/" + page.id)=page.title
+              span.text-muted.small.ms-2=page.id
+              if page.frontMatter && page.frontMatter.access === "full"
+                span.badge.text-bg-secondary.ms-2 only full users

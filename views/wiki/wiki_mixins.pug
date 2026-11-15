@@ -1,0 +1,14 @@
+mixin wikiBreadcrumbs(items)
+  nav(aria-label="breadcrumb")
+    ol.breadcrumb.mb-2.osmbc-wiki-breadcrumb
+      each item in items
+        if item.active
+          li.breadcrumb-item.active(aria-current="page")=item.label
+        else
+          li.breadcrumb-item
+            a(href=item.href)=item.label
+
+mixin wikiSidebar(sidebar)
+  if sidebar
+    aside.osmbc-wiki-sidebar.border-start.ps-lg-3.mt-4.mt-lg-0
+      | !{sidebar}

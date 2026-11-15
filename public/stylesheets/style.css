@@ -602,3 +602,51 @@ table {
     min-height: 44px;
   }
 }
+
+/* ---- wiki (views/wiki) ---- */
+.osmbc-wiki-content {
+  overflow-wrap: anywhere;
+}
+.osmbc-wiki-content img {
+  max-width: 100%;
+  height: auto;
+}
+/* wide tables scroll inside their own box, not the page */
+.osmbc-wiki-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+.osmbc-wiki-content th,
+.osmbc-wiki-content td {
+  border: 1px solid var(--bs-border-color);
+  padding: 0.25rem 0.5rem;
+}
+.osmbc-wiki-content pre {
+  white-space: pre-wrap;
+  background: var(--bs-tertiary-bg);
+  padding: 0.5rem;
+}
+.osmbc-wiki-content h1, .osmbc-wiki-content h2, .osmbc-wiki-content h3 {
+  scroll-margin-top: var(--osmbc-navbar-height, 4rem);
+}
+a.osmbc-wiki-missing {
+  color: var(--bs-danger);
+  text-decoration-style: dashed;
+}
+.osmbc-wiki-toc-3 {
+  margin-left: 1rem;
+}
+.osmbc-wiki-preview {
+  min-height: 10rem;
+}
+/* Save stays reachable at the bottom while scrolling through a long page */
+.osmbc-wiki-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+.osmbc-wiki-breadcrumb {
+  overflow-wrap: anywhere;
+}
