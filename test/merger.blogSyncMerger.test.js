@@ -1,5 +1,5 @@
 import should from "should";
-import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
+import blogSyncMerger from "../model/blogSync/blogSyncMerger.js";
 
 const {
   extractBlogNumber,
@@ -126,7 +126,7 @@ describe("merger/blogSyncMerger", function() {
       should(plan.remoteOnly.map((a) => a.id)).eql([4]);
     });
 
-    // Found via a real WN275 dry/commit run (see CLAUDE.local.md):
+    // Found via a real WN275 dry/commit run:
     // unpublishReason was not tracked, so a genuine local unpublish
     // correction (categoryEN -> "--unpublished--") produced a patch with no
     // unpublishReason, rejected by Article.prototype.setAndSave's own guard
@@ -148,7 +148,7 @@ describe("merger/blogSyncMerger", function() {
     // second, because its new remote id (bigserial) is permanently
     // unrelated to the local id that produced it. Fixed via a
     // caller-supplied `knownRemoteIds` map (syncState.js keeps this in a
-    // local, gitignored file - see CLAUDE.local.md - deliberately never
+    // local, gitignored file - deliberately never
     // written into the remote data itself).
     describe("knownRemoteIds matching (idempotent re-runs)", function() {
       it("should match an already-migrated article by its remembered remote id, not create it again, and report it under the REMOTE id", function() {
@@ -302,8 +302,8 @@ describe("merger/blogSyncMerger", function() {
     });
 
     // Blog-level field diff (e.g. teamString<LANG>) - found missing after a
-    // real osmbc_prod_copie vs. osmbc Hugo-export byte-diff (see
-    // CLAUDE.local.md). Reuses the same diffFields logic as article
+    // real osmbc_prod_copie vs. osmbc Hugo-export byte-diff.
+    // Reuses the same diffFields logic as article
     // fields, but as its own opt-in `trackedBlogFields` list - separate
     // from `trackedFields`, and never auto-applied via categories/status.
     it("should return no blogPatch when trackedBlogFields is omitted (backward compatible default)", function() {

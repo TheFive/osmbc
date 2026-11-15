@@ -298,7 +298,7 @@ describe("model/blog", function() {
     });
 
     // Optional optimistic-concurrency check via `data.old`, opt-in per key
-    // - added for the Blog-Sync-Merger (see CLAUDE.local.md). Backward
+    // - added for the Blog-Sync-Merger. Backward
     // compatibility with every pre-existing caller (none of which ever set
     // `data.old`) is what the test above already covers; these cover the
     // new opt-in behaviour itself.

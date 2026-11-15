@@ -1,14 +1,15 @@
-// Blog-Sync-Merger: pure planning logic.
+// Blog sync: field lists, diffs and merge planning, no I/O.
 //
-// Given a local (source-of-truth) blog+articles and the current remote
-// (production) blog+articles for the same WN issue, computes what would
-// need to change on the remote side - without performing any I/O itself.
-// Keeping this side-effect free makes the actual merge decision fully
-// unit-testable; routes/api.js is the only place that talks to the
-// database, and merger/rollback.js the only place that reverts one.
+// Used by the blogSync API in routes/api.js (which fields a client sees
+// and may write, how they are serialized and compared) and by the
+// migration runner wp-reconcile/blog-sync-merger/syncBlog.js, which
+// compares a local (source-of-truth) blog+articles with the remote one and
+// plans what has to change there. Keeping this side-effect free makes
+// those decisions unit-testable; routes/api.js is the only place that
+// writes to the database.
 //
-// See CLAUDE.local.md (osmbc-develop worktree) for the full design
-// discussion this implements, in particular:
+// What the API offers on top of this: docs/API.md, "Bulk corrections
+// through the API". Design decisions this implements:
 // - ID matching is primarily done by `id` alone. That is only valid
 //   because the local test/working DB is (or descends from) a literal
 //   snapshot copy of the real production database - callers are
@@ -29,8 +30,8 @@ const WN_NUMBER_RE = /^WN(\d+)$/i;
 // Fields carried unconditionally in addition to whatever language-specific
 // markdown fields the caller passes in trackedFields (e.g. "markdownDE").
 //
-// unpublishReason: found missing via a real WN275 dry/commit run (see
-// CLAUDE.local.md) - Article.prototype.setAndSave (model/article.js)
+// unpublishReason: found missing via a real WN275 dry/commit run
+// - Article.prototype.setAndSave (model/article.js)
 // refuses to set categoryEN to "--unpublished--" (or blog to "Trash")
 // unless the write carries a non-empty unpublishReason (or the article
 // already has one). Without this field tracked, a genuine local
@@ -268,8 +269,8 @@ function categoryIdentity(category) {
 // categoryIdentity above for the same rationale) - unlike categoryIdentity,
 // this compares the FULL translation content, not just the EN label, so it
 // catches a category that exists on both sides but whose translated text
-// has drifted (found via a real Hugo-export diff across 100 blogs, see
-// CLAUDE.local.md: e.g. a stale/never-translated "Programming" where the
+// has drifted (found via a real Hugo-export diff across 100 blogs,
+// e.g. a stale/never-translated "Programming" where the
 // corrected local copy already has "Programování").
 function categoriesEqual(a, b) {
   if (a === b) return true;
@@ -346,7 +347,7 @@ export function planCategoriesMerge(localCategories, remoteCategories) {
 // deliberately kept separate from trackedBlogFields even though it's the
 // exact same diffFields mechanism: render/Renderer.js skips a language's
 // content entirely unless close<LANG> is true, found via a real
-// Hugo-export diff (see CLAUDE.local.md) - but unlike teamString, this
+// Hugo-export diff - but unlike teamString, this
 // can never be applied at the *start* of a write batch (would lock this
 // same batch's own markdown<LANG> patches for that language, see
 // withReopenedBlog.js) - routes/api.js applies it as a `withReopenedBlog`
@@ -390,8 +391,8 @@ export function planMerge({ localBlog, localArticles, remoteBlog, remoteArticles
 // shared article ids between the two instances. planArticleMerge/id-matching
 // would then classify every remote original as `remoteOnly` (left in place)
 // and every local article as `toCreate` - producing a full DUPLICATE set
-// instead of a merge (found the hard way by a real full-range run, see
-// CLAUDE.local.md). This plan does the only correct thing for that case:
+// instead of a merge (found the hard way by a real full-range run).
+// This plan does the only correct thing for that case:
 // trash every remote article, recreate every local one, and replace the
 // blog's `categories` wholesale (no subsequence check - the old era is a
 // clean replace, never a pure insertion).

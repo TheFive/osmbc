@@ -119,7 +119,7 @@ class Blog {
   // unlike Article.prototype.setAndSave (model/article.js), which
   // *requires* `old`/`version` for every changed key, this stays backward
   // compatible with every existing Blog caller (none of which ever set
-  // `data.old` - verified 2026-09-03, see CLAUDE.local.md): a key with no
+  // `data.old` - verified 2026-09-03): a key with no
   // corresponding `data.old[key]` is written exactly as before,
   // unconditionally. Only keys the caller *does* make a claim about get
   // checked against the current in-memory value; a mismatch means someone
@@ -198,7 +198,7 @@ class Blog {
           // createTeamString return "" (no footer), whereas undefined
           // makes it auto-generate a "produced by ." credit from the
           // synthetic-only changelog (see routes/api.js applyBlogSync,
-          // blogSyncMerger.planReplace, CLAUDE.local.md WN009 canary).
+          // blogSyncMerger.planReplace; found in the WN009 canary run).
           if (value === "" && typeof (self[key]) === "undefined" && !explicitOldKeys.includes(key)) continue;
           if (typeof (value) === "object") {
             if (JSON.stringify(value) === JSON.stringify(self[key])) continue;

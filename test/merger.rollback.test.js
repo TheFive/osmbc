@@ -4,7 +4,7 @@ import testutil from "../test/testutil.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import { rollbackArticle, rollbackBlog, rollbackReplace } from "../wp-reconcile/blog-sync-merger/rollback.js";
-import { withReopenedBlog } from "../wp-reconcile/blog-sync-merger/withReopenedBlog.js";
+import { withReopenedBlog } from "../model/blogSync/withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../notification/migrationFilter.js";
 import syncState, { STATE_FILE } from "../wp-reconcile/blog-sync-merger/syncState.js";
 

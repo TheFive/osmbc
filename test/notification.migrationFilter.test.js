@@ -93,8 +93,8 @@ describe("notification/migrationFilter", function() {
 
   // config.test.yaml defines apiKeys["testapikey.dataadmin"] =
   // "dataAdmin-TestUser" - a per-data-admin identity (routes/api.js
-  // getBlogSyncUser) distinct from SYNTHETIC_MIGRATION_USER_NAME, see
-  // CLAUDE.local.md 2026-09-05.
+  // getBlogSyncUser) distinct from SYNTHETIC_MIGRATION_USER_NAME
+  // (docs/API.md, "Bulk corrections through the API").
   it("should also suppress updateArticle/updateBlog for a name configured under apiKeys, not just the hardcoded fallback", function(done) {
     const spy = makeSpyReceiver();
     const filtered = suppressMigrationNotifications(spy);

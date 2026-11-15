@@ -24,7 +24,7 @@ import async from "async";
 import articleModule from "../../model/article.js";
 import blogModule from "../../model/blog.js";
 import logModule from "../../model/logModule.js";
-import { withReopenedBlog } from "./withReopenedBlog.js";
+import { withReopenedBlog } from "../../model/blogSync/withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../../notification/migrationFilter.js";
 import syncState from "./syncState.js";
 

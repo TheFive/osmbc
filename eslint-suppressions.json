@@ -38,6 +38,19 @@
       "count": 1
     }
   },
+  "model/blogSync/blogSyncMerger.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 11
+    }
+  },
+  "model/blogSync/withReopenedBlog.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
   "model/blogTransitionScheduler.js": {
     "complexity": {
       "count": 1
@@ -378,14 +391,6 @@
       "count": 33
     }
   },
-  "wp-reconcile/blog-sync-merger/blogSyncMerger.js": {
-    "complexity": {
-      "count": 1
-    },
-    "jsdoc/require-jsdoc": {
-      "count": 11
-    }
-  },
   "wp-reconcile/blog-sync-merger/rollback.js": {
     "jsdoc/require-jsdoc": {
       "count": 3
@@ -405,11 +410,6 @@
   "wp-reconcile/blog-sync-merger/syncState.js": {
     "jsdoc/require-jsdoc": {
       "count": 5
-    }
-  },
-  "wp-reconcile/blog-sync-merger/withReopenedBlog.js": {
-    "jsdoc/require-jsdoc": {
-      "count": 1
     }
   }
 }

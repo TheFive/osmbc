@@ -13,8 +13,8 @@ import blogModule from "../model/blog.js";
 import logModule from "../model/logModule.js";
 import { ZipArchive } from "archiver";
 import { CONFLICT } from "http-status-codes";
-import blogSyncMerger from "../wp-reconcile/blog-sync-merger/blogSyncMerger.js";
-import { withReopenedBlog } from "../wp-reconcile/blog-sync-merger/withReopenedBlog.js";
+import blogSyncMerger from "../model/blogSync/blogSyncMerger.js";
+import { withReopenedBlog } from "../model/blogSync/withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../notification/migrationFilter.js";
 
 const debug = _debug("OSMBC:routes:api");
@@ -770,8 +770,7 @@ function getSyncTrackedFields() {
 // Blog-level fields the Blog-Sync-Merger also diffs/patches, in addition
 // to categories/status (handled separately via eligibility/
 // missingCategories) and close<LANG> (getSyncTrackedCloseFields).
-// All found via the WN008/WN009 canary Hugo-export byte-diffs, 2026-09-06
-// (see CLAUDE.local.md).
+// All found via the WN008/WN009 canary Hugo-export byte-diffs, 2026-09-06.
 //
 // - startDate/endDate: the old-era prod blog rows have neither, so the
 //   Hugo renderer falls back to "now" + Hugo.DateAdjust (every old issue
