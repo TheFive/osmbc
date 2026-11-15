@@ -160,7 +160,7 @@ export class WikiStore {
     if (!options || typeof options.directory !== "string" || !path.isAbsolute(options.directory)) {
       throw new Error("WikiStore needs an absolute directory");
     }
-    this.directory = options.directory;
+    this.directory = path.resolve(options.directory);
     this.autoPush = !!options.autoPush;
     this.logger = options.logger || console;
     this.gitBinary = options.git || "git";
@@ -230,8 +230,12 @@ export class WikiStore {
     return validatePageId(id) + ".md";
   }
 
+  // ids and media paths are validated before; this second check keeps
+  // every file access inside the wiki directory
   _absolute(relative) {
-    return path.join(this.directory, relative);
+    const file = path.resolve(this.directory, relative);
+    if (file !== this.directory && !file.startsWith(this.directory + path.sep)) throw invalid("Invalid wiki path: " + relative);
+    return file;
   }
 
   // ---- pages --------------------------------------------------------------

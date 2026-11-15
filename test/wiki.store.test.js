@@ -106,6 +106,12 @@ describe("wiki/wikiStore", function() {
     it("should need an absolute directory", function() {
       should(() => new WikiStore({ directory: "wiki" })).throw();
     });
+    it("should keep every file access inside the directory", function() {
+      should(store._absolute("osmbc/page.md")).eql(path.join(store.directory, "osmbc/page.md"));
+      should(store._absolute("")).eql(store.directory);
+      should(() => store._absolute("../outside.md")).throw(/Invalid wiki path/);
+      should(() => store._absolute("media/../../outside.png")).throw(/Invalid wiki path/);
+    });
   });
 
   describe("pages", function() {

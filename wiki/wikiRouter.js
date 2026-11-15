@@ -42,11 +42,20 @@ function revisionFrom(value) {
   return value;
 }
 
+// removes a character from both ends, in linear time (a regex like /x+$/
+// is quadratic on long runs of x followed by something else)
+function trimChar(text, char) {
+  let start = 0;
+  let end = text.length;
+  while (start < end && text[start] === char) start++;
+  while (end > start && text[end - 1] === char) end--;
+  return text.substring(start, end);
+}
+
 // user input "Howto/My Page" -> "howto/my_page"
 export function normalisePageId(value) {
-  return String(value || "").trim().toLowerCase()
-    .replace(/^\/+|\/+$/g, "")
-    .replace(/\s+/g, "_");
+  const text = String(value || "").trim().toLowerCase();
+  return trimChar(text, "/").replace(/\s+/g, "_");
 }
 
 // forms send an existing folder ("" = top level) and a name; the name may
@@ -54,7 +63,7 @@ export function normalisePageId(value) {
 export function pageIdFromFolderAndName(folder, name) {
   if (!String(name || "").trim()) return "";
   const prefix = typeof folder === "string" && folder.trim() ? folder.trim() + "/" : "";
-  return normalisePageId(prefix + String(name || "").trim().replace(/^\/+/, ""));
+  return normalisePageId(prefix + trimChar(String(name || "").trim(), "/"));
 }
 
 // uploaded "My Screenshot (1).PNG" -> "my_screenshot_1.png"
@@ -62,7 +71,7 @@ export function normaliseMediaName(value) {
   const name = String(value || "").split(/[\\/]/).pop().toLowerCase();
   const dot = name.lastIndexOf(".");
   if (dot <= 0) return null;
-  const base = name.substring(0, dot).replace(/[^a-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "").substring(0, 80) || "image";
+  const base = trimChar(name.substring(0, dot).replace(/[^a-z0-9_-]+/g, "_"), "_").substring(0, 80) || "image";
   const extension = name.substring(dot + 1).replace(/[^a-z0-9]/g, "");
   return base + "." + extension;
 }
