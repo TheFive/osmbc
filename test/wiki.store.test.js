@@ -6,10 +6,10 @@ import should from "should";
 
 import {
   WikiStore, WikiError, isValidPageId, validateMediaPath, validateMediaContent, blobHash,
-  splitFrontMatter, pageAllowsAccess
+  splitFrontMatter, pageAllowsAccess, userHasAccess
 } from "../wiki/wikiStore.js";
 
-const PNG = (...rest) => Buffer.from([0x89, 0x50, 0x4e, 0x47, ...rest]);
+const pngBytes = (...rest) => Buffer.from([0x89, 0x50, 0x4e, 0x47, ...rest]);
 
 const silentLogger = { info: () => {}, error: () => {} };
 
@@ -77,6 +77,20 @@ describe("wiki/wikiStore", function() {
       should(pageAllowsAccess({ access: "full" }, "guest")).be.false();
       should(pageAllowsAccess({}, "guest")).be.true();
     });
+    it("should give access by level or by OSM user name", function() {
+      const full = { OSMUser: "Alice", access: "full" };
+      const guest = { OSMUser: "Bob", access: "guest" };
+      const denied = { OSMUser: "Eve", access: "denied" };
+      should(userHasAccess(["full"], full)).be.true();
+      should(userHasAccess(["full"], guest)).be.false();
+      should(userHasAccess(["full", "guest"], guest)).be.true();
+      // small rollout: only named users, case ignored
+      should(userHasAccess(["alice"], full)).be.true();
+      should(userHasAccess(["alice"], { OSMUser: "Carol", access: "full" })).be.false();
+      should(userHasAccess(["full", "BOB"], guest)).be.true();
+      should(userHasAccess(["Eve", "guest", "full"], denied)).be.false();
+      should(userHasAccess(["full"], null)).be.false();
+    });
   });
 
   describe("init", function() {
@@ -142,7 +156,7 @@ describe("wiki/wikiStore", function() {
     it("should list pages with titles, without media", async function() {
       await store.savePage("start", "# Welcome\n", { user: "A" });
       await store.savePage("osmbc/review", "---\ntitle: Review rules\naccess: full\n---\n# Ignored\n", { user: "A" });
-      await store.saveMedia("logo.png", PNG(), { user: "A" });
+      await store.saveMedia("logo.png", pngBytes(), { user: "A" });
       const pages = await store.listPages();
       should(pages.map(p => [p.id, p.title])).eql([["osmbc/review", "Review rules"], ["start", "Welcome"]]);
       should(pages[0].frontMatter.access).eql("full");
@@ -217,14 +231,14 @@ describe("wiki/wikiStore", function() {
 
   describe("media", function() {
     it("should save, read and protect media files", async function() {
-      await store.saveMedia("osmbc/shot.png", PNG(1, 2), { user: "A", maxBytes: 10 });
+      await store.saveMedia("osmbc/shot.png", pngBytes(1, 2), { user: "A", maxBytes: 10 });
       const media = await store.readMedia("osmbc/shot.png");
       should(media.contentType).eql("image/png");
       should(Array.from(media.buffer)).eql([0x89, 0x50, 0x4e, 0x47, 1, 2]);
       should(await store.readMedia("osmbc/missing.png")).be.null();
       should(await store.mediaExists("osmbc/shot.png")).be.true();
-      await shouldReject(store.saveMedia("osmbc/shot.png", PNG(4), { user: "A" }), 409);
-      await store.saveMedia("osmbc/shot.png", PNG(4), { user: "A", overwrite: true });
+      await shouldReject(store.saveMedia("osmbc/shot.png", pngBytes(4), { user: "A" }), 409);
+      await store.saveMedia("osmbc/shot.png", pngBytes(4), { user: "A", overwrite: true });
       await shouldReject(store.saveMedia("big.png", Buffer.alloc(11), { user: "A", maxBytes: 10 }), 413);
       await shouldReject(store.saveMedia("script.js", Buffer.from("x"), { user: "A" }), 400);
       await shouldReject(store.saveMedia("fake.png", Buffer.from("<html>"), { user: "A" }), 400);
@@ -234,7 +248,7 @@ describe("wiki/wikiStore", function() {
 
   describe("media content", function() {
     it("should accept matching content", function() {
-      validateMediaContent(PNG(), "png");
+      validateMediaContent(pngBytes(), "png");
       validateMediaContent(Buffer.from([0xff, 0xd8, 0xff, 0xe0]), "jpg");
       validateMediaContent(Buffer.from("GIF89a"), "gif");
       validateMediaContent(Buffer.from("RIFF\0\0\0\0WEBPVP8 "), "webp");

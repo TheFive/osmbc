@@ -16,7 +16,7 @@
 
 import express from "express";
 import {
-  WikiError, isValidPageId, pageAllowsAccess, splitFrontMatter, validateMediaPath
+  WikiError, isValidPageId, pageAllowsAccess, splitFrontMatter, userHasAccess, validateMediaPath
 } from "./wikiStore.js";
 import wikiMarkdownPlugin from "./wikiMarkdown.js";
 import { htmlLineDiff } from "./wikiDiff.js";
@@ -98,7 +98,6 @@ function groupByNamespace(pages) {
  * options:
  *  - store: WikiStore
  *  - wikiConfig: { readAccess, writeAccess, maxUploadBytes }
- *  - checkRole(roles): middleware, rejects users without one of the roles
  *  - createMarkdown(): a new markdown-it instance with the host's plugins
  *    (HTML off), called per render
  *  - basePath: URL path the router is mounted at, e.g. htmlRoot + "/wiki"
@@ -108,7 +107,7 @@ function groupByNamespace(pages) {
  *    ({ type, id, user, rev, message, url, fromId, mediaPath })
  */
 export function createWikiRouter(options) {
-  const { store, wikiConfig, checkRole, basePath } = options;
+  const { store, wikiConfig, basePath } = options;
   const layout = options.layout || ((req, res) => res.rendervar && res.rendervar.layout);
   const prepareLayout = options.prepareLayout || ((req, res, next) => next());
   const onChange = options.onChange || (() => {});
@@ -117,9 +116,13 @@ export function createWikiRouter(options) {
   const createMarkdown = () => options.createMarkdown().use(wikiMarkdownPlugin, { basePath });
 
   const router = express.Router();
-  const canRead = checkRole(wikiConfig.readAccess);
-  const canWrite = checkRole(wikiConfig.writeAccess);
-  const userMayWrite = (req) => wikiConfig.writeAccess.includes(req.user.access);
+  // the host makes sure the user is logged in
+  const accessCheck = (list, what) => (req, res, next) => userHasAccess(list, req.user)
+    ? next()
+    : next(new WikiError("OSM User >" + (req.user && req.user.OSMUser) + "< has not enough access rights " + what, 403));
+  const canRead = accessCheck(wikiConfig.readAccess, "to read the wiki");
+  const canWrite = accessCheck(wikiConfig.writeAccess, "to change the wiki");
+  const userMayWrite = (req) => userHasAccess(wikiConfig.writeAccess, req.user);
   const pageUrl = (id) => basePath + "/" + id;
   const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 

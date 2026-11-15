@@ -99,12 +99,20 @@ describe("config directories", function() {
       should(r.value.directory).eql(path.join(tmpDir, "wiki"));
       should(r.value.readAccess).eql(["full", "guest"]);
     });
+    it("should accept OSM user names in the access lists", function() {
+      writeTestConfig(tmpDir, { wiki: { directory: "/somewhere/else", readAccess: ["full", "SomeGuest"], writeAccess: ["TheFive"] } });
+      const r = runConfig({ OSMBC_CONFIG_DIR: tmpDir, OSMBC_TEST_TMPDIR: tmpDir }, "config.getWikiConfig()");
+      should(r.status).equal(0, r.stderr);
+      should(r.value.readAccess).eql(["full", "SomeGuest"]);
+      should(r.value.writeAccess).eql(["TheFive"]);
+    });
 
     for (const [name, wiki] of [
       ["a relative directory", { directory: "wikidata" }],
       ["a directory inside the app", { directory: path.join(appDir, "wikidata") }],
       ["the app directory itself", { directory: appDir }],
-      ["an unknown access level", { directory: "/srv/wiki", readAccess: ["denied"] }],
+      ["the access level denied", { directory: "/srv/wiki", readAccess: ["denied"] }],
+      ["an empty access entry", { directory: "/srv/wiki", readAccess: ["full", " "] }],
       ["access that is not a list", { directory: "/srv/wiki", writeAccess: "full" }]
     ]) {
       it("should stop for " + name, function() {

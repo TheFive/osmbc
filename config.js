@@ -289,7 +289,6 @@ function getProfileDir() {
 // The editorial wiki (wiki/). Off unless wiki.directory is set. The
 // directory is a git repository of its own with instance content, so it
 // has to be an absolute path outside the app directory.
-const wikiAccessLevels = ["full", "guest"];
 
 function wikiConfigError(message) {
   logger.error("Wrong value in config.*.(yaml|yml|json). Name: 'wiki': " + message);
@@ -309,8 +308,9 @@ function getWikiConfig() {
   }
   const access = (name, defaultValue) => {
     const value = wiki[name] ?? defaultValue;
-    if (!Array.isArray(value) || !value.every(v => wikiAccessLevels.includes(v))) {
-      wikiConfigError(name + " has to be a list of " + wikiAccessLevels.join(", "));
+    // full, guest or OSM user names
+    if (!Array.isArray(value) || !value.every(v => typeof v === "string" && v.trim() !== "" && v !== "denied")) {
+      wikiConfigError(name + " has to be a list of full, guest and OSM user names");
     }
     return value;
   };

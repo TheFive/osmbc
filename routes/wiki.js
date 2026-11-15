@@ -2,7 +2,6 @@
 // Markdown settings and logging. The module itself has no OSMBC imports.
 
 import config from "../config.js";
-import auth from "./auth.js";
 import layoutRouter from "./layout.js";
 import { osmbcMarkdown } from "../util/md_util.js";
 import { WikiStore } from "../wiki/wikiStore.js";
@@ -46,7 +45,6 @@ export function createOsmbcWikiRouter(wikiConfig = config.getWikiConfig()) {
   const router = createWikiRouter({
     store,
     wikiConfig,
-    checkRole: (roles) => auth.checkRole(roles),
     createMarkdown: () => osmbcMarkdown(),
     basePath: config.htmlRoot() + "/wiki",
     prepareLayout: layoutRouter.prepareRenderLayout,

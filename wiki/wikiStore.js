@@ -115,6 +115,19 @@ export function splitFrontMatter(text) {
   return { frontMatter, body: text.substring(match[0].length) };
 }
 
+// wiki-wide access list (readAccess/writeAccess): "full" and "guest" are
+// access levels, every other entry is an OSM user name (case ignored), e.g.
+// [full, someGuest] or [alice, bob] for a small rollout. "denied" users
+// never get access.
+export const ACCESS_LEVELS = ["full", "guest"];
+export function userHasAccess(list, user) {
+  if (!user || !Array.isArray(list) || user.access === "denied") return false;
+  const name = String(user.OSMUser || "").toLowerCase();
+  return list.some(entry => ACCESS_LEVELS.includes(entry)
+    ? entry === user.access
+    : name !== "" && String(entry).toLowerCase() === name);
+}
+
 // front matter can only narrow access: "access: full" hides a page from
 // everyone without full access, whatever the wiki-wide read access is
 export function pageAllowsAccess(frontMatter, userAccess) {
