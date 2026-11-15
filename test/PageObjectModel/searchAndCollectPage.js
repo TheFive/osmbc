@@ -1,6 +1,6 @@
 "use strict;";
 
-import { By, until } from "selenium-webdriver";
+import { By, Key, until } from "selenium-webdriver";
 import util from "../../util/util.js";
 
 import StandardPage from "./standardPage.js";
@@ -39,6 +39,24 @@ export default class SearchAndCollectPage extends StandardPage {
     const ele =  await this._driver.findElement(By.css("textarea[name='collection']"));
     await (ele).sendKeys(await this.getCtrlA());
     await (ele).sendKeys(text);
+  }
+
+  async clearTitle() {
+    await this.assertPage();
+    const ele = await this._driver.findElement(By.id("title"));
+    await ele.sendKeys(await this.getCtrlA());
+    await ele.sendKeys(Key.BACK_SPACE);
+  }
+
+  // title from the phone keyboard (suggestion, long press paste),
+  // without key events
+  async appendTitleWithPhoneKeyboard(text) {
+    await this.assertPage();
+    await this._insertTextLikePhoneKeyboard(await this._driver.findElement(By.id("title")), text);
+  }
+
+  async isOKEnabled() {
+    return this._driver.findElement(By.css("button#OK")).isEnabled();
   }
 
   async clickOK() {

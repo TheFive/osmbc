@@ -168,6 +168,21 @@ class ArticlePage extends StandardPage {
     await this._driver.findElement(By.id("markdown" + lang)).sendKeys(text);
   }
 
+  // append text with the phone keyboard (suggestion, long press paste),
+  // without key events; field: "markdownDE", "collection", "title" ...
+  async appendWithPhoneKeyboard(field, text) {
+    await this.assertPage();
+    await this._insertTextLikePhoneKeyboard(await this._driver.findElement(By.id(field)), text);
+  }
+
+  async getPreviewText(lang) {
+    return this._driver.findElement(By.id("preview" + lang)).getText();
+  }
+
+  async getCollectionLinksText() {
+    return this._driver.findElement(By.id("linkArea")).getText();
+  }
+
   async isMarkdownShown(lang) {
     return this._driver.findElement(By.id("markdown" + lang)).isDisplayed();
   }

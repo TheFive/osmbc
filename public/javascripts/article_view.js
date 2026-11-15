@@ -78,9 +78,13 @@ function init() {
   $("#collection")
     .change(onchangeCollection)
     .change(FitToContent)
-    .keyup(onchangeCollection)
-    .keyup(FitToContent)
-    .keyup(showModified)
+    .change(showModified)
+    // input, not keyup: phone keyboards (word suggestions, autocorrect,
+    // pasting from the long press menu, dictation) change the text
+    // without any key event
+    .on("input", onchangeCollection)
+    .on("input", FitToContent)
+    .on("input", showModified)
     .trigger("change");
   $(".markdownEdit")
     .change(convertMinusNoTranslation)
@@ -89,17 +93,17 @@ function init() {
     .change(FitToContent)
     .change(checkMarkdownError)
     .focusout(convertMinusNoTranslation)
-    .keyup(previewMarkdown)
-    .keyup(checkForTable)
-    .keyup(FitToContent)
-    .keyup(checkMarkdownError)
-    .keyup(showModified)
+    .on("input", previewMarkdown)
+    .on("input", checkForTable)
+    .on("input", FitToContent)
+    .on("input", checkMarkdownError)
+    .on("input", showModified)
     .on("paste", pasteEvent)
     .on("drop", pasteEvent)
     .on("focus", function() { lastMarkdownField = this; })
     .trigger("change");
   $("#title")
-    .keyup(showModified);
+    .on("input change", showModified);
   $("#predecessorId")
     .change(showModified);
   $("#blog")
@@ -110,7 +114,7 @@ function init() {
     .change(showModified)
     .trigger("change");
   $("#unpublishReference")
-    .keyup(showModified)
+    .on("input change", showModified)
     .trigger("change");
   $("#categoryEN")
     .change(showModified)

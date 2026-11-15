@@ -68,6 +68,34 @@ describe("uc.article save bar", function() {
     await barSave.click();
     await driver.wait(async () => (await articleModule.findById(articleId)).markdownDE === "Text DE more", 5000, "text not saved");
   });
+  describe("text from the phone keyboard without key events", function() {
+    // word suggestions, autocorrect, long press paste, dictation
+    it("should show Save and the preview for the markdown", async function() {
+      driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + articleId));
+      await articlePage.appendWithPhoneKeyboard("markdownDE", " suggested");
+      should(await articlePage.isSaveBarShown()).be.True();
+      should(await articlePage.getPreviewText("DE")).containEql("Text DE suggested");
+      await articlePage.clickSaveBar();
+      await driver.wait(async () => (await articleModule.findById(articleId)).markdownDE === "Text DE suggested", 5000, "text not saved");
+    });
+    it("should show Save and the link for the collection", async function() {
+      driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + articleId));
+      await articlePage.appendWithPhoneKeyboard("collection", "https://example.com/pasted");
+      should(await articlePage.isSaveBarShown()).be.True();
+      should(await articlePage.getCollectionLinksText()).containEql("example.com/pasted");
+    });
+    it("should show Save for the title", async function() {
+      driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + articleId));
+      await articlePage.appendWithPhoneKeyboard("title", " suggested");
+      should(await articlePage.isSaveBarShown()).be.True();
+    });
+  });
   it("should insert a collection link and its translation link by tapping (X7)", async function() {
     const linked = await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Mapping", title: "Title", markdownDE: "Text DE", collection: "https://example.com/news" });
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });
