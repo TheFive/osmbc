@@ -1,5 +1,28 @@
 # Changelog
 
+## [4.7.0](https://github.com/TheFive/osmbc/tree/4.7.0) (2026-11-15)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.6.0...4.7.0)
+
+**Features:**
+
+- wiki: git-backed page store and wiki config
+- wiki: view, edit and index pages
+- wiki: history, move/delete, search, images, Mattermost messages
+- wiki: choose the target folder when moving a page
+- wiki: choose the folder when creating a page
+- wiki: allow single user names in readAccess and writeAccess
+- wiki: migration script from the DokuWiki git history
+- config: split the wiki block into technical and editorial parts
+- helpmenu: paths inside OSMBC and a default without instance links
+
+**Fixed bugs:**
+
+- ui: react to text changed without key events
+- wiki: treat link targets case-insensitively like DokuWiki
+- ui: drop auto translation marker after inline save [#1175](https://github.com/TheFive/osmbc/issues/1175)
+- wiki: keep file access inside the wiki directory, linear name trims
+
 ## [4.6.0](https://github.com/TheFive/osmbc/tree/4.6.0) (2026-11-14)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.5.1...4.6.0)
