@@ -277,6 +277,19 @@ describe("routes/wiki", function() {
       const messages = await waitForMessages(1);
       should(messages[0].text).match(/^moved wiki page tmp\/from to \[tmp\/to_here\].*: better name$/);
     });
+    it("should offer the existing folders and move into one of them", async function () {
+      const saved = await store.savePage("tmp/folder_move", "folder text", { user: "TheFive" });
+      const form = await full.get(wikiLink + "/tmp/folder_move?move");
+      should(form.data).containEql("<option value=\"osmbc\">osmbc</option>");
+      should(form.data).containEql("<option value=\"tmp\" selected>tmp</option>");
+      should(form.data).containEql("id=\"wikiMoveName\" type=\"text\" name=\"name\" value=\"folder_move\"");
+      const res = await full.post(wikiLink + "/tmp/folder_move", { action: "move", folder: "osmbc", name: "Moved Page", baseBlob: saved.blob });
+      should(res.headers.location).eql("/wiki/osmbc/moved_page");
+      should((await store.readPage("osmbc/moved_page")).markdown).eql("folder text\n");
+      const saved2 = await store.savePage("tmp/to_top", "x", { user: "TheFive" });
+      const res2 = await full.post(wikiLink + "/tmp/to_top", { action: "move", folder: "", name: "new_ns/top", baseBlob: saved2.blob });
+      should(res2.headers.location).eql("/wiki/new_ns/top");
+    });
     it("should not move onto an existing page or with a stale text", async function () {
       const saved = await store.savePage("tmp/a", "a", { user: "TheFive" });
       await store.savePage("tmp/b", "b", { user: "TheFive" });

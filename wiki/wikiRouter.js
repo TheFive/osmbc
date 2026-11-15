@@ -123,6 +123,16 @@ export function createWikiRouter(options) {
     }
   }
 
+  // all folders (namespaces) that hold pages, including their parents, sorted
+  async function existingFolders() {
+    const folders = new Set();
+    for (const page of await store.listPages()) {
+      const segments = page.id.split("/").slice(0, -1);
+      for (let i = 1; i <= segments.length; i++) folders.add(segments.slice(0, i).join("/"));
+    }
+    return Array.from(folders).sort();
+  }
+
   async function existingIds() {
     const pages = await store.listPages();
     return new Set(pages.map(p => p.id));
@@ -363,6 +373,9 @@ export function createWikiRouter(options) {
         title: page.title,
         mode: "move" in req.query ? "move" : "delete",
         blob: page.blob,
+        folders: await existingFolders(),
+        currentFolder: namespaceOf(id),
+        currentName: id.split("/").pop(),
         breadcrumbs: breadcrumbs(basePath, id)
       });
     }
@@ -436,7 +449,12 @@ export function createWikiRouter(options) {
 
   async function movePage(req, res, id, current) {
     const body = req.body || {};
-    const toId = normalisePageId(body.to);
+    // the form sends a folder (existing one, "" = top level) and a name; the
+    // name may contain "/" to create a new subfolder
+    const target = typeof body.folder === "string"
+      ? (body.folder ? body.folder + "/" : "") + String(body.name || "")
+      : body.to;
+    const toId = normalisePageId(target);
     if (!isValidPageId(toId)) throw new WikiError("Invalid wiki page name: " + toId, 400);
     if (toId === id) return res.redirect(pageUrl(id));
     if (typeof body.baseBlob === "string" && body.baseBlob !== current.blob) {
