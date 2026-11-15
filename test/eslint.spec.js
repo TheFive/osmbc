@@ -5,7 +5,8 @@ import { ESLint } from "eslint";
 import should from "should";
 
 function createESLintInstance() {
-  return new ESLint();
+  // existing readability violations are listed in eslint-suppressions.json
+  return new ESLint({ applySuppressions: true });
 }
 const eslint = createESLintInstance();
 

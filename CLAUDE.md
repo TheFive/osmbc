@@ -9,19 +9,23 @@ This file holds facts that are true regardless of which branch/worktree/task
 you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
 (gitignored, imported below) — not here, to avoid drift between branches.
 
-## Data model (Postgres)
+## Architecture
 
-- Every content table (`blog`, `article`, `changes`, `config`, `usert`,
-  `session`) stores one row per object as `id` + a `jsonb` `data` column —
-  there are no real typed columns. Query fields via `data->>'field'`
-  (e.g. `data->>'categoryEN'`), not as if they were columns.
-- The user table is named `usert`, not `users`.
-- No foreign keys exist between these tables — a per-table
-  TRUNCATE/DROP+reload has no ordering constraints to worry about.
-- `blog.categories` is an ordered array: its element order drives both the
-  rendered heading order **and** the lead-picture caption's position — not
-  just display order. Reorder relative to an existing anchor category, never
-  to absolute index 0.
+`docs/architecture.md` is the map of the code base (startup, request
+flow, persistence, `setAndSave`, notifications, configuration, where to
+start for a change). Read it before changing unfamiliar code. The rules
+that matter most, in short:
+
+- Every table (`blog`, `article`, `changes`, `config`, `usert`,
+  `session`) is `id` + `jsonb` `data`; query `data->>'field'`. The user
+  table is `usert`. No foreign keys.
+- `blog.categories` order drives heading order and the lead-picture
+  caption position; reorder relative to an existing category.
+- Editorial changes go through `setAndSave`, never a bare `save()`,
+  even for fields that should stay invisible — filter those with a
+  `FilterReceiver` instead.
+- Every `messageCenter` receiver implements all seven methods
+  (no-op stubs allowed); each receiver filters relevance itself.
 
 ## Configuration (`config.js`)
 
@@ -59,40 +63,16 @@ you're on. Task- or worktree-specific notes belong in `CLAUDE.local.md`
   `slugalias.json` old-URL redirect mechanism), and `docs/API.md` for the
   caller-facing API that consumes it.
 
-## Notifications (`setAndSave` → `messageCenter`)
+## Readability rules (ESLint)
 
-- Every `setAndSave`/`closeBlog`/etc. mutation broadcasts the full `change`
-  object to **every** registered `messageCenter.global` receiver
-  (`notification/messageCenter.js`), via `updateBlog`/`updateArticle`/
-  `sendReviewStatus`/`sendCloseStatus`/`addComment`/`editComment`/`sendInfo`.
-  It is each receiver's own job to decide whether a given change is
-  relevant to it — the broadcaster does not filter anything itself.
-  Concretely today: `LogModuleReceiver` (Postgres `changes` log, wrapped in
-  a `FilterReceiver`), `ExportReceiver` (text-log for operational markers),
-  and, via `IteratorReceiver`, one `MailReceiver`/`SlackReceiver` instance
-  per interested channel/user.
-- `MessageCenter` calls every receiver method **unconditionally, with no
-  existence check** — a receiver that's missing one of the seven interface
-  methods (`sendInfo`, `updateArticle`, `updateBlog`, `sendReviewStatus`,
-  `sendCloseStatus`, `addComment`, `editComment`) throws as soon as that
-  event fires. Any new receiver must implement all seven (no-op stubs for
-  the irrelevant ones), e.g. `notification/exportReceiver.js`.
-- Relevance filtering is inconsistent by receiver, and that inconsistency
-  matters: `UserConfigFilter` (wrapping `MailReceiver` per user) checks
-  `change.status` before reacting; `LogModuleReceiver` on its own does
-  **not** filter at all — it logs whatever keys are present in `change`
-  unconditionally, so an unfiltered receiver turns every field change into
-  a Postgres row visible to editors. `notification/FilterReceiver.js` is
-  the generic, reusable wrapper for bolting a relevance predicate in front
-  of a receiver that doesn't already do its own filtering (formalizes what
-  `UserConfigFilter` did ad hoc) — see `notification/messageCenter.js` for
-  how it wraps `LogModuleReceiver` to skip purely operational fields (e.g.
-  `blog.exportedBy`, set by `Blog.prototype.markAsExported`).
-- Net effect: a field that should stay invisible to editors (not appear in
-  the change history, not trigger a mail/Slack "changed" notification)
-  should still be written via `setAndSave` like everything else — never by
-  reaching for a bare `save()` to dodge the broadcast — and instead get a
-  `FilterReceiver`-wrapped or self-filtering receiver that ignores it.
+- New or changed application code keeps the limits in `eslint.config.js`
+  (complexity 15, depth 4, 80 lines per function, 5 params) and gets a
+  JSDoc comment on every exported function/class/method (what it does,
+  what the caller must know — not a restatement of the name).
+- Never grow `eslint-suppressions.json` (no `--suppress-all`, no hand
+  edits) to get past a new violation; fix the code. After fixing old
+  violations run `npm run lint:prune` and commit the file. Details:
+  `docs/development.md` "Lint rules for readability".
 
 ## Web UI
 

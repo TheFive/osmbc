@@ -1,0 +1,415 @@
+{
+  "config.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 15
+    }
+  },
+  "model/article.js": {
+    "complexity": {
+      "count": 2
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 36
+    },
+    "max-depth": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "model/blog.js": {
+    "complexity": {
+      "count": 4
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 47
+    },
+    "max-depth": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 4
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "model/blogTransitionScheduler.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 4
+    }
+  },
+  "model/config.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 11
+    }
+  },
+  "model/db.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "model/firstDraft.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 7
+    }
+  },
+  "model/htmltitle.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "model/language.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 7
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "model/logModule.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 10
+    }
+  },
+  "model/osmcalLoader.js": {
+    "complexity": {
+      "count": 4
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 4
+    }
+  },
+  "model/pgMap.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 9
+    },
+    "max-depth": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 3
+    }
+  },
+  "model/translator.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 4
+    }
+  },
+  "model/user.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 35
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "notification/ArticleCollectFilter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 8
+    }
+  },
+  "notification/BlogStatusFilter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 8
+    }
+  },
+  "notification/ConfigFilter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 7
+    }
+  },
+  "notification/FilterReceiver.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "notification/IteratorReceiver.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 8
+    }
+  },
+  "notification/LogModuleReceiver.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 8
+    }
+  },
+  "notification/SlackAPI.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 4
+    }
+  },
+  "notification/UserConfigFilter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 7
+    }
+  },
+  "notification/exportLogWriter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "notification/exportReceiver.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 8
+    }
+  },
+  "notification/mailReceiver.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 10
+    }
+  },
+  "notification/migrationFilter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "notification/slackReceiver.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 9
+    }
+  },
+  "public/javascripts/article_view.js": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "public/javascripts/github_contribution.js": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "public/javascripts/wiki_edit.js": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "render/HtmlRenderer.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "render/HugoMarkdownRenderer.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 15
+    }
+  },
+  "render/MarkdownRenderer.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "render/Renderer.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "routes/api.js": {
+    "complexity": {
+      "count": 3
+    },
+    "max-lines-per-function": {
+      "count": 4
+    }
+  },
+  "routes/article.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 3
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "routes/auth.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 5
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "routes/blog.js": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "routes/help.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "routes/index.js": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "routes/layout.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "routes/sessionStore.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "routes/slack.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "routes/users.js": {
+    "max-lines-per-function": {
+      "count": 2
+    }
+  },
+  "routes/wiki.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "util/configSplit.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "util/featureImage.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "util/initialise.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "util/internalCache.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 6
+    }
+  },
+  "util/license-checker-internal.js": {
+    "complexity": {
+      "count": 2
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "util/linkCheck.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "util/md_util.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 3
+    }
+  },
+  "util/util.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 14
+    }
+  },
+  "wiki/dokuwikiMigration.js": {
+    "complexity": {
+      "count": 3
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 12
+    },
+    "max-lines-per-function": {
+      "count": 2
+    }
+  },
+  "wiki/wikiDiff.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 2
+    }
+  },
+  "wiki/wikiMarkdown.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 4
+    }
+  },
+  "wiki/wikiNotify.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  },
+  "wiki/wikiRouter.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 3
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "wiki/wikiStore.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 33
+    }
+  },
+  "wp-reconcile/blog-sync-merger/blogSyncMerger.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 11
+    }
+  },
+  "wp-reconcile/blog-sync-merger/rollback.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 3
+    }
+  },
+  "wp-reconcile/blog-sync-merger/syncBlog.js": {
+    "complexity": {
+      "count": 1
+    },
+    "jsdoc/require-jsdoc": {
+      "count": 6
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "wp-reconcile/blog-sync-merger/syncState.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 5
+    }
+  },
+  "wp-reconcile/blog-sync-merger/withReopenedBlog.js": {
+    "jsdoc/require-jsdoc": {
+      "count": 1
+    }
+  }
+}

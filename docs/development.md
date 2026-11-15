@@ -12,7 +12,8 @@ Following development tools are required
 * Node.js 22 or newer with npm (tested with 22.22.0)
 * main developer is using VS Code with some plugins to develop
 
-More info in the [Installation Guide](install.md).
+More info in the [Installation Guide](install.md). How the code is organised:
+[Architecture](architecture.md).
 
 ## Tests
 
@@ -113,6 +114,41 @@ Many UI tests compare the rendered page with an expected file
 `test-actual-files`). If the new page is correct, rename the
 `_actual` file to the expected one; `test/mv_actual2test.sh` does that for
 all `_actual.html` files in the current directory.
+
+## Lint rules for readability
+
+The goal: code that a person can read and change without help. ESLint
+(`eslint.config.js`) checks the application code (not `test/`, not
+`tools/`) for
+
+| Rule | Limit | Why |
+|---|---|---|
+| `complexity` | 15 | branches per function; more is hard to follow and to test |
+| `max-depth` | 4 | nested blocks |
+| `max-lines-per-function` | 80 (without blank and comment lines) | a function should fit on a screen |
+| `max-params` | 5 | more parameters want an options object |
+| `jsdoc/require-jsdoc` | exported functions, classes and methods | what a module offers is described where it is defined |
+| `jsdoc/check-param-names`, `jsdoc/check-tag-names` | — | a JSDoc comment that exists matches the code |
+
+A JSDoc comment says what the function does and what the caller has to
+know (side effects, callback/promise, errors), not what the name already
+says. Parameters don't have to be listed one by one; if they are, the
+names must be right.
+
+**Existing code** breaks these rules in about 480 places. They are listed
+per file and rule in `eslint-suppressions.json`
+([bulk suppressions](https://eslint.org/docs/latest/use/suppressions)),
+so they don't fail the lint. New violations do — `npm run lint` and the
+ESLint test in `npm test` fail. When a file goes over its allowed count,
+ESLint shows *all* violations of that rule in the file; the new one is
+the one you added.
+
+When you fix old violations (split a function, add a JSDoc), the
+suppression file still allows the old count and `npm run lint` says
+"There are suppressions left that do not occur anymore". Run
+`npm run lint:prune` and commit `eslint-suppressions.json`, so the
+allowed count goes down for good. Don't add entries by hand and don't run
+`--suppress-all` again to hide new violations.
 
 ## Commit messages
 

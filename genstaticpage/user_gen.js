@@ -9,6 +9,12 @@ import userModule from "../model/user.js";
 import sanitize from "sanitize-html";
 
 
+/**
+ * Writes the static public profile page `<OSMUser>.html` into the profile
+ * directory, or removes it when the user has no public profile.
+ * @param {string} osmUser - OSM user name of the profile owner.
+ * @param {function(Error=)} callback - Called when the file is written or removed.
+ */
 export function generateUserPage(osmUser, callback) {
   debug("generateUserPage");
 
