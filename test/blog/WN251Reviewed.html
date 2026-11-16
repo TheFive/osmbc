@@ -743,6 +743,7 @@ while layout.user["blogSetting"+v]
       $(document).on("click", "[data-lang-status]", function() {
         const button = $(this);
         if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        const label = button.text();
         button.prop("disabled", true);
         button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus", {
@@ -751,6 +752,13 @@ while layout.user["blogSetting"+v]
         }, function() {
           location.reload();
         }).fail(function(err) {
+          // 409: refused with a message for the editor, e.g. articles not written yet
+          if (err.status === 409) {
+            window.alert(err.responseText);
+            button.prop("disabled", false);
+            button.text(label);
+            return;
+          }
           console.error("Trouble setting Language Status");
           console.error(err);
         });

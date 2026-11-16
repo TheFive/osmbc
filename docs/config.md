@@ -259,6 +259,14 @@ so the rule acts at most once per blog and language.
 | `recheck` | — | Check again until a later time, see above. |
 | `actorUser` | `autoclose-review` | Name in the close log entry. |
 
+A language with an article that is not written yet (no text and not
+`no translation`, or in `-- no category yet --`; `--unpublished--`
+doesn't count) is never closed, neither by this rule nor by hand: the
+close is refused (HTTP 409 with a message for the editor), so an
+unfinished blog can't be exported (issue #1137). The preview lists such
+languages as "blocked" with the number of articles still missing.
+Reopening is always possible.
+
 **Preview.** The admin page (`/osmbc/admin`) shows read-only what the next
 runs will do: per blog the due time (server timezone, plus the browser's
 local time if it differs), the languages that will be translated, those

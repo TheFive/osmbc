@@ -228,12 +228,16 @@ function recheckPreview(timing, now) {
   return { nextTs: (nextTs < timing.untilTs) ? nextTs : null, untilTs: timing.untilTs };
 }
 
+// a language with articles not written yet is never closed (#1137, closeBlog
+// refuses it too). Needs blog.calculateDerived to have run.
 function planLanguageClose(blog, ruleConfig) {
-  const plan = { close: [], waiting: [], done: [] };
+  const plan = { close: [], waiting: [], blocked: [], done: [] };
   ruleConfig.languages.forEach(function(lang) {
     if (blog["close" + lang] === true) return plan.done.push(lang);
     if (ruleConfig.onlyIfNotExported && blog["exported" + lang] === true) return plan.done.push(lang);
     const reviews = blog.getClosedReviewCount(lang);
+    const unwritten = blog.getUnEdited(lang);
+    if (unwritten > 0) return plan.blocked.push({ lang: lang, unwritten: unwritten, reviews: reviews });
     if (reviews < ruleConfig.minReviews) return plan.waiting.push({ lang: lang, reviews: reviews });
     plan.close.push(lang);
   });
@@ -306,10 +310,18 @@ function runLanguageAutoCloseRule(callback) {
       const timing = ruleTiming(blog, ruleConfig, ruleConfig.closeAt);
       if (!shouldRun("AutoLanguageClose", blog, timing, now)) return cbBlog();
 
-      eachSeries(planLanguageClose(blog, ruleConfig).close, function(lang, cbLanguage) {
-        debug("Auto close language %s for blog %s", lang, blog.name);
-        blog.closeBlog({ user: { OSMUser: ruleConfig.actorUser }, lang: lang, status: true }, cbLanguage);
-      }, cbBlog);
+      const actor = { OSMUser: ruleConfig.actorUser };
+      blog.calculateDerived(actor, function(err) {
+        if (err) return cbBlog(err);
+        eachSeries(planLanguageClose(blog, ruleConfig).close, function(lang, cbLanguage) {
+          debug("Auto close language %s for blog %s", lang, blog.name);
+          blog.closeBlog({ user: actor, lang: lang, status: true }, function(err) {
+            // a problem in one language should not stop the others
+            if (err) config.logger.error(err);
+            cbLanguage();
+          });
+        }, cbBlog);
+      });
     }, callback);
   });
 }
@@ -411,19 +423,26 @@ function previewAutoEdit(blogs, enabled, now) {
   return result;
 }
 
-function previewLanguageClose(blogs, transitionConfig, now) {
+function previewLanguageClose(blogs, transitionConfig, now, callback) {
   const closeConfig = transitionConfig.autoLanguageClose;
   const result = { enabled: closeConfig.enabled === true, minReviews: closeConfig.minReviews, blogs: [] };
-  if (!result.enabled) return result;
+  if (!result.enabled) return callback(null, result);
   if (closeConfig.recheck) result.everyMinutes = closeConfig.recheck.everyMinutes;
-  blogs.forEach(function(blog) {
-    if (!isPreviewCandidate(blog, closeConfig.blogStatusFilter, transitionConfig.autoEditMode.enabled === true)) return;
+  const actor = { OSMUser: closeConfig.actorUser };
+  eachSeries(blogs, function(blog, cbBlog) {
+    if (!isPreviewCandidate(blog, closeConfig.blogStatusFilter, transitionConfig.autoEditMode.enabled === true)) return cbBlog();
     const timing = ruleTiming(blog, closeConfig, closeConfig.closeAt);
-    if (!isUpcoming(timing, now)) return;
-    result.blogs.push(Object.assign({ name: blog.name, ts: timing.dueTs }, recheckPreview(timing, now), planLanguageClose(blog, closeConfig)));
+    if (!isUpcoming(timing, now)) return cbBlog();
+    blog.calculateDerived(actor, function(err) {
+      if (err) return cbBlog(err);
+      result.blogs.push(Object.assign({ name: blog.name, ts: timing.dueTs }, recheckPreview(timing, now), planLanguageClose(blog, closeConfig)));
+      cbBlog();
+    });
+  }, function(err) {
+    if (err) return callback(err);
+    result.blogs.sort(byTs);
+    callback(null, result);
   });
-  result.blogs.sort(byTs);
-  return result;
 }
 
 function previewAutoTranslate(blogs, transitionConfig, now, callback) {
@@ -509,15 +528,16 @@ export function getUpcomingActions(callback) {
     if (err) return callback(err);
 
     result.autoEdit = previewAutoEdit(blogs, transitionConfig.autoEditMode.enabled === true, now);
-    result.autoLanguageClose = previewLanguageClose(blogs, transitionConfig, now);
-    previewAutoTranslate(blogs, transitionConfig, now, function(err, translatePreview) {
+    series([
+      (cb) => previewAutoTranslate(blogs, transitionConfig, now, cb),
+      (cb) => previewAutoReviewStart(blogs, transitionConfig, now, cb),
+      (cb) => previewLanguageClose(blogs, transitionConfig, now, cb)
+    ], function(err, previews) {
       if (err) return callback(err);
-      result.autoTranslate = translatePreview;
-      previewAutoReviewStart(blogs, transitionConfig, now, function(err, reviewPreview) {
-        if (err) return callback(err);
-        result.autoReviewStart = reviewPreview;
-        callback(null, result);
-      });
+      result.autoTranslate = previews[0];
+      result.autoReviewStart = previews[1];
+      result.autoLanguageClose = previews[2];
+      callback(null, result);
     });
   });
 }

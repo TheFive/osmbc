@@ -491,7 +491,8 @@ describe("model/blog", function() {
     });
 
     it("should close the Blog and write a log Message", function (bddone) {
-      blogModule.createNewBlog({ OSMUser: "test" }, { name: "Title", status: "TEST" }, function(err, newBlog) {
+      // without the default (empty) articles, closing needs written articles (#1137)
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "Title", status: "TEST" }, true, function(err, newBlog) {
         should.not.exist(err);
         should.exist(newBlog);
         const id = newBlog.id;
@@ -515,6 +516,66 @@ describe("model/blog", function() {
               should(result).containEql(logModule.create({ oid: id, blog: "Title", user: "user", table: "blog", property: "closeDE", to: true }));
               bddone();
             });
+          });
+        });
+      });
+    });
+  });
+  describe("closeBlog with articles not written (#1137)", function() {
+    beforeEach(function (bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", status: "edit" }],
+        article: [
+          { blog: "WN1", title: "a", markdownDE: "Text", markdownEN: "Text" },
+          { blog: "WN1", title: "b", markdownDE: "no translation" },
+          { blog: "WN1", title: "c", categoryEN: "--unpublished--" },
+          { blog: "WN1", title: "d", categoryEN: "-- no category yet --", markdownDE: "Text", markdownEN: "Text" }
+        ]
+      }, bddone);
+    });
+    function closeWN1(lang, status, cb) {
+      blogModule.findOne({ name: "WN1" }, function(err, blog) {
+        should.not.exist(err);
+        blog.closeBlog({ user: { OSMUser: "test" }, lang: lang, status: status }, function(err) {
+          blogModule.findOne({ name: "WN1" }, function(err2, reloaded) {
+            should.not.exist(err2);
+            cb(err, reloaded);
+          });
+        });
+      });
+    }
+    it("refuses to close a language with an empty article or one without category", function(bddone) {
+      closeWN1("EN", true, function(err, blog) {
+        should.exist(err);
+        should(err.status).eql(409);
+        should(err.message).eql("WN1 (EN) can not be closed: 2 articles are not written yet. Write a text or \"no translation\", or give it a category.");
+        should(blog.closeEN).be.undefined();
+        bddone();
+      });
+    });
+    it("counts no translation as written and ignores --unpublished--", function(bddone) {
+      articleModule.findOne({ title: "d" }, function(err, article) {
+        should.not.exist(err);
+        article.setAndSave({ OSMUser: "test" }, { version: article.version, categoryEN: "Mapping" }, function(err) {
+          should.not.exist(err);
+          closeWN1("DE", true, function(err, blog) {
+            should.not.exist(err);
+            should(blog.closeDE).be.true();
+            bddone();
+          });
+        });
+      });
+    });
+    it("always allows to reopen", function(bddone) {
+      blogModule.findOne({ name: "WN1" }, function(err, blog) {
+        should.not.exist(err);
+        blog.setAndSave({ OSMUser: "test" }, { closeEN: true }, function(err) {
+          should.not.exist(err);
+          closeWN1("EN", false, function(err, blog) {
+            should.not.exist(err);
+            should(blog.closeEN).be.false();
+            bddone();
           });
         });
       });
@@ -944,7 +1005,8 @@ describe("model/blog", function() {
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);
         should.exist(blog);
-        blog.closeBlog({ user: { OSMUser: "Test" }, lang: "EN", status: true }, function(err) {
+        // set directly, closeBlog refuses a language with empty articles (#1137)
+        blog.setAndSave({ OSMUser: "Test" }, { closeEN: true }, function(err) {
           should.not.exist(err);
           blog.copyAllArticles({ OSMUser: "Test" }, "DE", "EN", function(err) {
             should.exist(err);
@@ -1014,7 +1076,8 @@ describe("model/blog", function() {
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);
         should.exist(blog);
-        blog.closeBlog({ user: { OSMUser: "Test" }, lang: "EN", status: true }, function(err) {
+        // set directly, closeBlog refuses a language with empty articles (#1137)
+        blog.setAndSave({ OSMUser: "Test" }, { closeEN: true }, function(err) {
           should.not.exist(err);
           blog.copyAllArticles({ OSMUser: "Test" }, "DE", "EN", function(err) {
             should.exist(err);
@@ -1325,7 +1388,7 @@ describe("model/blog", function() {
     });
 
     it("should return a blog closed on/after since", function(bddone) {
-      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2400", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2400", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
           should.not.exist(err);
@@ -1357,7 +1420,7 @@ describe("model/blog", function() {
     });
 
     it("should drop a language that was closed since `since` but has been reopened again", function(bddone) {
-      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2402", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2402", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         async.series([
           function(cb) { blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb); },
@@ -1379,7 +1442,7 @@ describe("model/blog", function() {
     });
 
     it("should only include the requested langs, even if another lang was also closed since `since`", function(bddone) {
-      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2403", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2403", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         async.series([
           function(cb) { blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb); },
@@ -1402,7 +1465,7 @@ describe("model/blog", function() {
     });
 
     it("should not require or touch exportedBy", function(bddone) {
-      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2404", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2404", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
           should.not.exist(err);
@@ -1423,19 +1486,19 @@ describe("model/blog", function() {
       beforeEach(function(bddone) {
         async.series([
           function(cb) {
-            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2410", status: "edit" }, function(err, blog) {
+            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2410", status: "edit" }, true, function(err, blog) {
               if (err) return cb(err);
               blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
             });
           },
           function(cb) {
-            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2420", status: "edit" }, function(err, blog) {
+            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2420", status: "edit" }, true, function(err, blog) {
               if (err) return cb(err);
               blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
             });
           },
           function(cb) {
-            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2430", status: "edit" }, function(err, blog) {
+            blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2430", status: "edit" }, true, function(err, blog) {
               if (err) return cb(err);
               blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
             });

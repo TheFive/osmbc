@@ -370,6 +370,25 @@ describe("routes/blog", function() {
       const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.closeDE).eql(true);
     });
+    it("should refuse to close a language with an article not written (#1137)", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      // the WN333 article has no English text
+      const body = await client.post(url, { lang: "EN", action: "closelang" }, { headers: { referrer: baseLink + "/blog/WN333" } });
+
+      should(body.status).eql(409);
+      should(body.data).eql("WN333 (EN) can not be closed: 1 article is not written yet. Write a text or \"no translation\", or give it a category.");
+      const blog = await blogModule.findOne({ name: "WN333" });
+      should(blog.closeEN).be.undefined();
+    });
+    it("should show the close button blocked while an article is not written", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      await client.post(url, { lang: "EN", action: "startreview" });
+      const page = await client.get(baseLink + "/blog/WN333?tab=Review");
+      should(page.status).eql(200);
+      page.data.should.containEql("1 article is not written yet (text or &quot;no translation&quot; missing), close is blocked");
+    });
     it("should reopen a language", async function () {
       const client = testutil.getWrappedAxiosClient();
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });

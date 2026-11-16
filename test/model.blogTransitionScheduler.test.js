@@ -513,7 +513,11 @@ describe("model/blogTransitionScheduler", function() {
             should(upcoming.autoLanguageClose).eql({
               enabled: true,
               minReviews: 2,
-              blogs: [{ name: "WN101", ts: endTs + 2 * 86400000, close: ["DE"], waiting: [{ lang: "FR", reviews: 0 }], done: [] }]
+              blogs: [{ name: "WN101", ts: endTs + 2 * 86400000, close: [],
+                waiting: [],
+                // the only article has no German or French text yet, so both are blocked (#1137)
+                blocked: [{ lang: "DE", unwritten: 1, reviews: 2 }, { lang: "FR", unwritten: 1, reviews: 0 }],
+                done: [] }]
             });
             blogModule.findOne({ name: "WN101" }, function(err, blog) {
               should.not.exist(err);
@@ -890,6 +894,33 @@ describe("model/blogTransitionScheduler", function() {
           sweepAt(["23:59"], function(err, blog) {
             should.not.exist(err);
             should(blog.closeDE).equal(true);
+            done();
+          });
+        });
+      });
+    });
+
+    it("does not auto close a language with an article not written (#1137)", function(done) {
+      useConfig(null, { closeAt: { weekday: "MON", hour: 12 } });
+      const reviews = [
+        { user: "reviewerA", text: "ok", timestamp: new Date() },
+        { user: "reviewerB", text: "ok", timestamp: new Date() }
+      ];
+      importBlog([
+        { blog: "WN101", title: "a", markdownDE: "Text", markdownFR: "Texte" },
+        { blog: "WN101", title: "b", markdownDE: "no translation" },
+        { blog: "WN101", title: "c", categoryEN: "--unpublished--" }
+      ], { reviewCommentDE: reviews, reviewCommentFR: reviews }, function(err) {
+        should.not.exist(err);
+        MockDate.set(monday("12:00"));
+        getUpcomingActions(function(err, upcoming) {
+          should.not.exist(err);
+          should(upcoming.autoLanguageClose.blogs[0].close).eql(["DE"]);
+          should(upcoming.autoLanguageClose.blogs[0].blocked).eql([{ lang: "FR", unwritten: 1, reviews: 2 }]);
+          sweepAt(["12:00"], function(err, blog) {
+            should.not.exist(err);
+            should(blog.closeDE).equal(true);
+            should(blog.closeFR).not.equal(true);
             done();
           });
         });

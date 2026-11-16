@@ -20,11 +20,24 @@ import OsmbcApp from "../../test/PageObjectModel/osmbcApp.js";
 
 import initialiseModules from "../../util/initialise.js";
 import userModule from "../../model/user.js";
+import articleModule from "../../model/article.js";
 
 
 
 
 
+
+// The editors finish a language: every empty article gets "no translation".
+// Closing a language needs every article written (#1137).
+async function finishLanguage(blogName, lang) {
+  const articles = await articleModule.find({ blog: blogName });
+  for (const article of articles) {
+    if (article["markdown" + lang]) continue;
+    const change = { version: article.version };
+    change["markdown" + lang] = "no translation";
+    await new Promise((resolve, reject) => article.setAndSave({ OSMUser: "TheFive" }, change, (err) => err ? reject(err) : resolve()));
+  }
+}
 
 describe("uc/blog", function() {
   this.timeout(2000 * 10);
@@ -124,6 +137,10 @@ describe("uc/blog", function() {
 
 
       await testutil.expectHtml(driverTheFive, errors, "blog", "WN251Reviewed");
+
+      // the editors finish German and English, so both can be closed later
+      await finishLanguage("WN251", "DE");
+      await finishLanguage("WN251", "EN");
 
       // view review count on start page
       await osmbcAppTheFive.openMainPage();
