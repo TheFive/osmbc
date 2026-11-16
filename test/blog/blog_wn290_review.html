@@ -134,7 +134,9 @@
           <div class="div"><button class="btn btn-lg btn-warning" id="didexport" data-lang-status="markexported" data-lang="DE" data-confirm="Mark WN290 (DE) as exported?">Did Export (DE)</button></div>
         </div>
         <div class="col-md-3 d-none d-md-block">
-          <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" data-lang-status="closelang" data-lang="EN" data-confirm="Close WN290 (EN)?">Close WN290(EN)</button></div>
+          <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" disabled="disabled">Close WN290(EN)</button>
+            <div class="small text-body-secondary" id="closeblocked">1 article is not written yet (text or "no translation" missing), close is blocked</div>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -2373,6 +2375,7 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
       $(document).on("click", "[data-lang-status]", function() {
         const button = $(this);
         if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        const label = button.text();
         button.prop("disabled", true);
         button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus", {
@@ -2381,6 +2384,13 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
         }, function() {
           location.reload();
         }).fail(function(err) {
+          // 409: refused with a message for the editor, e.g. articles not written yet
+          if (err.status === 409) {
+            window.alert(err.responseText);
+            button.prop("disabled", false);
+            button.text(label);
+            return;
+          }
           console.error("Trouble setting Language Status");
           console.error(err);
         });

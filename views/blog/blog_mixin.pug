@@ -6,7 +6,13 @@ mixin blogReviewButtons(lang)
     if (_rc)
       .div
         if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-          button.btn.btn-lg.btn-warning(id="closebutton" data-lang-status="closelang" data-lang=lang data-confirm=`Close ${blog.name} (${lang})?`) Close #{blog.name}(#{lang})
+          //- close is blocked while articles are not written (#1137, checked again on the server)
+          - var _unwritten = blog.getUnEdited(lang)
+          if (typeof _unwritten === "number" && _unwritten > 0)
+            button.btn.btn-lg.btn-warning(id="closebutton" disabled) Close #{blog.name}(#{lang})
+            div.small.text-body-secondary(id="closeblocked")= _unwritten + (_unwritten === 1 ? " article is" : " articles are") + " not written yet (text or \"no translation\" missing), close is blocked"
+          else
+            button.btn.btn-lg.btn-warning(id="closebutton" data-lang-status="closelang" data-lang=lang data-confirm=`Close ${blog.name} (${lang})?`) Close #{blog.name}(#{lang})
         else
           button.btn.btn-lg.btn-warning(id="didexport" data-lang-status="markexported" data-lang=lang data-confirm=`Mark ${blog.name} (${lang}) as exported?`) Did Export (#{lang})
 
@@ -357,11 +363,19 @@ block append scripts_to_execute
     $(document).on("click", "[data-lang-status]", function () {
       const button = $(this);
       if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+      const label = button.text();
       button.prop("disabled", true);
       button.text("wait ...");
       jQuery.post(window.htmlroot + "/blog/!{blog.name}/setLangStatus", { action: button.data("lang-status"), lang: button.data("lang") }, function () {
         location.reload();
       }).fail(function (err) {
+        // 409: refused with a message for the editor, e.g. articles not written yet
+        if (err.status === 409) {
+          window.alert(err.responseText);
+          button.prop("disabled", false);
+          button.text(label);
+          return;
+        }
         console.error("Trouble setting Language Status");
         console.error(err);
       });

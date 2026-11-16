@@ -408,7 +408,7 @@ describe("notification/mailReceiver", function() {
       });
     });
     it("should send out mail when blog is closed", function (bddone) {
-      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });

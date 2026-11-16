@@ -362,6 +362,33 @@ class Blog {
     });
   }
 
+  /**
+   * Check that a language may be closed: every article (except
+   * `--unpublished--`) has a text or "no translation" in it, and none is in
+   * `-- no category yet --`. Otherwise an unfinished blog could be exported
+   * (issue #1137).
+   * @param {string} lang language id, e.g. "DE"
+   * @param {object} user user for calculateDerived (only OSMUser needed)
+   * @param {function(Error=)} callback error with status 409 (CONFLICT) and a
+   *   message for the editor if articles are not written yet
+   */
+  checkClosable(lang, user, callback) {
+    debug("checkClosable");
+    const self = this;
+    self.calculateDerived(user, function(err) {
+      if (err) return callback(err);
+      const unwritten = self.getUnEdited(lang);
+      if (unwritten > 0) {
+        const error = new Error(self.name + " (" + lang + ") can not be closed: " + unwritten +
+          (unwritten === 1 ? " article is" : " articles are") +
+          " not written yet. Write a text or \"no translation\", or give it a category.");
+        error.status = CONFLICT;
+        return callback(error);
+      }
+      callback();
+    });
+  }
+
   closeBlog(options, callback) {
     debug("closeBlog");
     assert(typeof (options.user) === "object");
@@ -376,6 +403,11 @@ class Blog {
     assert(self.id);
     assert(self.id !== 0);
     series([
+      function checkArticles(callback) {
+        // only closing is checked, reopening is always possible
+        if (options.status !== true) return callback();
+        self.checkClosable(options.lang, options.user, callback);
+      },
       function logEntry(callback) {
         messageCenter.global.sendCloseStatus(options.user, self, options.lang, options.status, callback);
       },

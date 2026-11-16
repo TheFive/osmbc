@@ -1,6 +1,7 @@
 
 
 import express from "express";
+import { CONFLICT } from "http-status-codes";
 
 import async from "async";
 import { strict as assert } from "assert";
@@ -280,6 +281,11 @@ function setBlogStatus(req, res, next) {
   if (!req.blog) return next();
 
   function finalFunction(err) {
+    // e.g. close refused because articles are not written yet:
+    // the page shows the message to the editor
+    if (err && err.status === CONFLICT) {
+      return res.status(CONFLICT).type("text/plain").send(err.message);
+    }
     if (err) {
       return next(err);
     }

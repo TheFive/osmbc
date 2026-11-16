@@ -168,7 +168,9 @@
               <td><span class="badge small-margin osmbc-label-reviewblog">bogzab</span><span class="badge small-margin osmbc-label-reviewblog">elpbatista</span><span class="badge small-margin osmbc-label-reviewblog">derFred</span><span class="badge small-margin osmbc-label-reviewblog">jinalfoflia</span></td>
               <td><i class="fa fa-download" onclick="location.href='/blog/WN290/preview?download=true&amp;lang=EN';"></i><span> </span><i class="fa fa-exclamation-triangle"></i></td>
               <td>
-                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" data-lang-status="closelang" data-lang="EN" data-confirm="Close WN290 (EN)?">Close WN290(EN)</button></div>
+                <div class="div"><button class="btn btn-lg btn-warning" id="closebutton" disabled="disabled">Close WN290(EN)</button>
+                  <div class="small text-body-secondary" id="closeblocked">1 article is not written yet (text or "no translation" missing), close is blocked</div>
+                </div>
               </td>
               <td><button class="btn btn-warning" id="deletereviewbutton" data-lang-status="deleteallreviews" data-lang="EN" data-confirm="Delete all reviews of WN290 (EN)?">Delete Review</button></td>
             </tr>
@@ -810,6 +812,7 @@
       $(document).on("click", "[data-lang-status]", function() {
         const button = $(this);
         if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        const label = button.text();
         button.prop("disabled", true);
         button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN290/setLangStatus", {
@@ -818,6 +821,13 @@
         }, function() {
           location.reload();
         }).fail(function(err) {
+          // 409: refused with a message for the editor, e.g. articles not written yet
+          if (err.status === 409) {
+            window.alert(err.responseText);
+            button.prop("disabled", false);
+            button.text(label);
+            return;
+          }
           console.error("Trouble setting Language Status");
           console.error(err);
         });

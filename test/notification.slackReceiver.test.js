@@ -494,7 +494,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, true, function(err, blog) {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {
@@ -547,7 +547,7 @@ describe("notification/slackReceiver", function() {
             channel: "#osmbcblog"
           })
         .reply(200, "ok");
-      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, function(err, blog) {
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, true, function(err, blog) {
         const slack2a = nock("https://missingmattermost.example.com")
           .post("/services/osmde",
             {

@@ -55,7 +55,7 @@
               <li class="navbar-item active"><a class="nav-link" id="collect" href="/article/create">Collect</a></li>
               <li class="navbar-item active"><a class="nav-link" id="inbox" href="/usert/inbox">Inbox </a></li>
               <li class="navbar-item active"></li>
-              <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">1</span></a></li>
+              <li class="navbar-item active"><a class="nav-link" href="/blog/WN251">WN251<span class="badge rounded-pill osmbc-badge-lang">0</span></a></li>
               <li class="dropdown nav-item active"><a class="nav-link dropdown-toggle" id="articleMenuDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search</a>
                 <div class="dropdown-menu" aria-labelledby="articleMenuDropdown"><a class="dropdown-header">Articles</a><a class="dropdown-item" id="articleMenuSearch" href="/article/search">Search</a><a class="dropdown-item" id="articleMenuEmpty" href="/article/list?myArticles=true">My Empty Collections</a>
                   <div class="dropdown-divider"></div><a class="dropdown-header">Orphaned Article</a><a class="dropdown-item" id="articleMenuTrash" href="/article/list?blog=Trash">Trash</a><a class="dropdown-item" id="articleMenuTBC" href="/article/list?blog=TBC">TBC</a><a class="dropdown-item" id="articleMenuFuture" href="/article/list?blog=Future">Future</a><a class="dropdown-item" id="articleMenuNoBlog" href="/article/list?blog=">No Blog</a>
@@ -106,8 +106,8 @@
           <div class="progress" style="margin-bottom:2px">
             <div class="progress-bar osmbc-label-markdown" style="width:50%">1</div>
             <div class="progress-bar progress-bar osmbc-automated-translation" style="width:0%">0</div>
-            <div class="progress-bar osmbc-not-formulated" style="width:50%">1</div>
-            <div class="progress-bar osmbc-label-no-translation" style="width:0%">0</div>
+            <div class="progress-bar osmbc-not-formulated" style="width:0%">0</div>
+            <div class="progress-bar osmbc-label-no-translation" style="width:50%">1</div>
           </div>
         </div>
       </div>
@@ -168,10 +168,10 @@ while layout.user["blogSetting"+v]
     - style0 = layout.user["blogSetting"+v]+layout.user["blogLanguages"+v]
     +navbutton(style0,style)
   - v++-->
-            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN251/preview?lang=DE"><i class="fa fa-download"></i>DE<span> </span><i class="fa fa-exclamation-triangle"></i></a></li>
+            <li class="nav-item d-none d-md-block"><a class="nav-link" href="/blog/WN251/preview?lang=DE"><i class="fa fa-download"></i>DE</a></li>
             <li class="nav-item dropdown show"><a class="nav-link dropdown-toggle" id="dropdownExportLanguages" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i></a>
               <div class="dropdown-menu" aria-labelledby="dropdownExportLanguages">
-                <h6 class="dropdown-header">Export by language</h6><a class="dropdown-item" href="/blog/WN251/preview?lang=DE&amp;download=true&amp;exportProfile=OsmbcDownload"><span>Export HTML: DE</span><span> </span><i class="fa fa-exclamation-triangle"></i></a>
+                <h6 class="dropdown-header">Export by language</h6><a class="dropdown-item" href="/blog/WN251/preview?lang=DE&amp;download=true&amp;exportProfile=OsmbcDownload"><span>Export HTML: DE</span></a>
               </div>
             </li>
           </ul>
@@ -203,7 +203,7 @@ while layout.user["blogSetting"+v]
             </td>
             <td>
               <div class="osmbc-inline-edit" data-inline-editor="div2">
-                <div class="osmbc-not-formulated">
+                <div class="hide-text">
                   <ul class="no-margin">
                     <li>WN251 Picture</li>
                   </ul>
@@ -222,10 +222,10 @@ while layout.user["blogSetting"+v]
                   <ul class="preview" id="preview2"></ul>
                 </div>
                 <div class="card-body">
-                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(2);" spellcheck="true" lang="DE"></textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7"></textarea>
-                    <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Open Editor</button></div>
+                  <form name="EditArticle" id="EditArticle2" action="/article/2/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown2" rows="7" data-fit-content="data-fit-content" onchange="onLeaveText(2);" spellcheck="true" lang="DE">no translation</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown2" rows="7">no translation</textarea>
+                    <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel2" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(2,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave2" onmousedown="event.preventDefault();" onclick="saveInlineEditor(2,'',true);">Save</button></div>
                   </form>
-                  <p></p>
+                  <p><span> Edited: </span><span class="badge small-margin osmbc-label-user-self">TheFive</span><span> Time: a few seconds ago</span></p>
                 </div>
               </div>
             </td>
@@ -746,6 +746,7 @@ while layout.user["blogSetting"+v]
       $(document).on("click", "[data-lang-status]", function() {
         const button = $(this);
         if (button.data("confirm") && !window.confirm(button.data("confirm"))) return;
+        const label = button.text();
         button.prop("disabled", true);
         button.text("wait ...");
         jQuery.post(window.htmlroot + "/blog/WN251/setLangStatus", {
@@ -754,6 +755,13 @@ while layout.user["blogSetting"+v]
         }, function() {
           location.reload();
         }).fail(function(err) {
+          // 409: refused with a message for the editor, e.g. articles not written yet
+          if (err.status === 409) {
+            window.alert(err.responseText);
+            button.prop("disabled", false);
+            button.text(label);
+            return;
+          }
           console.error("Trouble setting Language Status");
           console.error(err);
         });

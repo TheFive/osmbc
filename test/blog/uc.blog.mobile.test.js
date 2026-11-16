@@ -297,8 +297,8 @@ describe("uc/blog mobile inline editor", function() {
       should(await storedMarkdown()).eql("Text vom Desktop");
     });
     it("should ask before closing a language and keep it open on Cancel", async function() {
-      // reviewed and exported: Close is shown
-      await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2", status: "edit", exportedDE: true, reviewCommentDE: [{ user: "TheFive", text: "ok", timestamp: new Date().toISOString() }] });
+      // reviewed and exported: Close is shown (without the empty default articles, they block close, #1137)
+      await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2", status: "edit", exportedDE: true, reviewCommentDE: [{ user: "TheFive", text: "ok", timestamp: new Date().toISOString() }] }, true);
       await driver.get(osmbcLink("/blog/WN2/overview"));
       await new BlogPage(driver).clickCloseAndCancel("WN2", "DE");
       should((await blogModule.findOne({ name: "WN2" })).closeDE).not.be.True();
