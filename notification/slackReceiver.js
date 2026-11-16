@@ -101,6 +101,27 @@ export class SlackReceiver {
     return callback();
   }
 
+  /**
+   * Auto Close could not close a reviewed language (issue #1130).
+   * @param {object} user actor of the rule
+   * @param {object} blog the blog
+   * @param {string} lang language id
+   * @param {string[]} problems messages for the editors
+   * @param {function(Error=)} callback called when done
+   */
+  sendCloseBlocked(user, blog, lang, problems, callback) {
+    debug("SlackReceiver::sendCloseBlocked %s", this.name);
+    const text = blogNameSlack(blog.name) + "(" + lang + ") could not be closed automatically: " + problems.join(" ");
+    if (this.slack) {
+      this.slack.send({
+        text: text,
+        channel: this.channel,
+        username: botName + "(" + user.OSMUser + ")",
+        icon_url: iconUrl
+      }, callback);
+    } else return callback();
+  }
+
   sendCloseStatus(user, blog, lang, status, callback) {
     debug("SlackReceiver::sendCloseStatus %s", this.name);
 

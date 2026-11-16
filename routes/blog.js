@@ -17,6 +17,7 @@ import configModule from "../model/config.js";
 
 
 import blogModule from "../model/blog.js";
+import blogTransitionScheduler from "../model/blogTransitionScheduler.js";
 import blogRenderer from "../render/BlogRenderer.js";
 import logModule from "../model/logModule.js";
 import userModule from "../model/user.js";
@@ -315,6 +316,15 @@ function setBlogStatus(req, res, next) {
   return next(new Error("Unknown Status Combination, Please Contact the Author"));
 }
 
+// close problems of every language that is still open, and whether Auto
+// Close is already due, for the Close button and the banner (#1137, #1130)
+function collectCloseInfo(blog, user, callback) {
+  blog.getCloseProblemsAll(language.getLid(), user, function(err, problems) {
+    if (err) return callback(err);
+    callback(null, { problems: problems, autoClose: blogTransitionScheduler.getLanguageCloseState(blog) });
+  });
+}
+
 function renderBlogTab(req, res, next) {
   debug("renderBlogTab");
 
@@ -388,6 +398,9 @@ function renderBlogTab(req, res, next) {
         });
       } else return callback();
     },
+    closeInfo: function (callback) {
+      collectCloseInfo(blog, req.user, callback);
+    },
     closeLang: function (callback) {
       if (typeof (req.query.closeLang) !== "undefined") {
         return callback(new Error("?closelang= parameter is not supported any longer"));
@@ -432,7 +445,8 @@ function renderBlogTab(req, res, next) {
       reviewInWP: reviewInWP,
       util: util,
       categories: blog.getCategories(),
-      apiAuthors: apiAuthors
+      apiAuthors: apiAuthors,
+      closeInfo: result.closeInfo
     });
   }
   );
@@ -485,7 +499,7 @@ function createBlog(req, res, next) {
   });
 }
 
-function editBlogId(req, res) {
+function editBlogId(req, res, next) {
   debug("editBlogId");
   const blog = req.blog;
   assert(res.rendervar);
@@ -499,14 +513,18 @@ function editBlogId(req, res) {
   res.set("content-type", "text/html");
   let copyLanguageFromAnother = config.getValue("copyLanguageFromAnother");
   if (!copyLanguageFromAnother) copyLanguageFromAnother = {};
-  res.render("blog/blog_edit.pug", {
-    layout: res.rendervar.layout,
-    blog: blog,
-    params: params,
-    reviewInWP: reviewInWP,
-    copyLanguageFromAnother: copyLanguageFromAnother,
-    statusList: blogModule.statusList,
-    categories: blog.getCategories()
+  collectCloseInfo(blog, req.user, function(err, closeInfo) {
+    if (err) return next(err);
+    res.render("blog/blog_edit.pug", {
+      layout: res.rendervar.layout,
+      blog: blog,
+      params: params,
+      reviewInWP: reviewInWP,
+      copyLanguageFromAnother: copyLanguageFromAnother,
+      statusList: blogModule.statusList,
+      categories: blog.getCategories(),
+      closeInfo: closeInfo
+    });
   });
 }
 

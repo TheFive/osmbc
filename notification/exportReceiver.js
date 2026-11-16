@@ -22,6 +22,15 @@ class ExportReceiver {
   sendInfo(object, cb) { return cb(); }
   updateArticle(user, article, change, cb) { return cb(); }
   sendReviewStatus(user, blog, lang, status, cb) { return cb(); }
+  /**
+   * Auto Close could not close a reviewed language (issue #1130).
+   * @param {object} user actor of the rule
+   * @param {object} blog the blog
+   * @param {string} lang language id
+   * @param {string[]} problems messages for the editors
+   * @param {function(Error=)} cb called when done
+   */
+  sendCloseBlocked(user, blog, lang, problems, cb) { return cb(); }
   sendCloseStatus(user, blog, lang, status, cb) { return cb(); }
   addComment(user, article, text, cb) { return cb(); }
   editComment(user, article, index, text, cb) { return cb(); }

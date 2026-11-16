@@ -21,6 +21,7 @@ import translator from "../model/translator.js";
 import { getKnownMigrationUserNames } from "../notification/migrationFilter.js";
 import osmcalLoader from "../model/osmcalLoader.js";
 import { normaliseWeeklyTime, nextWeeklyTimeAtOrAfter } from "../util/weeklyTime.js";
+import { checkAnchor, findAnchors } from "../util/anchorCheck.js";
 
 import pgMap from "./pgMap.js";
 import _debug from "debug";
@@ -57,6 +58,8 @@ function sanitizeBlogKey(blog) {
 
 class Blog {
   #statusCount = null;
+  // articles of the blog, loaded by calculateDerived
+  #articles = null;
 
   constructor(proto) {
     debug("Blog");
@@ -363,25 +366,97 @@ class Blog {
   }
 
   /**
-   * Check that a language may be closed: every article (except
-   * `--unpublished--`) has a text or "no translation" in it, and none is in
-   * `-- no category yet --`. Otherwise an unfinished blog could be exported
-   * (issue #1137).
+   * Problems that keep a language from being closed, each a sentence for the
+   * editor: articles not written yet (no text and not "no translation", or
+   * in `-- no category yet --`; `--unpublished--` doesn't count, issue #1137)
+   * and footnote anchors (`#wn<issue>_<id>`) that point to a missing,
+   * unpublished or other-issue article, which break the Hugo export (#1130).
+   * @param {string} lang language id, e.g. "DE"
+   * @param {object} user user for calculateDerived (only OSMUser needed)
+   * @param {function(Error|null, string[]=)} callback empty list if the
+   *   language can be closed
+   */
+  getCloseProblems(lang, user, callback) {
+    this._getCloseProblems(lang, user, {}, callback);
+  }
+
+  /**
+   * getCloseProblems for several languages at once; anchors used in more
+   * than one language are looked up only once.
+   * @param {string[]} langs language ids; closed languages are left out
+   * @param {object} user user for calculateDerived (only OSMUser needed)
+   * @param {function(Error|null, object=)} callback `{ lang: [message, ...] }`
+   */
+  getCloseProblemsAll(langs, user, callback) {
+    const self = this;
+    const anchorCache = {};
+    const result = {};
+    eachSeries(langs, function(lang, cb) {
+      if (self["close" + lang] === true) return cb();
+      self._getCloseProblems(lang, user, anchorCache, function(err, problems) {
+        if (err) return cb(err);
+        result[lang] = problems;
+        cb();
+      });
+    }, function(err) {
+      callback(err, result);
+    });
+  }
+
+  /**
+   * getCloseProblems with a cache of anchor results shared between languages.
+   * @param {string} lang language id
+   * @param {object} user user for calculateDerived
+   * @param {object} anchorCache anchor -> "OK" or message, filled here
+   * @param {function(Error|null, string[]=)} callback problems of the language
+   */
+  _getCloseProblems(lang, user, anchorCache, callback) {
+    debug("getCloseProblems");
+    const self = this;
+    self.calculateDerived(user, function(err) {
+      if (err) return callback(err);
+      const problems = [];
+      const unwritten = self.getUnEdited(lang);
+      if (unwritten > 0) {
+        problems.push(unwritten + (unwritten === 1 ? " article is" : " articles are") +
+          " not written yet. Write a text or \"no translation\", or give it a category.");
+      }
+      const anchors = new Set();
+      (self.#articles || []).forEach(function(article) {
+        if (article.categoryEN === "--unpublished--") return;
+        findAnchors(article["markdown" + lang]).forEach((anchor) => anchors.add(anchor));
+      });
+      eachSeries(Array.from(anchors), function(anchor, cb) {
+        function addStatus(status) {
+          anchorCache[anchor] = status;
+          if (status !== "OK") problems.push(status + ".");
+          cb();
+        }
+        if (anchorCache[anchor]) return addStatus(anchorCache[anchor]);
+        checkAnchor(anchor, self.name, function(err, status) {
+          if (err) return cb(err);
+          addStatus(status);
+        });
+      }, function(err) {
+        callback(err, problems);
+      });
+    });
+  }
+
+  /**
+   * Check that a language may be closed, see getCloseProblems.
    * @param {string} lang language id, e.g. "DE"
    * @param {object} user user for calculateDerived (only OSMUser needed)
    * @param {function(Error=)} callback error with status 409 (CONFLICT) and a
-   *   message for the editor if articles are not written yet
+   *   message for the editor if the language has problems
    */
   checkClosable(lang, user, callback) {
     debug("checkClosable");
     const self = this;
-    self.calculateDerived(user, function(err) {
+    self.getCloseProblems(lang, user, function(err, problems) {
       if (err) return callback(err);
-      const unwritten = self.getUnEdited(lang);
-      if (unwritten > 0) {
-        const error = new Error(self.name + " (" + lang + ") can not be closed: " + unwritten +
-          (unwritten === 1 ? " article is" : " articles are") +
-          " not written yet. Write a text or \"no translation\", or give it a category.");
+      if (problems.length > 0) {
+        const error = new Error(self.name + " (" + lang + ") can not be closed: " + problems.join(" "));
         error.status = CONFLICT;
         return callback(error);
       }
@@ -1020,6 +1095,30 @@ class Blog {
     this.setAndSave(user, { autoTranslated: updated }, callback);
   }
 
+  /**
+   * Tell the language team once per blog that Auto Close could not close
+   * its reviewed language, and why (issue #1130): sends `sendCloseBlocked`
+   * to the message center (Mattermost channels of that language) and notes
+   * the language in `closeBlockedNotified`. Like `autoTranslated` an
+   * operational field, not written to the change history.
+   * @param {object} user actor, e.g. { OSMUser: "autoclose-review" }
+   * @param {string} lang language id
+   * @param {string[]} problems from getCloseProblems
+   * @param {function(Error=)} callback called when done (also if already reported)
+   */
+  reportCloseBlocked(user, lang, problems, callback) {
+    debug("reportCloseBlocked");
+    const self = this;
+    const notified = (self.closeBlockedNotified && typeof self.closeBlockedNotified === "object") ? self.closeBlockedNotified : {};
+    if (notified[lang]) return callback();
+    messageCenter.global.sendCloseBlocked(user, self, lang, problems, function(err) {
+      if (err) return callback(err);
+      const updated = Object.assign({}, notified);
+      updated[lang] = new Date().toISOString();
+      self.setAndSave(user, { closeBlockedNotified: updated }, callback);
+    });
+  }
+
   // markAsExported(user, exportProfile, lang, callback)
   // Sets the export marker for the given exportProfile and lang.
   // Goes through setAndSave, same as every other blog mutation - "every
@@ -1090,6 +1189,7 @@ class Blog {
     articleModule.find({ blog: self }, function (err, result) {
       if (err) return callback(err);
       assert(Array.isArray(result));
+      self.#articles = result;
       each(result, calculateDependend, function(err) {
         if (err) return callback(err);
         for (const l in language.getLanguages()) {

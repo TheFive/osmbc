@@ -143,6 +143,19 @@ class UserConfigFilter {
     this.receiver.sendReviewStatus(user, blog, lang, status, cb);
   }
 
+  /**
+   * Auto Close could not close a reviewed language (issue #1130).
+   * @param {object} user actor of the rule
+   * @param {object} blog the blog
+   * @param {string} lang language id
+   * @param {string[]} problems messages for the editors
+   * @param {function(Error=)} cb called when done
+   */
+  sendCloseBlocked(user, blog, lang, problems, cb) {
+    debug("UserConfigFilter.prototype.sendCloseBlocked");
+    return cb();
+  }
+
   sendCloseStatus(user, blog, lang, status, cb) {
     debug("UserConfigFilter.prototype.sendCloseStatus");
     let wnList = [];

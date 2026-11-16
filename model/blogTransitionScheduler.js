@@ -240,16 +240,22 @@ function recheckPreview(timing, now) {
   return { nextTs: (nextTs < timing.untilTs) ? nextTs : null, untilTs: timing.untilTs };
 }
 
-// a language with articles not written yet is never closed (#1137, closeBlog
-// refuses it too). Needs blog.calculateDerived to have run.
-function planLanguageClose(blog, ruleConfig) {
+// close problems (blog.getCloseProblemsAll) of every language still open,
+// as { lang: [message, ...] }
+function closeProblemsOf(blog, ruleConfig, user, callback) {
+  blog.getCloseProblemsAll(ruleConfig.languages, user, callback);
+}
+
+// a language with close problems (articles not written, broken anchors) is
+// never closed (#1137, #1130; closeBlog refuses it too)
+function planLanguageClose(blog, ruleConfig, problems) {
   const plan = { close: [], waiting: [], blocked: [], done: [] };
   ruleConfig.languages.forEach(function(lang) {
     if (blog["close" + lang] === true) return plan.done.push(lang);
     if (ruleConfig.onlyIfNotExported && blog["exported" + lang] === true) return plan.done.push(lang);
     const reviews = blog.getClosedReviewCount(lang);
-    const unwritten = blog.getUnEdited(lang);
-    if (unwritten > 0) return plan.blocked.push({ lang: lang, unwritten: unwritten, reviews: reviews });
+    const langProblems = problems[lang] || [];
+    if (langProblems.length > 0) return plan.blocked.push({ lang: lang, reviews: reviews, problems: langProblems });
     if (reviews < ruleConfig.minReviews) return plan.waiting.push({ lang: lang, reviews: reviews });
     plan.close.push(lang);
   });
@@ -323,16 +329,27 @@ function runLanguageAutoCloseRule(callback) {
       if (!shouldRun("AutoLanguageClose", blog, timing, now)) return cbBlog();
 
       const actor = { OSMUser: ruleConfig.actorUser };
-      blog.calculateDerived(actor, function(err) {
+      closeProblemsOf(blog, ruleConfig, actor, function(err, problems) {
         if (err) return cbBlog(err);
-        eachSeries(planLanguageClose(blog, ruleConfig).close, function(lang, cbLanguage) {
+        const plan = planLanguageClose(blog, ruleConfig, problems);
+        eachSeries(plan.close, function(lang, cbLanguage) {
           debug("Auto close language %s for blog %s", lang, blog.name);
           blog.closeBlog({ user: actor, lang: lang, status: true }, function(err) {
             // a problem in one language should not stop the others
             if (err) config.logger.error(err);
             cbLanguage();
           });
-        }, cbBlog);
+        }, function(err) {
+          if (err) return cbBlog(err);
+          // tell the team once why its reviewed language stays open (#1130)
+          const reviewed = plan.blocked.filter((entry) => entry.reviews >= ruleConfig.minReviews);
+          eachSeries(reviewed, function(entry, cbLanguage) {
+            blog.reportCloseBlocked(actor, entry.lang, entry.problems, function(err) {
+              if (err) config.logger.error(err);
+              cbLanguage();
+            });
+          }, cbBlog);
+        });
       });
     }, callback);
   });
@@ -445,9 +462,9 @@ function previewLanguageClose(blogs, transitionConfig, now, callback) {
     if (!isPreviewCandidate(blog, closeConfig.blogStatusFilter, transitionConfig.autoEditMode.enabled === true)) return cbBlog();
     const timing = ruleTiming(blog, closeConfig, closeConfig.closeAt);
     if (!isUpcoming(timing, now)) return cbBlog();
-    blog.calculateDerived(actor, function(err) {
+    closeProblemsOf(blog, closeConfig, actor, function(err, problems) {
       if (err) return cbBlog(err);
-      result.blogs.push(Object.assign({ name: blog.name, ts: timing.dueTs }, recheckPreview(timing, now), planLanguageClose(blog, closeConfig)));
+      result.blogs.push(Object.assign({ name: blog.name, ts: timing.dueTs }, recheckPreview(timing, now), planLanguageClose(blog, closeConfig, problems)));
       cbBlog();
     });
   }, function(err) {
@@ -510,6 +527,23 @@ function previewAutoReviewStart(blogs, transitionConfig, now, callback) {
     result.blogs.sort(byTs);
     callback(null, result);
   });
+}
+
+/**
+ * Whether Auto Language Close is switched on and already due for a blog, so
+ * the blog page can tell the editors why a reviewed language stays open.
+ * @param {object} blog blog with endDate
+ * @returns {{due: boolean, minReviews: number}} due false if the rule is off
+ *   or its time has not come yet
+ */
+export function getLanguageCloseState(blog) {
+  const transitionConfig = getTransitionConfig();
+  const closeConfig = transitionConfig.autoLanguageClose;
+  const result = { due: false, minReviews: closeConfig.minReviews };
+  if (transitionConfig.enabled !== true || closeConfig.enabled !== true) return result;
+  const dueTs = ruleDueTs(blog, closeConfig.delayDays, closeConfig.closeAt);
+  result.due = dueTs !== null && Date.now() >= dueTs;
+  return result;
 }
 
 /**
@@ -651,7 +685,8 @@ const blogTransitionScheduler = {
   start: startTransitionScheduler,
   stop: stopTransitionScheduler,
   runSweep: runTransitionSweep,
-  getUpcomingActions: getUpcomingActions
+  getUpcomingActions: getUpcomingActions,
+  getLanguageCloseState: getLanguageCloseState
 };
 
 export default blogTransitionScheduler;
