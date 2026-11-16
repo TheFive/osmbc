@@ -111,7 +111,7 @@ a map of *where to look*, not a restatement of every field.
 | `auth` | `htaccess` (basic-auth escape hatch) and `openstreetmap_oauth20` (the real login: `authorizationURL`, `tokenURL`, `clientID`, `clientSecret`, `callbackURL`, `scope`). **When `serverport`/`url` change, `auth.openstreetmap_oauth20.callbackURL` must be updated to match too** — and so must the redirect URL registered with the OAuth application in OSM. Easy to miss when moving to another port or host. |
 | `allowGuest`, `createGuestUsersAutomatic`, `DefineRole` | Login/role behavior for users without (or before) an OSM-verified account. |
 | `WelcomeInterval`, `userIsOldInDays`, `WelcomeRefreshInSeconds` | Home-screen "recently active"/"welcome" display tuning, not data-affecting. |
-| `Transition` | The automatic workflow scheduler (`AutoEditMode`, `AutoTranslate`, `AutoLanguageClose`), see [Automatic transitions](#automatic-transitions-transition) below. `enabled: false` in `config.test.yaml` so tests don't race a live cron. |
+| `Transition` | The automatic workflow scheduler (`AutoEditMode`, `AutoTranslate`, `AutoReviewStart`, `AutoLanguageClose`), see [Automatic transitions](#automatic-transitions-transition) below. `enabled: false` in `config.test.yaml` so tests don't race a live cron. |
 | `limitValues` | Rate limiting with `express-rate-limit` (`limitWindowsMs`, `limitMaxCount`) and the number of trusted proxies (`trustProxy`, see [install.md](install.md#6-reverse-proxy)). A fast, unpaced API client (e.g. a Blog-Sync-Merger run over many blogs) can hit the limit within seconds. |
 | `DeeplProConfig` | DeepL API auth/endpoints for machine translation. |
 | `copyLanguageFromAnother` | Per-language "translate from this other language instead" fallback map. |
@@ -129,36 +129,77 @@ a map of *where to look*, not a restatement of every field.
 ## Automatic transitions (`Transition`)
 
 `model/blogTransitionScheduler.js` runs a sweep on the `scheduleCron`
-schedule. Each sweep runs three rules in this order: Auto Edit, Auto
-Translate, Auto Language Close. Translate runs before close because a closed
-language can't be edited any more.
+schedule. Each sweep runs four rules in this order: Auto Edit, Auto
+Translate, Auto Review Start, Auto Language Close. Translate runs before
+review start, so machine translated texts already count as written, and
+both run before close, because a closed language can't be edited any more.
+What the rules do for the editors is described in
+[automatic-transitions.md](automatic-transitions.md).
 
 ```yaml
 Transition:
   enabled: true              # false = no scheduler at all (tests, a second instance on the same DB)
   scheduleCron: "*/1 * * * *"
   runOnStart: true           # run one sweep right after start
-  AutoEditMode:
-    enabled: true
+  # AutoEditMode is on unless switched off, no entry needed
   AutoTranslate:
     enabled: true
     sourceLanguage: EN
     previousBlogs: 2
-    translateAt: { weekday: SUN, hour: 20, minute: 0 }
+    translateAt: { weekday: THU, hour: 20, minute: 0 }
+  AutoReviewStart:
+    enabled: true
+    reviewStartAt: { weekday: SAT, hour: 12, minute: 0 }
+    recheck: { everyMinutes: 60, until: AutoLanguageClose }
   AutoLanguageClose:
     enabled: true
     minReviews: 2
-    closeAt: { weekday: MON, hour: 12, minute: 0 }
+    closeAt: { weekday: SUN, hour: 18, minute: 0 }
+    recheck: { everyMinutes: 60, until: { weekday: SUN, hour: 24 } }
 ```
 
-**When a rule is due.** Auto Translate and Auto Language Close are due
-per blog. A rule is due `delayDays` after the blog's `endDate`. If
-`translateAt` or `closeAt` is set, it is due instead at the first time
-with that weekday and hour after `endDate`. `weekday` is `SUN`…`SAT` or
-0–6, and `hour`/`minute` default to 12:00. The time is calculated in the
-timezone of the server process. An invalid value makes the rule fall back
-to `delayDays`. A rule acts only within one hour after its due time, so a
-blog whose window was missed (e.g. server down) is not processed later.
+**On and off.** Auto Edit is **on** unless `AutoEditMode.enabled: false`
+is set: without it no new blog is created, so every instance needs it.
+The other three rules are **off** unless `enabled: true` is set, because
+they change content or act for the language teams (and Auto Translate
+costs translation credits). `Transition.enabled: false` switches off all
+four.
+
+**When a rule is due.** Auto Translate, Auto Review Start and Auto
+Language Close are due per blog. A rule is due `delayDays` after the
+blog's `endDate`. If `translateAt`, `reviewStartAt` or `closeAt` is set,
+it is due instead at the first time with that weekday and hour after
+`endDate`. `weekday` is `SUN`…`SAT` or 0–6, and `hour`/`minute` default
+to 12:00. The time is calculated in the timezone of the server process.
+An invalid value makes the rule fall back to `delayDays`. Without a
+`recheck` a rule acts only within one hour after its due time, so a blog
+whose window was missed (e.g. server down) is not processed later.
+
+**Recheck** (Auto Review Start and Auto Language Close). With
+`recheck: { everyMinutes, until }` the rule checks the blog again from
+its due time on, once every `everyMinutes`, until `until`. The time
+from the due time on is cut into slots of `everyMinutes`; each slot runs
+once, with the first sweep inside it.
+`until` is
+
+- a weekday and time (`{ weekday, hour, minute }`): the first such time
+  at or after the due time. `hour: 24` (with `minute: 0`) means the end
+  of that day, e.g. `{ weekday: MON, hour: 24 }` = Monday 24:00.
+- `AutoLanguageClose` (only for Auto Review Start): the due time of Auto
+  Language Close for the same blog. Auto Language Close must be enabled,
+  else the recheck is ignored.
+
+A recheck with `everyMinutes` below 1, without `until`, or with an
+`until` at or before the due time is ignored (warning in the log), and
+the rule runs only once as described above. The checks can not be more
+frequent than `scheduleCron`. Which slot already ran is kept in memory;
+after a restart the current slot runs once more, which changes nothing
+because a started review / closed language is left alone.
+
+Example: `closeAt: { weekday: SUN, hour: 18 }` with
+`recheck: { everyMinutes: 60, until: { weekday: SUN, hour: 24 } }`
+checks every hour on Sunday from 18:00 to 23:00 and closes every
+language that has reached `minReviews` by then.
 
 | `AutoEditMode` | Default | |
 |---|---|---|
@@ -183,6 +224,25 @@ language is translated, the blog gets the marker `autoTranslated.<LANG>`
 translation is emptied or the language is reopened later. Like `exportedBy`,
 the marker is an operational field and is not written to the change history.
 
+| `AutoReviewStart` | Default | |
+|---|---|---|
+| `enabled` | `false` | |
+| `languages` | `ALL` | |
+| `blogStatusFilter` | `[edit]` | |
+| `delayDays`, `reviewStartAt` | `3`, — | Due time, see above. |
+| `recheck` | — | Check again until a later time, see above. `until: AutoLanguageClose` ends at the close time. |
+| `acceptAutoTranslated` | `true` | A machine translation nobody has edited since (last author a translator user, e.g. `deeplPro API Call`) counts as written. `false`: such an article blocks the review start. |
+| `actorUser` | `autoreview-start` | Name in the review list of the blog and in the review log entry. |
+
+The review of a language starts (the same as the "Start Review" button,
+including the Upcoming Events text from OSMCAL) when every article of the
+blog is written in that language: it has a text or `no translation`.
+`--unpublished--` articles don't count, an article in
+`-- no category yet --` counts as not written. A language whose articles
+are all `no translation` is left alone (no team at work). Languages that
+are closed, exported or whose review has already started are left alone,
+so the rule acts at most once per blog and language.
+
 | `AutoLanguageClose` | Default | |
 |---|---|---|
 | `enabled` | `false` | |
@@ -191,14 +251,41 @@ the marker is an operational field and is not written to the change history.
 | `languages` | `ALL` | |
 | `blogStatusFilter` | `[edit]` | |
 | `delayDays`, `closeAt` | `3`, — | Due time, see above. |
+| `recheck` | — | Check again until a later time, see above. |
 | `actorUser` | `autoclose-review` | Name in the close log entry. |
 
 **Preview.** The admin page (`/osmbc/admin`) shows read-only what the next
 runs will do: per blog the due time (server timezone, plus the browser's
 local time if it differs), the languages that will be translated, those
 skipped because they were not closed in the previous blogs, those already
-translated/closed, and per close candidate the languages grouped by their
-review count.
+translated/closed, the languages whose review will start and why the
+others wait (articles not written, machine translated), per close
+candidate the languages grouped by their review count, and with a
+recheck its end and the next check. Check it there after changing the
+configuration.
+
+### Example week
+
+A blog lives about ten days: one week of collecting, then a few days of
+editing until it is closed. So two blogs are always active, one
+collecting (`open`) and one being edited (`edit`). With
+`BlogDurationDays: 7` and the YAML example above, for a blog whose
+collecting ends Wednesday 23:59:
+
+| When | Rule | What happens |
+|---|---|---|
+| Thursday 00:00 (week 1) | Auto Edit | The previous blog goes to `edit`, this blog is created and collecting starts. |
+| Wednesday 23:59 (week 1) | — | `endDate`: collecting ends. |
+| Thursday 00:00 (week 2) | Auto Edit | This blog goes to `edit`, the next blog is created. |
+| Thursday 20:00 | Auto Translate | Empty articles of active languages are filled from EN. |
+| Saturday 12:00, then hourly | Auto Review Start | Every language whose articles are all written gets "review started". Checked every hour until Sunday 18:00. |
+| Sunday 18:00, then hourly until 24:00 | Auto Language Close | Every language with 2 reviews is closed. |
+
+The weekday/hour values are only an example. Each `…At` is the first
+such time after the blog's `endDate`, so all of them have to lie within
+the 7 days after it, in the order of the rules. Auto Edit has no time of
+its own yet: a blog is created when the previous one ends, and its
+`endDate` is the previous `endDate` plus `BlogDurationDays`.
 
 A few keys are flagged `POTENTIALLY_UNUSED` directly in the yaml files'
 own comments (not found in any static `getValue(...)` call at last check) -

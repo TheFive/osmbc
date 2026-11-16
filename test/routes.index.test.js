@@ -105,6 +105,45 @@ describe("routes/index", function() {
         expectedMessage: "You are logged in as guest. Please refer to "
       }));
   });
+  describe("route GET /osmbc/admin", function() {
+    let originalGetValue = null;
+    afterEach(function() {
+      if (originalGetValue) config.getValue = originalGetValue;
+      originalGetValue = null;
+    });
+    it("should preview Auto Review Start with its recheck", async function () {
+      originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "Transition") {
+          return {
+            enabled: true,
+            AutoEditMode: { enabled: false },
+            AutoReviewStart: {
+              enabled: true,
+              languages: ["DE", "EN"],
+              reviewStartAt: { weekday: "MON", hour: 9 },
+              recheck: { everyMinutes: 60, until: "AutoLanguageClose" }
+            },
+            AutoLanguageClose: { enabled: true, languages: ["DE"], closeAt: { weekday: "MON", hour: 12 } }
+          };
+        }
+        return originalGetValue.call(config, key, subkey, options);
+      };
+      mockdate.set(new Date("2026-11-09T09:30:00Z"));
+      await testutil.importData({
+        blog: [{ name: "WN101", status: "edit", endDate: "2026-11-08T22:59:00.000Z" }],
+        article: [{ blog: "WN101", title: "a", markdownDE: "Text" }]
+      });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/osmbc/admin");
+      body.data.should.containEql("Auto Review Start");
+      body.data.should.containEql("start review: DE");
+      body.data.should.containEql("waiting: EN (1 not written)");
+      body.data.should.containEql("then every 60 min until");
+      body.data.should.containEql("next check");
+    });
+  });
+
   describe("route GET /osmbc.html", function() {
     it("should redirect to /", async function() {
       let body = await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });

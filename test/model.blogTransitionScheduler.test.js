@@ -1,5 +1,6 @@
 import should from "should";
 import nock from "nock";
+import MockDate from "mockdate";
 
 import testutil from "./testutil.js";
 
@@ -7,7 +8,7 @@ import config from "../config.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
-import { runTransitionSweep, getUpcomingActions } from "../model/blogTransitionScheduler.js";
+import { runTransitionSweep, getUpcomingActions, stopTransitionScheduler } from "../model/blogTransitionScheduler.js";
 
 describe("model/blogTransitionScheduler", function() {
   let originalGetValue;
@@ -593,6 +594,333 @@ describe("model/blogTransitionScheduler", function() {
           should(upcoming.enabled).be.false();
           should(Object.keys(upcoming)).eql(["enabled", "timezone"]);
           done();
+        });
+      });
+    });
+  });
+
+  describe("AutoReviewStart and recheck", function() {
+    // the blog ends Sunday 2026-11-08 23:59 in Europe/Amsterdam (UTC+1)
+    const END_DATE = "2026-11-08T22:59:00.000Z";
+    // Monday 2026-11-09, local time hh:mm
+    function monday(hhmm) {
+      const [h, m] = hhmm.split(":").map(Number);
+      return Date.UTC(2026, 10, 9, h - 1, m);
+    }
+    const reviewDefaults = {
+      enabled: true,
+      languages: ["DE", "FR"],
+      reviewStartAt: { weekday: "MON", hour: 9, minute: 0 }
+    };
+    const closeDefaults = {
+      enabled: true,
+      minReviews: 2,
+      languages: ["DE", "FR"],
+      closeAt: { weekday: "MON", hour: 12, minute: 0 }
+    };
+    function useConfig(review, close, translate) {
+      originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "Transition") {
+          return {
+            enabled: true,
+            AutoEditMode: { enabled: false },
+            AutoReviewStart: review === null ? { enabled: false } : Object.assign({}, reviewDefaults, review),
+            AutoLanguageClose: close === null ? { enabled: false } : Object.assign({}, closeDefaults, close),
+            AutoTranslate: translate || { enabled: false }
+          };
+        }
+        return originalGetValue.call(config, key, subkey, options);
+      };
+    }
+    function importBlog(articles, blogFields, cb) {
+      testutil.importData({
+        clear: true,
+        blog: [Object.assign({ name: "WN101", status: "edit", endDate: END_DATE }, blogFields)],
+        article: articles
+      }, cb);
+    }
+    // run one sweep per given local Monday time, then read the blog
+    function sweepAt(times, cb) {
+      eachTime(times.slice(), function(err) {
+        should.not.exist(err);
+        blogModule.findOne({ name: "WN101" }, cb);
+      });
+    }
+    function eachTime(times, cb) {
+      if (times.length === 0) return cb();
+      const time = times.shift();
+      MockDate.set(typeof time === "number" ? time : monday(time));
+      runTransitionSweep(function(err) {
+        if (err) return cb(err);
+        eachTime(times, cb);
+      });
+    }
+    function setArticle(title, data, cb) {
+      articleModule.findOne({ title: title }, function(err, article) {
+        should.not.exist(err);
+        const change = Object.assign({ version: article.version }, data);
+        article.setAndSave({ OSMUser: "editor" }, change, cb);
+      });
+    }
+    const written = [
+      { blog: "WN101", title: "a", markdownDE: "Text", markdownFR: "" },
+      { blog: "WN101", title: "b", markdownDE: "no translation", markdownFR: "Texte" },
+      { blog: "WN101", title: "c", categoryEN: "--unpublished--" }
+    ];
+
+    beforeEach(function(done) {
+      stopTransitionScheduler(done);
+    });
+    afterEach(function() {
+      MockDate.reset();
+    });
+
+    it("starts the review of a language whose articles are all written", function(done) {
+      useConfig({}, null);
+      importBlog(written, {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentDE.length).eql(1);
+          should(blog.reviewCommentDE[0].user).eql("autoreview-start");
+          should(blog.reviewCommentDE[0].text).eql("startreview");
+          // article a has no French text yet
+          should(blog.reviewCommentFR).eql(undefined);
+          done();
+        });
+      });
+    });
+
+    it("waits for an article without category", function(done) {
+      useConfig({}, null);
+      importBlog([{ blog: "WN101", title: "a", markdownDE: "Text", categoryEN: "-- no category yet --" }], {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentDE).eql(undefined);
+          done();
+        });
+      });
+    });
+
+    it("counts a machine translation as written unless acceptAutoTranslated is false", function(done) {
+      const articles = [{ blog: "WN101", title: "a", markdownDE: "Maschine", author: { markdownDE: "deeplPro API Call" } }];
+      useConfig({}, null);
+      importBlog(articles, {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentDE.length).eql(1);
+          config.getValue = originalGetValue;
+          useConfig({ acceptAutoTranslated: false }, null);
+          stopTransitionScheduler();
+          importBlog(articles, {}, function(err) {
+            should.not.exist(err);
+            sweepAt(["09:00"], function(err, blog) {
+              should.not.exist(err);
+              should(blog.reviewCommentDE).eql(undefined);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    it("does not start a language with only no translation articles", function(done) {
+      useConfig({ languages: ["FR"] }, null);
+      importBlog([{ blog: "WN101", title: "a", markdownDE: "Text", markdownFR: "no translation" }], {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentFR).eql(undefined);
+          done();
+        });
+      });
+    });
+
+    it("leaves closed, exported and started languages alone", function(done) {
+      useConfig({}, null);
+      const started = [{ user: "someone", text: "startreview", timestamp: new Date() }];
+      importBlog([{ blog: "WN101", title: "a", markdownDE: "Text", markdownFR: "Texte" }],
+        { closeDE: true, reviewCommentFR: started }, function(err) {
+          should.not.exist(err);
+          sweepAt(["09:00"], function(err, blog) {
+            should.not.exist(err);
+            should(blog.reviewCommentDE).eql(undefined);
+            should(blog.reviewCommentFR.length).eql(1);
+            should(blog.reviewCommentFR[0].user).eql("someone");
+            done();
+          });
+        });
+    });
+
+    it("does nothing outside the one hour window without recheck", function(done) {
+      useConfig({}, null);
+      importBlog(written, {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["08:59", "10:01"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentDE).eql(undefined);
+          done();
+        });
+      });
+    });
+
+    it("rechecks once per slot until the Auto Close time", function(done) {
+      useConfig({ recheck: { everyMinutes: 60, until: "AutoLanguageClose" } }, {});
+      importBlog(written, {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentFR).eql(undefined);
+          setArticle("a", { markdownFR: "Texte" }, function(err) {
+            should.not.exist(err);
+            // slot 09:00-10:00 already ran
+            sweepAt(["09:30"], function(err, blog) {
+              should.not.exist(err);
+              should(blog.reviewCommentFR).eql(undefined);
+              sweepAt(["10:00"], function(err, blog) {
+                should.not.exist(err);
+                should(blog.reviewCommentFR[0].user).eql("autoreview-start");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it("stops the recheck at the Auto Close time", function(done) {
+      useConfig({ recheck: { everyMinutes: 60, until: "AutoLanguageClose" } }, {});
+      importBlog([{ blog: "WN101", title: "a", markdownDE: "Text" }], {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00", "11:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentFR).eql(undefined);
+          setArticle("a", { markdownFR: "Texte" }, function(err) {
+            should.not.exist(err);
+            sweepAt(["12:00", "13:00"], function(err, blog) {
+              should.not.exist(err);
+              should(blog.reviewCommentFR).eql(undefined);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    it("ignores an invalid recheck", function(done) {
+      useConfig({ recheck: { everyMinutes: 0, until: "AutoLanguageClose" } }, {});
+      importBlog(written, {}, function(err) {
+        should.not.exist(err);
+        sweepAt(["11:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.reviewCommentDE).eql(undefined);
+          done();
+        });
+      });
+    });
+
+    it("starts the review after the translation of the same sweep", function(done) {
+      useConfig({ languages: ["DE"] }, null, {
+        enabled: true,
+        sourceLanguage: "EN",
+        languages: ["DE"],
+        translateAt: { weekday: "MON", hour: 9, minute: 0 }
+      });
+      const deepl = nock("https://api.deepl.com")
+        .post("/v2/translate")
+        .reply(200, { translations: [{ text: "<p>Übersetzt</p>" }] });
+      testutil.importData({
+        clear: true,
+        blog: [
+          { name: "WN100", status: "closed", closeDE: true },
+          { name: "WN101", status: "edit", endDate: END_DATE }
+        ],
+        article: [{ blog: "WN101", title: "a", markdownEN: "English" }]
+      }, function(err) {
+        should.not.exist(err);
+        sweepAt(["09:00"], function(err, blog) {
+          should.not.exist(err);
+          should(deepl.isDone()).be.true();
+          should(blog.reviewCommentDE[0].user).eql("autoreview-start");
+          done();
+        });
+      });
+    });
+
+    it("closes hourly from 12:00 to 24:00 with an Auto Close recheck", function(done) {
+      useConfig(null, { recheck: { everyMinutes: 60, until: { weekday: "MON", hour: 24 } } });
+      const oneReview = [{ user: "reviewerA", text: "ok", timestamp: new Date() }];
+      importBlog([{ blog: "WN101", title: "a", markdownDE: "Text" }], { reviewCommentDE: oneReview }, function(err) {
+        should.not.exist(err);
+        sweepAt(["12:00", "15:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.closeDE).not.equal(true);
+          blog.setReviewComment("DE", { OSMUser: "reviewerB" }, "ok", function(err) {
+            should.not.exist(err);
+            sweepAt(["15:30"], function(err, blog) {
+              should.not.exist(err);
+              should(blog.closeDE).not.equal(true);
+              sweepAt(["16:00"], function(err, blog) {
+                should.not.exist(err);
+                should(blog.closeDE).equal(true);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it("ends the Auto Close recheck at 24:00", function(done) {
+      useConfig(null, { recheck: { everyMinutes: 60, until: { weekday: "MON", hour: 24 } } });
+      const reviews = [
+        { user: "reviewerA", text: "ok", timestamp: new Date() },
+        { user: "reviewerB", text: "ok", timestamp: new Date() }
+      ];
+      importBlog([{ blog: "WN101", title: "a", markdownDE: "Text" }], { reviewCommentDE: reviews }, function(err) {
+        should.not.exist(err);
+        // Tuesday 00:00 local
+        sweepAt([monday("24:00")], function(err, blog) {
+          should.not.exist(err);
+          should(blog.closeDE).not.equal(true);
+          sweepAt(["23:59"], function(err, blog) {
+            should.not.exist(err);
+            should(blog.closeDE).equal(true);
+            done();
+          });
+        });
+      });
+    });
+
+    it("previews start, waiting and the next recheck without changing anything", function(done) {
+      useConfig({ recheck: { everyMinutes: 60, until: "AutoLanguageClose" } }, {});
+      importBlog(written, {}, function(err) {
+        should.not.exist(err);
+        MockDate.set(monday("09:30"));
+        getUpcomingActions(function(err, upcoming) {
+          should.not.exist(err);
+          should(upcoming.autoReviewStart).eql({
+            enabled: true,
+            acceptAutoTranslated: true,
+            everyMinutes: 60,
+            blogs: [{
+              name: "WN101",
+              ts: monday("09:00"),
+              nextTs: monday("10:00"),
+              untilTs: monday("12:00"),
+              start: ["DE"],
+              waiting: [{ lang: "FR", unedited: 1, autoTranslated: 0, written: 1 }],
+              done: []
+            }]
+          });
+          blogModule.findOne({ name: "WN101" }, function(err, blog) {
+            should.not.exist(err);
+            should(blog.reviewCommentDE).eql(undefined);
+            done();
+          });
         });
       });
     });

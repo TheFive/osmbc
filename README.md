@@ -58,6 +58,7 @@ The server uses Express with Pug templates. Details are in the
 
 * [Installation Guide](docs/install.md): setting up a server
 * [Configuration](docs/config.md): the configuration file
+* [Automatic steps](docs/automatic-transitions.md): what OSMBC does by itself in the editorial week
 * [Export Profiles](docs/export-profiles.md) and [Hugo Export](docs/hugo-export.md)
 * [API](docs/API.md): interface for external tools
 * [Wiki](docs/wiki.md): the built-in wiki and the migration from DokuWiki
