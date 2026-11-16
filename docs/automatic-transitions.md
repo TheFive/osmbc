@@ -22,7 +22,9 @@ list, so you can always see that it was not a person:
 
 When the collection period of a blog ends (example: Wednesday 23:59), the
 blog switches from *open* to *edit*, and the next blog is created for
-collecting. So there are always two blogs: one collecting, one being
+collecting (example: Thursday 00:00 to next Wednesday 23:59). If the end
+of a blog was moved by hand, the next blog is made shorter or longer so
+that the weekly rhythm is kept. So there are always two blogs: one collecting, one being
 edited. A blog lives about ten days: one week of collecting, then a few
 days of editing until it is published.
 

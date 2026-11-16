@@ -141,7 +141,8 @@ Transition:
   enabled: true              # false = no scheduler at all (tests, a second instance on the same DB)
   scheduleCron: "*/1 * * * *"
   runOnStart: true           # run one sweep right after start
-  # AutoEditMode is on unless switched off, no entry needed
+  AutoEditMode:              # on unless enabled: false
+    editAt: { weekday: THU, hour: 0, minute: 0 }
   AutoTranslate:
     enabled: true
     sourceLanguage: EN
@@ -204,6 +205,10 @@ language that has reached `minReviews` by then.
 | `AutoEditMode` | Default | |
 |---|---|---|
 | `enabled` | `true` | An `open` blog switches to `edit` once its `endDate` has passed. If no open blog is left, a new one is created. |
+| `editAt` | — | Weekday and time of the weekly switch (`{ weekday, hour, minute }` as above). A new blog starts one minute after the end of the previous one and ends one minute before the first `editAt` at least one day after its start: with `THU 0:00` it collects Thursday 00:00 to Wednesday 23:59. A previous blog whose end was moved by hand is caught up with a shorter or longer blog. Without `editAt` (or with an invalid one, warning in the log) the new blog starts one day after the previous end and ends `BlogDurationDays` (default 7) days after it. |
+
+The blog with the highest `WN` number is the previous blog. Manually
+created blogs get their dates the same way.
 
 | `AutoTranslate` | Default | |
 |---|---|---|
@@ -268,24 +273,22 @@ configuration.
 
 A blog lives about ten days: one week of collecting, then a few days of
 editing until it is closed. So two blogs are always active, one
-collecting (`open`) and one being edited (`edit`). With
-`BlogDurationDays: 7` and the YAML example above, for a blog whose
-collecting ends Wednesday 23:59:
+collecting (`open`) and one being edited (`edit`). With the YAML example
+above (`editAt` Thursday 00:00), for a blog whose collecting ends
+Wednesday 23:59:
 
 | When | Rule | What happens |
 |---|---|---|
-| Thursday 00:00 (week 1) | Auto Edit | The previous blog goes to `edit`, this blog is created and collecting starts. |
-| Wednesday 23:59 (week 1) | — | `endDate`: collecting ends. |
-| Thursday 00:00 (week 2) | Auto Edit | This blog goes to `edit`, the next blog is created. |
+| Wednesday 23:59 (week 0) | Auto Edit | The previous blog goes to `edit`, this blog is created; collecting starts Thursday 00:00. |
+| Wednesday 23:59 (week 1) | Auto Edit | `endDate`: collecting ends, this blog goes to `edit`, the next blog is created. |
 | Thursday 20:00 | Auto Translate | Empty articles of active languages are filled from EN. |
 | Saturday 12:00, then hourly | Auto Review Start | Every language whose articles are all written gets "review started". Checked every hour until Sunday 18:00. |
 | Sunday 18:00, then hourly until 24:00 | Auto Language Close | Every language with 2 reviews is closed. |
 
-The weekday/hour values are only an example. Each `…At` is the first
-such time after the blog's `endDate`, so all of them have to lie within
-the 7 days after it, in the order of the rules. Auto Edit has no time of
-its own yet: a blog is created when the previous one ends, and its
-`endDate` is the previous `endDate` plus `BlogDurationDays`.
+The weekday/hour values are only an example. The switch to `edit`
+happens at `endDate`, one minute before `editAt`. Each other `…At` is
+the first such time after the blog's `endDate`, so all of them have to
+lie within the 7 days after it, in the order of the rules.
 
 A few keys are flagged `POTENTIALLY_UNUSED` directly in the yaml files'
 own comments (not found in any static `getValue(...)` call at last check) -
