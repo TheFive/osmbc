@@ -12,6 +12,11 @@ const debug = _debug("OSMBC:model:blogTransitionScheduler");
 let _transitionJob = null;
 let _transitionSweepRunning = 0;
 const _warnedOnce = new Set();
+// rule + blog id -> last recheck slot that ran, so a slot runs only once
+// although the sweep runs every minute. Lost on restart: then the current
+// slot runs once more, which is harmless because every rule action is
+// idempotent (language already closed / review already started).
+const _lastSlot = new Map();
 
 // the sweep runs every minute, so a configuration problem is logged only once
 function warnOnce(message) {
@@ -32,28 +37,34 @@ function parseNumber(value, fallback) {
   return fallback;
 }
 
-function normaliseCloseAt(closeAtConfig) {
-  if (!closeAtConfig || typeof closeAtConfig !== "object") return null;
+function parseActor(value, fallback) {
+  if (typeof value === "string" && value.trim() !== "") return value.trim();
+  return fallback;
+}
 
-  const weekdayMap = {
-    SUN: 0,
-    MON: 1,
-    TUE: 2,
-    WED: 3,
-    THU: 4,
-    FRI: 5,
-    SAT: 6
-  };
+function parseStatusFilter(value) {
+  if (!Array.isArray(value) || value.length === 0) return ["edit"];
+  return value;
+}
+
+const WEEKDAYS = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
+
+// allowHour24: only for the end of a recheck, "MON 24:00" is stored as "TUE 0:00"
+function normaliseCloseAt(closeAtConfig, allowHour24) {
+  if (!closeAtConfig || typeof closeAtConfig !== "object") return null;
 
   let weekday = closeAtConfig.weekday;
   if (typeof weekday === "string") {
-    weekday = weekdayMap[weekday.trim().toUpperCase()];
+    weekday = WEEKDAYS[weekday.trim().toUpperCase()];
   }
   if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) return null;
 
   const hour = parseNumber(closeAtConfig.hour, 12);
   const minute = parseNumber(closeAtConfig.minute, 0);
 
+  if (allowHour24 && hour === 24 && minute === 0) {
+    return { weekday: (weekday + 1) % 7, hour: 0, minute: 0 };
+  }
   if (!Number.isInteger(hour) || hour < 0 || hour > 23) return null;
   if (!Number.isInteger(minute) || minute < 0 || minute > 59) return null;
 
@@ -62,6 +73,28 @@ function normaliseCloseAt(closeAtConfig) {
     hour: hour,
     minute: minute
   };
+}
+
+// recheck: { everyMinutes, until }, until is a weekday/time or (only for
+// rules running before the close) the string "AutoLanguageClose".
+// Returns null (rule runs only once at its due time) if it is missing or invalid.
+function normaliseRecheck(raw, ruleName, allowCloseRule) {
+  if (raw === undefined || raw === null) return null;
+  const prefix = "Transition." + ruleName + ".recheck: ";
+  const everyMinutes = parseNumber(raw.everyMinutes, NaN);
+  if (!(everyMinutes >= 1)) {
+    warnOnce(prefix + "everyMinutes must be a number >= 1, recheck ignored");
+    return null;
+  }
+  if (allowCloseRule && raw.until === "AutoLanguageClose") {
+    return { everyMinutes: everyMinutes, everyMs: everyMinutes * 60 * 1000, untilClose: true };
+  }
+  const untilAt = normaliseCloseAt(raw.until, true);
+  if (!untilAt) {
+    warnOnce(prefix + "until missing or invalid, recheck ignored");
+    return null;
+  }
+  return { everyMinutes: everyMinutes, everyMs: everyMinutes * 60 * 1000, untilAt: untilAt };
 }
 
 function nextWeeklyCloseTimeAtOrAfter(referenceTs, closeAt) {
@@ -94,28 +127,66 @@ function normaliseLanguageList(languagesConfig) {
   return filtered;
 }
 
-function getTransitionConfig() {
-  const raw = config.getValue("Transition", { default: {} }) || {};
-  const rawAutoLanguageClose = raw.AutoLanguageClose || {};
-  const rawAutoEditMode = raw.AutoEditMode || {};
-  const rawAutoTranslate = raw.AutoTranslate || {};
+function parseAutoLanguageClose(raw) {
+  raw = raw || {};
+  return {
+    enabled: parseBoolean(raw.enabled, false),
+    delayDays: parseNumber(raw.delayDays, 3),
+    minReviews: parseNumber(raw.minReviews, 2),
+    blogStatusFilter: parseStatusFilter(raw.blogStatusFilter),
+    onlyIfNotExported: parseBoolean(raw.onlyIfNotExported, true),
+    languages: normaliseLanguageList(raw.languages),
+    closeAt: normaliseCloseAt(raw.closeAt),
+    recheck: normaliseRecheck(raw.recheck, "AutoLanguageClose", false),
+    actorUser: parseActor(raw.actorUser, "autoclose-review")
+  };
+}
 
-  let blogStatusFilter = rawAutoLanguageClose.blogStatusFilter;
-  if (!Array.isArray(blogStatusFilter) || blogStatusFilter.length === 0) {
-    blogStatusFilter = ["edit"];
-  }
-
-  let translateStatusFilter = rawAutoTranslate.blogStatusFilter;
-  if (!Array.isArray(translateStatusFilter) || translateStatusFilter.length === 0) {
-    translateStatusFilter = ["edit"];
-  }
-
+function parseAutoTranslate(raw) {
+  raw = raw || {};
   // no default for the source language, it has to be one of the configured languages
   let sourceLanguage = null;
-  if (typeof rawAutoTranslate.sourceLanguage === "string") {
-    const candidate = rawAutoTranslate.sourceLanguage.trim().toUpperCase();
+  if (typeof raw.sourceLanguage === "string") {
+    const candidate = raw.sourceLanguage.trim().toUpperCase();
     if (language.getLid().indexOf(candidate) >= 0) sourceLanguage = candidate;
   }
+  return {
+    enabled: parseBoolean(raw.enabled, false),
+    sourceLanguage: sourceLanguage,
+    service: parseActor(raw.service, "deeplPro"),
+    languages: normaliseLanguageList(raw.languages).filter((lang) => lang !== sourceLanguage),
+    previousBlogs: parseNumber(raw.previousBlogs, 2),
+    blogStatusFilter: parseStatusFilter(raw.blogStatusFilter),
+    delayDays: parseNumber(raw.delayDays, 3),
+    translateAt: normaliseCloseAt(raw.translateAt),
+    actorUser: parseActor(raw.actorUser, "autotranslate")
+  };
+}
+
+function parseAutoReviewStart(raw, closeConfig) {
+  raw = raw || {};
+  const enabled = parseBoolean(raw.enabled, false);
+  let recheck = normaliseRecheck(raw.recheck, "AutoReviewStart", true);
+  if (enabled && recheck && recheck.untilClose && closeConfig.enabled !== true) {
+    warnOnce("Transition.AutoReviewStart.recheck: until AutoLanguageClose, but AutoLanguageClose is off, recheck ignored");
+    recheck = null;
+  }
+  return {
+    enabled: enabled,
+    languages: normaliseLanguageList(raw.languages),
+    blogStatusFilter: parseStatusFilter(raw.blogStatusFilter),
+    delayDays: parseNumber(raw.delayDays, 3),
+    reviewStartAt: normaliseCloseAt(raw.reviewStartAt),
+    recheck: recheck,
+    acceptAutoTranslated: parseBoolean(raw.acceptAutoTranslated, true),
+    actorUser: parseActor(raw.actorUser, "autoreview-start")
+  };
+}
+
+function getTransitionConfig() {
+  const raw = config.getValue("Transition", { default: {} }) || {};
+  const rawAutoEditMode = raw.AutoEditMode || {};
+  const autoLanguageClose = parseAutoLanguageClose(raw.AutoLanguageClose);
 
   return {
     enabled: parseBoolean(raw.enabled, true),
@@ -124,33 +195,9 @@ function getTransitionConfig() {
     autoEditMode: {
       enabled: parseBoolean(rawAutoEditMode.enabled, true)
     },
-    autoLanguageClose: {
-      enabled: parseBoolean(rawAutoLanguageClose.enabled, false),
-      delayDays: parseNumber(rawAutoLanguageClose.delayDays, 3),
-      minReviews: parseNumber(rawAutoLanguageClose.minReviews, 2),
-      blogStatusFilter: blogStatusFilter,
-      onlyIfNotExported: parseBoolean(rawAutoLanguageClose.onlyIfNotExported, true),
-      languages: normaliseLanguageList(rawAutoLanguageClose.languages),
-      closeAt: normaliseCloseAt(rawAutoLanguageClose.closeAt),
-      actorUser: (typeof rawAutoLanguageClose.actorUser === "string" && rawAutoLanguageClose.actorUser.trim() !== "")
-        ? rawAutoLanguageClose.actorUser.trim()
-        : "autoclose-review"
-    },
-    autoTranslate: {
-      enabled: parseBoolean(rawAutoTranslate.enabled, false),
-      sourceLanguage: sourceLanguage,
-      service: (typeof rawAutoTranslate.service === "string" && rawAutoTranslate.service.trim() !== "")
-        ? rawAutoTranslate.service.trim()
-        : "deeplPro",
-      languages: normaliseLanguageList(rawAutoTranslate.languages).filter((lang) => lang !== sourceLanguage),
-      previousBlogs: parseNumber(rawAutoTranslate.previousBlogs, 2),
-      blogStatusFilter: translateStatusFilter,
-      delayDays: parseNumber(rawAutoTranslate.delayDays, 3),
-      translateAt: normaliseCloseAt(rawAutoTranslate.translateAt),
-      actorUser: (typeof rawAutoTranslate.actorUser === "string" && rawAutoTranslate.actorUser.trim() !== "")
-        ? rawAutoTranslate.actorUser.trim()
-        : "autotranslate"
-    }
+    autoLanguageClose: autoLanguageClose,
+    autoTranslate: parseAutoTranslate(raw.AutoTranslate),
+    autoReviewStart: parseAutoReviewStart(raw.AutoReviewStart, autoLanguageClose)
   };
 }
 
@@ -168,6 +215,59 @@ function ruleDueTs(blog, delayDays, at) {
 // rules act only within one hour after the due time, so they run once without a marker
 function isInRuleWindow(dueTs, now) {
   return dueTs !== null && now >= dueTs && now <= dueTs + RULE_WINDOW_MS;
+}
+
+// timing of a rule for one blog: due time, and with a recheck its end and slot length.
+// A recheck that would end at or before the due time is ignored.
+function ruleTiming(blog, ruleConfig, at, closeConfig) {
+  const timing = { dueTs: ruleDueTs(blog, ruleConfig.delayDays, at), recheck: null, untilTs: null };
+  const recheck = ruleConfig.recheck;
+  if (timing.dueTs === null || !recheck) return timing;
+  const untilTs = recheck.untilClose
+    ? ruleDueTs(blog, closeConfig.delayDays, closeConfig.closeAt)
+    : nextWeeklyCloseTimeAtOrAfter(timing.dueTs, recheck.untilAt);
+  if (untilTs === null || untilTs <= timing.dueTs) return timing;
+  timing.recheck = recheck;
+  timing.untilTs = untilTs;
+  return timing;
+}
+
+// index of the recheck slot "now" falls in (slot 0 starts at the due time),
+// null before the due time and from the end of the recheck on
+function recheckSlot(timing, now) {
+  if (now < timing.dueTs || now >= timing.untilTs) return null;
+  return Math.floor((now - timing.dueTs) / timing.recheck.everyMs);
+}
+
+// true if a rule should act on a blog in this sweep.
+// Without a recheck: every sweep within one hour after the due time.
+// With a recheck: once per slot from the due time until its end.
+function shouldRun(ruleName, blog, timing, now) {
+  if (timing.dueTs === null) return false;
+  if (!timing.recheck) return isInRuleWindow(timing.dueTs, now);
+  const slot = recheckSlot(timing, now);
+  if (slot === null) return false;
+  const key = ruleName + ":" + blog.id;
+  if (_lastSlot.get(key) === slot) return false;
+  _lastSlot.set(key, slot);
+  return true;
+}
+
+// true if the preview should still show the blog for this rule
+function isUpcoming(timing, now) {
+  if (timing.dueTs === null) return false;
+  if (timing.recheck) return now < timing.untilTs;
+  return now <= timing.dueTs + RULE_WINDOW_MS;
+}
+
+// preview fields of a recheck: next slot start (null if no slot is left) and the end
+function recheckPreview(timing, now) {
+  if (!timing.recheck) return {};
+  let nextTs = timing.dueTs;
+  if (now >= timing.dueTs) {
+    nextTs = timing.dueTs + (Math.floor((now - timing.dueTs) / timing.recheck.everyMs) + 1) * timing.recheck.everyMs;
+  }
+  return { nextTs: (nextTs < timing.untilTs) ? nextTs : null, untilTs: timing.untilTs };
 }
 
 function planLanguageClose(blog, ruleConfig) {
@@ -195,6 +295,26 @@ function planTranslate(blog, previousBlogs, ruleConfig) {
   return plan;
 }
 
+// start the review of a language when every article is written: it has a text
+// or "no translation" (--unpublished-- articles do not count). A machine
+// translation counts as written unless acceptAutoTranslated is false. A
+// language with only "no translation" articles has no active team and waits.
+// Needs blog.calculateDerived to have run.
+function planReviewStart(blog, ruleConfig) {
+  const plan = { start: [], waiting: [], done: [] };
+  ruleConfig.languages.forEach(function(lang) {
+    if (!blog.isEditable(lang) || blog.isReviewStarted(lang)) return plan.done.push(lang);
+    const unedited = blog.getUnEdited(lang);
+    const autoTranslated = ruleConfig.acceptAutoTranslated ? 0 : blog.getAutoTranslate(lang);
+    const written = blog.getWritten(lang);
+    if (unedited > 0 || autoTranslated > 0 || written === 0) {
+      return plan.waiting.push({ lang: lang, unedited: unedited, autoTranslated: autoTranslated, written: written });
+    }
+    plan.start.push(lang);
+  });
+  return plan;
+}
+
 function autoTranslateProblem(ruleConfig) {
   if (!ruleConfig.sourceLanguage) {
     return "Transition.AutoTranslate: sourceLanguage missing or not a configured language, rule skipped";
@@ -206,6 +326,13 @@ function autoTranslateProblem(ruleConfig) {
   return null;
 }
 
+function findBlogsWithStatus(statusList, callback) {
+  blogModule.find({ status: "IN(" + statusList.join(",") + ")" }, { column: "endDate", desc: false }, function(err, blogs) {
+    if (err) return callback(err);
+    callback(null, blogs || []);
+  });
+}
+
 function runLanguageAutoCloseRule(callback) {
   const transitionConfig = getTransitionConfig();
   const ruleConfig = transitionConfig.autoLanguageClose;
@@ -213,19 +340,49 @@ function runLanguageAutoCloseRule(callback) {
   if (ruleConfig.enabled !== true) return callback();
 
   const now = Date.now();
-  const statusFilter = "IN(" + ruleConfig.blogStatusFilter.join(",") + ")";
 
-  blogModule.find({ status: statusFilter }, { column: "endDate", desc: false }, function(err, blogs) {
+  findBlogsWithStatus(ruleConfig.blogStatusFilter, function(err, blogs) {
     if (err) return callback(err);
-    if (!blogs || blogs.length === 0) return callback();
 
     eachSeries(blogs, function(blog, cbBlog) {
-      if (!isInRuleWindow(ruleDueTs(blog, ruleConfig.delayDays, ruleConfig.closeAt), now)) return cbBlog();
+      const timing = ruleTiming(blog, ruleConfig, ruleConfig.closeAt);
+      if (!shouldRun("AutoLanguageClose", blog, timing, now)) return cbBlog();
 
       eachSeries(planLanguageClose(blog, ruleConfig).close, function(lang, cbLanguage) {
         debug("Auto close language %s for blog %s", lang, blog.name);
         blog.closeBlog({ user: { OSMUser: ruleConfig.actorUser }, lang: lang, status: true }, cbLanguage);
       }, cbBlog);
+    }, callback);
+  });
+}
+
+function runAutoReviewStartRule(callback) {
+  const transitionConfig = getTransitionConfig();
+  const ruleConfig = transitionConfig.autoReviewStart;
+
+  if (ruleConfig.enabled !== true) return callback();
+
+  const now = Date.now();
+  const actor = { OSMUser: ruleConfig.actorUser };
+
+  findBlogsWithStatus(ruleConfig.blogStatusFilter, function(err, blogs) {
+    if (err) return callback(err);
+
+    eachSeries(blogs, function(blog, cbBlog) {
+      const timing = ruleTiming(blog, ruleConfig, ruleConfig.reviewStartAt, transitionConfig.autoLanguageClose);
+      if (!shouldRun("AutoReviewStart", blog, timing, now)) return cbBlog();
+
+      blog.calculateDerived(actor, function(err) {
+        if (err) return cbBlog(err);
+        eachSeries(planReviewStart(blog, ruleConfig).start, function(lang, cbLanguage) {
+          debug("Auto review start language %s for blog %s", lang, blog.name);
+          blog.setReviewComment(lang, actor, "startreview", function(err) {
+            // a problem in one language should not stop the others
+            if (err) config.logger.error(err);
+            cbLanguage();
+          });
+        }, cbBlog);
+      });
     }, callback);
   });
 }
@@ -242,11 +399,9 @@ function runAutoTranslateRule(callback) {
   }
 
   const now = Date.now();
-  const statusFilter = "IN(" + ruleConfig.blogStatusFilter.join(",") + ")";
 
-  blogModule.find({ status: statusFilter }, { column: "endDate", desc: false }, function(err, blogs) {
+  findBlogsWithStatus(ruleConfig.blogStatusFilter, function(err, blogs) {
     if (err) return callback(err);
-    if (!blogs || blogs.length === 0) return callback();
 
     eachSeries(blogs, function(blog, cbBlog) {
       if (!isInRuleWindow(ruleDueTs(blog, ruleConfig.delayDays, ruleConfig.translateAt), now)) return cbBlog();
@@ -275,86 +430,144 @@ function runAutoTranslateRule(callback) {
   });
 }
 
-// getUpcomingActions(callback)
-// read only preview of what the next sweeps will do, for the admin page.
-// Uses the same decisions as the rules above, but changes nothing.
+function byTs(a, b) { return a.ts - b.ts; }
+
+// preview helper: open blogs will be in status edit when a later rule is due
+function isPreviewCandidate(blog, statusFilter, autoEditEnabled) {
+  if (statusFilter.indexOf(blog.status) >= 0) return true;
+  return blog.status === "open" && autoEditEnabled && statusFilter.indexOf("edit") >= 0;
+}
+
+function previewAutoEdit(blogs, enabled, now) {
+  const result = { enabled: enabled, blogs: [] };
+  if (!enabled) return result;
+  blogs.forEach(function(blog) {
+    if (blog.status !== "open") return;
+    const ts = ruleDueTs(blog, 0, null);
+    if (ts === null) return;
+    result.blogs.push({ name: blog.name, ts: ts, overdue: ts < now });
+  });
+  result.blogs.sort(byTs);
+  return result;
+}
+
+function previewLanguageClose(blogs, transitionConfig, now) {
+  const closeConfig = transitionConfig.autoLanguageClose;
+  const result = { enabled: closeConfig.enabled === true, minReviews: closeConfig.minReviews, blogs: [] };
+  if (!result.enabled) return result;
+  if (closeConfig.recheck) result.everyMinutes = closeConfig.recheck.everyMinutes;
+  blogs.forEach(function(blog) {
+    if (!isPreviewCandidate(blog, closeConfig.blogStatusFilter, transitionConfig.autoEditMode.enabled === true)) return;
+    const timing = ruleTiming(blog, closeConfig, closeConfig.closeAt);
+    if (!isUpcoming(timing, now)) return;
+    result.blogs.push(Object.assign({ name: blog.name, ts: timing.dueTs }, recheckPreview(timing, now), planLanguageClose(blog, closeConfig)));
+  });
+  result.blogs.sort(byTs);
+  return result;
+}
+
+function previewAutoTranslate(blogs, transitionConfig, now, callback) {
+  const translateConfig = transitionConfig.autoTranslate;
+  const result = {
+    enabled: translateConfig.enabled === true,
+    sourceLanguage: translateConfig.sourceLanguage,
+    previousBlogs: translateConfig.previousBlogs,
+    blogs: []
+  };
+  if (!result.enabled) return callback(null, result);
+  result.problem = autoTranslateProblem(translateConfig);
+  if (result.problem) return callback(null, result);
+
+  eachSeries(blogs, function(blog, cbBlog) {
+    if (!isPreviewCandidate(blog, translateConfig.blogStatusFilter, transitionConfig.autoEditMode.enabled === true)) return cbBlog();
+    const ts = ruleDueTs(blog, translateConfig.delayDays, translateConfig.translateAt);
+    if (ts === null || now > ts + RULE_WINDOW_MS) return cbBlog();
+    blogModule.findPreviousBlogs(blog, translateConfig.previousBlogs, function(err, previousBlogs) {
+      if (err) return cbBlog(err);
+      result.blogs.push(Object.assign({ name: blog.name, ts: ts }, planTranslate(blog, previousBlogs, translateConfig)));
+      cbBlog();
+    });
+  }, function(err) {
+    if (err) return callback(err);
+    result.blogs.sort(byTs);
+    callback(null, result);
+  });
+}
+
+function previewAutoReviewStart(blogs, transitionConfig, now, callback) {
+  const reviewConfig = transitionConfig.autoReviewStart;
+  const result = {
+    enabled: reviewConfig.enabled === true,
+    acceptAutoTranslated: reviewConfig.acceptAutoTranslated,
+    blogs: []
+  };
+  if (!result.enabled) return callback(null, result);
+  if (reviewConfig.recheck) result.everyMinutes = reviewConfig.recheck.everyMinutes;
+  const actor = { OSMUser: reviewConfig.actorUser };
+
+  eachSeries(blogs, function(blog, cbBlog) {
+    if (!isPreviewCandidate(blog, reviewConfig.blogStatusFilter, transitionConfig.autoEditMode.enabled === true)) return cbBlog();
+    const timing = ruleTiming(blog, reviewConfig, reviewConfig.reviewStartAt, transitionConfig.autoLanguageClose);
+    if (!isUpcoming(timing, now)) return cbBlog();
+    blog.calculateDerived(actor, function(err) {
+      if (err) return cbBlog(err);
+      result.blogs.push(Object.assign({ name: blog.name, ts: timing.dueTs }, recheckPreview(timing, now), planReviewStart(blog, reviewConfig)));
+      cbBlog();
+    });
+  }, function(err) {
+    if (err) return callback(err);
+    result.blogs.sort(byTs);
+    callback(null, result);
+  });
+}
+
+/**
+ * Read only preview of what the next sweeps will do, for the admin page.
+ * Uses the same decisions as the rules, but changes nothing. Due times are
+ * calculated in the timezone of the server process (`timezone` in the result).
+ * With transitions off the result holds only `enabled` and `timezone`.
+ * @param {function(Error|null, object=)} callback gets the preview per rule
+ *   (`autoEdit`, `autoTranslate`, `autoReviewStart`, `autoLanguageClose`)
+ */
 export function getUpcomingActions(callback) {
   debug("getUpcomingActions");
   const transitionConfig = getTransitionConfig();
   const result = {
     enabled: transitionConfig.enabled,
-    // closeAt / translateAt are calculated in the timezone of the server process
     timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone
   };
   if (transitionConfig.enabled !== true) return callback(null, result);
 
   const now = Date.now();
-  const autoEditEnabled = transitionConfig.autoEditMode.enabled === true;
-  const translateConfig = transitionConfig.autoTranslate;
-  const closeConfig = transitionConfig.autoLanguageClose;
-  const statusList = ["open"].concat(translateConfig.blogStatusFilter, closeConfig.blogStatusFilter)
-    .filter((status, index, list) => list.indexOf(status) === index);
+  const statusList = ["open"].concat(
+    transitionConfig.autoTranslate.blogStatusFilter,
+    transitionConfig.autoReviewStart.blogStatusFilter,
+    transitionConfig.autoLanguageClose.blogStatusFilter
+  ).filter((status, index, list) => list.indexOf(status) === index);
 
-  // open blogs will be in status edit when a later rule is due
-  function isCandidate(blog, statusFilter) {
-    if (statusFilter.indexOf(blog.status) >= 0) return true;
-    return blog.status === "open" && autoEditEnabled && statusFilter.indexOf("edit") >= 0;
-  }
-  function byTs(a, b) { return a.ts - b.ts; }
-
-  blogModule.find({ status: "IN(" + statusList.join(",") + ")" }, { column: "endDate", desc: false }, function(err, blogs) {
+  findBlogsWithStatus(statusList, function(err, blogs) {
     if (err) return callback(err);
-    blogs = blogs || [];
 
-    result.autoEdit = { enabled: autoEditEnabled, blogs: [] };
-    if (autoEditEnabled) {
-      blogs.forEach(function(blog) {
-        if (blog.status !== "open") return;
-        const ts = ruleDueTs(blog, 0, null);
-        if (ts === null) return;
-        result.autoEdit.blogs.push({ name: blog.name, ts: ts, overdue: ts < now });
-      });
-      result.autoEdit.blogs.sort(byTs);
-    }
-
-    result.autoLanguageClose = { enabled: closeConfig.enabled === true, minReviews: closeConfig.minReviews, blogs: [] };
-    if (result.autoLanguageClose.enabled) {
-      blogs.forEach(function(blog) {
-        if (!isCandidate(blog, closeConfig.blogStatusFilter)) return;
-        const ts = ruleDueTs(blog, closeConfig.delayDays, closeConfig.closeAt);
-        if (ts === null || now > ts + RULE_WINDOW_MS) return;
-        result.autoLanguageClose.blogs.push(Object.assign({ name: blog.name, ts: ts }, planLanguageClose(blog, closeConfig)));
-      });
-      result.autoLanguageClose.blogs.sort(byTs);
-    }
-
-    result.autoTranslate = {
-      enabled: translateConfig.enabled === true,
-      sourceLanguage: translateConfig.sourceLanguage,
-      previousBlogs: translateConfig.previousBlogs,
-      blogs: []
-    };
-    if (!result.autoTranslate.enabled) return callback(null, result);
-    result.autoTranslate.problem = autoTranslateProblem(translateConfig);
-    if (result.autoTranslate.problem) return callback(null, result);
-
-    eachSeries(blogs, function(blog, cbBlog) {
-      if (!isCandidate(blog, translateConfig.blogStatusFilter)) return cbBlog();
-      const ts = ruleDueTs(blog, translateConfig.delayDays, translateConfig.translateAt);
-      if (ts === null || now > ts + RULE_WINDOW_MS) return cbBlog();
-      blogModule.findPreviousBlogs(blog, translateConfig.previousBlogs, function(err, previousBlogs) {
-        if (err) return cbBlog(err);
-        result.autoTranslate.blogs.push(Object.assign({ name: blog.name, ts: ts }, planTranslate(blog, previousBlogs, translateConfig)));
-        cbBlog();
-      });
-    }, function(err) {
+    result.autoEdit = previewAutoEdit(blogs, transitionConfig.autoEditMode.enabled === true, now);
+    result.autoLanguageClose = previewLanguageClose(blogs, transitionConfig, now);
+    previewAutoTranslate(blogs, transitionConfig, now, function(err, translatePreview) {
       if (err) return callback(err);
-      result.autoTranslate.blogs.sort(byTs);
-      callback(null, result);
+      result.autoTranslate = translatePreview;
+      previewAutoReviewStart(blogs, transitionConfig, now, function(err, reviewPreview) {
+        if (err) return callback(err);
+        result.autoReviewStart = reviewPreview;
+        callback(null, result);
+      });
     });
   });
 }
 
+/**
+ * Run all transition rules once, in the order Auto Edit, Auto Translate,
+ * Auto Review Start, Auto Language Close. A sweep that starts while another
+ * one is still running returns at once without doing anything.
+ * @param {function(Error=)} [callback] called when the sweep is done
+ */
 export function runTransitionSweep(callback) {
   debug("runTransitionSweep");
   if (_transitionSweepRunning > 0) {
@@ -374,6 +587,10 @@ export function runTransitionSweep(callback) {
       // before the language close, a closed language can not be edited any more
       runAutoTranslateRule(cb);
     },
+    function runAutoReviewStart(cb) {
+      // after the translation, so its texts count as written
+      runAutoReviewStartRule(cb);
+    },
     function runLanguageAutoClose(cb) {
       runLanguageAutoCloseRule(cb);
     }
@@ -383,15 +600,26 @@ export function runTransitionSweep(callback) {
   });
 }
 
+/**
+ * Stop the cron job of the scheduler and forget which recheck slots ran.
+ * @param {function()} [callback] called when stopped
+ */
 export function stopTransitionScheduler(callback) {
   debug("stopTransitionScheduler");
   if (_transitionJob) {
     _transitionJob.cancel();
     _transitionJob = null;
   }
+  _lastSlot.clear();
   if (callback) callback();
 }
 
+/**
+ * Start the cron job (`Transition.scheduleCron`) that runs the sweep, and
+ * with `runOnStart` one sweep at once. Does nothing if `Transition.enabled`
+ * is false or the job is already running.
+ * @param {function(Error=)} [callback] called after start (and the first sweep)
+ */
 export function startTransitionScheduler(callback) {
   debug("startTransitionScheduler");
   const transitionConfig = getTransitionConfig();

@@ -7,6 +7,17 @@ mixin upcomingTime(ts, tz)
   - var text = (days === 0) ? m.format("[today] HH:mm z") : (days > 0 && days < 7) ? m.format("ddd HH:mm z") : m.format("ddd, YYYY-MM-DD HH:mm z")
   time(datetime=new Date(ts).toISOString(), data-localtime="", data-tz=tz)= text
 
+//- recheck of a rule: checked again every n minutes until untilTs
+mixin recheckTime(b, everyMinutes, tz)
+  if b.untilTs
+    div.text-muted
+      | then every #{everyMinutes} min until
+      +upcomingTime(b.untilTs, tz)
+    if b.nextTs
+      div.text-muted
+        | next check
+        +upcomingTime(b.nextTs, tz)
+
 block content
   .row
     .col-md-4
@@ -123,6 +134,32 @@ block content
                           div.text-muted= "already auto translated: " + b.translated.join(", ")
                         if b.done.length > 0
                           div.text-muted= "already closed/exported: " + b.done.join(", ")
+                if !upcoming.autoReviewStart.enabled
+                  tr
+                    td Auto Review Start
+                    td(colspan=3) off
+                else if upcoming.autoReviewStart.blogs.length === 0
+                  tr
+                    td Auto Review Start
+                    td(colspan=3) no blog due
+                else
+                  each b in upcoming.autoReviewStart.blogs
+                    tr
+                      td Auto Review Start
+                      td= b.name
+                      td
+                        +upcomingTime(b.ts, tz)
+                        +recheckTime(b, upcoming.autoReviewStart.everyMinutes, tz)
+                      td
+                        div= "start review: " + (b.start.join(", ") || "none")
+                        each w in b.waiting
+                          - var reasons = []
+                          - if (w.unedited > 0) reasons.push(w.unedited + " not written")
+                          - if (w.autoTranslated > 0) reasons.push(w.autoTranslated + " machine translated")
+                          - if (w.unedited === 0 && w.written === 0) reasons.push("no text, only no translation")
+                          div.text-muted= "waiting: " + w.lang + " (" + reasons.join(", ") + ")"
+                        if b.done.length > 0
+                          div.text-muted= "already started/closed/exported: " + b.done.join(", ")
                 if !upcoming.autoLanguageClose.enabled
                   tr
                     td Auto Close
@@ -138,6 +175,7 @@ block content
                       td= b.name
                       td
                         +upcomingTime(b.ts, tz)
+                        +recheckTime(b, upcoming.autoLanguageClose.everyMinutes, tz)
                       td
                         - var minReviews = upcoming.autoLanguageClose.minReviews
                         div= minReviews + (minReviews === 1 ? " review" : " reviews") + " needed, close: " + (b.close.join(", ") || "none")
