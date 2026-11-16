@@ -124,7 +124,8 @@ describe("routes/index", function() {
               reviewStartAt: { weekday: "MON", hour: 9 },
               recheck: { everyMinutes: 60, until: "AutoLanguageClose" }
             },
-            AutoLanguageClose: { enabled: true, languages: ["DE"], closeAt: { weekday: "MON", hour: 12 } }
+            AutoLanguageClose: { enabled: true, languages: ["DE"], closeAt: { weekday: "MON", hour: 12 } },
+            AutoBlogClose: { enabled: true }
           };
         }
         return originalGetValue.call(config, key, subkey, options);
@@ -141,6 +142,17 @@ describe("routes/index", function() {
       body.data.should.containEql("waiting: EN (1 not written)");
       body.data.should.containEql("then every 60 min until");
       body.data.should.containEql("next check");
+      // only one blog, so none is older than the two kept open
+      body.data.should.containEql("no blog in edit older than the 2 newest ones");
+
+      // two newer blogs: WN101 becomes a candidate, DE has text and waits
+      await testutil.importData({
+        blog: [{ name: "WN102", status: "edit", endDate: "2026-11-15T22:59:00.000Z" },
+          { name: "WN103", status: "edit", endDate: "2026-11-22T22:59:00.000Z" }]
+      });
+      const page = await client.get(baseLink + "/osmbc/admin");
+      page.data.should.containEql("waiting for: DE");
+      page.data.should.containEql("abandoned from");
     });
   });
 

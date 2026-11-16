@@ -192,6 +192,33 @@ block content
                           div.text-muted= "blocked, articles not written: " + b.blocked.map((x) => x.lang + " (" + x.unwritten + ")").join(", ")
                         if b.done.length > 0
                           div.text-muted= "already closed/exported: " + b.done.join(", ")
+                - var blogClose = upcoming.autoBlogClose
+                if !blogClose.enabled
+                  tr
+                    td Auto Blog Close
+                    td(colspan=3) off
+                else if blogClose.blogs.length === 0
+                  tr
+                    td Auto Blog Close
+                    td(colspan=3)= "no blog in edit older than the " + blogClose.keepOpenBlogs + " newest ones"
+                else
+                  each b in blogClose.blogs
+                    tr
+                      td Auto Blog Close
+                      td= b.name
+                      td= b.close ? "next run" : "waiting"
+                      td
+                        div= b.close ? "blog will be closed" : "waiting for: " + b.waiting.map((w) => w.lang).join(", ")
+                        each w in b.waiting
+                          div.text-muted
+                            | #{w.lang}: last change 
+                            +upcomingTime(w.lastTs, tz)
+                            | , abandoned from 
+                            +upcomingTime(w.idleFromTs, tz)
+                        if b.abandoned.length > 0
+                          div.text-muted= "abandoned, no change for " + blogClose.idleDays + " days: " + b.abandoned.map((a) => a.lang).join(", ")
+                        if b.closed.length > 0
+                          div.text-muted= "closed: " + b.closed.join(", ")
       div
         h4="Long Absent"
         p
