@@ -1,16 +1,29 @@
 extends ../layout
 
+//- Auto Close is due but could not close a reviewed language (#1130)
+mixin autoCloseBlocked(lang)
+  - var _blockedProblems = (closeInfo && lang && closeInfo.problems[lang]) || []
+  if closeInfo && closeInfo.autoClose.due && _blockedProblems.length > 0 && blog.getClosedReviewCount(lang) >= closeInfo.autoClose.minReviews
+    .alert.alert-warning(id="autocloseblocked" + lang role="alert")
+      div= "Auto Close could not close " + blog.name + " (" + lang + "):"
+      each problem in _blockedProblems
+        div= problem
+
 mixin blogReviewButtons(lang)
   if (!(blog["close"+lang])) && (lang !== null)
     - _rc = blog["reviewComment"+lang];
     if (_rc)
       .div
         if (blog["exported"+lang] || reviewInWP.indexOf(lang)<0)
-          //- close is blocked while articles are not written (#1137, checked again on the server)
-          - var _unwritten = blog.getUnEdited(lang)
-          if (typeof _unwritten === "number" && _unwritten > 0)
+          //- close is blocked while articles are not written or anchors are
+          //- broken (#1137, #1130, checked again on the server)
+          - var _problems = (closeInfo && closeInfo.problems[lang]) || []
+          if (_problems.length > 0)
             button.btn.btn-lg.btn-warning(id="closebutton" disabled) Close #{blog.name}(#{lang})
-            div.small.text-body-secondary(id="closeblocked")= _unwritten + (_unwritten === 1 ? " article is" : " articles are") + " not written yet (text or \"no translation\" missing), close is blocked"
+            div.small.text-body-secondary(id="closeblocked")
+              div Close is blocked:
+              each problem in _problems
+                div= problem
           else
             button.btn.btn-lg.btn-warning(id="closebutton" data-lang-status="closelang" data-lang=lang data-confirm=`Close ${blog.name} (${lang})?`) Close #{blog.name}(#{lang})
         else

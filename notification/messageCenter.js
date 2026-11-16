@@ -12,7 +12,7 @@ const debug = _debug("OSMBC:notification:messageCenter");
 // row that editors see in the blog history tab. See
 // Blog.prototype.markAsExported / markAsAutoTranslated in model/blog.js and
 // notification/exportReceiver.js.
-const OPERATIONAL_ONLY_BLOG_FIELDS = ["exportedBy", "autoTranslated"];
+const OPERATIONAL_ONLY_BLOG_FIELDS = ["exportedBy", "autoTranslated", "closeBlockedNotified"];
 
 function isEditorialBlogChange(user, blog, change) {
   const keys = Object.keys(change).filter((k) => typeof change[k] !== "undefined");
@@ -60,6 +60,21 @@ class MessageCenter {
     debug("MessageCenter.prototype.sendCloseStatus");
     async.each(this.receiverList, function sendIt(element, cb) {
       element.sendCloseStatus(user, blog, lang, status, cb);
+    }, function final(err) { callback(err); });
+  }
+
+  /**
+   * Auto Close could not close a reviewed language (issue #1130).
+   * @param {object} user actor of the rule
+   * @param {object} blog the blog
+   * @param {string} lang language id
+   * @param {string[]} problems messages for the editors
+   * @param {function(Error=)} callback called when done
+   */
+  sendCloseBlocked(user, blog, lang, problems, callback) {
+    debug("MessageCenter.prototype.sendCloseBlocked");
+    async.each(this.receiverList, function sendIt(element, cb) {
+      element.sendCloseBlocked(user, blog, lang, problems, cb);
     }, function final(err) { callback(err); });
   }
 

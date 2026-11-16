@@ -567,6 +567,29 @@ describe("model/blog", function() {
         });
       });
     });
+    it("refuses to close a language with a broken anchor in a caption (#1130)", function(bddone) {
+      articleModule.findOne({ title: "a" }, function(err, article) {
+        should.not.exist(err);
+        // copied from last week: the anchor still points to WN0
+        article.setAndSave({ OSMUser: "test" }, { version: article.version, markdownEN: "Caption [[1](#wn0_" + article.id + ")]" }, function(err) {
+          should.not.exist(err);
+          articleModule.findOne({ title: "d" }, function(err, d) {
+            should.not.exist(err);
+            d.setAndSave({ OSMUser: "test" }, { version: d.version, categoryEN: "Mapping", markdownEN: "Text [[1](#wn1_" + article.id + ")]" }, function(err) {
+              should.not.exist(err);
+              closeWN1("EN", true, function(err, blog) {
+                should.exist(err);
+                should(err.status).eql(409);
+                should(err.message).eql("WN1 (EN) can not be closed: 1 article is not written yet. Write a text or \"no translation\", or give it a category." +
+                  " Anchor \"#wn0_" + article.id + "\" points to WN0, not WN1.");
+                should(blog.closeEN).be.undefined();
+                bddone();
+              });
+            });
+          });
+        });
+      });
+    });
     it("always allows to reopen", function(bddone) {
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);

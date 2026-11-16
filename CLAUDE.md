@@ -24,7 +24,7 @@ that matter most, in short:
 - Editorial changes go through `setAndSave`, never a bare `save()`,
   even for fields that should stay invisible — filter those with a
   `FilterReceiver` instead.
-- Every `messageCenter` receiver implements all seven methods
+- Every `messageCenter` receiver implements all eight methods
   (no-op stubs allowed); each receiver filters relevance itself.
 
 ## Configuration (`config.js`)

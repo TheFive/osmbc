@@ -207,6 +207,12 @@ block content
       +blogReviewButtons(left_lang)
     .col-md-3.d-none.d-md-block
       +blogReviewButtons(right_lang)
+  if closeInfo && closeInfo.autoClose.due
+    .row
+      .col-md-6
+        +autoCloseBlocked(left_lang)
+      .col-md-6.d-none.d-md-block
+        +autoCloseBlocked(right_lang)
 
   .row
     div(class=columnLeftSize)

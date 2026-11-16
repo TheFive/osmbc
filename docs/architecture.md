@@ -142,8 +142,9 @@ sequenceDiagram
 
 `notification/messageCenter.js` has one global instance,
 `messageCenter.global`. `setAndSave`, `closeBlog` and the other mutating
-functions call one of its seven methods: `sendInfo`, `updateArticle`,
-`updateBlog`, `sendReviewStatus`, `sendCloseStatus`, `addComment`,
+functions call one of its eight methods: `sendInfo`, `updateArticle`,
+`updateBlog`, `sendReviewStatus`, `sendCloseStatus`, `sendCloseBlocked`
+(Auto Close could not close a reviewed language), `addComment`,
 `editComment`. Registered today:
 
 * `LogModuleReceiver` — writes the `changes` table behind the "History"
@@ -155,7 +156,7 @@ functions call one of its seven methods: `sendInfo`, `updateArticle`,
 
 Rules:
 
-* **Every receiver implements all seven methods.** The message center
+* **Every receiver implements all eight methods.** The message center
   calls them without checking whether they exist; a missing one throws as
   soon as that event happens. Use no-op stubs for events a receiver
   doesn't care about (see `notification/exportReceiver.js`).

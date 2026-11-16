@@ -387,7 +387,38 @@ describe("routes/blog", function() {
       await client.post(url, { lang: "EN", action: "startreview" });
       const page = await client.get(baseLink + "/blog/WN333?tab=Review");
       should(page.status).eql(200);
-      page.data.should.containEql("1 article is not written yet (text or &quot;no translation&quot; missing), close is blocked");
+      page.data.should.containEql("Close is blocked:");
+      page.data.should.containEql("1 article is not written yet. Write a text or &quot;no translation&quot;, or give it a category.");
+    });
+    it("should show why Auto Close could not close a reviewed language (#1130)", async function () {
+      const originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "Transition") return { enabled: true, AutoLanguageClose: { enabled: true, delayDays: 3 } };
+        return originalGetValue.call(config, key, subkey, options);
+      };
+      try {
+        const reviews = [{ user: "A", text: "ok", timestamp: "2016-05-20T10:00:00Z" }, { user: "B", text: "ok", timestamp: "2016-05-20T10:00:00Z" }];
+        // due since 2016-05-04, the English text is missing
+        await testutil.importData({
+          blog: [{ name: "WN334", status: "edit", endDate: "2016-05-01T00:00:00Z", reviewCommentEN: reviews }],
+          article: [{ blog: "WN334", title: "x", markdownDE: "Text", categoryEN: "Mapping" }]
+        });
+        const client = testutil.getWrappedAxiosClient();
+        await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+        const page = await client.get(baseLink + "/blog/WN334?tab=Review");
+        page.data.should.containEql("Auto Close could not close WN334 (EN):");
+        page.data.should.containEql("1 article is not written yet.");
+
+        // not due yet: no banner
+        config.getValue = function(key, subkey, options) {
+          if (key === "Transition") return { enabled: true, AutoLanguageClose: { enabled: true, delayDays: 30 } };
+          return originalGetValue.call(config, key, subkey, options);
+        };
+        const notDue = await client.get(baseLink + "/blog/WN334?tab=Review");
+        notDue.data.should.not.containEql("Auto Close could not close");
+      } finally {
+        config.getValue = originalGetValue;
+      }
     });
     it("should reopen a language", async function () {
       const client = testutil.getWrappedAxiosClient();

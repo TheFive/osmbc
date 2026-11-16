@@ -528,6 +528,56 @@ describe("notification/slackReceiver", function() {
         });
       });
     });
+    it("should slack message once, when Auto Close could not close a language (#1130)", function (bddone) {
+      const created = ["osmde", "theweeklyosm"].map((service) => nock("https://missingmattermost.example.com")
+        .post("/services/" + service, (body) => / was created/.test(body.text))
+        .reply(200, "ok"));
+      blogModule.createNewBlog({ OSMUser: "testuser" }, { name: "blog", status: "edit" }, true, function(err, blog) {
+        should.not.exist(err);
+        const text = "<https://localhost:35043/blog/blog|blog>(PT-PT) could not be closed automatically: 1 article is not written yet.";
+        const blockedDE = nock("https://missingmattermost.example.com")
+          .post("/services/osmde", (body) => body.text === text)
+          .reply(200, "ok");
+        let posts = 0;
+        const blocked = nock("https://missingmattermost.example.com")
+          .post("/services/theweeklyosm", (body) => {
+            should(body).eql({
+              text: text,
+              username: "testbc(autoclose-review)",
+              icon_url: "https://localhost:35043/images/osmbc_im_logo.png",
+              channel: "#osmbcblog"
+            });
+            posts += 1;
+            return true;
+          })
+          .times(2)
+          .reply(200, "ok");
+        const actor = { OSMUser: "autoclose-review" };
+        blog.reportCloseBlocked(actor, "PT-PT", ["1 article is not written yet."], function(err) {
+          should.not.exist(err);
+          should(blog.closeBlockedNotified["PT-PT"]).be.a.String();
+          // a second report for the same language sends nothing
+          blog.reportCloseBlocked(actor, "PT-PT", ["1 article is not written yet."], function(err) {
+            should.not.exist(err);
+            // the iterator posts after the callback: wait for the first post,
+            // then a moment longer, so a second post would be counted
+            const start = Date.now();
+            (function waitForPost() {
+              if (posts === 0 && Date.now() - start < 5000) return setTimeout(waitForPost, 20);
+              setTimeout(checkPosts, 200);
+            })();
+            function checkPosts() {
+              should(created.every((scope) => scope.isDone())).be.true();
+              should(posts).eql(1);
+              // osmde gets the close status of DE only, not PT-PT
+              should(blockedDE.isDone()).is.False();
+              nock.cleanAll();
+              bddone();
+            }
+          });
+        });
+      });
+    });
     it("should slack message, when blog is reopened", function (bddone) {
       const slack1a = nock("https://missingmattermost.example.com")
         .post("/services/osmde",

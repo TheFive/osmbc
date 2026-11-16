@@ -188,8 +188,8 @@ block content
                           - var langs = b.waiting.filter((w) => w.reviews === n).map((w) => w.lang)
                           if langs.length > 0
                             div.text-muted= n + (n === 1 ? " review: " : " reviews: ") + langs.join(", ")
-                        if b.blocked.length > 0
-                          div.text-muted= "blocked, articles not written: " + b.blocked.map((x) => x.lang + " (" + x.unwritten + ")").join(", ")
+                        each x in b.blocked
+                          div.text-muted= "blocked " + x.lang + ": " + x.problems.join(" ")
                         if b.done.length > 0
                           div.text-muted= "already closed/exported: " + b.done.join(", ")
                 - var blogClose = upcoming.autoBlogClose

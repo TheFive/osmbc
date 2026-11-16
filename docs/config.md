@@ -263,13 +263,25 @@ so the rule acts at most once per blog and language.
 | `recheck` | — | Check again until a later time, see above. |
 | `actorUser` | `autoclose-review` | Name in the close log entry. |
 
-A language with an article that is not written yet (no text and not
-`no translation`, or in `-- no category yet --`; `--unpublished--`
-doesn't count) is never closed, neither by this rule nor by hand: the
-close is refused (HTTP 409 with a message for the editor), so an
-unfinished blog can't be exported (issue #1137). The preview lists such
-languages as "blocked" with the number of articles still missing.
-Reopening is always possible.
+A language is never closed, neither by this rule nor by hand, while
+
+- an article is not written yet (no text and not `no translation`, or in
+  `-- no category yet --`; `--unpublished--` doesn't count, issue #1137),
+- or a footnote anchor in its texts (`[[1](#wn<issue>_<article id>)]`,
+  e.g. in the lead picture caption) points to another issue, a missing
+  article or an unpublished one. Such an anchor breaks the Hugo export
+  (issue #1130).
+
+The close is refused (HTTP 409 with a message for the editor); the
+Close button is greyed out and lists the problems. Reopening is always
+possible. The preview lists such languages as "blocked" with the
+problems. When the rule is due and a language with at least `minReviews`
+reviews is blocked, the blog page shows a banner "Auto Close could not
+close …" above that language, and the rule posts the problems once per
+blog and language to the Mattermost/Slack channels that get the close
+status of that language (`sendCloseBlocked`; marker
+`closeBlockedNotified.<LANG>`, an operational field like
+`autoTranslated`, not in the change history).
 
 | `AutoBlogClose` | Default | |
 |---|---|---|

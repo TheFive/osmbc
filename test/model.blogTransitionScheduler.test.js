@@ -516,7 +516,7 @@ describe("model/blogTransitionScheduler", function() {
               blogs: [{ name: "WN101", ts: endTs + 2 * 86400000, close: [],
                 waiting: [],
                 // the only article has no German or French text yet, so both are blocked (#1137)
-                blocked: [{ lang: "DE", unwritten: 1, reviews: 2 }, { lang: "FR", unwritten: 1, reviews: 0 }],
+                blocked: [{ lang: "DE", reviews: 2, problems: ["1 article is not written yet. Write a text or \"no translation\", or give it a category."] }, { lang: "FR", reviews: 0, problems: ["1 article is not written yet. Write a text or \"no translation\", or give it a category."] }],
                 done: [] }]
             });
             blogModule.findOne({ name: "WN101" }, function(err, blog) {
@@ -916,13 +916,46 @@ describe("model/blogTransitionScheduler", function() {
         getUpcomingActions(function(err, upcoming) {
           should.not.exist(err);
           should(upcoming.autoLanguageClose.blogs[0].close).eql(["DE"]);
-          should(upcoming.autoLanguageClose.blogs[0].blocked).eql([{ lang: "FR", unwritten: 1, reviews: 2 }]);
+          should(upcoming.autoLanguageClose.blogs[0].blocked).eql([{ lang: "FR", reviews: 2, problems: ["1 article is not written yet. Write a text or \"no translation\", or give it a category."] }]);
           sweepAt(["12:00"], function(err, blog) {
             should.not.exist(err);
             should(blog.closeDE).equal(true);
             should(blog.closeFR).not.equal(true);
-            done();
+            // the French team is told once why (#1130), not in the change history
+            should(Object.keys(blog.closeBlockedNotified)).eql(["FR"]);
+            const notifiedAt = blog.closeBlockedNotified.FR;
+            sweepAt(["12:30"], function(err, blog) {
+              should.not.exist(err);
+              should(blog.closeBlockedNotified.FR).eql(notifiedAt);
+              logModule.find({ property: "closeBlockedNotified" }, function(err, logs) {
+                should.not.exist(err);
+                should(logs).eql([]);
+                done();
+              });
+            });
           });
+        });
+      });
+    });
+
+    it("reports only blocked languages with enough reviews, also for broken anchors (#1130)", function(done) {
+      useConfig(null, { closeAt: { weekday: "MON", hour: 12 }, languages: ["DE", "FR", "ES"] });
+      const reviews = [
+        { user: "reviewerA", text: "ok", timestamp: new Date() },
+        { user: "reviewerB", text: "ok", timestamp: new Date() }
+      ];
+      importBlog([
+        // German caption copied from last week, the anchor still points to WN100
+        { blog: "WN101", title: "a", markdownDE: "Bild [[1](#wn100_1)]", markdownFR: "Texte" }
+      ], { reviewCommentDE: reviews, reviewCommentFR: reviews }, function(err) {
+        should.not.exist(err);
+        sweepAt(["12:00"], function(err, blog) {
+          should.not.exist(err);
+          should(blog.closeFR).equal(true);
+          should(blog.closeDE).not.equal(true);
+          // ES has no text and no reviews: no team at work, nobody to tell
+          should(Object.keys(blog.closeBlockedNotified)).eql(["DE"]);
+          done();
         });
       });
     });

@@ -58,7 +58,8 @@ export function suppressMigrationNotifications(receiver) {
     addComment: isNotMigrationUser,
     editComment: isNotMigrationUser,
     sendReviewStatus: isNotMigrationUser,
-    sendCloseStatus: isNotMigrationUser
+    sendCloseStatus: isNotMigrationUser,
+    sendCloseBlocked: isNotMigrationUser
   });
 }
 

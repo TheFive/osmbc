@@ -26,6 +26,7 @@ const RECEIVER_METHODS = [
   "updateBlog",
   "sendReviewStatus",
   "sendCloseStatus",
+  "sendCloseBlocked",
   "addComment",
   "editComment"
 ];
