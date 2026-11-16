@@ -129,10 +129,12 @@ a map of *where to look*, not a restatement of every field.
 ## Automatic transitions (`Transition`)
 
 `model/blogTransitionScheduler.js` runs a sweep on the `scheduleCron`
-schedule. Each sweep runs four rules in this order: Auto Edit, Auto
-Translate, Auto Review Start, Auto Language Close. Translate runs before
-review start, so machine translated texts already count as written, and
-both run before close, because a closed language can't be edited any more.
+schedule. Each sweep runs five rules in this order: Auto Edit, Auto
+Translate, Auto Review Start, Auto Language Close, Auto Blog Close.
+Translate runs before review start, so machine translated texts already
+count as written, and both run before close, because a closed language
+can't be edited any more. Auto Blog Close runs last, so the language
+closes of the same sweep count.
 What the rules do for the editors is described in
 [automatic-transitions.md](automatic-transitions.md).
 
@@ -157,14 +159,16 @@ Transition:
     minReviews: 2
     closeAt: { weekday: SUN, hour: 18, minute: 0 }
     recheck: { everyMinutes: 60, until: { weekday: SUN, hour: 24 } }
+  AutoBlogClose:
+    enabled: true            # keepOpenBlogs 2, idleDays 14, previousBlogs 2 by default
 ```
 
 **On and off.** Auto Edit is **on** unless `AutoEditMode.enabled: false`
 is set: without it no new blog is created, so every instance needs it.
-The other three rules are **off** unless `enabled: true` is set, because
+The other four rules are **off** unless `enabled: true` is set, because
 they change content or act for the language teams (and Auto Translate
 costs translation credits). `Transition.enabled: false` switches off all
-four.
+five.
 
 **When a rule is due.** Auto Translate, Auto Review Start and Auto
 Language Close are due per blog. A rule is due `delayDays` after the
@@ -267,6 +271,26 @@ unfinished blog can't be exported (issue #1137). The preview lists such
 languages as "blocked" with the number of articles still missing.
 Reopening is always possible.
 
+| `AutoBlogClose` | Default | |
+|---|---|---|
+| `enabled` | `false` | |
+| `keepOpenBlogs` | `2` | The newest blogs in `edit` that always stay open for late teams. A blog is a candidate only when at least this many newer blogs are past collecting (`edit` or `closed`). |
+| `previousBlogs` | `2` | A language is **active** in a blog if it has text there (not only `no translation`) or was closed in one of this many blogs before. |
+| `idleDays` | `14` | An active language that is not closed counts as **abandoned** when nobody changed its article texts, review comments or close state for this many days (counted from the blog's `endDate` at the earliest). Changes by translation services (e.g. `deeplPro API Call`), copy users, OSMCAL, migration users and the automatic rules don't count. |
+| `everyMinutes` | `60` | The rule checks at most this often (it looks at the change history). |
+| `languages` | `ALL` | |
+| `actorUser` | `autoclose-blog` | Name in the blog's status change. |
+
+A candidate blog is set to `closed` when every active language is
+closed or abandoned. Closing the blog makes every language read-only,
+also the abandoned ones. Defaults from the change history of
+WN776–WN837: blogs were closed by hand when the second newer blog had
+gone to edit (42 of 44). A replay of the rule over these 62 blogs closed
+them 2.5 days earlier than by hand (median). With `idleDays: 7` six
+blogs would have locked out late teams that came back after more than a
+week of silence (e.g. a Russian team working 18–21 days after the blog
+end); with 14 three, and `keepOpenBlogs: 3` closed later than by hand.
+
 **Preview.** The admin page (`/osmbc/admin`) shows read-only what the next
 runs will do: per blog the due time (server timezone, plus the browser's
 local time if it differs), the languages that will be translated, those
@@ -274,7 +298,9 @@ skipped because they were not closed in the previous blogs, those already
 translated/closed, the languages whose review will start and why the
 others wait (articles not written, machine translated), per close
 candidate the languages grouped by their review count, and with a
-recheck its end and the next check. Check it there after changing the
+recheck its end and the next check, and per blog close candidate the
+languages still awaited with their last change and the time from which
+they count as abandoned. Check it there after changing the
 configuration.
 
 ### Example week
@@ -292,6 +318,7 @@ Wednesday 23:59:
 | Thursday 20:00 | Auto Translate | Empty articles of active languages are filled from EN. |
 | Saturday 12:00, then hourly | Auto Review Start | Every language whose articles are all written gets "review started". Checked every hour until Sunday 18:00. |
 | Sunday 18:00, then hourly until 24:00 | Auto Language Close | Every language with 2 reviews is closed. |
+| about two weeks later, hourly | Auto Blog Close | Once two newer blogs are in edit, the blog is closed as soon as every active language is closed or had no change for 14 days. |
 
 The weekday/hour values are only an example. The switch to `edit`
 happens at `endDate`, one minute before `editAt`. Each other `…At` is

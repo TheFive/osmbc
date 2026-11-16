@@ -17,6 +17,7 @@ list, so you can always see that it was not a person:
 | Auto Translate | `autotranslate` (articles: `deeplPro API Call`) |
 | Auto Review Start | `autoreview-start` |
 | Auto Close | `autoclose-review` |
+| Auto Blog Close | `autoclose-blog` |
 
 ## 1. Auto Edit — the blog goes into edit mode
 
@@ -82,3 +83,23 @@ category, or move it to `--unpublished--`; then close again.
 
 **Undo:** click *Reopen* for your language in the blog's language table.
 After the last check of the day nothing is closed automatically any more.
+
+## 5. Auto Blog Close — the whole blog is closed
+
+A blog stays open for late teams until two newer blogs are in edit mode
+(example values; about two weeks after the blog end). After that it is
+closed as a whole when every *active* language is done:
+
+- a language is active if it has text in this blog, or if its team closed
+  one of the last two blogs;
+- an active language is done when it is closed, **or** when nobody has
+  worked on it for 14 days — no text change, no review, no close. Machine
+  translations and other automatic steps don't count as work.
+
+So a team that is only late keeps the blog open as long as it works on
+it, and a language nobody looks after any more does not keep the blog
+open forever. A closed blog can't be edited in any language. Admins see
+on the admin page which languages a blog still waits for, and from when
+a language counts as abandoned.
+
+**Undo:** set the blog status back to *edit* in the blog details.
