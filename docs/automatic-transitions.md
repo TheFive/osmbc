@@ -74,12 +74,21 @@ without enough reviews stay open; with the hourly recheck they are closed
 at the next check after the last needed review. Languages that are
 already exported are left alone.
 
-**Only complete languages are closed** — automatically and by hand. As
-long as an article in your language has no text (and is not
-`no translation`) or has no category yet, the *Close* button is greyed
-out and says how many articles are missing, and Auto Close skips your
-language. Write the text, set `no translation`, give the article a
-category, or move it to `--unpublished--`; then close again.
+**Only complete languages are closed** — automatically and by hand. The
+*Close* button is greyed out and lists what is missing, and Auto Close
+skips your language, as long as
+
+- an article in your language has no text (and is not `no translation`)
+  or has no category yet: write the text, set `no translation`, give the
+  article a category, or move it to `--unpublished--`;
+- a footnote link like `[[1](#wn851_12345)]` (lead picture caption) points
+  to another issue or to an article that is missing or unpublished — often
+  a caption copied from last week: correct the number.
+
+If Auto Close is due and your reviewed language is blocked, the blog page
+shows a yellow box "Auto Close could not close …" with the reasons, and
+your language channel gets one message with the same reasons. Fix them,
+and the next hourly check (or the *Close* button) closes the language.
 
 **Undo:** click *Reopen* for your language in the blog's language table.
 After the last check of the day nothing is closed automatically any more.
