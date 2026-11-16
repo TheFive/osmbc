@@ -5,6 +5,7 @@ import config from "../config.js";
 import language from "./language.js";
 import blogModule from "./blog.js";
 import translator from "./translator.js";
+import { normaliseWeeklyTime, nextWeeklyTimeAtOrAfter } from "../util/weeklyTime.js";
 import _debug from "debug";
 
 const debug = _debug("OSMBC:model:blogTransitionScheduler");
@@ -47,34 +48,6 @@ function parseStatusFilter(value) {
   return value;
 }
 
-const WEEKDAYS = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
-
-// allowHour24: only for the end of a recheck, "MON 24:00" is stored as "TUE 0:00"
-function normaliseCloseAt(closeAtConfig, allowHour24) {
-  if (!closeAtConfig || typeof closeAtConfig !== "object") return null;
-
-  let weekday = closeAtConfig.weekday;
-  if (typeof weekday === "string") {
-    weekday = WEEKDAYS[weekday.trim().toUpperCase()];
-  }
-  if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) return null;
-
-  const hour = parseNumber(closeAtConfig.hour, 12);
-  const minute = parseNumber(closeAtConfig.minute, 0);
-
-  if (allowHour24 && hour === 24 && minute === 0) {
-    return { weekday: (weekday + 1) % 7, hour: 0, minute: 0 };
-  }
-  if (!Number.isInteger(hour) || hour < 0 || hour > 23) return null;
-  if (!Number.isInteger(minute) || minute < 0 || minute > 59) return null;
-
-  return {
-    weekday: weekday,
-    hour: hour,
-    minute: minute
-  };
-}
-
 // recheck: { everyMinutes, until }, until is a weekday/time or (only for
 // rules running before the close) the string "AutoLanguageClose".
 // Returns null (rule runs only once at its due time) if it is missing or invalid.
@@ -89,27 +62,12 @@ function normaliseRecheck(raw, ruleName, allowCloseRule) {
   if (allowCloseRule && raw.until === "AutoLanguageClose") {
     return { everyMinutes: everyMinutes, everyMs: everyMinutes * 60 * 1000, untilClose: true };
   }
-  const untilAt = normaliseCloseAt(raw.until, true);
+  const untilAt = normaliseWeeklyTime(raw.until, true);
   if (!untilAt) {
     warnOnce(prefix + "until missing or invalid, recheck ignored");
     return null;
   }
   return { everyMinutes: everyMinutes, everyMs: everyMinutes * 60 * 1000, untilAt: untilAt };
-}
-
-function nextWeeklyCloseTimeAtOrAfter(referenceTs, closeAt) {
-  const result = new Date(referenceTs);
-  const targetWeekday = closeAt.weekday;
-
-  result.setHours(closeAt.hour, closeAt.minute, 0, 0);
-  const dayDiff = (targetWeekday - result.getDay() + 7) % 7;
-  result.setDate(result.getDate() + dayDiff);
-
-  if (result.getTime() < referenceTs) {
-    result.setDate(result.getDate() + 7);
-  }
-
-  return result.getTime();
 }
 
 function normaliseLanguageList(languagesConfig) {
@@ -136,7 +94,7 @@ function parseAutoLanguageClose(raw) {
     blogStatusFilter: parseStatusFilter(raw.blogStatusFilter),
     onlyIfNotExported: parseBoolean(raw.onlyIfNotExported, true),
     languages: normaliseLanguageList(raw.languages),
-    closeAt: normaliseCloseAt(raw.closeAt),
+    closeAt: normaliseWeeklyTime(raw.closeAt),
     recheck: normaliseRecheck(raw.recheck, "AutoLanguageClose", false),
     actorUser: parseActor(raw.actorUser, "autoclose-review")
   };
@@ -158,7 +116,7 @@ function parseAutoTranslate(raw) {
     previousBlogs: parseNumber(raw.previousBlogs, 2),
     blogStatusFilter: parseStatusFilter(raw.blogStatusFilter),
     delayDays: parseNumber(raw.delayDays, 3),
-    translateAt: normaliseCloseAt(raw.translateAt),
+    translateAt: normaliseWeeklyTime(raw.translateAt),
     actorUser: parseActor(raw.actorUser, "autotranslate")
   };
 }
@@ -176,7 +134,7 @@ function parseAutoReviewStart(raw, closeConfig) {
     languages: normaliseLanguageList(raw.languages),
     blogStatusFilter: parseStatusFilter(raw.blogStatusFilter),
     delayDays: parseNumber(raw.delayDays, 3),
-    reviewStartAt: normaliseCloseAt(raw.reviewStartAt),
+    reviewStartAt: normaliseWeeklyTime(raw.reviewStartAt),
     recheck: recheck,
     acceptAutoTranslated: parseBoolean(raw.acceptAutoTranslated, true),
     actorUser: parseActor(raw.actorUser, "autoreview-start")
@@ -208,7 +166,7 @@ function ruleDueTs(blog, delayDays, at) {
   if (!blog || !blog.endDate) return null;
   const endDateTs = new Date(blog.endDate).getTime();
   if (Number.isNaN(endDateTs)) return null;
-  if (at) return nextWeeklyCloseTimeAtOrAfter(endDateTs, at);
+  if (at) return nextWeeklyTimeAtOrAfter(endDateTs, at);
   return endDateTs + (delayDays * 24 * 60 * 60 * 1000);
 }
 
@@ -225,7 +183,7 @@ function ruleTiming(blog, ruleConfig, at, closeConfig) {
   if (timing.dueTs === null || !recheck) return timing;
   const untilTs = recheck.untilClose
     ? ruleDueTs(blog, closeConfig.delayDays, closeConfig.closeAt)
-    : nextWeeklyCloseTimeAtOrAfter(timing.dueTs, recheck.untilAt);
+    : nextWeeklyTimeAtOrAfter(timing.dueTs, recheck.untilAt);
   if (untilTs === null || untilTs <= timing.dueTs) return timing;
   timing.recheck = recheck;
   timing.untilTs = untilTs;
@@ -445,7 +403,9 @@ function previewAutoEdit(blogs, enabled, now) {
     if (blog.status !== "open") return;
     const ts = ruleDueTs(blog, 0, null);
     if (ts === null) return;
-    result.blogs.push({ name: blog.name, ts: ts, overdue: ts < now });
+    // the new blog follows the blog with the highest number, normally this open one
+    const newBlogEndTs = new Date(blogModule.calculateNewBlogDates(ts).endDate).getTime();
+    result.blogs.push({ name: blog.name, ts: ts, overdue: ts < now, newBlogEndTs: newBlogEndTs });
   });
   result.blogs.sort(byTs);
   return result;

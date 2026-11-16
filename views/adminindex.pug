@@ -106,7 +106,11 @@ block content
                         +upcomingTime(b.ts, tz)
                         if b.overdue
                           |  (overdue, next run)
-                      td open → edit, a new blog is created if none is open
+                      td
+                        div open → edit, a new blog is created if none is open
+                        div.text-muted
+                          | new blog collects until 
+                          +upcomingTime(b.newBlogEndTs, tz)
                 if !upcoming.autoTranslate.enabled
                   tr
                     td Auto Translate
