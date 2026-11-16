@@ -141,23 +141,29 @@ Transition:
   enabled: true              # false = no scheduler at all (tests, a second instance on the same DB)
   scheduleCron: "*/1 * * * *"
   runOnStart: true           # run one sweep right after start
-  AutoEditMode:
-    enabled: true
+  # AutoEditMode is on unless switched off, no entry needed
   AutoTranslate:
     enabled: true
     sourceLanguage: EN
     previousBlogs: 2
-    translateAt: { weekday: SUN, hour: 20, minute: 0 }
+    translateAt: { weekday: THU, hour: 20, minute: 0 }
   AutoReviewStart:
     enabled: true
-    reviewStartAt: { weekday: SUN, hour: 21, minute: 0 }
+    reviewStartAt: { weekday: SAT, hour: 12, minute: 0 }
     recheck: { everyMinutes: 60, until: AutoLanguageClose }
   AutoLanguageClose:
     enabled: true
     minReviews: 2
-    closeAt: { weekday: MON, hour: 12, minute: 0 }
-    recheck: { everyMinutes: 60, until: { weekday: MON, hour: 24 } }
+    closeAt: { weekday: SUN, hour: 18, minute: 0 }
+    recheck: { everyMinutes: 60, until: { weekday: SUN, hour: 24 } }
 ```
+
+**On and off.** Auto Edit is **on** unless `AutoEditMode.enabled: false`
+is set: without it no new blog is created, so every instance needs it.
+The other three rules are **off** unless `enabled: true` is set, because
+they change content or act for the language teams (and Auto Translate
+costs translation credits). `Transition.enabled: false` switches off all
+four.
 
 **When a rule is due.** Auto Translate, Auto Review Start and Auto
 Language Close are due per blog. A rule is due `delayDays` after the
@@ -190,9 +196,9 @@ frequent than `scheduleCron`. Which slot already ran is kept in memory;
 after a restart the current slot runs once more, which changes nothing
 because a started review / closed language is left alone.
 
-Example: `closeAt: { weekday: MON, hour: 12 }` with
-`recheck: { everyMinutes: 60, until: { weekday: MON, hour: 24 } }`
-checks every hour on Monday from 12:00 to 23:00 and closes every
+Example: `closeAt: { weekday: SUN, hour: 18 }` with
+`recheck: { everyMinutes: 60, until: { weekday: SUN, hour: 24 } }`
+checks every hour on Sunday from 18:00 to 23:00 and closes every
 language that has reached `minReviews` by then.
 
 | `AutoEditMode` | Default | |
@@ -260,18 +266,26 @@ configuration.
 
 ### Example week
 
-With the YAML example above, a blog that ends Sunday 23:59:
+A blog lives about ten days: one week of collecting, then a few days of
+editing until it is closed. So two blogs are always active, one
+collecting (`open`) and one being edited (`edit`). With
+`BlogDurationDays: 7` and the YAML example above, for a blog whose
+collecting ends Wednesday 23:59:
 
 | When | Rule | What happens |
 |---|---|---|
-| Sunday 23:59 | Auto Edit | Blog goes from `open` to `edit`, the next blog is created. |
-| following Sunday 20:00 | Auto Translate | Empty articles of active languages are filled from EN. |
-| following Sunday 21:00, then hourly | Auto Review Start | Every language whose articles are all written gets "review started". Checked every hour until Monday 12:00. |
-| following Monday 12:00, then hourly until 24:00 | Auto Language Close | Every language with 2 reviews is closed. |
+| Thursday 00:00 (week 1) | Auto Edit | The previous blog goes to `edit`, this blog is created and collecting starts. |
+| Wednesday 23:59 (week 1) | — | `endDate`: collecting ends. |
+| Thursday 00:00 (week 2) | Auto Edit | This blog goes to `edit`, the next blog is created. |
+| Thursday 20:00 | Auto Translate | Empty articles of active languages are filled from EN. |
+| Saturday 12:00, then hourly | Auto Review Start | Every language whose articles are all written gets "review started". Checked every hour until Sunday 18:00. |
+| Sunday 18:00, then hourly until 24:00 | Auto Language Close | Every language with 2 reviews is closed. |
 
-(The weekday/hour values are only an example; `translateAt` etc. are
-calculated from `endDate`, so "following Sunday" is the first Sunday
-20:00 after the blog's end.)
+The weekday/hour values are only an example. Each `…At` is the first
+such time after the blog's `endDate`, so all of them have to lie within
+the 7 days after it, in the order of the rules. Auto Edit has no time of
+its own yet: a blog is created when the previous one ends, and its
+`endDate` is the previous `endDate` plus `BlogDurationDays`.
 
 A few keys are flagged `POTENTIALLY_UNUSED` directly in the yaml files'
 own comments (not found in any static `getValue(...)` call at last check) -

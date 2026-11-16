@@ -20,12 +20,15 @@ list, so you can always see that it was not a person:
 
 ## 1. Auto Edit — the blog goes into edit mode
 
-When the collection period of a blog ends, the blog switches from *open*
-to *edit*, and the next blog is created for collecting.
+When the collection period of a blog ends (example: Wednesday 23:59), the
+blog switches from *open* to *edit*, and the next blog is created for
+collecting. So there are always two blogs: one collecting, one being
+edited. A blog lives about ten days: one week of collecting, then a few
+days of editing until it is published.
 
 ## 2. Auto Translate — empty articles get a machine translation
 
-Example: Sunday 20:00. Every article that is still empty in your language
+Example: Thursday 20:00, the evening after collecting ended. Every article that is still empty in your language
 gets a machine translation (DeepL) from the source language. This happens
 only for languages whose team closed one of the last blogs, only once per
 blog and language, and never overwrites a text. Articles with
@@ -35,7 +38,7 @@ the machine translated articles nobody has edited yet.
 
 ## 3. Auto Review Start — the review starts when everything is written
 
-Example: Sunday 21:00, then every hour until Auto Close. OSMBC checks for
+Example: Saturday 12:00, then every hour until Auto Close. OSMBC checks for
 every language whether **every article is written**:
 
 - an article is written when it has a text in your language, or
@@ -62,7 +65,7 @@ empty, or ask your admins to switch the step off for your language.
 
 ## 4. Auto Close — the language is closed after enough reviews
 
-Example: Monday 12:00, then every hour until 24:00. Every language with
+Example: Sunday 18:00, then every hour until 24:00. Every language with
 enough reviews by different people (example: 2) is closed. Languages
 without enough reviews stay open; with the hourly recheck they are closed
 at the next check after the last needed review. Languages that are
