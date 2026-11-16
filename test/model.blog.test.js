@@ -128,6 +128,82 @@ describe("model/blog", function() {
       });
     });
   });
+  describe("calculateNewBlogDates", function() {
+    let originalGetValue = null;
+    function useConfig(transition, blogDurationDays) {
+      originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "Transition") return transition;
+        if (key === "BlogDurationDays" && blogDurationDays !== undefined) return blogDurationDays;
+        return originalGetValue.call(config, key, subkey, options);
+      };
+    }
+    afterEach(function() {
+      if (originalGetValue) config.getValue = originalGetValue;
+      originalGetValue = null;
+    });
+    function datesAfter(previousEnd) {
+      return blogModule.calculateNewBlogDates(new Date(previousEnd).getTime());
+    }
+    const editThursday = { AutoEditMode: { editAt: { weekday: "THU", hour: 0, minute: 0 } } };
+
+    /* eslint-disable mocha/no-synchronous-tests */
+    it("runs from Thursday 00:00 to Wednesday 23:59 with editAt THU 0:00", function() {
+      useConfig(editThursday);
+      // previous blog ends Wednesday 2026-11-11 23:59 in Europe/Amsterdam
+      should(datesAfter("2026-11-11T22:59:00.000Z")).eql({
+        startDate: "2026-11-11T23:00:00.000Z",
+        endDate: "2026-11-18T22:59:00.000Z"
+      });
+    });
+    it("keeps 23:59 local time across the end of daylight saving time", function() {
+      useConfig(editThursday);
+      should(datesAfter("2026-10-21T21:59:00.000Z")).eql({
+        startDate: "2026-10-21T22:00:00.000Z",
+        endDate: "2026-10-28T22:59:00.000Z"
+      });
+    });
+    it("catches up with the weekly rhythm after a shifted end", function() {
+      useConfig(editThursday);
+      // previous end moved by hand to Monday 10:00, the new blog ends this Wednesday
+      should(datesAfter("2026-11-09T09:00:00.000Z")).eql({
+        startDate: "2026-11-09T09:01:00.000Z",
+        endDate: "2026-11-11T22:59:00.000Z"
+      });
+      // previous end Wednesday 12:00, less than a day before editAt: end a week later
+      should(datesAfter("2026-11-11T11:00:00.000Z").endDate).eql("2026-11-18T22:59:00.000Z");
+    });
+    it("uses BlogDurationDays without or with an invalid editAt", function() {
+      useConfig({ AutoEditMode: { editAt: { weekday: "XYZ" } } }, 7);
+      should(datesAfter("2026-11-11T22:59:00.000Z")).eql({
+        startDate: "2026-11-12T22:59:00.000Z",
+        endDate: "2026-11-18T22:59:00.000Z"
+      });
+      config.getValue = originalGetValue;
+      useConfig({}, 3);
+      should(datesAfter("2026-11-11T22:59:00.000Z").endDate).eql("2026-11-14T22:59:00.000Z");
+    });
+    /* eslint-enable mocha/no-synchronous-tests */
+    it("is used by createNewBlog", function(bddone) {
+      useConfig(editThursday);
+      testutil.clearDB(function(err) {
+        should.not.exist(err);
+        blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN100", endDate: "2026-11-11T22:59:00.000Z" }, function(err, blog) {
+          should.not.exist(err);
+          blog.save(function(err) {
+            should.not.exist(err);
+            blogModule.createNewBlog({ OSMUser: "test" }, function(err, next) {
+              should.not.exist(err);
+              should(next.name).eql("WN101");
+              should(next.startDate).eql("2026-11-11T23:00:00.000Z");
+              should(next.endDate).eql("2026-11-18T22:59:00.000Z");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+  });
   describe("isEditable", function() {
     /* eslint-disable mocha/no-synchronous-tests */
     it("should be editable if no review or closed state", function() {

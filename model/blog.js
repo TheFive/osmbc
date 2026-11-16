@@ -20,6 +20,7 @@ import userModule from "../model/user.js";
 import translator from "../model/translator.js";
 import { getKnownMigrationUserNames } from "../notification/migrationFilter.js";
 import osmcalLoader from "../model/osmcalLoader.js";
+import { normaliseWeeklyTime, nextWeeklyTimeAtOrAfter } from "../util/weeklyTime.js";
 
 import pgMap from "./pgMap.js";
 import _debug from "debug";
@@ -1708,6 +1709,45 @@ export function buildClosedSinceExportZip(exportProfile, since, langs, options, 
   });
 }
 
+const MINUTE_MS = 60 * 1000;
+const DAY_MS = 24 * 60 * MINUTE_MS;
+
+/**
+ * Collecting period of the blog that follows a blog ending at previousEndTs.
+ *
+ * With `Transition.AutoEditMode.editAt` (weekday/time when a blog goes to
+ * edit and the next one is created): the new blog starts one minute after
+ * the previous end and ends one minute before the first editAt that is at
+ * least one day after its start (e.g. editAt THU 0:00 → Thursday 00:00 to
+ * Wednesday 23:59). A previous end off the weekly rhythm is caught up by a
+ * shorter or longer blog. Without (or with an invalid) editAt: start one
+ * day after the previous end, end `BlogDurationDays` (default 7) days
+ * after it.
+ * @param {number} previousEndTs end of the previous blog in ms
+ * @returns {{startDate: string, endDate: string}} ISO strings
+ */
+export function calculateNewBlogDates(previousEndTs) {
+  const transition = config.getValue("Transition", { default: {} }) || {};
+  const rawEditAt = (transition.AutoEditMode || {}).editAt;
+  const editAt = normaliseWeeklyTime(rawEditAt);
+  if (editAt) {
+    const startTs = previousEndTs + MINUTE_MS;
+    const endTs = nextWeeklyTimeAtOrAfter(startTs + DAY_MS, editAt) - MINUTE_MS;
+    return { startDate: new Date(startTs).toISOString(), endDate: new Date(endTs).toISOString() };
+  }
+  if (rawEditAt !== undefined && rawEditAt !== null) {
+    config.logger.warn("Transition.AutoEditMode.editAt invalid, BlogDurationDays used");
+  }
+  let blogDurationDays = Number(config.getValue("BlogDurationDays", { default: 7 }));
+  if (!Number.isFinite(blogDurationDays) || blogDurationDays <= 0) blogDurationDays = 7;
+  blogDurationDays = Math.round(blogDurationDays);
+  const startDate = new Date(previousEndTs);
+  startDate.setDate(startDate.getDate() + 1);
+  const endDate = new Date(previousEndTs);
+  endDate.setDate(endDate.getDate() + blogDurationDays);
+  return { startDate: startDate.toISOString(), endDate: endDate.toISOString() };
+}
+
 // Create a blog in the database,
 // createNewBlog(proto,callback)
 // for parameter see create
@@ -1747,16 +1787,11 @@ function createNewBlog(user, proto, noArticle, callback) {
       const wnId = name.substring(2, 99);
       const newWnId = parseInt(wnId) + 1;
       const newName = "WN" + newWnId;
-      let blogDurationDays = Number(config.getValue("BlogDurationDays", { default: 7 }));
-      if (!Number.isFinite(blogDurationDays) || blogDurationDays <= 0) blogDurationDays = 7;
-      blogDurationDays = Math.round(blogDurationDays);
-      const startDate = new Date(endDate);
-      startDate.setDate(startDate.getDate() + 1);
-      endDate.setDate(endDate.getDate() + blogDurationDays);
+      const dates = calculateNewBlogDates(endDate.getTime());
       blog.name = newName;
       blog.status = "open";
-      blog.startDate = startDate.toISOString();
-      blog.endDate = endDate.toISOString();
+      blog.startDate = dates.startDate;
+      blog.endDate = dates.endDate;
       for (const k in proto) {
         blog[k] = proto[k];
       }
@@ -1805,24 +1840,13 @@ function createNewBlog(user, proto, noArticle, callback) {
 
 let _autoCloseRunning = 0;
 
-function isAutoEditModeEnabled() {
-  const transitionConfig = config.getValue("Transition", { default: {} }) || {};
-
-  if (transitionConfig && typeof transitionConfig === "object") {
-    const autoEditMode = transitionConfig.AutoEditMode || {};
-    if (autoEditMode.enabled === true || autoEditMode.enabled === "true") return true;
-    if (autoEditMode.enabled === false || autoEditMode.enabled === "false") return false;
-  }
-  return true;
-}
-
-
-
+// Switch open blogs past their endDate to edit and create a new blog if
+// none is open. Whether this runs at all (Transition.AutoEditMode.enabled)
+// is decided by the caller, model/blogTransitionScheduler.js.
 function autoCloseBlog(callback) {
   debug("autoCloseBlog");
   // Do not run this function twice !
   if (_autoCloseRunning > 0) return callback();
-  if (!isAutoEditModeEnabled()) return callback();
   _autoCloseRunning = _autoCloseRunning + 1;
 
 
@@ -2078,6 +2102,7 @@ const blogModule = {
   sortArticles: sortArticles,
   sanitizeBlogKey: sanitizeBlogKey,
   autoCloseBlog: autoCloseBlog,
+  calculateNewBlogDates: calculateNewBlogDates,
   createNewBlog: createNewBlog,
   getCategories: getGlobalCategories,
   statusList: BLOG_STATUS,

@@ -539,7 +539,8 @@ describe("model/blogTransitionScheduler", function() {
           should.not.exist(err);
           getUpcomingActions(function(err, upcoming) {
             should.not.exist(err);
-            should(upcoming.autoEdit.blogs).eql([{ name: "WN101", ts: new Date(endDate).getTime(), overdue: false }]);
+            const endTs = new Date(endDate).getTime();
+            should(upcoming.autoEdit.blogs).eql([{ name: "WN101", ts: endTs, overdue: false, newBlogEndTs: new Date(blogModule.calculateNewBlogDates(endTs).endDate).getTime() }]);
             should(upcoming.autoTranslate.blogs.map((b) => b.name)).eql(["WN101"]);
             should(upcoming.autoLanguageClose).eql({ enabled: false, minReviews: 2, blogs: [] });
             config.getValue = originalGetValue;
