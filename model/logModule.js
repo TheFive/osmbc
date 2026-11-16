@@ -253,8 +253,35 @@ function getCountsForUsers(userNames, callback) {
   });
 }
 
+/**
+ * Last change per language-related property of a blog, leaving out the given
+ * users (translation services, automatic rules). Looks at article texts
+ * (`markdownXX`) and the blog's review comments and close/reopen
+ * (`reviewCommentXX`, `closeXX`).
+ * @param {string} blogName e.g. "WN851"
+ * @param {string[]} ignoredUsers OSMUser names whose changes don't count
+ * @param {function(Error|null, Array<{table: string, property: string, last: string}>=)} callback
+ *   one row per table/property, `last` is the ISO timestamp of the newest change
+ */
+function findLastChangesForBlog(blogName, ignoredUsers, callback) {
+  debug("findLastChangesForBlog");
+  const sqlQuery = `
+    SELECT data->>'table' AS table, data->>'property' AS property, MAX(data->>'timestamp') AS last
+    FROM changes
+    WHERE data->>'blog' = $1
+    AND NOT (data->>'user' = ANY($2::text[]))
+    AND ((data->>'table' = 'article' AND data->>'property' LIKE 'markdown%')
+      OR (data->>'table' = 'blog' AND (data->>'property' LIKE 'reviewComment%' OR data->>'property' LIKE 'close%')))
+    GROUP BY 1, 2`;
+  db.query(sqlQuery, [blogName, ignoredUsers], function(err, result) {
+    if (err) return callback(err);
+    callback(null, (result && result.rows) ? result.rows : []);
+  });
+}
+
 const logModule = {
   table: "changes",
+  findLastChangesForBlog: findLastChangesForBlog,
   countLogsForBlog: countLogsForBlog,
   create: create,
   countLogsForUser: countLogsForUser,

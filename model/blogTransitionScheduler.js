@@ -6,6 +6,7 @@ import language from "./language.js";
 import blogModule from "./blog.js";
 import translator from "./translator.js";
 import { normaliseWeeklyTime, nextWeeklyTimeAtOrAfter } from "../util/weeklyTime.js";
+import { parseAutoBlogClose, ignoredUsersForActivity, runAutoBlogCloseRule, previewAutoBlogClose, resetAutoBlogClose } from "./autoBlogClose.js";
 import _debug from "debug";
 
 const debug = _debug("OSMBC:model:blogTransitionScheduler");
@@ -155,8 +156,19 @@ function getTransitionConfig() {
     },
     autoLanguageClose: autoLanguageClose,
     autoTranslate: parseAutoTranslate(raw.AutoTranslate),
-    autoReviewStart: parseAutoReviewStart(raw.AutoReviewStart, autoLanguageClose)
+    autoReviewStart: parseAutoReviewStart(raw.AutoReviewStart, autoLanguageClose),
+    autoBlogClose: parseAutoBlogClose(raw.AutoBlogClose)
   };
+}
+
+// changes by these users are no sign of a working language team
+function activityIgnoredUsers(transitionConfig) {
+  return ignoredUsersForActivity([
+    transitionConfig.autoTranslate.actorUser,
+    transitionConfig.autoReviewStart.actorUser,
+    transitionConfig.autoLanguageClose.actorUser,
+    transitionConfig.autoBlogClose.actorUser
+  ]);
 }
 
 const RULE_WINDOW_MS = 1 * 60 * 60 * 1000;
@@ -531,12 +543,14 @@ export function getUpcomingActions(callback) {
     series([
       (cb) => previewAutoTranslate(blogs, transitionConfig, now, cb),
       (cb) => previewAutoReviewStart(blogs, transitionConfig, now, cb),
-      (cb) => previewLanguageClose(blogs, transitionConfig, now, cb)
+      (cb) => previewLanguageClose(blogs, transitionConfig, now, cb),
+      (cb) => previewAutoBlogClose(transitionConfig.autoBlogClose, activityIgnoredUsers(transitionConfig), cb)
     ], function(err, previews) {
       if (err) return callback(err);
       result.autoTranslate = previews[0];
       result.autoReviewStart = previews[1];
       result.autoLanguageClose = previews[2];
+      result.autoBlogClose = previews[3];
       callback(null, result);
     });
   });
@@ -544,7 +558,7 @@ export function getUpcomingActions(callback) {
 
 /**
  * Run all transition rules once, in the order Auto Edit, Auto Translate,
- * Auto Review Start, Auto Language Close. A sweep that starts while another
+ * Auto Review Start, Auto Language Close, Auto Blog Close. A sweep that starts while another
  * one is still running returns at once without doing anything.
  * @param {function(Error=)} [callback] called when the sweep is done
  */
@@ -573,6 +587,10 @@ export function runTransitionSweep(callback) {
     },
     function runLanguageAutoClose(cb) {
       runLanguageAutoCloseRule(cb);
+    },
+    function runAutoBlogClose(cb) {
+      // last: the language closes of this sweep count already
+      runAutoBlogCloseRule(transitionConfig.autoBlogClose, activityIgnoredUsers(transitionConfig), cb);
     }
   ], function(err) {
     _transitionSweepRunning -= 1;
@@ -591,6 +609,7 @@ export function stopTransitionScheduler(callback) {
     _transitionJob = null;
   }
   _lastSlot.clear();
+  resetAutoBlogClose();
   if (callback) callback();
 }
 
