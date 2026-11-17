@@ -193,9 +193,10 @@
               </div>
             </div>
           </div>
+          <p class="text-danger mb-1" id="duplicateHint"><i class="fa fa-exclamation-triangle"></i> The search found 2 articles above. Please check that this is not a duplicate.</p>
           <div class="row">
             <div class="col-md-1">Title <br></div>
-            <div class="col-md-11"><textarea class="form-control" id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" autofocus="">HTML Title for test</textarea></div>
+            <div class="col-md-11"><textarea class="form-control" id="title" name="title" placeholder="Please enter a title with at last 6 characters" rows="1" data-duplicates="2">HTML Title for test</textarea></div>
           </div>
           <div class="row">
             <div class="col-md-1">Collection <br></div>
@@ -537,7 +538,8 @@
         if (searchField) searchField.oninput = onchangeSearch;
         onchangeTitle();
         onchangeCategory();
-        if (title) title.select();
+        // no focus with duplicates found, see the hint above the title
+        if (title && title.dataset.duplicates === "0") title.select();
       }
 
       function onchangeCategory() {
