@@ -42,6 +42,23 @@ block content
                   option(value=category.EN selected )=option
                 else
                   option(value=category.EN disabled=!article.isChangeAllowed("categoryEN"))=option
+        //- Unpublish reason right below the category (and the blog, for
+        //- Trash), shown by article_view.js showHideUnpublishReason (#1171)
+        div.form-group.row.d-none#unpublishReasonRow
+          label.col-sm-2.col-form-label(for="unpublishReason")="Reason"
+          div.col-md-10
+            .row.g-2
+              .col-sm-5
+                textarea.d-none.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
+                select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
+                  for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
+                    if (reason == article.unpublishReason)
+                      option(value=reason selected )=reason
+                    else
+                      option(value=reason )=reason
+              .col-sm-7
+                textarea.d-none.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
+                textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 placeholder="Reference, e.g. link to the other article" readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference
         div.form-group.row
           .col-md-2
           .col-md-10
@@ -114,22 +131,6 @@ block content
         div.badge.text-bg-danger#title_unsaved(style="display:none")="unsaved"
         textarea.d-none.form-control(id="old_title" name="old_title",rows=1,hide=true)=article.title
         textarea.form-control.af(id="title" name="title",rows=1 readonly=!article.isChangeAllowed("title"))=article.title
-
-
-    // Display Unpublish Reason Row
-    div.form-group.row.d-none#unpublishReasonRow
-      label.col-md-1="Unpublish Reason"
-      .col-md-5
-        textarea.d-none.form-control(id="old_unpublishReason",name="old_unpublishReason",rows=1,hide=true)=article.unpublishReason
-        select(id="unpublishReason",name="unpublishReason" readonly=!article.isChangeAllowed("unpublishReason")).form-control.af
-          for reason in ["","old","doublette","not relevant","merged into","reported earlier"]
-            if (reason == article.unpublishReason)
-              option(value=reason selected )=reason
-            else
-              option(value=reason )=reason
-      .col-md-5
-        textarea.d-none.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
-        textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference
 
 
     // Display Collection Row

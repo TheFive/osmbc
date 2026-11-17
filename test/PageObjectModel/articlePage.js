@@ -22,6 +22,30 @@ class ArticlePage extends StandardPage {
     await (await this._driver.findElement(By.css(`option[value='${category}']`))).click();
   }
 
+  // unpublish reason (shown for --unpublished-- and the Trash blog)
+  async isUnpublishReasonShown() {
+    return this._driver.findElement(By.id("unpublishReason")).isDisplayed();
+  }
+
+  async selectUnpublishReason(reason, reference) {
+    await this.assertPage();
+    const select = await this._driver.findElement(By.id("unpublishReason"));
+    await this.tap(select);
+    await (await select.findElement(By.css(`option[value='${reason}']`))).click();
+    const ref = await this._driver.findElement(By.id("unpublishReference"));
+    await this.tap(ref);
+    await ref.sendKeys(reference);
+  }
+
+  // vertical gap in px from the category field down to the unpublish
+  // reason field (negative: the reason sits above the category)
+  async getUnpublishReasonGapToCategory() {
+    return this._driver.executeScript(`
+      const category = document.getElementById("categoryEN").getBoundingClientRect();
+      const reason = document.getElementById("unpublishReason").getBoundingClientRect();
+      return Math.round(reason.top - category.bottom);`);
+  }
+
   async fillTitleInput(text) {
     await this.assertPage();
     const ele =  await this._driver.findElement(By.id("title"));

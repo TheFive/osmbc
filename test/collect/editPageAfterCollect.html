@@ -140,6 +140,21 @@
                   <option value="--unpublished--">--unveröffentlicht-- / --unpublished--</option>
                 </select></div>
             </div>
+            <div class="form-group row d-none" id="unpublishReasonRow"><label class="col-sm-2 col-form-label" for="unpublishReason">Reason</label>
+              <div class="col-md-10">
+                <div class="row g-2">
+                  <div class="col-sm-5"><textarea class="d-none form-control" id="old_unpublishReason" name="old_unpublishReason" rows="1" hide=""></textarea><select class="form-control af" id="unpublishReason" name="unpublishReason">
+                      <option value=""></option>
+                      <option value="old">old</option>
+                      <option value="doublette">doublette</option>
+                      <option value="not relevant">not relevant</option>
+                      <option value="merged into">merged into</option>
+                      <option value="reported earlier">reported earlier</option>
+                    </select></div>
+                  <div class="col-sm-7"><textarea class="d-none form-control" id="old_unpublishReference" name="old_unpublishReference" rows="1" hide=""></textarea><textarea class="form-control af" id="unpublishReference" name="unpublishReference" rows="1" placeholder="Reference, e.g. link to the other article"></textarea></div>
+                </div>
+              </div>
+            </div>
             <div class="form-group row">
               <div class="col-md-2"></div>
               <div class="col-md-10">
@@ -182,17 +197,6 @@
           <div class="col-md-10">
             <div class="badge text-bg-danger" id="title_unsaved" style="display:none">unsaved</div><textarea class="d-none form-control" id="old_title" name="old_title" rows="1" hide="">Test Title for Article</textarea><textarea class="form-control af" id="title" name="title" rows="1">Test Title for Article</textarea>
           </div>
-        </div><!-- Display Unpublish Reason Row-->
-        <div class="form-group row d-none" id="unpublishReasonRow"><label class="col-md-1">Unpublish Reason</label>
-          <div class="col-md-5"><textarea class="d-none form-control" id="old_unpublishReason" name="old_unpublishReason" rows="1" hide=""></textarea><select class="form-control af" id="unpublishReason" name="unpublishReason">
-              <option value=""></option>
-              <option value="old">old</option>
-              <option value="doublette">doublette</option>
-              <option value="not relevant">not relevant</option>
-              <option value="merged into">merged into</option>
-              <option value="reported earlier">reported earlier</option>
-            </select></div>
-          <div class="col-md-5"><textarea class="d-none form-control" id="old_unpublishReference" name="old_unpublishReference" rows="1" hide=""></textarea><textarea class="form-control af" id="unpublishReference" name="unpublishReference" rows="1"></textarea></div>
         </div><!-- Display Collection Row-->
         <div class="form-group row" id="CollectionRow">
           <div class="col-md-1"></div>
