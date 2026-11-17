@@ -90,6 +90,10 @@ shows a yellow box "Auto Close could not close …" with the reasons, and
 your language channel gets one message with the same reasons. Fix them,
 and the next hourly check (or the *Close* button) closes the language.
 
+An article added after your language was closed (or copied or moved into
+such a blog) gets `no translation` in your language automatically, so it
+doesn't show up as missing in your preview.
+
 **Undo:** click *Reopen* for your language in the blog's language table.
 After the last check of the day nothing is closed automatically any more.
 

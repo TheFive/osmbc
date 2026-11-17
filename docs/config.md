@@ -272,6 +272,11 @@ A language is never closed, neither by this rule nor by hand, while
   article or an unpublished one. Such an anchor breaks the Hugo export
   (issue #1130).
 
+The other way round: an article that arrives in a blog (created, moved or
+copied there) gets `no translation` in every language that is already
+closed or exported there and would stay empty — nobody can write those
+languages any more (issue #1133).
+
 The close is refused (HTTP 409 with a message for the editor); the
 Close button is greyed out and lists the problems. Reopening is always
 possible. The preview lists such languages as "blocked" with the
