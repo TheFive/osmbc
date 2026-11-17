@@ -14,6 +14,8 @@ import blogModule from "../model/blog.js";
 import { initialiseSlackReceiver, SlackReceiver } from "../notification/slackReceiver.js";
 import config from "../config.js";
 import configModule from "../model/config.js";
+import userModule from "../model/user.js";
+import { mailReceiverUpdateUser } from "../notification/mailReceiver.js";
 
 
 
@@ -642,6 +644,99 @@ describe("notification/slackReceiver", function() {
                 bddone();
               });
             });
+          });
+        });
+      });
+    });
+  });
+  describe("article notifications by kind (#1170)", function() {
+    const editor = { OSMUser: "Editor", access: "full" };
+    const guest = { OSMUser: "Visitor", access: "guest" };
+    let posted;
+    function captureAll() {
+      posted = [];
+      nock("https://missingmattermost.example.com")
+        .post(/\/services\/.*/, function(body) { posted.push(body); return true; })
+        .times(20)
+        .reply(200, "ok");
+    }
+    function setChannels(yaml, cb) {
+      configModule.getConfigObject("slacknotification", function(err, cf) {
+        should.not.exist(err);
+        cf.setAndSave({ OSMUser: "TheFive" }, { version: cf.version, yaml: yaml }, function(err) {
+          should.not.exist(err);
+          initialiseSlackReceiver(cb);
+        });
+      });
+    }
+    function afterSends(cb) { setTimeout(cb, 150); }
+    function collect(user, cb) {
+      articleModule.createNewArticle(function(err, article) {
+        should.not.exist(err);
+        article.setAndSave(user, { version: article.version, blog: "WN1", collection: "https://example.com", title: "T" }, function(err) {
+          should.not.exist(err);
+          afterSends(() => cb(article));
+        });
+      });
+    }
+    it("should post only guest submissions and guest texts to a guest channel", function (bddone) {
+      setChannels("- slack: osmde\n  channel: \"#guests\"\n  notifyNewCollection: guest\n  notifyGuestTextChange: true\n", function(err) {
+        should.not.exist(err);
+        captureAll();
+        collect(editor, function(article) {
+          should(posted).eql([]);
+          collect(guest, function() {
+            should(posted.length).eql(1);
+            should(posted[0].channel).eql("#guests");
+            should(posted[0].text).containEql("added to");
+            posted.length = 0;
+            article.setAndSave(guest, { version: article.version, markdownDE: "Text vom Gast" }, function(err) {
+              should.not.exist(err);
+              afterSends(function() {
+                should(posted.length).eql(1);
+                should(posted[0].text).eql("<https://localhost:35043/article/1|T> text (DE) changed by guest Visitor\n");
+                bddone();
+              });
+            });
+          });
+        });
+      });
+    });
+    it("should still post changed collections where only notifyNewCollection is set", function (bddone) {
+      setChannels("- slack: osmde\n  channel: \"#articles\"\n  notifyNewCollection: true\n", function(err) {
+        should.not.exist(err);
+        captureAll();
+        collect(editor, function(article) {
+          should(posted.length).eql(1);
+          article.setAndSave(editor, { version: article.version, collection: "https://example.com/other" }, function(err) {
+            should.not.exist(err);
+            afterSends(function() {
+              should(posted.length).eql(2);
+              should(posted[1].text).containEql("changed collection");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it("should send a user's notifications as Mattermost direct message", function (bddone) {
+      const getValue = config.getValue;
+      sinon.stub(config, "getValue").callsFake(function(key, ...rest) {
+        if (key === "MattermostUserNotification") return { team: "theweeklyosm" };
+        return getValue.call(config, key, ...rest);
+      });
+      setChannels("[]\n", function(err) {
+        should.not.exist(err);
+        userModule.createNewUser({ OSMUser: "Reader", access: "full", email: "reader@mail.bc", SlackUser: "@reader.mm", notifyVia: "mattermost", notifyNewCollection: "all" }, function(err, user) {
+          should.not.exist(err);
+          mailReceiverUpdateUser(user);
+          captureAll();
+          collect(editor, function() {
+            mailReceiverUpdateUser({ OSMUser: "Reader", access: "denied" });
+            should(posted.length).eql(1);
+            should(posted[0].channel).eql("@reader.mm");
+            should(posted[0].text).containEql("added to");
+            bddone();
           });
         });
       });

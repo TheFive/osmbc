@@ -1,4 +1,5 @@
 import should from "should";
+import sinon from "sinon";
 import nock from "nock";
 import config from "../config.js";
 import HttpStatus from "http-status-codes";
@@ -108,7 +109,9 @@ describe("router/user", function() {
         mailAllComment: "false",
         mailBlogLanguageStatusChange: [],
         mailComment: [],
-        mailNewCollection: "false"
+        notifyNewCollection: "off",
+        notifyCollectionChange: "off",
+        notifyGuestTextChange: "false"
       });
     });
     it("should deny denied access user",
@@ -210,6 +213,52 @@ describe("router/user", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "Not allowed for guests."
       }));
+  });
+  describe("article notification settings (#1170)", function() {
+    afterEach(function() { sinon.restore(); });
+    async function userPage() {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return { client: client, body: (await client.get(baseLink + "/usert/1")).data };
+    }
+    it("should show the old mailNewCollection as all for both new settings", async function () {
+      const user = await userModule.findById(1);
+      user.mailNewCollection = "true";
+      await new Promise((resolve, reject) => user.save(err => err ? reject(err) : resolve()));
+      const { body } = await userPage();
+      body.should.match(/<select class="form-control" id="notifyNewCollection" name="notifyNewCollection"><option value="all" selected/);
+      body.should.match(/<select class="form-control" id="notifyCollectionChange" name="notifyCollectionChange"><option value="all" selected/);
+      body.should.containEql('id="notifyGuestTextChange"');
+      // without MattermostUserNotification in the config: mail only
+      body.should.not.containEql('id="notifyVia"');
+    });
+    it("should offer Mattermost when it is configured", async function () {
+      const getValue = config.getValue;
+      sinon.stub(config, "getValue").callsFake(function(key, ...rest) {
+        if (key === "MattermostUserNotification") return { team: "theweeklyosm" };
+        return getValue.call(config, key, ...rest);
+      });
+      const { body } = await userPage();
+      body.should.containEql('id="notifyVia"');
+      body.should.containEql('<option value="mattermost">Mattermost direct message</option>');
+    });
+    it("should save the new settings", async function () {
+      const { client } = await userPage();
+      const result = await client.post(baseLink + "/usert/1", {
+        // the form always sends the name, a logged in user can't rename
+        OSMUser: "TestUser",
+        notifyNewCollection: "guest",
+        notifyCollectionChange: "off",
+        notifyGuestTextChange: "true",
+        notifyVia: "both"
+      });
+      should(result.status).eql(302);
+      const user = await userModule.findById(1);
+      should(user.notifyNewCollection).eql("guest");
+      should(user.notifyCollectionChange).eql("off");
+      should(user.notifyGuestTextChange).eql("true");
+      should(user.notifyVia).eql("both");
+    });
   });
   describe("routes POST /:user_id", function() {
     const url = baseLink + "/usert/2";

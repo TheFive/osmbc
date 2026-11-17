@@ -443,7 +443,9 @@ function createNewUser (proto, callback) {
         return callback(err);
       }
       // set some defaults for the user
-      if (!proto) user.mailNewCollection = "false";
+      if (!proto) user.notifyNewCollection = "off";
+      if (!proto) user.notifyCollectionChange = "off";
+      if (!proto) user.notifyGuestTextChange = "false";
       if (!proto) user.mailAllComment = "false";
       if (!proto) user.mailComment = [];
       if (!proto) user.mailBlogLanguageStatusChange = [];

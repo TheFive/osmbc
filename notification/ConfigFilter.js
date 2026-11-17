@@ -1,4 +1,5 @@
 import util from "../util/util.js";
+import { classifyArticleChange, articleChangeWanted, channelArticleSettings } from "./articleChangeFilter.js";
 
 import _debug from "debug";
 const debug = _debug("OSMBC:notification:messageFilter");
@@ -10,7 +11,13 @@ const debug = _debug("OSMBC:notification:messageFilter");
 * it requires a config object with the following properties
 *
 * notifyNewCollection
-*   if true every new Collection is forewarded
+*   true: every new submission (first collection of an article) is
+*   forwarded, "guest": only submissions by guests
+* notifyCollectionChange
+*   true / "guest" for changed collections; missing = same as
+*   notifyNewCollection (which covered both before issue #1170)
+* notifyGuestTextChange
+*   true: text changes (markdown) made by guests are forwarded
 * notifyAllComment
 *   if true every comment is forewarded
 * notifyComment
@@ -39,18 +46,20 @@ class ConfigFilter {
     this.receiver = receiver;
   }
 
+  /**
+   * Passes an article change on if the channel wants it, see the
+   * notifyNewCollection / notifyCollectionChange / notifyGuestTextChange
+   * keys above (issue #1170).
+   * @param {object} user the user who made the change
+   * @param {object} article the article before the change
+   * @param {object} change the changed fields
+   * @param {function(Error=)} cb called when done
+   */
   updateArticle(user, article, change, cb) {
     debug("ConfigFilter.prototype.updateArticle");
-    let notify = false;
-
-    // check Collection
-    if (util.isTrue(this.config.notifyNewCollection)) {
-      if (change.collection && change.collection !== article.collection) {
-        notify = true;
-        debug("Notification because new collection");
-      }
-    }
-    if (!notify) return cb();
+    const kind = classifyArticleChange(user, article, change);
+    if (!articleChangeWanted(kind, channelArticleSettings(this.config))) return cb();
+    debug("Notification because of article change");
     this.receiver.updateArticle(user, article, change, cb);
   }
 

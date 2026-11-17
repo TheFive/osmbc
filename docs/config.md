@@ -101,6 +101,7 @@ a map of *where to look*, not a restatement of every field.
 | `postgres` | `{database, username, password, server, port, connectstr?, postgresLogStatements?}` — `connectstr`, if set, overrides the assembled connection string entirely. `test` env also sets `postgres.initialise: true` (creates the DB/tables before running). |
 | `url`, `htmlroot` | Public base URL and the path prefix every route/asset is mounted under (often empty in `test`). |
 | `slacktool`, `slack` | Outbound Mattermost/Slack webhook endpoints for blog/article notifications. |
+| `MattermostUserNotification` | Optional. `team: <key of slacktool>`: users may get their notifications as Mattermost direct message, see [Notifications](#notifications). Missing = mail only. |
 | `SMTP`, `EmailSender`, `AllowedMailAddresses` | Outbound mail transport and sender/recipient allowlist. |
 | `maillog_*` | Where `MailReceiver` logs what it *would* send, independent of SMTP. |
 | `editorial_config` | Optional. Path of the second file with the editorial settings, see [above](#optional-second-file-for-the-editorial-settings). |
@@ -125,6 +126,43 @@ a map of *where to look*, not a restatement of every field.
 | `"Blog Title For Export"`, `Hugo.DateAdjust` | Export-time title/date-offset knobs. |
 | `"link-attributes"` | Per-render-target (`editor`/`production`) HTML attributes markdown-it adds to links. |
 | `ExportProfiles` | Full renderer/bundling/GUI-menu definition per export profile — see [docs/export-profiles.md](export-profiles.md), the dedicated reference for this one. |
+
+## Notifications
+
+Every user chooses on their user page what they want to hear about; the
+same choices apply to mail and to a Mattermost direct message.
+
+| User setting | Values | Meaning |
+|---|---|---|
+| Notify via (`notifyVia`) | `mail` (default), `mattermost`, `both` | Shown only with `MattermostUserNotification` in the config. Mattermost needs the user's name in "Mattermost User" (`SlackUser`, the same field as for collecting from Mattermost). |
+| New Submissions (`notifyNewCollection`) | `all`, `guest`, `off` | An article gets its first collection (Collect). `guest`: only submissions of guest users. |
+| Changed Collections (`notifyCollectionChange`) | `all`, `guest`, `off` | An existing collection is changed. |
+| Text Changes by Guests (`notifyGuestTextChange`) | `true`, `false` | A guest wrote or changed a text in any language. |
+
+Article notifications go to full users only; guests get mails about
+comments that mention them. Users saved before these settings existed
+only have `mailNewCollection`: `"true"` counts as `all` for both new
+submissions and changed collections, so nothing changes for them until
+they save their page.
+
+A direct message goes through the incoming webhook of the team named in
+
+```yaml
+MattermostUserNotification:
+  team: theweeklyosm   # a key of slacktool
+```
+
+to the channel `@<Mattermost User>`. The webhook must not be locked to
+one channel, else Mattermost refuses the `@user` target.
+
+Mattermost channels are configured in the admin config
+`slacknotification` (a list, one entry per channel). The article keys:
+
+| Key | Values | Meaning |
+|---|---|---|
+| `notifyNewCollection` | `true`, `"guest"`, `false` | New submissions (all / by guests only). |
+| `notifyCollectionChange` | `true`, `"guest"`, `false` | Changed collections. Missing = same as `notifyNewCollection`, which covered both before (issue #1170). |
+| `notifyGuestTextChange` | `true`, `false` | Text changes made by guests. |
 
 ## Automatic transitions (`Transition`)
 

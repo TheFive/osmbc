@@ -9,6 +9,7 @@ import configModule from "../model/config.js";
 
 import messageCenter from "../notification/messageCenter.js";
 import ConfigFilter from "../notification/ConfigFilter.js";
+import { classifyArticleChange } from "../notification/articleChangeFilter.js";
 import IteratorReceiver from "../notification/IteratorReceiver.js";
 import { suppressMigrationNotifications } from "../notification/migrationFilter.js";
 
@@ -31,12 +32,12 @@ export class SlackReceiver {
 
     assert(typeof (name) === "string");
     assert(typeof (slack) === "string");
-    // If privat channels should be adressed to,
-    // please change condition to
-    // (channel.substring(0,1)==="#")||(channel.substring(0,1)==="@")
-    assert((channel.substring(0, 1) === "#"));
+    // "#channel" for a channel, "@user" for a direct message to a
+    // Mattermost user (user notifications, issue #1170)
+    assert((channel.substring(0, 1) === "#") || (channel.substring(0, 1) === "@"));
     this.name = name;
     this.slackName = slack;
+    if (!slackhook) slackhook = config.getValue("slacktool") || {};
     this.hook = slackhook[this.slackName];
     if (this.hook) this.slack = new Slack(this.hook); else this.slack = null;
 
@@ -165,6 +166,11 @@ export class SlackReceiver {
     if (article.collection && change.collection) {
       text += articleTitle + " changed collection" + "\n";
     }
+    const kind = classifyArticleChange(user, article, change);
+    if (kind.textLangs.length > 0 && kind.byGuest) {
+      text += articleTitle + " text (" + kind.textLangs.join(", ") + ") changed by guest " + user.OSMUser + "\n";
+    }
+    if (text === "") return callback();
     debug("Sending subject " + text);
     const username = botName + "(" + user.OSMUser + ")";
 
