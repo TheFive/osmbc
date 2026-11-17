@@ -519,6 +519,84 @@ describe("model/article", function() {
       });
     });
   });
+  describe("setAndSave into a blog with closed languages (#1133)", function() {
+    beforeEach(function (bddone) {
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", status: "edit", closeEN: true, exportedFR: true },
+          { name: "WN2", status: "edit" }]
+      }, bddone);
+    });
+    function reload(id, cb) {
+      testutil.getJsonWithId("article", id, cb);
+    }
+    it("should set no translation for closed and exported languages of a new article", function (bddone) {
+      articleModule.createNewArticle(function(err, article) {
+        should.not.exist(err);
+        article.setAndSave(testUser, { version: article.version, blog: "WN1", title: "new", markdownDE: "Text" }, function(err) {
+          should.not.exist(err);
+          reload(article.id, function(err, result) {
+            should.not.exist(err);
+            should(result.markdownDE).eql("Text");
+            should(result.markdownEN).eql("no translation");
+            should(result.markdownFR).eql("no translation");
+            should(result.markdownES).be.undefined();
+            bddone();
+          });
+        });
+      });
+    });
+    it("should keep a text written in a closed language", function (bddone) {
+      articleModule.createNewArticle(function(err, article) {
+        should.not.exist(err);
+        article.setAndSave(testUser, { version: article.version, blog: "WN1", markdownEN: "English" }, function(err) {
+          should.not.exist(err);
+          reload(article.id, function(err, result) {
+            should.not.exist(err);
+            should(result.markdownEN).eql("English");
+            should(result.markdownFR).eql("no translation");
+            bddone();
+          });
+        });
+      });
+    });
+    it("should set no translation when an article is moved into the blog", function (bddone) {
+      articleModule.createNewArticle({ blog: "WN2", markdownDE: "Text", markdownEN: "  " }, function(err, article) {
+        should.not.exist(err);
+        article.setAndSave(testUser, { version: article.version, blog: "WN1" }, function(err) {
+          should.not.exist(err);
+          reload(article.id, function(err, result) {
+            should.not.exist(err);
+            should(result.blog).eql("WN1");
+            should(result.markdownEN).eql("no translation");
+            should(result.markdownFR).eql("no translation");
+            should(result.markdownES).be.undefined();
+            logModule.find({ oid: article.id, property: "markdownEN" }, function(err, logs) {
+              should.not.exist(err);
+              should(logs.length).eql(1);
+              should(logs[0].to).eql("no translation");
+              should(logs[0].user).eql("user");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it("should change nothing for a blog without closed languages", function (bddone) {
+      articleModule.createNewArticle(function(err, article) {
+        should.not.exist(err);
+        article.setAndSave(testUser, { version: article.version, blog: "WN2", title: "new" }, function(err) {
+          should.not.exist(err);
+          reload(article.id, function(err, result) {
+            should.not.exist(err);
+            should(result.markdownEN).be.undefined();
+            should(result.markdownFR).be.undefined();
+            bddone();
+          });
+        });
+      });
+    });
+  });
   describe("findFunctions", function() {
     let idToFindLater;
     before(function (bddone) {
@@ -1423,7 +1501,8 @@ describe("model/article", function() {
         blog: [{ name: "WN1", exportedDE: true, status: "edit" },
           { name: "WNclosed", status: "closed" },
           { name: "WN2", status: "open" },
-          { name: "CopyToBlog", status: "open" }],
+          { name: "CopyToBlog", status: "open" },
+          { name: "CopyToClosedES", status: "edit", closeES: true, exportedEN: true }],
         article: [{ blog: "WN1", title: "first", id: 1 },
           { blog: "WN2", title: "second", categoryEN: "cat", markdownEN: "ENMarkdown", markdownDE: "DEMarkdown", markdownES: "ESMarkdown", id: 2 },
           { blog: "WNclosed", title: "third", id: 3 },
@@ -1455,6 +1534,22 @@ describe("model/article", function() {
               markdownEN: "Former Text:\n\nENMarkdown",
               version: 1
             });
+            bddone();
+          });
+        });
+      });
+    });
+    it("should set no translation for empty closed languages of the target blog", function(bddone) {
+      articleModule.findById(2, function(err, article) {
+        should.not.exist(err);
+        article.copyToBlog("CopyToClosedES", ["DE"], function(err) {
+          should.not.exist(err);
+          articleModule.findOne({ blog: "CopyToClosedES" }, function(err, copy) {
+            should.not.exist(err);
+            should(copy.markdownDE).eql("Former Text:\n\nDEMarkdown");
+            should(copy.markdownEN).eql("no translation");
+            should(copy.markdownES).eql("no translation");
+            should(copy.markdownFR).be.undefined();
             bddone();
           });
         });

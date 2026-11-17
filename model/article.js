@@ -33,6 +33,27 @@ const url = config.url();
 
 
 
+/**
+ * Sets "no translation" in `data` for every language that is closed or
+ * exported in `targetBlog` and would stay empty for the article. Called
+ * when an article arrives in a blog (created or moved there): nobody can
+ * write those languages any more, and an empty article would warn in their
+ * preview and block nothing that could still be fixed (issue #1133).
+ * Changes `data` in place; does nothing without a target blog.
+ * @param {object} article the article before the change
+ * @param {object|null} targetBlog the blog the article moves to
+ * @param {object} data the changes passed to setAndSave
+ */
+function addNoTranslationForClosedLanguages(article, targetBlog, data) {
+  if (!targetBlog) return;
+  for (const lang in language.getLanguages()) {
+    if (targetBlog["close" + lang] !== true && targetBlog["exported" + lang] !== true) continue;
+    const md = (typeof data["markdown" + lang] === "string") ? data["markdown" + lang] : article["markdown" + lang];
+    if (typeof md === "string" && md.trim() !== "") continue;
+    data["markdown" + lang] = "no translation";
+  }
+}
+
 class Article {
   constructor(proto) {
     debug("Article constructor");
@@ -211,6 +232,14 @@ class Article {
         __findOne({ name: self.blog }, function (err, result) {
           if (err) return cb(err);
           self._blog = result;
+          return cb();
+        });
+      },
+      function fillClosedLanguages(cb) {
+        if (!data.blog || data.blog === self.blog) return cb();
+        __findOne({ name: data.blog }, function (err, target) {
+          if (err) return cb(err);
+          addNoTranslationForClosedLanguages(self, target, data);
           return cb();
         });
       },
@@ -584,6 +613,13 @@ class Article {
     self.copyTo[blogName] = 0;
     let storeArticle = null;
     series([
+      function (cb) {
+        __findOne({ name: blogName }, function (err, target) {
+          if (err) return cb(err);
+          addNoTranslationForClosedLanguages({}, target, newArticle);
+          return cb();
+        });
+      },
       function (cb) {
         createNewArticle(newArticle, function (err, a) {
           storeArticle = a;
