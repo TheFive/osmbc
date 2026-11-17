@@ -387,6 +387,20 @@ describe("router/article", function() {
 
       body.data.should.containEql('<p class="osmbc-help-text" align="center">Please check your link for duplicates before collect it.</p>');
       body.data.should.containEql('<input class="form-control" id="searchField" type="text" name="search" value="hallo">');
+      // nothing found: the title gets the focus, no duplicate hint
+      body.data.should.match(/<textarea[^>]*id="title"[^>]*autofocus/);
+      body.data.should.not.containEql('id="duplicateHint"');
+    });
+    it("should not focus the title and show a hint when duplicates are found (#987)", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/article/searchandcreate?search=Testartikel");
+
+      body.data.should.containEql('id="duplicateHint"');
+      body.data.should.containEql("The search found 3 articles above. Please check that this is not a duplicate.");
+      const titleTag = body.data.match(/<textarea[^>]*id="title"[^>]*>/)[0];
+      titleTag.should.not.containEql("autofocus");
+      titleTag.should.containEql('data-duplicates="3"');
     });
     it("should deny denied access user",
       testutil.checkUrlWithUser({

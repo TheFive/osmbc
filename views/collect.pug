@@ -112,11 +112,18 @@ block content
                     button.btn.btn-lg.btn-primary(id="OK")="OK"
                     a(href=layout.htmlroot+`/article/create` class="btn btn-outline-secondary" role="button") Cancel
 
+          //- with duplicates found, no autofocus: on phones the browser
+          //- would scroll the found articles out of sight (issue #987)
+          - var duplicateCount = foundArticles.length;
+          if duplicateCount > 0
+            p.text-danger.mb-1#duplicateHint
+              i.fa.fa-exclamation-triangle
+              |  The search found #{duplicateCount} #{duplicateCount === 1 ? "article" : "articles"} above. Please check that this is not a duplicate.
           .row
             .col-md-1
               | Title <br>
             .col-md-11
-              textarea.form-control(id = "title",name="title",placeholder="Please enter a title with at last 6 characters",rows=1, autofocus)=title
+              textarea.form-control(id = "title",name="title",placeholder="Please enter a title with at last 6 characters",rows=1, autofocus=(duplicateCount === 0), data-duplicates=duplicateCount)=title
                  
           .row
             .col-md-1
@@ -173,7 +180,8 @@ block append scripts_to_execute
       if (searchField) searchField.oninput = onchangeSearch;
       onchangeTitle();
       onchangeCategory();
-      if (title) title.select();
+      // no focus with duplicates found, see the hint above the title
+      if (title && title.dataset.duplicates === "0") title.select();
     }
 
     function onchangeCategory() {
