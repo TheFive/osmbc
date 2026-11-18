@@ -74,6 +74,19 @@ that matter most, in short:
   violations run `npm run lint:prune` and commit the file. Details:
   `docs/development.md` "Lint rules for readability".
 
+## Admin configurations
+
+- `docs/admin-config.md` describes every configuration of the admin page
+  (database configs like `slacknotification`, `votes`, `helpmenu`); each
+  config page shows its section as help. Whoever changes what such a
+  config means — a new config in `model/config.js`, a new or changed key
+  or value, its default in `data/<name>.yaml|txt`, how it is read (e.g.
+  `notification/ConfigFilter.js`) — updates that section in the same
+  commit. A test fails for a config without a section; keys and values
+  are not checked automatically. `.claude/settings.json` has a hook that
+  reminds of this after edits of those files (it does not see edits made
+  through shell scripts).
+
 ## Web UI
 
 - Before changing views, client scripts or `style.css`, read

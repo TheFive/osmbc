@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in */model/config.js|*/data/*.yaml|*/data/*.txt|*/views/config/*.pug|*/notification/ConfigFilter.js|*/notification/articleChangeFilter.js) printf '%s\\n' '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"An admin configuration file was changed. Check the section of that configuration in docs/admin-config.md and update it in the same commit (keys, values, defaults, meaning).\"}}';; esac; } 2>/dev/null || true",
+            "statusMessage": "Checking for admin config changes"
+          }
+        ]
+      }
+    ]
+  }
+}
