@@ -382,9 +382,12 @@ mixin helpMenu(configarray)
             - const href = typeof item[1] === "string" && item[1].startsWith("~/") ? layout.htmlroot + item[1].substring(1) : item[1]
             //- links into the wiki only for users who may read it
             - const isWikiLink = typeof href === "string" && (href === layout.htmlroot + "/wiki" || href.startsWith(layout.htmlroot + "/wiki/"))
+            //- the admin configuration help only for full users
+            - const isAdminHelp = href === layout.htmlroot + "/help/admin-config"
+            - const isFullUser = !!layout.user && layout.user.access === "full"
             if item[1] == "header"
               a.dropdown-header=item[0]
-            else if !isWikiLink || layout.wikiReadable
+            else if (!isWikiLink || layout.wikiReadable) && (!isAdminHelp || isFullUser)
               a.dropdown-item(href=href)=item[0]
 
 mixin homeButton(addclass)

@@ -3,6 +3,8 @@
 # Entries: [label, url], [label, header] or "---" (divider).
 # "~/path" is a path inside this OSMBC, e.g. ~/wiki for the built-in wiki
 # (shown only when the wiki is switched on and the user may read it).
+# "~/help/admin-config" (help for the admin configurations) is shown to
+# full users only.
 
 - [OSMBC, header]
 - [Changelog, https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md]

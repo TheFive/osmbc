@@ -1,4 +1,5 @@
 import should from "should";
+import sinon from "sinon";
 import nock from "nock";
 import fs from "fs";
 import path from "path";
@@ -7,6 +8,7 @@ import HttpStatus from "http-status-codes";
 import initialiseModules from "../util/initialise.js";
 import help from "../routes/help.js";
 import testutil from "./testutil.js";
+import configModule from "../model/config.js";
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
 
@@ -60,6 +62,28 @@ describe("router/admin config help", function() {
       body.should.containEql('<details class="mb-3" id="configHelp"><summary>Help for this configuration</summary>');
       body.should.containEql("<code>notifyGuestTextChange</code>");
       body.should.containEql('href="/help/admin-config"');
+    });
+  });
+
+  describe("help menu entry", function() {
+    afterEach(function () { sinon.restore(); });
+    async function menuOf(username) {
+      const getConfig = configModule.getConfig;
+      sinon.stub(configModule, "getConfig").callsFake(function(name) {
+        if (name === "helpmenu") return [["OSMBC", "header"], ["Changelog", "https://example.com/changelog"], ["Admin configurations", "~/help/admin-config"]];
+        return getConfig(name);
+      });
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: username, password: username });
+      return (await client.get(baseLink + "/osmbc.html")).data;
+    }
+    it("should show the admin configuration help to full users", async function () {
+      (await menuOf("TestUser")).should.containEql('<a class="dropdown-item" href="/help/admin-config">Admin configurations</a>');
+    });
+    it("should hide it from guests", async function () {
+      const body = await menuOf("TestUserNewGuest");
+      body.should.containEql('<a class="dropdown-item" href="https://example.com/changelog">Changelog</a>');
+      body.should.not.containEql("/help/admin-config");
     });
   });
 

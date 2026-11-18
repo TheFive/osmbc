@@ -162,7 +162,8 @@ list:
 
 - `[label, url]` — a link; `~/path` is a path inside this OSMBC, e.g.
   `~/wiki` (shown only when the wiki is on and the user may read it) or
-  `~/help/admin-config` for this document.
+  `~/help/admin-config` for this document (shown to full users only):
+  `- [Admin configurations, ~/help/admin-config]`.
 - `[label, header]` — a heading.
 - `"---"` — a divider.
 
