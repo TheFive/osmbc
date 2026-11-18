@@ -1,5 +1,6 @@
 
 
+import { classifyArticleChange, articleChangeWanted, userArticleSettings } from "./articleChangeFilter.js";
 import _debug from "debug";
 
 import { strict as assert } from "assert";
@@ -16,20 +17,22 @@ class UserConfigFilter {
     assert(this.user.access);
   }
 
+  /**
+   * Passes an article change on if the user wants it: new submission,
+   * collection change (each "all" or "only by guests") or a text change by
+   * a guest (issue #1170). Only full users get article changes; guests are
+   * only informed about comments they are addressed to.
+   * @param {object} user the user who made the change
+   * @param {object} article the article before the change
+   * @param {object} change the changed fields
+   * @param {function(Error=)} cb called when done
+   */
   updateArticle(user, article, change, cb) {
     debug("UserConfigFilter.prototype.updateArticle");
-    let sendMail = false;
-
-    // check Collection
-    if (this.user.mailNewCollection === "true" && this.user.access === "full") {
-      if (change.collection && change.collection !== article.collection) {
-        sendMail = true;
-        debug("Mail sent because new Collection");
-      }
-    }
-
-    // Guest are only informed about comments they are adressed to
-    if (!sendMail) return cb();
+    if (this.user.access !== "full") return cb();
+    const kind = classifyArticleChange(user, article, change);
+    if (!articleChangeWanted(kind, userArticleSettings(this.user))) return cb();
+    debug("Notification because of article change");
     this.receiver.updateArticle(user, article, change, cb);
   }
 

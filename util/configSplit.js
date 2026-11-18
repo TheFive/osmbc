@@ -49,7 +49,7 @@ export const technicalKeys = [
   "exportlog_directory", "exportlog_prefix", "exportlog_dateformat",
   "cache_directory", "profile_directory", "editorial_config",
   "logInfoTemplate", "User-Agent", "media folder", "Feature Image Base URL",
-  "slack", "slacktool", "DeeplProConfig", "blogSyncReplaceMaxBlogNumber",
+  "slack", "slacktool", "MattermostUserNotification", "DeeplProConfig", "blogSyncReplaceMaxBlogNumber",
   "AppName", "style", "extraStyle", "bootstrap", "jquery", "twitter"
 ];
 

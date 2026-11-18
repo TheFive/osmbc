@@ -85,12 +85,33 @@ block content
                      ["full","guest","denied"],
                      ["full","guest","denied"],
                      "Define Users Access to OSMBC")
-      +labeledSelect("Mail a new Collection",
-                     "mailNewCollection",
-                     usershown.mailNewCollection,
+      //- article notifications (issue #1170); users saved before only have
+      //- mailNewCollection, the route passes the derived values
+      if mattermostNotify
+        +labeledSelect("Notify via",
+                       "notifyVia",
+                       usershown.notifyVia || "mail",
+                       ["mail","mattermost","both"],
+                       ["Mail","Mattermost direct message","Mail and Mattermost"],
+                       "Where all notifications below go. Mattermost needs your name in the field \"Mattermost User\" further down.")
+      +labeledSelect("New Submissions",
+                     "notifyNewCollection",
+                     articleSettings.newSubmission,
+                     ["all","editor","guest","off"],
+                     ["all","only by editors","only by guests","off"],
+                     "A new article was collected or submitted. \"only by guests\": submissions of guest users, e.g. to welcome them or to discuss the link with them in the comments.")
+      +labeledSelect("Changed Collections",
+                     "notifyCollectionChange",
+                     articleSettings.collectionChange,
+                     ["all","editor","guest","off"],
+                     ["all","only by editors","only by guests","off"],
+                     "Someone changed the collection (links, notes) of an article.")
+      +labeledSelect("Text Changes by Guests",
+                     "notifyGuestTextChange",
+                     articleSettings.guestTextChange ? "true" : "false",
                      ["true","false"],
                      ["on","off"],
-                     "Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.")
+                     "A guest user wrote or changed the text of an article in any language.")
       +labeledSelect("Mail All Comments",
                      "mailAllComment",
                      usershown.mailAllComment,
@@ -132,7 +153,7 @@ block content
                        ["deeplPro","deepl","copy"],
                        ["Deepl Translator API", "DeeplTranslator Online", "Simple Text Copy"],
                        "Please choose your translation services you would like to use. one language to many open languages")
-      +labeledInput("Mattermost User","SlackUser",usershown.SlackUser,"Username in the slack for using the collect feature.")
+      +labeledInput("Mattermost User","SlackUser",usershown.SlackUser,"Your Mattermost user name: for collecting from Mattermost and for notifications as direct message.")
       +labeledSelect( "Num Languages",
                 "languageCount",
                 usershown.languageCount,

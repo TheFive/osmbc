@@ -104,6 +104,21 @@ describe("uc/config", function() {
     should(source).containEql("(invalid entry)");
   });
 
+  it("should show the article notification keys of each channel (#1170)", async function() {
+    const cf = await configModule.getConfigObject("slacknotification");
+    await cf.setAndSave({ OSMUser: "TheFive" }, {
+      version: cf.version,
+      yaml: "- slack: osmde\n  channel: \"#guests\"\n  notifyNewCollection: guest\n  notifyCollectionChange: guest\n  notifyGuestTextChange: true\n" +
+        "- slack: osmde\n  channel: \"#editors\"\n  notifyNewCollection: editor\n"
+    });
+    await driver.get(osmbcLink("/config/slacknotification"));
+    const rows = await driver.findElements(By.css("#resulttable tbody tr"));
+    should(rows.length).eql(2);
+    const cells = async (row) => Promise.all((await row.findElements(By.css("td"))).map(td => td.getText()));
+    should((await cells(rows[0])).slice(0, 5)).eql(["osmde", "#guests", "guest", "guest", "true"]);
+    should((await cells(rows[1])).slice(0, 5)).eql(["osmde", "#editors", "editor", "(as New Submissions)", ""]);
+  });
+
   it("should render the site header without crashing on a null helpmenu entry", async function() {
     const cf = await configModule.getConfigObject("helpmenu");
     await cf.setAndSave({ OSMUser: "TheFive" }, {

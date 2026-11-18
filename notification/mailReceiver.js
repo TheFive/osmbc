@@ -20,6 +20,8 @@ import "winston-daily-rotate-file";
 
 
 import UserConfigFilter from "../notification/UserConfigFilter.js";
+import { classifyArticleChange, userNotifyVia } from "../notification/articleChangeFilter.js";
+import { createMattermostUserReceiver } from "../notification/mattermostUserReceiver.js";
 import { suppressMigrationNotifications } from "../notification/migrationFilter.js";
 
 import IteratorReceiver from "../notification/IteratorReceiver.js";
@@ -240,12 +242,18 @@ class MailReceiver {
     let logblog = article.blog;
     if (change.blog) logblog = change.blog;
 
+    const kind = classifyArticleChange(user, article, change);
+    if (kind.textLangs.length > 0) {
+      subject = logblog + " text (" + kind.textLangs.join(", ") + ") changed: " + newArticle.title;
+    }
     if (!article.collection && change.collection) {
       subject = logblog + " added: " + newArticle.title;
     }
     if (article.collection && change.collection) {
       subject = logblog + " changed: " + newArticle.title;
     }
+    if (!subject) subject = logblog + " changed: " + newArticle.title;
+    if (kind.byGuest) subject += " (guest " + user.OSMUser + ")";
 
 
     const data = { user: this.user, changeby: user, article: article, newArticle: newArticle, layout: layout, logblog: logblog };
@@ -482,14 +490,24 @@ function initialise(userList) {
 }
 
 
+/**
+ * (Re)creates the notification receivers of one user after a change of
+ * the user: mail (to the mail address) and Mattermost direct message (to
+ * the Mattermost User), as chosen in notifyVia (issue #1170).
+ * @param {object} user the saved user
+ */
 export function mailReceiverUpdateUser(user) {
   debug("mailReceiverUpdateUser");
   delete userReceiverMap[user.OSMUser];
+  delete userReceiverMap[user.OSMUser + " (Mattermost)"];
+  iteratorReceiver.receiverMap = userReceiverMap;
   if (user.access !== "full" && user.access !== "guest") return;
+  const mattermost = createMattermostUserReceiver(user);
+  if (mattermost) userReceiverMap[user.OSMUser + " (Mattermost)"] = mattermost;
+  if (!userNotifyVia(user).mail) return;
   if (!user.email) return;
   if (user.email.trim() === "") return;
   userReceiverMap[user.OSMUser] = new UserConfigFilter(user, new MailReceiver(user));
-  iteratorReceiver.receiverMap = userReceiverMap;
 }
 
 

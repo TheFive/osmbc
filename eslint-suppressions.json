@@ -145,7 +145,7 @@
   },
   "notification/ConfigFilter.js": {
     "jsdoc/require-jsdoc": {
-      "count": 7
+      "count": 6
     }
   },
   "notification/FilterReceiver.js": {
@@ -170,7 +170,7 @@
   },
   "notification/UserConfigFilter.js": {
     "jsdoc/require-jsdoc": {
-      "count": 7
+      "count": 6
     }
   },
   "notification/exportLogWriter.js": {
@@ -185,7 +185,7 @@
   },
   "notification/mailReceiver.js": {
     "jsdoc/require-jsdoc": {
-      "count": 10
+      "count": 9
     }
   },
   "notification/migrationFilter.js": {

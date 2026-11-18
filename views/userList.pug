@@ -62,7 +62,7 @@ block content
                 else if user.emailInvalidation
                   i.fa.fa-question-circle
               td
-                if user.mailNewCollection==="true" && user.email
+                if user._notifiesNewCollection && user.email
                   i.fa.fa-check
                 else
                   p=" "

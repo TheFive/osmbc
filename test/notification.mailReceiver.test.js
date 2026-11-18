@@ -16,7 +16,7 @@ import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
 import userModule from "../model/user.js";
 
-import { MailReceiverForTestOnly } from "../notification/mailReceiver.js";
+import { MailReceiverForTestOnly, initialiseMailReceiver } from "../notification/mailReceiver.js";
 
 import messageCenter from "../notification/messageCenter.js";
 
@@ -495,6 +495,84 @@ describe("notification/mailReceiver", function() {
               });
             });
           }, 500);
+        });
+      });
+    });
+  });
+  describe("article notifications by kind (#1170)", function() {
+    let mailChecker;
+    const editor = { OSMUser: "Editor", access: "full" };
+    const guest = { OSMUser: "Visitor", access: "guest" };
+    beforeEach(function (bddone) {
+      mailChecker = sinon.stub(MailReceiverForTestOnly.transporter, "sendMail")
+        .callsFake(function(obj, doit) { return doit(null, { response: "t" }); });
+      // only the users of this block receive mails
+      initialiseMailReceiver([]);
+      testutil.importData({
+        clear: true,
+        user: [{ OSMUser: "AllNew", email: "allnew@mail.bc", access: "full", notifyNewCollection: "all", notifyCollectionChange: "off" },
+          { OSMUser: "GuestWatcher", email: "guestwatcher@mail.bc", access: "full", notifyNewCollection: "guest", notifyCollectionChange: "guest", notifyGuestTextChange: "true" },
+          { OSMUser: "EditorWatcher", email: "editorwatcher@mail.bc", access: "full", notifyNewCollection: "editor", notifyCollectionChange: "off" },
+          { OSMUser: "OnlyMattermost", email: "onlymattermost@mail.bc", access: "full", notifyNewCollection: "all", notifyVia: "mattermost" },
+          { OSMUser: "Visitor", email: "visitor@mail.bc", access: "guest", notifyNewCollection: "all" }]
+      }, bddone);
+    });
+    afterEach(function (bddone) {
+      mailChecker.restore();
+      bddone();
+    });
+    function recipients() {
+      return mailChecker.getCalls().map(c => c.args[0].to).sort();
+    }
+    function collect(user, cb) {
+      articleModule.createNewArticle(function(err, article) {
+        should.not.exist(err);
+        article.setAndSave(user, { version: article.version, blog: "WN1", collection: "https://example.com", title: "T" }, function(err) {
+          should.not.exist(err);
+          cb(article);
+        });
+      });
+    }
+    it("should mail an editor's submission to users who want all submissions", function (bddone) {
+      collect(editor, function() {
+        should(recipients()).eql(["allnew@mail.bc", "editorwatcher@mail.bc"]);
+        should(mailChecker.getCall(0).args[0].subject).eql("[TESTBC] WN1 added: T");
+        bddone();
+      });
+    });
+    it("should mail a guest's submission also to users who want guest submissions, marked as guest", function (bddone) {
+      collect(guest, function() {
+        should(recipients()).eql(["allnew@mail.bc", "guestwatcher@mail.bc"]);
+        should(mailChecker.getCall(0).args[0].subject).eql("[TESTBC] WN1 added: T (guest Visitor)");
+        bddone();
+      });
+    });
+    it("should keep a changed collection apart from a submission", function (bddone) {
+      collect(editor, function(article) {
+        mailChecker.resetHistory();
+        article.setAndSave(editor, { version: article.version, collection: "https://example.com/other" }, function(err) {
+          should.not.exist(err);
+          should(recipients()).eql([]);
+          article.setAndSave(guest, { version: article.version, collection: "https://example.com/third" }, function(err) {
+            should.not.exist(err);
+            should(recipients()).eql(["guestwatcher@mail.bc"]);
+            bddone();
+          });
+        });
+      });
+    });
+    it("should mail text changes of guests only", function (bddone) {
+      collect(editor, function(article) {
+        mailChecker.resetHistory();
+        article.setAndSave(editor, { version: article.version, markdownDE: "Text vom Editor" }, function(err) {
+          should.not.exist(err);
+          should(recipients()).eql([]);
+          article.setAndSave(guest, { version: article.version, markdownDE: "Text vom Gast" }, function(err) {
+            should.not.exist(err);
+            should(recipients()).eql(["guestwatcher@mail.bc"]);
+            should(mailChecker.getCall(0).args[0].subject).eql("[TESTBC] WN1 text (DE) changed: T (guest Visitor)");
+            bddone();
+          });
         });
       });
     });

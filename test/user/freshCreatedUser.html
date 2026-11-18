@@ -128,11 +128,27 @@
               <option value="denied">denied</option>
             </select></div><label class="col-12 col-md d-none d-md-block form-text">Define Users Access to OSMBC</label>
         </div>
-        <div class="row mb-3"><label class="col-12 col-md col-form-label" for="mailNewCollection">Mail a new Collection</label>
-          <div class="col-12 col-md-5"><select class="form-control" id="mailNewCollection" name="mailNewCollection">
+        <div class="row mb-3"><label class="col-12 col-md col-form-label" for="notifyNewCollection">New Submissions</label>
+          <div class="col-12 col-md-5"><select class="form-control" id="notifyNewCollection" name="notifyNewCollection">
+              <option value="all">all</option>
+              <option value="editor">only by editors</option>
+              <option value="guest">only by guests</option>
+              <option value="off" selected="selected">off</option>
+            </select></div><label class="col-12 col-md d-none d-md-block form-text">A new article was collected or submitted. "only by guests": submissions of guest users, e.g. to welcome them or to discuss the link with them in the comments.</label>
+        </div>
+        <div class="row mb-3"><label class="col-12 col-md col-form-label" for="notifyCollectionChange">Changed Collections</label>
+          <div class="col-12 col-md-5"><select class="form-control" id="notifyCollectionChange" name="notifyCollectionChange">
+              <option value="all">all</option>
+              <option value="editor">only by editors</option>
+              <option value="guest">only by guests</option>
+              <option value="off" selected="selected">off</option>
+            </select></div><label class="col-12 col-md d-none d-md-block form-text">Someone changed the collection (links, notes) of an article.</label>
+        </div>
+        <div class="row mb-3"><label class="col-12 col-md col-form-label" for="notifyGuestTextChange">Text Changes by Guests</label>
+          <div class="col-12 col-md-5"><select class="form-control" id="notifyGuestTextChange" name="notifyGuestTextChange">
               <option value="true">on</option>
               <option value="false" selected="selected">off</option>
-            </select></div><label class="col-12 col-md d-none d-md-block form-text">Send a mail for every new Collect. If you are interested in new Articles, you should send this to ON.</label>
+            </select></div><label class="col-12 col-md d-none d-md-block form-text">A guest user wrote or changed the text of an article in any language.</label>
         </div>
         <div class="row mb-3"><label class="col-12 col-md col-form-label" for="mailAllComment">Mail All Comments</label>
           <div class="col-12 col-md-5"><select class="form-control" id="mailAllComment" name="mailAllComment">
@@ -238,7 +254,7 @@
         <div class="row mb-3">
           <div class="col-12 col-md"><label class="col-form-label" for="SlackUser">Mattermost User</label></div>
           <div class="col-12 col-md-5"><input class="form-control" name="SlackUser" id="SlackUser" value=""></div>
-          <div class="col-12 col-md"><label class="d-none d-md-block form-text">Username in the slack for using the collect feature.</label></div>
+          <div class="col-12 col-md"><label class="d-none d-md-block form-text">Your Mattermost user name: for collecting from Mattermost and for notifications as direct message.</label></div>
         </div>
         <div class="row mb-3"><label class="col-12 col-md col-form-label" for="languageCount">Num Languages</label>
           <div class="col-12 col-md-5"><select class="form-control" id="languageCount" name="languageCount">

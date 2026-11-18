@@ -15,6 +15,8 @@ import userModule from "../model/user.js";
 import logModule from "../model/logModule.js";
 import blogRenderer from "../render/BlogRenderer.js";
 import { generateUserPage } from "../genstaticpage/user_gen.js";
+import { userArticleSettings } from "../notification/articleChangeFilter.js";
+import { mattermostUserTeam } from "../notification/mattermostUserReceiver.js";
 
 import _debug from "debug";
 const debug = _debug("OSMBC:routes:users");
@@ -57,6 +59,7 @@ function renderList(req, res, next) {
           // Weise Counts den Usern zu
           users.forEach(user => {
             user._countChanges = countsMap[user.OSMUser] || 0;
+            user._notifiesNewCollection = userArticleSettings(user).newSubmission !== "off";
           });
 
           // Sortierung nach Counts falls gewünscht
@@ -184,6 +187,8 @@ function renderUserId(req, res, next) {
       params: params,
       userHeatMapArray: userHeatMapArray,
       langlist: language.getLid(),
+      articleSettings: userArticleSettings(user),
+      mattermostNotify: mattermostUserTeam() !== null,
       layout: res.rendervar.layout,
       highlight: highlight
     });
@@ -202,7 +207,10 @@ function postUserId(req, res, next) {
     languageCount: req.body.languageCount,
     language: req.body.language,
     mailAllComment: req.body.mailAllComment,
-    mailNewCollection: req.body.mailNewCollection,
+    notifyNewCollection: req.body.notifyNewCollection,
+    notifyCollectionChange: req.body.notifyCollectionChange,
+    notifyGuestTextChange: req.body.notifyGuestTextChange,
+    notifyVia: req.body.notifyVia,
     mailComment: req.body.mailComment,
     translationServices: req.body.translationServices,
     translationServicesMany: req.body.translationServicesMany,
