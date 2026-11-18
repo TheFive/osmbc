@@ -15,6 +15,14 @@ block content
           h2="List of URLS, that are no doublettes"
         else
           h2=config.name
+    //- this config's section of docs/admin-config.md
+    if helpText
+      details.mb-3#configHelp
+        summary="Help for this configuration"
+        div.card.card-body.mt-2
+          |!{helpText}
+          p
+            a(href=layout.htmlroot + "/help/admin-config") All admin configurations
     div.row      
         if config.type == "yaml"
             div.col-11

@@ -16,6 +16,7 @@ import config from "../config.js";
 import configModule from "../model/config.js";
 import logModule from "../model/logModule.js";
 import firstDraft from "../model/firstDraft.js";
+import help from "../routes/help.js";
 const debug = _debug("OSMBC:routes:config");
 const router     = express.Router();
 
@@ -76,6 +77,7 @@ function renderConfigName(req, res, next) {
       config: config,
       changes: changes,
       params: params,
+      helpText: help.getDocSection("admin-config.md", name),
       layout: res.rendervar.layout
     });
   }

@@ -156,27 +156,9 @@ to the channel `@<Mattermost User>`. The webhook must not be locked to
 one channel, else Mattermost refuses the `@user` target.
 
 Mattermost channels are configured in the admin config
-`slacknotification` (a list, one entry per channel). The article keys:
-
-| Key | Values | Meaning |
-|---|---|---|
-| `notifyNewCollection` | `true`, `"editor"`, `"guest"`, `false` | New submissions (all / by editors only / by guests only). |
-| `notifyCollectionChange` | `true`, `"editor"`, `"guest"`, `false` | Changed collections. Missing = same as `notifyNewCollection`, which covered both before (issue #1170). |
-| `notifyGuestTextChange` | `true`, `false` | Text changes made by guests. |
-
-Example: one channel to look after the guests, one for the editors.
-
-```yaml
-- slack: theweeklyosm
-  channel: "#osmbc-guests"
-  notifyNewCollection: guest
-  notifyCollectionChange: guest
-  notifyGuestTextChange: true
-- slack: theweeklyosm
-  channel: "#osmbc-editors"
-  notifyNewCollection: editor
-  notifyCollectionChange: editor
-```
+`slacknotification` (Admin → "Configuration of IM Channel"), not in this
+file: see [admin-config.md](admin-config.md#slacknotification--configuration-of-im-channel-slack-mm),
+which describes every configuration of the admin page.
 
 ## Automatic transitions (`Transition`)
 

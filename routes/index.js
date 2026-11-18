@@ -280,6 +280,13 @@ function renderChangelog(req, res, next) {
   });
 }
 
+function renderAdminConfigHelp(req, res) {
+  debug("renderAdminConfigHelp");
+  assert(res.rendervar.layout);
+  res.set("content-type", "text/html");
+  res.render("help", { layout: res.rendervar.layout, text: help.getDocText("admin-config.md") });
+}
+
 const htmlRoot = config.htmlRoot();
 
 function redirectHome(req, res) {
@@ -293,6 +300,7 @@ router.get("/osmbc.html", redirectHome);
 router.get("/osmbc", redirectHome);
 router.get("/osmbc/admin", auth.checkRole(["full"]), renderAdminHome);
 router.get("/changelog", auth.checkRole(["full", "guest"]), renderChangelog);
+router.get("/help/admin-config", auth.checkRole(["full"]), renderAdminConfigHelp);
 router.post("/language", auth.checkRole(["full", "guest"]), languageSwitcher);
 router.post("/languageset", auth.checkRole(["full", "guest"]), languageSetSwitcher);
 router.post("/mobilelanguage", auth.checkRole(["full", "guest"]), mobileLanguageSwitcher);
