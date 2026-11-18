@@ -702,6 +702,21 @@ describe("notification/slackReceiver", function() {
         });
       });
     });
+    it("should split guest and editor submissions between two channels", function (bddone) {
+      setChannels("- slack: osmde\n  channel: \"#guests\"\n  notifyNewCollection: guest\n" +
+        "- slack: osmde\n  channel: \"#editors\"\n  notifyNewCollection: editor\n", function(err) {
+        should.not.exist(err);
+        captureAll();
+        collect(editor, function() {
+          should(posted.map(p => p.channel)).eql(["#editors"]);
+          posted.length = 0;
+          collect(guest, function() {
+            should(posted.map(p => p.channel)).eql(["#guests"]);
+            bddone();
+          });
+        });
+      });
+    });
     it("should still post changed collections where only notifyNewCollection is set", function (bddone) {
       setChannels("- slack: osmde\n  channel: \"#articles\"\n  notifyNewCollection: true\n", function(err) {
         should.not.exist(err);

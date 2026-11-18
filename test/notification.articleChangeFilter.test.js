@@ -36,6 +36,7 @@ describe("notification/articleChangeFilter (#1170)", function() {
       should(filter.normaliseLevel(true)).eql("all");
       should(filter.normaliseLevel("true")).eql("all");
       should(filter.normaliseLevel("guest")).eql("guest");
+      should(filter.normaliseLevel("editor")).eql("editor");
       should(filter.normaliseLevel(false)).eql("off");
       should(filter.normaliseLevel("nonsense")).eql("off");
     });
@@ -57,6 +58,13 @@ describe("notification/articleChangeFilter (#1170)", function() {
       should(filter.articleChangeWanted(submissionByGuest, onlyGuests)).be.True();
       should(filter.articleChangeWanted(submissionByEditor, onlyGuests)).be.False();
       should(filter.articleChangeWanted(changeByEditor, onlyGuests)).be.False();
+    });
+    it("should filter editor-only submissions and changes", function() {
+      const onlyEditors = { newSubmission: "editor", collectionChange: "editor", guestTextChange: false };
+      should(filter.articleChangeWanted(submissionByEditor, onlyEditors)).be.True();
+      should(filter.articleChangeWanted(submissionByGuest, onlyEditors)).be.False();
+      should(filter.articleChangeWanted(changeByEditor, onlyEditors)).be.True();
+      should(filter.articleChangeWanted({ ...changeByEditor, byGuest: true }, onlyEditors)).be.False();
     });
     it("should keep submission and change apart", function() {
       const onlyNew = { newSubmission: "all", collectionChange: "off", guestTextChange: false };

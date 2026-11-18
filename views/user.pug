@@ -97,14 +97,14 @@ block content
       +labeledSelect("New Submissions",
                      "notifyNewCollection",
                      articleSettings.newSubmission,
-                     ["all","guest","off"],
-                     ["all","only by guests","off"],
+                     ["all","editor","guest","off"],
+                     ["all","only by editors","only by guests","off"],
                      "A new article was collected or submitted. \"only by guests\": submissions of guest users, e.g. to welcome them or to discuss the link with them in the comments.")
       +labeledSelect("Changed Collections",
                      "notifyCollectionChange",
                      articleSettings.collectionChange,
-                     ["all","guest","off"],
-                     ["all","only by guests","off"],
+                     ["all","editor","guest","off"],
+                     ["all","only by editors","only by guests","off"],
                      "Someone changed the collection (links, notes) of an article.")
       +labeledSelect("Text Changes by Guests",
                      "notifyGuestTextChange",

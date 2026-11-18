@@ -9,7 +9,9 @@ block showContentOfConfig
         tr
           th="Slack"
           th="Channel"
-          th="New Collects"
+          th="New Submissions"
+          th="Changed Collections"
+          th="Guest Texts"
           th="All Comments"
           th="Comments"
           th="Blog Change"
@@ -17,6 +19,8 @@ block showContentOfConfig
         tr
           td.text-info="osmde / theweeklyosm"
           td.text-info="#channelname"
+          td.text-info="true / editor / guest / false"
+          td.text-info="true / editor / guest / false"
           td.text-info="true / false"
           td.text-info="true / false"
           td.text-info="List of languages in []"
@@ -34,6 +38,12 @@ block showContentOfConfig
                 td.danger=c.channel
 
               td=c.notifyNewCollection
+              //- missing: follows notifyNewCollection (issue #1170)
+              if (typeof c.notifyCollectionChange === "undefined")
+                td.text-body-secondary="(as New Submissions)"
+              else
+                td=c.notifyCollectionChange
+              td=c.notifyGuestTextChange
               td=c.notifyAllComment
               td
                 if c.notifyComment
@@ -48,7 +58,7 @@ block showContentOfConfig
                     span=" "
           else
             tr
-              td.danger(colspan="7")="(invalid entry)"
+              td.danger(colspan="9")="(invalid entry)"
 
 
 

@@ -135,8 +135,8 @@ same choices apply to mail and to a Mattermost direct message.
 | User setting | Values | Meaning |
 |---|---|---|
 | Notify via (`notifyVia`) | `mail` (default), `mattermost`, `both` | Shown only with `MattermostUserNotification` in the config. Mattermost needs the user's name in "Mattermost User" (`SlackUser`, the same field as for collecting from Mattermost). |
-| New Submissions (`notifyNewCollection`) | `all`, `guest`, `off` | An article gets its first collection (Collect). `guest`: only submissions of guest users. |
-| Changed Collections (`notifyCollectionChange`) | `all`, `guest`, `off` | An existing collection is changed. |
+| New Submissions (`notifyNewCollection`) | `all`, `editor`, `guest`, `off` | An article gets its first collection (Collect). `guest`: only submissions of guest users, `editor`: only those of the other users. |
+| Changed Collections (`notifyCollectionChange`) | `all`, `editor`, `guest`, `off` | An existing collection is changed. |
 | Text Changes by Guests (`notifyGuestTextChange`) | `true`, `false` | A guest wrote or changed a text in any language. |
 
 Article notifications go to full users only; guests get mails about
@@ -160,9 +160,23 @@ Mattermost channels are configured in the admin config
 
 | Key | Values | Meaning |
 |---|---|---|
-| `notifyNewCollection` | `true`, `"guest"`, `false` | New submissions (all / by guests only). |
-| `notifyCollectionChange` | `true`, `"guest"`, `false` | Changed collections. Missing = same as `notifyNewCollection`, which covered both before (issue #1170). |
+| `notifyNewCollection` | `true`, `"editor"`, `"guest"`, `false` | New submissions (all / by editors only / by guests only). |
+| `notifyCollectionChange` | `true`, `"editor"`, `"guest"`, `false` | Changed collections. Missing = same as `notifyNewCollection`, which covered both before (issue #1170). |
 | `notifyGuestTextChange` | `true`, `false` | Text changes made by guests. |
+
+Example: one channel to look after the guests, one for the editors.
+
+```yaml
+- slack: theweeklyosm
+  channel: "#osmbc-guests"
+  notifyNewCollection: guest
+  notifyCollectionChange: guest
+  notifyGuestTextChange: true
+- slack: theweeklyosm
+  channel: "#osmbc-editors"
+  notifyNewCollection: editor
+  notifyCollectionChange: editor
+```
 
 ## Automatic transitions (`Transition`)
 

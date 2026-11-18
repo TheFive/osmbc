@@ -12,9 +12,10 @@ const debug = _debug("OSMBC:notification:messageFilter");
 *
 * notifyNewCollection
 *   true: every new submission (first collection of an article) is
-*   forwarded, "guest": only submissions by guests
+*   forwarded, "guest": only submissions by guests, "editor": only
+*   submissions by non-guests
 * notifyCollectionChange
-*   true / "guest" for changed collections; missing = same as
+*   true / "guest" / "editor" for changed collections; missing = same as
 *   notifyNewCollection (which covered both before issue #1170)
 * notifyGuestTextChange
 *   true: text changes (markdown) made by guests are forwarded

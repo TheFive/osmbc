@@ -8,13 +8,16 @@
 // - text change:        a markdown<LANG> text is changed; only reported
 //                       when a guest made it (editors write texts all day)
 // Submission and collection change have the levels "all", "guest" (only
-// when a guest made the change) and "off".
+// when a guest made the change), "editor" (only when a non-guest made it)
+// and "off". A channel for guest control and one for the editors can so
+// split the stream.
 
 import language from "../model/language.js";
 import util from "../util/util.js";
 
 export const LEVEL_ALL = "all";
 export const LEVEL_GUEST = "guest";
+export const LEVEL_EDITOR = "editor";
 export const LEVEL_OFF = "off";
 
 /**
@@ -43,11 +46,11 @@ export function classifyArticleChange(user, article, change) {
 }
 
 /**
- * Normalises a setting value to "all", "guest" or "off". Accepts the user
+ * Normalises a setting value to "all", "guest", "editor" or "off". Accepts the user
  * form values and the channel config values (true/"true" = all).
  * @param {*} value the stored value
  * @param {*} fallback used when value is missing (undefined/null/"")
- * @returns {string} LEVEL_ALL, LEVEL_GUEST or LEVEL_OFF
+ * @returns {string} LEVEL_ALL, LEVEL_GUEST, LEVEL_EDITOR or LEVEL_OFF
  */
 export function normaliseLevel(value, fallback) {
   if (typeof value === "undefined" || value === null || value === "") {
@@ -56,12 +59,14 @@ export function normaliseLevel(value, fallback) {
   }
   if (util.isTrue(value) || value === LEVEL_ALL) return LEVEL_ALL;
   if (value === LEVEL_GUEST) return LEVEL_GUEST;
+  if (value === LEVEL_EDITOR) return LEVEL_EDITOR;
   return LEVEL_OFF;
 }
 
 function levelMatches(level, byGuest) {
   if (level === LEVEL_ALL) return true;
   if (level === LEVEL_GUEST) return byGuest;
+  if (level === LEVEL_EDITOR) return !byGuest;
   return false;
 }
 

@@ -512,6 +512,7 @@ describe("notification/mailReceiver", function() {
         clear: true,
         user: [{ OSMUser: "AllNew", email: "allnew@mail.bc", access: "full", notifyNewCollection: "all", notifyCollectionChange: "off" },
           { OSMUser: "GuestWatcher", email: "guestwatcher@mail.bc", access: "full", notifyNewCollection: "guest", notifyCollectionChange: "guest", notifyGuestTextChange: "true" },
+          { OSMUser: "EditorWatcher", email: "editorwatcher@mail.bc", access: "full", notifyNewCollection: "editor", notifyCollectionChange: "off" },
           { OSMUser: "OnlyMattermost", email: "onlymattermost@mail.bc", access: "full", notifyNewCollection: "all", notifyVia: "mattermost" },
           { OSMUser: "Visitor", email: "visitor@mail.bc", access: "guest", notifyNewCollection: "all" }]
       }, bddone);
@@ -534,7 +535,7 @@ describe("notification/mailReceiver", function() {
     }
     it("should mail an editor's submission to users who want all submissions", function (bddone) {
       collect(editor, function() {
-        should(recipients()).eql(["allnew@mail.bc"]);
+        should(recipients()).eql(["allnew@mail.bc", "editorwatcher@mail.bc"]);
         should(mailChecker.getCall(0).args[0].subject).eql("[TESTBC] WN1 added: T");
         bddone();
       });
