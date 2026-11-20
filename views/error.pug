@@ -27,6 +27,15 @@ html
       | You can even use your browser history to go back to that change.
 
 
+  if (error && error.status === 409 && typeof error.message === "string" && error.message.endsWith("already changed in DB"))
+    h2
+      | Important Hint for Changed Texts
+    p
+      | Someone changed this text after you opened the page (maybe you
+      | yourself, in another tab or with the inline editor). Nothing was saved.
+      | Go back, reload the page and check the current text before you try again.
+
+
   if (error && error.message == "failed to find request token in session")
     h2
       | Important Hint for Problems with request tokens

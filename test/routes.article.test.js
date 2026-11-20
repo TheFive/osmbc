@@ -881,6 +881,29 @@ describe("router/article", function() {
         version: 1
       });
     });
+    it("should accept a multi-line text sent with browser line breaks (#1177)", async function () {
+      const article = await articleModule.findById(2);
+      await new Promise((resolve, reject) => article.setAndSave({ OSMUser: "TestUser" },
+        { markdownDE: "* Line one\n\nLine two", old: { markdownDE: article.markdownDE } },
+        (err) => err ? reject(err) : resolve()));
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      // browsers submit textarea line breaks as \r\n
+      const body = await client.post(url, { markdown: "* Line one\r\n\r\nLine two" });
+
+      should(body.status).eql(HttpStatus.OK);
+      body.data.should.containEql("<!-- Full Access Index Page-->");
+      const result = await articleModule.findById(2);
+      should(result.markdownDE).eql("* Line one\n\nLine two");
+    });
+    it("should explain a real conflict on the error page", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { markdown: "text changed by someone else meanwhile" });
+
+      should(body.status).eql(HttpStatus.CONFLICT);
+      body.data.should.containEql("Someone changed this text");
+    });
     it("should deny denied access user",
       testutil.checkPostUrlWithUser({
         url: url,

@@ -75,7 +75,7 @@ block blogcontent
                   +inlineEditorButtons(a.id, "", !a["markdown" + lang])
                 form(id="reviewTranslation" name="reviewTranslation"+a.id+lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + lang, method="post")
                   if a.isTranslatedAutomated(lang)
-                      textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+lang]
+                      textarea.d-none.form-control(name="markdown" id="reviewMarkdown"+a.id+lang)=a["markdown"+lang]
                       button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+lang type="submit")
                         div.fa.fa-ok
                         span=" Mark Auto Translation OK"

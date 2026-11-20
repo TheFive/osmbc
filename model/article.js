@@ -327,6 +327,16 @@ class Article {
     }, callback);
   }
 
+  /**
+   * Accepts an automatic translation as reviewed ("Mark Auto Translation OK").
+   * `data` maps a field (e.g. `markdownDE`) to the text the user saw; it must
+   * still match the stored text (line breaks \r\n and \n count as equal),
+   * otherwise the callback gets a 409 CONFLICT error. Nothing is changed in the
+   * article, only a "Review Change of ..." entry is logged.
+   * @param {object} user the reviewing user
+   * @param {object} data field name to text shown to the user
+   * @param {Function} callback called with an error or after logging
+   */
   reviewChanges(user, data, callback) {
     debug("reviewChanges");
     util.requireTypes([user, data, callback], ["object", "object", "function"]);
@@ -334,8 +344,10 @@ class Article {
     const self = this;
 
 
+    // browsers submit textarea line breaks as \r\n, compare like setAndSave does
+    const normalise = (v) => (typeof v === "string") ? v.replace(/\r\n/g, "\n") : v;
     for (const k in data) {
-      if ((self[k] && self[k] !== data[k]) || (typeof (self[k]) === "undefined" && data[k] !== "")) {
+      if ((self[k] && normalise(self[k]) !== normalise(data[k])) || (typeof (self[k]) === "undefined" && data[k] !== "")) {
         const error = new Error("Field " + k + " already changed in DB");
         error.status = CONFLICT;
         error.detail = { oldValue: data[k], databaseValue: self[k], Action: "Review Translation Command", field: k };
