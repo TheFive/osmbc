@@ -176,7 +176,7 @@ block all
                   =appName
               button.btn-close(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
             div.offcanvas-body.flex-grow-1
-              ul.navbar-nav
+              ul.navbar-nav.align-items-lg-center
                 +collectMenu
                 +inboxMenu
                 
@@ -186,7 +186,7 @@ block all
                 +articleMenu    
                 +toolMenu
                 block additionalMenuMain    
-              ul.navbar-nav.ms-auto
+              ul.navbar-nav.ms-auto.align-items-lg-center
                 +helpMenu(layout.helpMenu)
                 block additionalMenuRight
                 +userAvatar
