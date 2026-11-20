@@ -7,7 +7,10 @@ block additionalMenuRight
 
 
 block content
-  
+  //- phones work in the one phone language (kept apart from the desktop
+  //- pair), larger screens in the desktop pair
+  - var collectLanguages = layout.mobileView ? [layout.mobileLang] : [layout.user.getLang(0), layout.user.getLang(1)].filter((l) => l)
+
   div
     - var action = layout.htmlroot+"/article/searchandcreate";
     - if (!showCollect) action = layout.htmlroot+"/article/search";
@@ -60,12 +63,11 @@ block content
                   td.d-none.d-sm-table-cell=article.categoryEN
                   //- hidden on phones like its column header
                   td.pre.d-none.d-sm-table-cell=article.collection
-                tr.d-none(class="class_" + article.id)
+                tr.d-none.osmbc-found-detail(class="class_" + article.id)
                   td
-                  td(colspan=1)
-                    |!{layout.md_renderInline(article["markdown"+layout.user.getLang(0)])}
-                  td(colspan=2)
-                    |!{layout.md_renderInline(article["markdown"+layout.user.getLang(1)])}
+                  each l, i in collectLanguages
+                    td(colspan=(i === 0) ? 1 : 2)
+                      |!{layout.md_renderInline(article["markdown"+l])}
 
            
       else
@@ -92,7 +94,7 @@ block content
                   .col-md-10
                     select(id="categoryEN",name="categoryEN").form-control
                       for category in categories
-                        option(value=category.EN ) #{category[layout.user.getLang(0)]} / #{category[layout.user.getLang(1)]}
+                        option(value=category.EN )=collectLanguages.map((l) => category[l]).join(" / ")
           
      
 

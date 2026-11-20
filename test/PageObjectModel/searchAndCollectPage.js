@@ -116,6 +116,21 @@ export default class SearchAndCollectPage extends StandardPage {
     await this._tapAndWaitForNavigation(await this._driver.findElement(By.id("OK")));
   }
 
+  // texts of the category select, as the editor reads them
+  async getCategoryOptionTexts() {
+    await this.assertPage();
+    const options = await this._driver.findElements(By.css("select#categoryEN option"));
+    return Promise.all(options.map((o) => o.getAttribute("textContent")));
+  }
+
+  // texts of the found duplicates' detail rows (also while collapsed)
+  async getFoundArticleTexts() {
+    await this.assertPage();
+    const cells = await this._driver.findElements(By.css("tr.osmbc-found-detail td"));
+    const texts = await Promise.all(cells.map((c) => c.getAttribute("textContent")));
+    return texts.map((t) => t.trim()).filter((t) => t !== "");
+  }
+
   async getOkButton() {
     await this.assertPage();
     return await this._driver.findElement(By.css("button#OK"));
