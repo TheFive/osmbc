@@ -189,6 +189,22 @@ export default class Page {
     return this._driver.executeScript("return document.documentElement.scrollWidth > window.screen.width;");
   }
 
+  // entries of the menu bar (app name, links, buttons, avatar) whose middle
+  // is more than 2 px above or below the middle of the bar, as
+  // "text (offset px)"; meant for the desktop bar, not the phone side panel
+  async navbarEntriesOffCenter() {
+    return this._driver.executeScript(`
+      const bar = document.querySelector("#fixedNavbar > .container-fluid").getBoundingClientRect();
+      const middle = bar.top + bar.height / 2;
+      const entries = [...document.querySelectorAll("#fixedNavbar .navbar-brand, #navbarSupportedContent .navbar-nav > li > :first-child")];
+      return entries
+        .map(e => ({ e: e, r: e.getBoundingClientRect() }))
+        .filter(x => x.r.height > 0)
+        .map(x => ({ text: (x.e.textContent.trim() || x.e.id), offset: Math.round(x.r.top + x.r.height / 2 - middle) }))
+        .filter(x => Math.abs(x.offset) > 2)
+        .map(x => x.text + " (" + x.offset + " px)");`);
+  }
+
   // visible elements matching `selector` that are smaller than a tap target
   // (44 x 44 px, or the given minimum), as "text (width x height)"
   async tapTargetsTooSmall(selector, minimum = {}) {
