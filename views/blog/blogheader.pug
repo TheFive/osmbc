@@ -20,10 +20,8 @@ mixin userLabel(user,style)
 
 
 mixin previewDiv(article, lang)
-  - previewClass = ""
-  - if (!article.isFormulated(lang)) previewClass = "osmbc-not-formulated";
-  - if (article.isNoTranslation(lang)) previewClass = "hide-text";
-  - if (article.isTranslatedAutomated(lang)) previewClass = "osmbc-automated-translation"
+  //- keep in step with markerClasses in blog_mixin.pug (inline save)
+  - const previewClass = { automated: "osmbc-automated-translation", noTranslation: "hide-text", notFormulated: "osmbc-not-formulated" }[article.translationState(lang)] || ""
   div(class=previewClass )
     if block
       block

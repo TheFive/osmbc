@@ -591,9 +591,11 @@ while layout.user["blogSetting"+v]
           body: new URLSearchParams(new FormData(form))
         }).then(function(res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        }).then(function(data) {
           oldField.value = value;
           savedPreview[column + "div" + id] = convert(value);
-          updateMarker(id, column, value);
+          updateMarker(id, column, data.state);
           updateSaveLabel(id, column);
           inlineStatus(id, column, "saved", "text-bg-success");
           if (close) closeInlineEditor(id, column, "saved");
@@ -606,16 +608,24 @@ while layout.user["blogSetting"+v]
         return inlineSaves[key];
       }
 
-      // marker of the saved text, as previewDiv (blogheader.pug) sets it after
-      // a reload; a text saved by the user is never an automated translation
-      function updateMarker(id, column, value) {
+      // marker of the saved text; the server sends its state (model
+      // translationState), keep the classes in step with previewDiv (blogheader.pug)
+      var markerClasses = {
+        automated: "osmbc-automated-translation",
+        noTranslation: "hide-text",
+        notFormulated: "osmbc-not-formulated"
+      };
+
+      function updateMarker(id, column, state) {
         var wrapper = document.querySelector("[data-inline-editor='" + column + "div" + id + "']");
         var marker = wrapper && wrapper.firstElementChild;
         if (marker) {
-          marker.classList.remove("osmbc-automated-translation", "osmbc-not-formulated", "hide-text");
-          if (value === "") marker.classList.add("osmbc-not-formulated");
-          else if (value === "no translation") marker.classList.add("hide-text");
+          Object.keys(markerClasses).forEach(function(k) {
+            marker.classList.remove(markerClasses[k]);
+          });
+          if (markerClasses[state]) marker.classList.add(markerClasses[state]);
         }
+        if (state === "automated") return;
         var editor = document.getElementById(column + "div" + id);
         var ok = editor && editor.querySelector("button[id^='reviewTranslation']");
         if (ok) ok.remove();

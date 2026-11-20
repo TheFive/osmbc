@@ -119,7 +119,7 @@ block blogcontent
                       +inlineEditorButtons(a.id, "l", !a["markdown" + left_lang])
                     form(id="reviewTranslation" name="reviewTranslation"+a.id+left_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + left_lang, method="post")
                       if a.isTranslatedAutomated(left_lang)
-                          textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+left_lang]
+                          textarea.d-none.form-control(name="markdown" id="reviewMarkdown"+a.id+left_lang)=a["markdown"+left_lang]
                           button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+left_lang type="submit")
                             div.fa.fa-ok
                             span=" Mark Auto Translation OK"
@@ -149,7 +149,7 @@ block blogcontent
                         +inlineEditorButtons(a.id, "r", !a["markdown" + right_lang])
                       form(id="reviewTranslation" name="reviewTranslation"+a.id+right_lang, action=layout.htmlroot+"/article/" + a.id + "/reviewChange/" + right_lang, method="post")
                         if a.isTranslatedAutomated(right_lang)
-                            textarea.d-none.form-control(name="markdown" id="markdown"+a.id)=a["markdown"+right_lang]
+                            textarea.d-none.form-control(name="markdown" id="reviewMarkdown"+a.id+right_lang)=a["markdown"+right_lang]
                             button.btn.btn-sm.btn-success(id="reviewTranslation"+a.id+right_lang type="submit")
                               div.fa.fa-ok
                               span=" Mark Auto Translation OK"

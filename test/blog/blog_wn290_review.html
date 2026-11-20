@@ -354,7 +354,7 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
             <form name="EditArticle" id="EditArticle12" action="/article/12/setMarkdown/DE" method="post"><textarea class="form-control" name="markdown" id="markdown12" rows="7" data-fit-content="" onchange="onLeaveText(12);" spellcheck="true" lang="DE">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea><textarea class="d-none form-control" name="oldMarkdown" id="oldMarkdown12" rows="7">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea>
               <div class="d-flex gap-2 my-2"><button class="btn btn-secondary" type="button" id="inlineCancel12" onmousedown="event.preventDefault();" onclick="cancelInlineEditor(12,'');">Cancel</button><button class="btn btn-primary ms-auto" type="button" id="inlineSave12" onmousedown="event.preventDefault();" onclick="saveInlineEditor(12,'',true);">Save</button></div>
             </form>
-            <form id="reviewTranslation" name="reviewTranslation12DE" action="/article/12/reviewChange/DE" method="post"><textarea class="d-none form-control" name="markdown" id="markdown12">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea><button class="btn btn-sm btn-success" id="reviewTranslation12DE" type="submit">
+            <form id="reviewTranslation" name="reviewTranslation12DE" action="/article/12/reviewChange/DE" method="post"><textarea class="d-none form-control" name="markdown" id="reviewMarkdown12DE">Im Forum wird darüber [diskutiert](http://forum.openstreetmap.org/viewtopic.php?id=53524), ob das massenhafte Ändern von Objekten (z.B. Suchen&amp;Ersetzen mit JOSM), die man alle selber als letzter Mapper bearbeitet hat, als [diskussionspflichtiger](https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct) mechanischer Edit gilt oder nicht.</textarea><button class="btn btn-sm btn-success" id="reviewTranslation12DE" type="submit">
                 <div class="fa fa-ok"></div><span> Mark Auto Translation OK</span>
               </button><span>Collected: </span><span class="badge small-margin osmbc-label-collect">Nakaner</span><span> Edited: </span><span class="badge small-margin osmbc-label-markdown">deeplPro API Call</span><span class="badge small-margin osmbc-label-markdown">wambacher</span><span class="badge small-margin osmbc-label-markdown">Peda</span><span class="badge small-margin osmbc-label-markdown">Nakaner</span></form>
           </div>
@@ -2223,9 +2223,11 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
           body: new URLSearchParams(new FormData(form))
         }).then(function(res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        }).then(function(data) {
           oldField.value = value;
           savedPreview[column + "div" + id] = convert(value);
-          updateMarker(id, column, value);
+          updateMarker(id, column, data.state);
           updateSaveLabel(id, column);
           inlineStatus(id, column, "saved", "text-bg-success");
           if (close) closeInlineEditor(id, column, "saved");
@@ -2238,16 +2240,24 @@ Die Kurvigkeit von Straßen: tortuOSMity von Martin Raifert [[1]](#wn290_Kurvigk
         return inlineSaves[key];
       }
 
-      // marker of the saved text, as previewDiv (blogheader.pug) sets it after
-      // a reload; a text saved by the user is never an automated translation
-      function updateMarker(id, column, value) {
+      // marker of the saved text; the server sends its state (model
+      // translationState), keep the classes in step with previewDiv (blogheader.pug)
+      var markerClasses = {
+        automated: "osmbc-automated-translation",
+        noTranslation: "hide-text",
+        notFormulated: "osmbc-not-formulated"
+      };
+
+      function updateMarker(id, column, state) {
         var wrapper = document.querySelector("[data-inline-editor='" + column + "div" + id + "']");
         var marker = wrapper && wrapper.firstElementChild;
         if (marker) {
-          marker.classList.remove("osmbc-automated-translation", "osmbc-not-formulated", "hide-text");
-          if (value === "") marker.classList.add("osmbc-not-formulated");
-          else if (value === "no translation") marker.classList.add("hide-text");
+          Object.keys(markerClasses).forEach(function(k) {
+            marker.classList.remove(markerClasses[k]);
+          });
+          if (markerClasses[state]) marker.classList.add(markerClasses[state]);
         }
+        if (state === "automated") return;
         var editor = document.getElementById(column + "div" + id);
         var ok = editor && editor.querySelector("button[id^='reviewTranslation']");
         if (ok) ok.remove();
