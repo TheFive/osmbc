@@ -279,8 +279,41 @@ function findLastChangesForBlog(blogName, ignoredUsers, callback) {
   });
 }
 
+/**
+ * Who changed which property of the given articles, without the texts.
+ * One row per article, property and user with the user's latest change,
+ * ordered by article, property and that timestamp (newest first), so the
+ * first row of a property is its last author.
+ * Callback style, or a promise without callback.
+ * @param {Array<string|number>} oids article ids
+ * @param {Function} [callback] (err, rows) with rows {oid, property, user, timestamp}
+ * @returns {Promise<Array>|undefined} rows, if no callback is given
+ */
+function findAuthorSummary(oids, callback) {
+  debug("findAuthorSummary");
+  function _findAuthorSummary(oids, callback) {
+    if (!oids || oids.length === 0) return callback(null, []);
+    const sqlQuery = `
+      SELECT data->>'oid' AS oid, data->>'property' AS property, data->>'user' AS user,
+        MAX(data->>'timestamp') AS timestamp
+      FROM changes
+      WHERE data->>'table' = 'article' AND data->>'oid' = ANY($1::text[])
+      GROUP BY 1, 2, 3
+      ORDER BY 1, 2, 4 DESC`;
+    db.query(sqlQuery, [oids.map(String)], function(err, result) {
+      if (err) return callback(err);
+      callback(null, (result && result.rows) ? result.rows : []);
+    });
+  }
+  if (callback) return _findAuthorSummary(oids, callback);
+  return new Promise((resolve, reject) => {
+    _findAuthorSummary(oids, (err, rows) => (err) ? reject(err) : resolve(rows));
+  });
+}
+
 const logModule = {
   table: "changes",
+  findAuthorSummary: findAuthorSummary,
   findLastChangesForBlog: findLastChangesForBlog,
   countLogsForBlog: countLogsForBlog,
   create: create,

@@ -718,7 +718,16 @@ class Blog {
         articleModule.find({ blog: self }, { column: "title" }, function (err, result) {
           if (err) return cb(err);
           if (options.collectors) {
-            each(result, calculateDependend, function finalFunction(err) {
+            // calculateDerived (e.g. from the blog route) already read the
+            // change log for these articles, reuse it instead of a second query
+            const known = {};
+            for (const a of (self.#articles || [])) if (a._lastChange) known[a.id] = a;
+            for (const a of result) {
+              if (!known[a.id]) continue;
+              a._lastChange = known[a.id]._lastChange;
+              a.author = known[a.id].author;
+            }
+            articleModule.calculateDerivedFromChangesForList(result, function finalFunction(err) {
               if (err) return cb(err);
               articleList = result;
               return cb();
@@ -1190,7 +1199,7 @@ class Blog {
       if (err) return callback(err);
       assert(Array.isArray(result));
       self.#articles = result;
-      each(result, calculateDependend, function(err) {
+      articleModule.calculateDerivedFromChangesForList(result, function(err) {
         if (err) return callback(err);
         for (const l in language.getLanguages()) {
           const statusLang = {};
@@ -2133,14 +2142,6 @@ function sortArticles(listOfArticles) {
   return result;
 }
 
-function calculateDependend(article, cb) {
-  debug("calculateDependend");
-
-  series([
-    article.calculateDerivedFromChanges.bind(article),
-    article.calculateDerivedFromSourceId.bind(article)
-  ], cb);
-}
 
 
 
