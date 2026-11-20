@@ -35,4 +35,11 @@ describe("uc/navbar on large screens", function() {
     await mainPage.assertPage();
     should(await mainPage.navbarEntriesOffCenter()).eql([]);
   });
+
+  it("should show the running version at the end of the Help menu", async function() {
+    const mainPage = new MainPage(driver);
+    await mainPage.assertPage();
+    // tests run with the placeholder version T.V.S (routes/layout.js)
+    should(await mainPage.getVersionFromHelpMenu()).eql("OSMBC T.V.S");
+  });
 });

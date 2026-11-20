@@ -173,6 +173,15 @@ export default class Page {
     return this._driver.executeScript("return [...document.querySelectorAll('p.osmbc-help-text, div.osmbc-help-text')].filter(e => e.offsetHeight > 0).map(e => e.textContent.trim());");
   }
 
+  // opens the Help menu of the desktop bar and returns the version line
+  // shown at its end
+  async getVersionFromHelpMenu() {
+    await this._driver.findElement(By.id("helpDropdown")).click();
+    const version = await this._driver.findElement(By.id("osmbcVersion"));
+    await this._driver.wait(until.elementIsVisible(version), 3000, "version in the Help menu not shown");
+    return version.getText();
+  }
+
   // sources of the shown avatars (menu, comments, user page)
   async getAvatarSources() {
     return this._driver.executeScript("return [...document.querySelectorAll('img.osmbc-avatar')].map(img => img.getAttribute('src'));");

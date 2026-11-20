@@ -389,6 +389,10 @@ mixin helpMenu(configarray)
               a.dropdown-header=item[0]
             else if (!isWikiLink || layout.wikiReadable) && (!isAdminHelp || isFullUser)
               a.dropdown-item(href=href)=item[0]
+      //- the running version (from package.json), to check a deploy
+      if layout && layout.osmbc_version
+        div.dropdown-divider
+        span.dropdown-item-text.text-muted.small#osmbcVersion="OSMBC " + layout.osmbc_version
 
 mixin homeButton(addclass)
   a(href=htmlroot+'/osmbc.html' class=addclass)=appName
