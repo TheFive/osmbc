@@ -210,7 +210,9 @@ pgObject.indexDefinition = {
   changes_table_oid_idx: "CREATE INDEX changes_table_oid_idx ON changes USING btree (((data ->> 'table'::text)), ((data ->> 'oid'::text)))",
   changes_blog_to_idx: "CREATE INDEX changes_blog_to_idx ON changes USING btree (((data ->> 'blog'::text)))",
   changes_user_to_idx: "CREATE INDEX changes_user_to_idx ON changes USING btree (((data ->> 'user'::text)))",
-  changes_timestamp_idx: "CREATE INDEX changes_timestamp_idx ON changes USING btree (((data ->> 'timestamp'::text)))"
+  changes_timestamp_idx: "CREATE INDEX changes_timestamp_idx ON changes USING btree (((data ->> 'timestamp'::text)))",
+  // first change of a user (new users on the start page, model/user.js getNewUsers)
+  changes_user_timestamp_idx: "CREATE INDEX changes_user_timestamp_idx ON changes USING btree (((data ->> 'user'::text)), ((data ->> 'timestamp'::text)))"
 };
 
 pgObject.viewDefinition = {};
