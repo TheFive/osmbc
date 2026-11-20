@@ -825,6 +825,21 @@ class Article {
     return false;
   }
 
+  /**
+   * State of the text in `lang` as the blog views mark it: "automated" (last
+   * author is a translation service, needs review), "noTranslation",
+   * "notFormulated" (empty) or "formulated". Needs `author` from
+   * calculateDerivedFromChanges, else an automated text counts as formulated.
+   * @param {string} lang language key, e.g. "DE"
+   * @returns {string} one of the four states
+   */
+  translationState(lang) {
+    if (this.isTranslatedAutomated(lang)) return "automated";
+    if (this.isNoTranslation(lang)) return "noTranslation";
+    if (!this.isFormulated(lang)) return "notFormulated";
+    return "formulated";
+  }
+
   isFormulated(lang) {
     return (this["markdown" + lang] && this["markdown" + lang].length > 0 && this["markdown" + lang] !== "no translation");
   }

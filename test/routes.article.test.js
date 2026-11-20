@@ -732,6 +732,29 @@ describe("router/article", function() {
       markdown: "new Content",
       oldMarkdown: "* Dies ist ein grosser Testartikel."
     };
+    it("should report the state of the saved text to inline editors", async function () {
+      // the text was translated automatically, so the blog views ask for a review
+      const article = await articleModule.findById(2);
+      await new Promise((resolve, reject) => article.setAndSave({ OSMUser: "deeplPro API Call" },
+        { markdownDE: "Maschine", old: { markdownDE: article.markdownDE } },
+        (err) => err ? reject(err) : resolve()));
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const xhr = { headers: { "X-Requested-With": "XMLHttpRequest" } };
+
+      // saving without a change keeps it an automated translation
+      let body = await client.post(url, { markdown: "Maschine", oldMarkdown: "Maschine" }, xhr);
+      should(body.data).eql({ markdown: "Maschine", state: "automated" });
+
+      // a text changed by a user is reviewed (later timestamp: the newest author counts)
+      mockdate.set(new Date("2016-05-25T20:01:00Z"));
+      body = await client.post(url, { markdown: "Mensch", oldMarkdown: "Maschine" }, xhr);
+      should(body.data).eql({ markdown: "Mensch", state: "formulated" });
+
+      mockdate.set(new Date("2016-05-25T20:02:00Z"));
+      body = await client.post(url, { markdown: "no translation", oldMarkdown: "Mensch" }, xhr);
+      should(body.data).eql({ markdown: "no translation", state: "noTranslation" });
+    });
     it("should run with full access user", async function () {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
