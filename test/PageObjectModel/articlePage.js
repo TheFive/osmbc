@@ -46,6 +46,25 @@ class ArticlePage extends StandardPage {
       return Math.round(reason.top - category.bottom);`);
   }
 
+  // true when the save was stopped because the unpublish reason is missing:
+  // the field is marked and its hint is visible
+  async isUnpublishReasonMarkedMissing() {
+    const select = await this._driver.findElement(By.id("unpublishReason"));
+    const marked = (await select.getAttribute("class")).split(" ").includes("is-invalid");
+    return marked && await this._driver.findElement(By.id("unpublishReasonMissing")).isDisplayed();
+  }
+
+  // Save button (desktop) for a save the page itself stops (e.g. missing
+  // unpublish reason): no navigation to wait for
+  async clickSaveStaysOnPage() {
+    await this.assertPage();
+    await this.tap(await this._driver.findElement(By.css("button#saveButton")));
+  }
+
+  async getCommentInput() {
+    return this._driver.findElement(By.css("textarea#comment")).getAttribute("value");
+  }
+
   async fillTitleInput(text) {
     await this.assertPage();
     const ele =  await this._driver.findElement(By.id("title"));

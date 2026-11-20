@@ -171,8 +171,12 @@ class Article {
 
     const self = this;
 
-    if (data.addComment) return callback(new Error("addCommment in article setAndSave is unsupported"));
     if (data.comment) return callback(new Error("comment in article setAndSave is unsupported"));
+    // a new comment is stored with the same save as the other changes, so a
+    // failed save stores no comment either (#914)
+    const comments = [];
+    if (typeof data.addComment === "string" && data.addComment.trim() !== "") comments.push(data.addComment);
+    delete data.addComment;
 
     debug("Version of Article %s", self.version);
     debug("Version of dataset %s", data.version);
@@ -248,8 +252,9 @@ class Article {
         if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
           let text = "#solved because set to --unpublished--.\n\nReason: " + data.unpublishReason;
           if (data.unpublishReference) text += "\n" + data.unpublishReference;
-          self.addCommentFunction(user, text, cb);
-        } else cb();
+          comments.push(text);
+        }
+        cb();
       }
     ], function (err) {
       if (err) return callback(err);
@@ -280,12 +285,15 @@ class Article {
           for (const k in data) {
             if (typeof (data[k]) !== "undefined") self[k] = data[k];
           }
+          for (let i = 0; i < comments.length; i++) comments[i] = self.#pushComment(user, comments[i]);
           cb();
         }],
         function setAndSaveFinalCB(err) {
           if (err) return callback(err);
           self.save(function (err) {
-            callback(err);
+            if (err) return callback(err);
+            // tell about the comments only once they are stored
+            series(comments.map((text) => (cb) => messageCenter.global.addComment(user, self, text, cb)), (err) => callback(err));
           });
         });
     });
@@ -503,6 +511,15 @@ class Article {
     return result;
   }
 
+  /**
+   * Adds a comment on its own (the "Add Comment" buttons), saves the article
+   * and then tells the message center. A comment that comes with other
+   * changes goes through setAndSave (`data.addComment`) instead, so both are
+   * stored by one save.
+   * @param {object} user the commenting user
+   * @param {string} text comment text, must not be empty
+   * @param {Function} callback called with an error, if any
+   */
   addCommentFunction(user, text, callback) {
     debug("Article.prototype.addCommentFunction");
     assert.equal(typeof (user), "object");
@@ -512,41 +529,30 @@ class Article {
     // check on empty comment
     if (text.trim() === "") return callback(new Error("Empty Comment Added"));
     const self = this;
+    const stored = self.#pushComment(user, text);
+    self.save(function (err) {
+      if (err) return callback(err);
+      // send message because changed comment as described in message center
+      messageCenter.global.addComment(user, self, stored, callback);
+    });
+  }
 
+  // Adds the comment to commentList in memory only (no save, no message):
+  // marks it read for its author and sets commentStatus (#solved / #open).
+  // Returns the text as stored.
+  #pushComment(user, text) {
     text = normaliseArticleNumber(text);
-
-    // Add the new comment with User to the comment list object
-    if (!self.commentList) self.commentList = [];
-    self.commentStatus = "open";
-    const commentObject = { user: user.OSMUser, timestamp: new Date(), text: text };
-    self.commentList.push(commentObject);
+    if (!this.commentList) this.commentList = [];
+    this.commentList.push({ user: user.OSMUser, timestamp: new Date(), text: text });
 
     // Set the self written comment (and all before) to be read by OSMUser
-    if (!self.commentRead) self.commentRead = {};
-    self.commentRead[user.OSMUser] = self.commentList.length - 1;
+    if (!this.commentRead) this.commentRead = {};
+    this.commentRead[user.OSMUser] = this.commentList.length - 1;
 
-
-    series([
-      function sendit(cb) {
-        debug("sendit");
-
-        // send message because changed comment as described in message center
-        messageCenter.global.addComment(user, self, text, cb);
-      }, function searchStatus(cb) {
-        if (text.indexOf("#solved") >= 0) {
-          self.commentStatus = "solved";
-        }
-        if (text.indexOf("#open") >= 0) {
-          self.commentStatus = "open";
-        }
-        cb();
-      }
-    ], function finalFunction(err) {
-      debug("finalFunction");
-      if (err) return callback(err);
-      self.save(callback);
-    }
-    );
+    this.commentStatus = "open";
+    if (text.indexOf("#solved") >= 0) this.commentStatus = "solved";
+    if (text.indexOf("#open") >= 0) this.commentStatus = "open";
+    return text;
   }
 
   editComment(user, index, text, callback) {
