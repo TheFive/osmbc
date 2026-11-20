@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.8.1](https://github.com/TheFive/osmbc/tree/4.8.1) (2026-11-20)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.8.0...4.8.1)
+
+**Fixed bugs:**
+
+- layout: centre the menu bar entries vertically
+
 ## [4.8.0](https://github.com/TheFive/osmbc/tree/4.8.0) (2026-11-20)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.7.0...4.8.0)
