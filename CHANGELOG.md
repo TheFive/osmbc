@@ -1,5 +1,29 @@
 # Changelog
 
+## [4.8.0](https://github.com/TheFive/osmbc/tree/4.8.0) (2026-11-20)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.7.0...4.8.0)
+
+**Features:**
+
+- transition: start the review when every article is written
+- transition: weekly time for switching to edit and creating the next blog
+- blog: a language can only be closed when every article is written [#1137](https://github.com/TheFive/osmbc/issues/1137)
+- transition: close a whole blog when its active languages are done [#1134](https://github.com/TheFive/osmbc/issues/1134)
+- blog: broken caption anchors block the close, Auto Close tells the team [#1130](https://github.com/TheFive/osmbc/issues/1130)
+- notification: choose new submissions, changes and guest texts [#1170](https://github.com/TheFive/osmbc/issues/1170)
+- notification: editor-only level and channel preview of the new keys [#1170](https://github.com/TheFive/osmbc/issues/1170)
+- help: show the admin configuration help in the help menu to full users [#1170](https://github.com/TheFive/osmbc/issues/1170)
+
+**Fixed bugs:**
+
+- article: set no translation for closed languages of a new article [#1133](https://github.com/TheFive/osmbc/issues/1133)
+- collect: keep found duplicates in sight on phones [#987](https://github.com/TheFive/osmbc/issues/987)
+- article: ask for the unpublish reason right below the category [#1171](https://github.com/TheFive/osmbc/issues/1171)
+- collect: show categories in the phone language on phones [#1176](https://github.com/TheFive/osmbc/issues/1176)
+- article: save the comment together with the article [#914](https://github.com/TheFive/osmbc/issues/914)
+- article: accept auto translation review for multi-line texts [#1177](https://github.com/TheFive/osmbc/issues/1177)
+
 ## [4.7.0](https://github.com/TheFive/osmbc/tree/4.7.0) (2026-11-15)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.6.0...4.7.0)
