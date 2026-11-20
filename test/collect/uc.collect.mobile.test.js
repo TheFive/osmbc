@@ -4,6 +4,7 @@ import nock from "nock";
 import testutil from "../testutil.js";
 import userModule from "../../model/user.js";
 import blogModule from "../../model/blog.js";
+import articleModule from "../../model/article.js";
 import util from "../../util/util.js";
 import SearchAndCollectPage from "../PageObjectModel/searchAndCollectPage.js";
 
@@ -27,6 +28,11 @@ describe("uc/collect on small screens", function() {
     await userModule.createNewUser({ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", email: "a@b.c" });
     await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN1", status: "edit" });
   });
+  // desktop pair stays DE/EN, the phone works in this language
+  async function setMobileLang(lang) {
+    const user = await userModule.findOne({ OSMUser: "TheFive" });
+    await new Promise((resolve, reject) => user.setAndSave({ OSMUser: "test" }, { mobileLang: lang }, (err) => err ? reject(err) : resolve()));
+  }
   afterEach(async function() {
     nock.cleanAll();
     await testutil.safeQuit(driver);
@@ -52,5 +58,28 @@ describe("uc/collect on small screens", function() {
     should(await collectPage.isOKEnabled()).be.False();
     await collectPage.appendTitleWithPhoneKeyboard("A suggested title");
     should(await collectPage.isOKEnabled()).be.True();
+  });
+  // the phone language is kept apart from the desktop pair: collect shows
+  // categories and found texts in it, not in the desktop pair (#1176)
+  it("should show categories and found texts in the phone language", async function() {
+    await setMobileLang("EN");
+    await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Picture", title: "Old", collection: "https://example.com/news", markdownDE: "Text DE", markdownEN: "Text EN" });
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const collectPage = new SearchAndCollectPage(driver);
+    await driver.get(osmbcLink("/article/create"));
+    await collectPage.fillAndStartSearch("https://example.com/news");
+    should(await collectPage.getCategoryOptionTexts()).containEql("Picture");
+    should(await collectPage.getCategoryOptionTexts()).not.containEql("Bild / Picture");
+    should(await collectPage.getFoundArticleTexts()).eql(["Text EN"]);
+  });
+  it("should show categories and found texts in the desktop pair on a desktop", async function() {
+    await setMobileLang("EN");
+    await articleModule.createNewArticle({ blog: "WN1", categoryEN: "Picture", title: "Old", collection: "https://example.com/news", markdownDE: "Text DE", markdownEN: "Text EN" });
+    driver = await testutil.getNewDriver("TheFive");
+    const collectPage = new SearchAndCollectPage(driver);
+    await driver.get(osmbcLink("/article/create"));
+    await collectPage.fillAndStartSearch("https://example.com/news");
+    should(await collectPage.getCategoryOptionTexts()).containEql("Bild / Picture");
+    should(await collectPage.getFoundArticleTexts()).eql(["Text DE", "Text EN"]);
   });
 });
