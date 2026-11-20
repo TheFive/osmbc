@@ -1182,6 +1182,10 @@ describe("model/blog", function() {
       should(blogModule.sanitizeBlogKey("WN34887")).eql("WN34887");
       should(blogModule.sanitizeBlogKey("blog34887")).eql("34887");
       should(blogModule.sanitizeBlogKey("blog348\n87")).eql("34887");
+      // pseudo blogs of the "Orphaned Article" menu (#1037)
+      should(blogModule.sanitizeBlogKey("Trash")).eql("Trash");
+      should(blogModule.sanitizeBlogKey("TBC")).eql("TBC");
+      should(blogModule.sanitizeBlogKey("Future")).eql("Future");
     });
   });
 
