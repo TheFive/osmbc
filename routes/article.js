@@ -601,6 +601,15 @@ function postArticleWithOldValues(req, res, next) {
   let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
+  // the comment field is saved together with the article, so a failed save
+  // keeps no comment (#914); guests may comment only on their own collections
+  // (as in postNewComment)
+  if (typeof req.body.addComment === "string" && req.body.addComment.trim() !== "") {
+    if (!article) return next(new Error("A comment needs an existing article."));
+    if (req.user.access === "guest" && article.firstCollector !== req.user.OSMUser) return next();
+    changes.addComment = req.body.addComment;
+  }
+
   series([
     function checkFeatureImage(cb) {
       // a new article is checked against an empty one, so nothing is

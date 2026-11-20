@@ -18,6 +18,9 @@ block content
       | !{JSON.stringify(layout.activeLanguages)}
   
   form(name="input",id="input", action=`${layout.htmlroot}/article/${article.id}/witholdvalues`, method="post")
+    //- Save copies the comment field into it, so the comment is stored with
+    //- the article in one request (article_view.js saveWithComment, #914)
+    input(type="hidden" name="addComment" id="addCommentOnSave")
     .row
       // Block for Buttons in the upper right corner and on the top in mobile
       .col-md-6
@@ -56,6 +59,8 @@ block content
                       option(value=reason selected )=reason
                     else
                       option(value=reason )=reason
+                //- shown by article_view.js checkUnpublishReason
+                .invalid-feedback#unpublishReasonMissing="Choose a reason for unpublishing."
               .col-sm-7
                 textarea.d-none.form-control(id="old_unpublishReference",name="old_unpublishReference",rows=1,hide=true)=article.unpublishReference
                 textarea.form-control.af(id="unpublishReference" name="unpublishReference" rows=1 placeholder="Reference, e.g. link to the other article" readonly=!article.isChangeAllowed("unpublishReference"))=article.unpublishReference

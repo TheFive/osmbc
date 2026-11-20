@@ -90,7 +90,7 @@
       <p><!-- FullAccessArticleView--></p>
       <form class="d-none" id="textanalyseform" method="POST" action="https://wortliga.de/textanalyse/"><input class="form-control" name="text" id="textanalysefield"></form>
       <form class="d-none" id="noTranslationForm" action="/article/4/notranslation" method="post" hide=""><textarea type="text" name="language">["EN"]</textarea></form>
-      <form name="input" id="input" action="/article/4/witholdvalues" method="post">
+      <form name="input" id="input" action="/article/4/witholdvalues" method="post"><input type="hidden" name="addComment" id="addCommentOnSave">
         <div class="row"><!-- Block for Buttons in the upper right corner and on the top in mobile-->
           <div class="col-md-6">
             <div class="form-group row"><label class="col-sm-2 col-form-label">Blog Date</label><label class="col-md-10">06/11/2015 - 12/11/2015</label></div>
@@ -136,7 +136,9 @@
                       <option value="not relevant">not relevant</option>
                       <option value="merged into">merged into</option>
                       <option value="reported earlier">reported earlier</option>
-                    </select></div>
+                    </select>
+                    <div class="invalid-feedback" id="unpublishReasonMissing">Choose a reason for unpublishing.</div>
+                  </div>
                   <div class="col-sm-7"><textarea class="d-none form-control" id="old_unpublishReference" name="old_unpublishReference" rows="1" hide=""></textarea><textarea class="form-control af" id="unpublishReference" name="unpublishReference" rows="1" placeholder="Reference, e.g. link to the other article"></textarea></div>
                 </div>
               </div>

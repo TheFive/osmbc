@@ -21,7 +21,13 @@ class ErrorPage extends Page {
     // error page is not storing navbar brand
     // as id does not contain one.
     // await super.assertPage();
-    should(this.isPage());
+    should(await this.isPage()).be.ok();
+  }
+
+  // the "Go Back" button (browser history back); returns with the previous
+  // page loaded
+  async clickGoBack() {
+    await this._clickAndWaitForNavigation(await this._driver.findElement(By.id("goBack")));
   }
 
   async getErrorTitle() {

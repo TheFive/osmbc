@@ -620,6 +620,26 @@ describe("router/article", function() {
         version: 1
       });
     });
+    it("should save the comment with the article (#914)", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, Object.assign({ addComment: "new comment" }, params));
+      should(body.status).eql(HttpStatus.OK);
+      const article = await articleModule.findById(2);
+      should(article.title).eql("new title2");
+      should(article.version).eql(2);
+      should(article.commentList.map((c) => c.text)).eql(["comment", "new comment"]);
+    });
+    it("should keep no comment when the save fails (#914)", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { categoryEN: "--unpublished--", old_categoryEN: "", addComment: "new comment" });
+      should(body.status).eql(HttpStatus.INTERNAL_SERVER_ERROR);
+      body.data.should.containEql("Missing reason for unpublishing article.");
+      const article = await articleModule.findById(2);
+      should(article.commentList.map((c) => c.text)).eql(["comment"]);
+      should(article.version).eql(1);
+    });
     it("should deny denied access user",
       testutil.checkPostUrlWithUser({
         url: url,

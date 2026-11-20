@@ -13,7 +13,7 @@ html
       pre=error.stack
 
     button(type="button" onclick=`location.href='${layout.htmlroot}/osmbc.html'`) OSMBC Home
-    button(type="button" onclick="goBack()")="Go Back"
+    button#goBack(type="button" onclick="goBack()")="Go Back"
     button(type="button" onclick=`location.href='${layout.htmlroot}/logout'`) logout
 
   if (error && error.message == "Version Number Differs")

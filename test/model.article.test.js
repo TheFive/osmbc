@@ -519,6 +519,70 @@ describe("model/article", function() {
       });
     });
   });
+  describe("setAndSave with a comment (#914)", function() {
+    const user = { OSMUser: "commenter" };
+    function setAndSave(article, data) {
+      return new Promise((resolve) => article.setAndSave(user, data, (err) => resolve(err)));
+    }
+    function load(id) {
+      return new Promise((resolve, reject) => articleModule.findById(id, (err, a) => err ? reject(err) : resolve(a)));
+    }
+    async function newArticle(blog, props) {
+      await new Promise((resolve, reject) => testutil.importData({ initialise: true, blog: [blog] }, (err) => err ? reject(err) : resolve()));
+      return new Promise((resolve, reject) => articleModule.createNewArticle(Object.assign({ blog: blog.name, markdownDE: "text" }, props), (err, a) => err ? reject(err) : resolve(a)));
+    }
+
+    it("should store the comment and the changes with one save", async function () {
+      const created = await newArticle({ name: "WN1" });
+      const article = await load(created.id);
+      should.not.exist(await setAndSave(article, { title: "new title", addComment: "please check", version: article.version }));
+      const stored = await load(created.id);
+      should(stored.title).eql("new title");
+      should(stored.version).eql(created.version + 1);
+      should(stored.commentList).have.length(1);
+      should(stored.commentList[0]).have.properties({ user: "commenter", text: "please check" });
+      should(stored.commentRead).eql({ commenter: 0 });
+      should(stored.commentStatus).eql("open");
+    });
+    it("should store a comment without other changes", async function () {
+      const created = await newArticle({ name: "WN1" });
+      const article = await load(created.id);
+      should.not.exist(await setAndSave(article, { addComment: "only a comment", old: {} }));
+      should((await load(created.id)).commentList).have.length(1);
+    });
+    it("should store no comment when the unpublish reason is missing", async function () {
+      const created = await newArticle({ name: "WN1" });
+      const article = await load(created.id);
+      const err = await setAndSave(article, { categoryEN: "--unpublished--", addComment: "lost?", version: article.version });
+      should(err.message).eql("Missing reason for unpublishing article.");
+      const stored = await load(created.id);
+      should.not.exist(stored.commentList);
+      should(stored.version).eql(created.version);
+    });
+    it("should store no comment on a version conflict", async function () {
+      const created = await newArticle({ name: "WN1" });
+      const article = await load(created.id);
+      const err = await setAndSave(article, { title: "x", addComment: "lost?", version: article.version + 1 });
+      should(err.message).eql("Version Number Differs");
+      should.not.exist((await load(created.id)).commentList);
+    });
+    it("should store no unpublish comment when the change is not allowed", async function () {
+      const created = await newArticle({ name: "WN1", exportedEN: true }, { categoryEN: "Mapping" });
+      const article = await load(created.id);
+      const err = await setAndSave(article, { categoryEN: "--unpublished--", unpublishReason: "old", version: article.version });
+      should(err.message).eql("categoryEN can not be edited. Blog is already exported.");
+      should.not.exist((await load(created.id)).commentList);
+    });
+    it("should store the own comment before the unpublish comment", async function () {
+      const created = await newArticle({ name: "WN1" });
+      const article = await load(created.id);
+      should.not.exist(await setAndSave(article, { categoryEN: "--unpublished--", unpublishReason: "doublette", addComment: "same as the other one", version: article.version }));
+      const stored = await load(created.id);
+      should(stored.commentList.map((c) => c.text)).eql(["same as the other one", "#solved because set to --unpublished--.\n\nReason: doublette"]);
+      should(stored.commentStatus).eql("solved");
+      should(stored.version).eql(created.version + 1);
+    });
+  });
   describe("setAndSave into a blog with closed languages (#1133)", function() {
     beforeEach(function (bddone) {
       testutil.importData({

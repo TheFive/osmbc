@@ -112,6 +112,7 @@ function init() {
     .trigger("change");
   $("#unpublishReason")
     .change(showModified)
+    .change(function() { $(this).removeClass("is-invalid"); })
     .trigger("change");
   $("#unpublishReference")
     .on("input change", showModified)
@@ -164,31 +165,33 @@ function checkFeatureImageBeforeSave(callback) {
 }
 
 function saveButton() {
+  if (!checkUnpublishReason()) return;
   checkFeatureImageBeforeSave(function(ok) {
     if (ok) saveWithComment();
   });
 }
 
+// An unpublished (or trashed) article needs a reason, as Article.setAndSave
+// checks; say so at the field instead of sending the editor to the error page.
+function checkUnpublishReason() {
+  const unpublished = $("#categoryEN").val() === "--unpublished--" || $("#blog").val() === "Trash";
+  const reason = $("#unpublishReason");
+  if (!unpublished || reason.length === 0) return true;
+  if ((reason.val() || "").trim() !== "" || ($("#old_unpublishReason").val() || "").trim() !== "") return true;
+  reason.addClass("is-invalid");
+  reason[0].scrollIntoView({ block: "center" });
+  reason.trigger("focus");
+  return false;
+}
+
+// The comment field goes with the article form, so the server stores both
+// with one save; a failed save keeps no comment, and going back to the form
+// does not store it a second time (#914).
 function saveWithComment() {
-  function save() {
-    disableUnchanged(); document.getElementById("input").submit();
-  }
-  if (document.getElementById("comment").value.trim() === "") return save();
-
-  // only save comment, if it is not empty
-  const jqForm = $("form#AddComment");
-  const url = jqForm.attr("action");
-  const toPost = jqForm.serialize();
-
-  $.post(url, toPost, function (data) {
-    if (data === "OK") {
-      save();
-    }
-  },
-  "text" // I expect a JSON response
-  ).fail(function (err) {
-    console.error(err);
-  });
+  const comment = document.getElementById("comment");
+  if (comment) document.getElementById("addCommentOnSave").value = comment.value;
+  disableUnchanged();
+  document.getElementById("input").submit();
 }
 
 
