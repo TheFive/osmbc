@@ -5,6 +5,7 @@ import should from "should";
 import async from "async";
 
 import pgMap from "../model/pgMap.js";
+import db from "../model/db.js";
 
 
 function TestTable(proto) {
@@ -49,6 +50,48 @@ describe("model/pgMap", function() {
         should(err.code).eql("42601"); // pg Syntax Error Code
         bddone();
       });
+    });
+  });
+  describe("analyseIndexes and updateIndex", function() {
+    const indexTable = {
+      createString: "CREATE TABLE indextest (id bigserial NOT NULL, data json, CONSTRAINT indextest_pkey PRIMARY KEY (id))",
+      indexDefinition: {
+        indextest_a_idx: "CREATE INDEX indextest_a_idx ON indextest USING btree (((data ->> 'a'::text)))",
+        indextest_b_idx: "CREATE INDEX indextest_b_idx ON indextest USING btree (((data ->> 'b'::text)))"
+      },
+      viewDefinition: {},
+      table: "indextest"
+    };
+    const analyse = () => new Promise((resolve, reject) => pgMap.analyseIndexes(indexTable, (err, r) => err ? reject(err) : resolve(r)));
+    const run = (options, analysed) => new Promise((resolve, reject) => pgMap.createTables(indexTable, options, analysed, (err) => err ? reject(err) : resolve()));
+    const query = (sql) => new Promise((resolve, reject) => db.query(sql, (err, r) => err ? reject(err) : resolve(r)));
+    beforeEach(async function() {
+      await run({ dropTable: "indextest", createTable: "indextest", createIndex: true }, { foundNOK: {}, expected: {} });
+    });
+    after(async function() {
+      await run({ dropTable: "indextest" }, { foundNOK: {}, expected: {} });
+    });
+    it("should find all indexes OK right after creation (schema prefix public. ignored)", async function() {
+      const result = await analyse();
+      should(Object.keys(result.foundOK).sort()).eql(["indextest_a_idx", "indextest_b_idx"]);
+      should(result.foundNOK).eql({});
+      should(result.expected).eql({});
+      should(result.foundUnnecessary).eql({});
+    });
+    it("should add a missing index and keep unknown ones", async function() {
+      await query("drop index indextest_b_idx");
+      await query("create index indextest_own_idx on indextest ((data->>'c'))");
+      await query("drop index indextest_a_idx");
+      await query("create index indextest_a_idx on indextest ((data->>'x'))");
+      let result = await analyse();
+      should(Object.keys(result.expected)).eql(["indextest_b_idx"]);
+      should(Object.keys(result.foundNOK)).eql(["indextest_a_idx"]);
+      should(Object.keys(result.foundUnnecessary)).eql(["indextest_own_idx"]);
+
+      await run({ updateIndex: true }, result);
+      result = await analyse();
+      should(Object.keys(result.foundOK).sort()).eql(["indextest_a_idx", "indextest_b_idx"]);
+      should(Object.keys(result.foundUnnecessary)).eql(["indextest_own_idx"]);
     });
   });
   describe("find functions", function() {

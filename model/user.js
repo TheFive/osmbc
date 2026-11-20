@@ -1,4 +1,5 @@
 import pgMap from "./pgMap.js";
+import logModule from "./logModule.js";
 import util from "../util/util.js";
 import { strict as assert } from "assert";
 import { series, eachOfSeries } from "async";
@@ -674,26 +675,73 @@ const interval = config.getValue("WelcomeInterval", { mustExist: true });
 const welcomeRefresh = config.getValue("WelcomeRefreshInSeconds", { mustExist: true });
 
 
+// Without changes_user_timestamp_idx the fast query is much slower than the
+// old one (minutes instead of seconds), so it is only used once the index
+// exists (import/createdb.js --updateIndex). Checked until it is found.
+let _newUsersIndexReady = false;
+let _newUsersIndexWarned = false;
+
+/**
+ * Forgets the result of the index check of getNewUsers. For tests only.
+ */
+export function resetNewUsersIndexCheck() {
+  _newUsersIndexReady = false;
+  _newUsersIndexWarned = false;
+}
+
+function checkNewUsersIndex(callback) {
+  if (_newUsersIndexReady) return callback(null, true);
+  pgMap.analyseIndexes(logModule.pg, function(err, result) {
+    if (err) return callback(err);
+    _newUsersIndexReady = !!result.foundOK.changes_user_timestamp_idx;
+    if (!_newUsersIndexReady && !_newUsersIndexWarned) {
+      _newUsersIndexWarned = true;
+      config.logger.warn("Index changes_user_timestamp_idx is missing, the start page uses the slow query for new users. Run import/createdb.js --updateIndex");
+    }
+    return callback(null, _newUsersIndexReady);
+  });
+}
+
+// Reads every change, takes seconds on a large changes table.
+const newUsersSlowQuery = "select changes.data->>'user' as osmuser ,min(changes.data->>'timestamp') as first, usert.data->>'access' as access from changes inner join usert on changes.data->>'user' = usert.data->>'OSMUser' group by changes.data->>'user',usert.data->>'access' having ( min(changes.data->>'timestamp')  )::timestamp with time zone  > ($1)::timestamp with time zone - interval '" + interval + "'";
+
+// Same result: only users with a change since the start of the interval,
+// their first change read from changes_user_timestamp_idx. Timestamps are
+// ISO strings (UTC), so comparing them as text is comparing the times.
+const newUsersFastQuery = `
+  with since as (select to_char((($1)::timestamp with time zone - interval '${interval}') at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as ts),
+  candidates as materialized (select distinct data->>'user' as osmuser from changes, since where data->>'timestamp' > since.ts)
+  select candidates.osmuser, f.first, usert.data->>'access' as access
+  from candidates
+  cross join lateral (select min(c.data->>'timestamp') as first from changes c where c.data->>'user' = candidates.osmuser) f
+  inner join usert on usert.data->>'OSMUser' = candidates.osmuser
+  where (f.first)::timestamp with time zone > ($1)::timestamp with time zone - interval '${interval}'`;
+
+/**
+ * Users whose first change lies within `WelcomeInterval` (start page
+ * "new users"), as rows {osmuser, first, access}. Cached for
+ * `WelcomeRefreshInSeconds` (0 = no cache).
+ * @param {Function} callback (err, rows)
+ */
 export function getNewUsers(callback) {
   debug("getNewUsers");
-
-
-
   if (welcomeRefresh > 0 && _newUsers) return callback(null, _newUsers);
 
-
-  pgMap.select("select changes.data->>'user' as osmuser ,min(changes.data->>'timestamp') as first, usert.data->>'access' as access from changes inner join usert on changes.data->>'user' = usert.data->>'OSMUser' group by changes.data->>'user',usert.data->>'access' having ( min(changes.data->>'timestamp')  )::timestamp with time zone  > ($1)::timestamp with time zone - interval '" + interval + "'", [new Date().toISOString()], function(err, result) {
+  checkNewUsersIndex(function(err, fast) {
     if (err) return callback(err);
-    if (result.indexOf("autocreate") >= 0) {
-      result = result.splice(result.indexOf("autocreate"), result.indexOf("autocreate") + 1);
-    }
-    if (welcomeRefresh > 0) {
-      _newUsers = result;
-      setTimeout(function() {
-        _newUsers = null;
-      }, welcomeRefresh * 1000);
-    }
-    callback(null, result);
+    pgMap.select(fast ? newUsersFastQuery : newUsersSlowQuery, [new Date().toISOString()], function(err, result) {
+      if (err) return callback(err);
+      if (result.indexOf("autocreate") >= 0) {
+        result = result.splice(result.indexOf("autocreate"), result.indexOf("autocreate") + 1);
+      }
+      if (welcomeRefresh > 0) {
+        _newUsers = result;
+        setTimeout(function() {
+          _newUsers = null;
+        }, welcomeRefresh * 1000);
+      }
+      callback(null, result);
+    });
   });
 }
 

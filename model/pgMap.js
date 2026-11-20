@@ -434,9 +434,7 @@ function createTables(pgObject, options, analyse, callback) {
         for (k in analyse.foundNOK) {
           if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
         }
-        for (k in analyse.foundUnnecessary) {
-          if (toBeDropped.indexOf(k) < 0) toBeDropped.push(k);
-        }
+        // indexes unknown to OSMBC are kept ("keep existing")
       }
       each(toBeDropped, function ftoBeDropped(index, eachofcb) {
         debug("ftoBeDropped");
@@ -492,6 +490,39 @@ function createTables(pgObject, options, analyse, callback) {
 }
 
 
+/**
+ * Compares the indexes of `pgObject.indexDefinition` with the database
+ * (pg_indexes, without constraint indexes like primary keys). Definitions
+ * count as equal when they differ only in the schema prefix "public." or
+ * in white space. Used by import/createdb.js (--updateIndex) and at start
+ * to warn about missing indexes.
+ * @param {object} pgObject table definition of a model (`module.pg`)
+ * @param {Function} callback (err, {foundOK, foundNOK, foundUnnecessary,
+ *   expected}) — `expected` holds the missing indexes; every entry maps
+ *   index name to its definition (database definition for foundUnnecessary)
+ */
+function analyseIndexes(pgObject, callback) {
+  debug("analyseIndexes %s", pgObject.table);
+  const normalise = (sql) => sql.replace(/\bpublic\./g, "").replace(/\s+/g, " ").trim();
+  const result = { foundOK: {}, foundNOK: {}, foundUnnecessary: {}, expected: {} };
+  for (const k in pgObject.indexDefinition) result.expected[k] = pgObject.indexDefinition[k];
+  const sql = "select indexname, indexdef from pg_indexes where tablename = $1 and indexname not in (select conname from pg_constraint)";
+  db.query(sql, [pgObject.table], function(err, res) {
+    if (err) return callback(err);
+    for (const row of res.rows) {
+      const expected = result.expected[row.indexname];
+      if (!expected) {
+        result.foundUnnecessary[row.indexname] = row.indexdef;
+        continue;
+      }
+      if (normalise(expected) === normalise(row.indexdef)) result.foundOK[row.indexname] = expected;
+      else result.foundNOK[row.indexname] = expected;
+      delete result.expected[row.indexname];
+    }
+    return callback(null, result);
+  });
+}
+
 function count(sql, values, callback) {
   debug("count");
   if (typeof values === "function") {
@@ -546,6 +577,7 @@ const pgMap = {
   findOne: findOne,
   count: count,
   createTables: createTables,
+  analyseIndexes: analyseIndexes,
   select: select
 };
 
