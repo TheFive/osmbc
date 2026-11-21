@@ -238,7 +238,6 @@ class Blog {
       }
     ], function (err) {
       if (err) return callback(err);
-      self.startCloseTimer();
       self.save(callback);
     });
   }
@@ -567,31 +566,62 @@ class Blog {
     });
   }
 
-  closeBlog(options, callback) {
-    debug("closeBlog");
-    assert(typeof (options.user) === "object");
-    assert(typeof (options.status) === "boolean");
-    const languageError = checkLanguage(options.lang);
+  /**
+   * Close one language of the blog (status button "Close", Auto Close).
+   * Refused with 409 (CONFLICT) while the language has close problems
+   * (see getCloseProblems). The whole blog is closed by setting its
+   * `status` to "closed" with setAndSave.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  closeLanguage(lang, user, callback) {
+    this._setLanguageClosed(lang, user, true, callback);
+  }
+
+  /**
+   * Reopen a closed language (status button "Edit"): drops a review that
+   * only consists of the start marker and the export markers of it.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  reopenLanguage(lang, user, callback) {
+    this._setLanguageClosed(lang, user, false, callback);
+  }
+
+  /**
+   * Shared code of closeLanguage / reopenLanguage.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {boolean} closed true = close, false = reopen
+   * @param {function(Error=)} callback
+   */
+  _setLanguageClosed(lang, user, closed, callback) {
+    debug("_setLanguageClosed");
+    assert(typeof (user) === "object");
+    assert(typeof (closed) === "boolean");
+    const languageError = checkLanguage(lang);
     if (languageError) return callback(languageError);
 
     const self = this;
-    const closeField = "close" + options.lang;
-    const reviewField = "reviewComment" + options.lang;
+    const closeField = "close" + lang;
+    const reviewField = "reviewComment" + lang;
 
-    if (self[closeField] === options.status) return callback();
+    if (self[closeField] === closed) return callback();
     assert(self.id);
     assert(self.id !== 0);
     series([
       function checkArticles(callback) {
         // only closing is checked, reopening is always possible
-        if (options.status !== true) return callback();
-        self.checkClosable(options.lang, options.user, callback);
+        if (closed !== true) return callback();
+        self.checkClosable(lang, user, callback);
       },
       function logEntry(callback) {
-        messageCenter.global.sendCloseStatus(options.user, self, options.lang, options.status, callback);
+        messageCenter.global.sendCloseStatus(user, self, lang, closed, callback);
       },
       function setCloseField(callback) {
-        self[closeField] = options.status;
+        self[closeField] = closed;
         callback();
       },
       function removeReview(callback) {
@@ -599,7 +629,7 @@ class Blog {
         // e.g. that review is started.
         // if there is some "substantial" review information (a review comment),
         // keep it and do not delete anythingx
-        if (options.status === false) {
+        if (closed === false) {
           if (self[reviewField] && self[reviewField].length === 0) {
             delete self[reviewField];
           }
@@ -608,12 +638,12 @@ class Blog {
               delete self[reviewField];
             }
           }
-          self["exported" + options.lang] = false;
+          self["exported" + lang] = false;
           // Clear exportedBy marker for this language across all export profiles
           if (self.exportedBy && typeof self.exportedBy === "object") {
             for (const profile of Object.keys(self.exportedBy)) {
               if (self.exportedBy[profile] && typeof self.exportedBy[profile] === "object") {
-                delete self.exportedBy[profile][options.lang];
+                delete self.exportedBy[profile][lang];
               }
             }
           }
@@ -626,8 +656,13 @@ class Blog {
     });
   }
 
-  autoClose(cb) {
-    debug("autoClose");
+  /**
+   * Switch an open blog whose endDate has passed to "edit" (Auto Edit
+   * Mode); does nothing before endDate or without one.
+   * @param {function(Error=)} cb
+   */
+  startEditModeIfEnded(cb) {
+    debug("startEditModeIfEnded");
     if (!this.endDate) return cb();
 
     const time = new Date().getTime();
@@ -1401,11 +1436,6 @@ class Blog {
     return result;
   }
 
-  startCloseTimer() {
-    debug("startCloseTimer");
-    // Legacy no-op: timer orchestration is handled centrally in blogTransitionScheduler.
-  }
-
   getBlogName(lang) {
     if (lang === "DE") return "Wochennotiz";
     return "Weekly";
@@ -2083,30 +2113,30 @@ function createNewBlog(user, proto, noArticle, callback) {
 }
 
 
-let _autoCloseRunning = 0;
+let _autoEditModeRunning = 0;
 
 // Switch open blogs past their endDate to edit and create a new blog if
 // none is open. Whether this runs at all (Transition.AutoEditMode.enabled)
 // is decided by the caller, model/blogTransitionScheduler.js.
-function autoCloseBlog(callback) {
-  debug("autoCloseBlog");
+function runAutoEditMode(callback) {
+  debug("runAutoEditMode");
   // Do not run this function twice !
-  if (_autoCloseRunning > 0) return callback();
-  _autoCloseRunning = _autoCloseRunning + 1;
+  if (_autoEditModeRunning > 0) return callback();
+  _autoEditModeRunning = _autoEditModeRunning + 1;
 
 
 
 
   find({ status: "open" }, { column: "endDate", desc: false }, function(err, result) {
     if (err) {
-      _autoCloseRunning = _autoCloseRunning - 1;
+      _autoEditModeRunning = _autoEditModeRunning - 1;
       return callback(err);
     }
     assert(Array.isArray(result));
     series([
       function series1CloseAllBlogs(cb) {
         each(result, function(data, cb) {
-          data.autoClose(cb);
+          data.startEditModeIfEnded(cb);
         }, function finish() { cb(); });
       },
       function series2CreateNewBlog(cb) {
@@ -2120,7 +2150,7 @@ function autoCloseBlog(callback) {
         });
       }
     ], function seriesFinal(err) {
-      _autoCloseRunning = _autoCloseRunning - 1;
+      _autoEditModeRunning = _autoEditModeRunning - 1;
       callback(err);
     });
   });
@@ -2298,11 +2328,6 @@ const pg = pgObject;
 
 
 
-/* commented as it should be replaced by a central scheduler, that calls the autoCloseBlog function of the blog model and the autoCreateBlog function of the blog model
-export function startAllTimers(callback) {
-  debug("startAllTimers");
-  autoCloseBlog(callback);
-}*/
 
 
 export function getTBC() {
@@ -2338,7 +2363,7 @@ const blogModule = {
   create: create,
   sortArticles: sortArticles,
   sanitizeBlogKey: sanitizeBlogKey,
-  autoCloseBlog: autoCloseBlog,
+  runAutoEditMode: runAutoEditMode,
   calculateNewBlogDates: calculateNewBlogDates,
   createNewBlog: createNewBlog,
   getCategories: getGlobalCategories,

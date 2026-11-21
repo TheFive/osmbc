@@ -141,7 +141,7 @@ sequenceDiagram
 ### Receivers
 
 `notification/messageCenter.js` has one global instance,
-`messageCenter.global`. `setAndSave`, `closeBlog` and the other mutating
+`messageCenter.global`. `setAndSave`, `closeLanguage` and the other mutating
 functions call one of its eight methods: `sendInfo`, `updateArticle`,
 `updateBlog`, `sendReviewStatus`, `sendCloseStatus`, `sendCloseBlocked`
 (Auto Close could not close a reviewed language), `addComment`,

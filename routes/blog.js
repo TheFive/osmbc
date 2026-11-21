@@ -291,8 +291,8 @@ const blogStatusActions = {
   startreview: (blog, lang, user, cb) => blog.startReview(lang, user, cb),
   markexported: (blog, lang, user, cb) => blog.markExported(lang, user, cb),
   deleteallreviews: (blog, lang, user, cb) => blog.deleteAllReviews(lang, user, cb),
-  closelang: (blog, lang, user, cb) => blog.closeBlog({ lang: lang, user: user, status: true }, cb),
-  editlang: (blog, lang, user, cb) => blog.closeBlog({ lang: lang, user: user, status: false }, cb)
+  closelang: (blog, lang, user, cb) => blog.closeLanguage(lang, user, cb),
+  editlang: (blog, lang, user, cb) => blog.reopenLanguage(lang, user, cb)
 };
 
 function setBlogStatus(req, res, next) {

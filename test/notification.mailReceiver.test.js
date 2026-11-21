@@ -413,7 +413,7 @@ describe("notification/mailReceiver", function() {
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         MailReceiverForTestOnly.transporter.sendMail = mailChecker;
-        blog.closeBlog({ lang: "ES", user: { OSMUser: "testuser" }, status: true }, function(err) {
+        blog.closeLanguage("ES", { OSMUser: "testuser" }, function(err) {
           should.not.exist(err);
           const expectedMail = '<h2>Blog blog was closed for ES.</h2><p>Blog <a href=\"https://localhost:35043/blog/blog\">blog</a>(ES) was closed by testuser.</p>';
           const expectedText = "BLOG BLOG WAS CLOSED FOR ES.\n\nBlog blog [https://localhost:35043/blog/blog](ES) was closed by testuser.";

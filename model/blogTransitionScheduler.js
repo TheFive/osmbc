@@ -247,7 +247,7 @@ function closeProblemsOf(blog, ruleConfig, user, callback) {
 }
 
 // a language with close problems (articles not written, broken anchors) is
-// never closed (#1137, #1130; closeBlog refuses it too)
+// never closed (#1137, #1130; closeLanguage refuses it too)
 function planLanguageClose(blog, ruleConfig, problems) {
   const plan = { close: [], waiting: [], blocked: [], done: [] };
   ruleConfig.languages.forEach(function(lang) {
@@ -334,7 +334,7 @@ function runLanguageAutoCloseRule(callback) {
         const plan = planLanguageClose(blog, ruleConfig, problems);
         eachSeries(plan.close, function(lang, cbLanguage) {
           debug("Auto close language %s for blog %s", lang, blog.name);
-          blog.closeBlog({ user: actor, lang: lang, status: true }, function(err) {
+          blog.closeLanguage(lang, actor, function(err) {
             // a problem in one language should not stop the others
             if (err) config.logger.error(err);
             cbLanguage();
@@ -609,7 +609,7 @@ export function runTransitionSweep(callback) {
   series([
     function runOpenToEditAndCreate(cb) {
       if (transitionConfig.autoEditMode.enabled !== true) return cb();
-      blogModule.autoCloseBlog(cb);
+      blogModule.runAutoEditMode(cb);
     },
     function runAutoTranslate(cb) {
       // before the language close, a closed language can not be edited any more

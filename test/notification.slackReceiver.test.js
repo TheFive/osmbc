@@ -516,7 +516,7 @@ describe("notification/slackReceiver", function() {
             })
           .reply(200, "ok");
         should.not.exist(err);
-        blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
+        blog.closeLanguage("PT-PT", { OSMUser: "testuser" }, function(err) {
           should.not.exist(err);
           waitForMocksToComplete([slack1a, slack1b, slack2b], function(waitErr) {
             should.not.exist(waitErr);
@@ -619,7 +619,7 @@ describe("notification/slackReceiver", function() {
             })
           .reply(200, "ok");
         should.not.exist(err);
-        blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: true }, function(err) {
+        blog.closeLanguage("PT-PT", { OSMUser: "testuser" }, function(err) {
           should.not.exist(err);
           waitForMocksToComplete([slack1a, slack1b, slack2b], function(waitErr) {
             should.not.exist(waitErr);
@@ -636,7 +636,7 @@ describe("notification/slackReceiver", function() {
                   channel: "#osmbcblog"
                 })
               .reply(200, "ok");
-            blog.closeBlog({ lang: "PT-PT", user: { OSMUser: "testuser" }, status: false }, function(err) {
+            blog.reopenLanguage("PT-PT", { OSMUser: "testuser" }, function(err) {
               should.not.exist(err);
               waitForMocksToComplete([slack2b], function(waitErr2) {
                 should.not.exist(waitErr2);

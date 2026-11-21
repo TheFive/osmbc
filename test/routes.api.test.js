@@ -625,11 +625,11 @@ describe("router/api", function() {
         const blog3000 = await waitUntilExported("WN3000", "HugoDownload", "DE");
 
         await new Promise((resolve, reject) => {
-          blog3000.closeBlog({ lang: "DE", user: { OSMUser: "user" }, status: false }, (err) => (err ? reject(err) : resolve()));
+          blog3000.reopenLanguage("DE", { OSMUser: "user" }, (err) => (err ? reject(err) : resolve()));
         });
         const reopened = await blogModule.findOne({ name: "WN3000" });
         await new Promise((resolve, reject) => {
-          reopened.closeBlog({ lang: "DE", user: { OSMUser: "user" }, status: true }, (err) => (err ? reject(err) : resolve()));
+          reopened.closeLanguage("DE", { OSMUser: "user" }, (err) => (err ? reject(err) : resolve()));
         });
 
         const response = await axios.get(
@@ -702,13 +702,13 @@ describe("router/api", function() {
             function(cb) {
               blogModule.findOne({ name: "WN3100" }, function(err, blog) {
                 if (err) return cb(err);
-                blog.closeBlog({ user: { OSMUser: "TheFive" }, lang: "DE", status: true }, cb);
+                blog.closeLanguage("DE", { OSMUser: "TheFive" }, cb);
               });
             },
             function(cb) {
               blogModule.findOne({ name: "WN3101" }, function(err, blog) {
                 if (err) return cb(err);
-                blog.closeBlog({ user: { OSMUser: "TheFive" }, lang: "DE", status: true }, cb);
+                blog.closeLanguage("DE", { OSMUser: "TheFive" }, cb);
               });
             }
           ], bddone);

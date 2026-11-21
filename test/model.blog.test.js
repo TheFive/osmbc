@@ -245,13 +245,13 @@ describe("model/blog", function() {
         },
         function (cb2) {
           should(newBlog.isEditable("DE")).be.True();
-          newBlog.closeBlog({ lang: "DE", user: { OSMUser: "Test" }, status: true }, cb2);
+          newBlog.closeLanguage("DE", { OSMUser: "Test" }, cb2);
         },
         function (cb1) {
           should(newBlog.isEditable("DE")).be.False();
           blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); });
         },
-        function (cb3) { newBlog.closeBlog({ lang: "DE", user: { OSMUser: "Test" }, status: false }, cb3); },
+        function (cb3) { newBlog.reopenLanguage("DE", { OSMUser: "Test" }, cb3); },
         function (cb1) {
           blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); });
         }
@@ -289,7 +289,7 @@ describe("model/blog", function() {
           should(newBlog.isEditable("EN")).be.False();
           blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); });
         },
-        function (cb3) { newBlog.closeBlog({ lang: "EN", user: { OSMUser: "Test" }, status: false }, cb3); },
+        function (cb3) { newBlog.reopenLanguage("EN", { OSMUser: "Test" }, cb3); },
         function (cb1) {
           blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); });
         }
@@ -485,7 +485,7 @@ describe("model/blog", function() {
       });
     });
   });
-  describe("closeBlog", function() {
+  describe("closeLanguage", function() {
     before(function (bddone) {
       testutil.clearDB(bddone);
       process.env.TZ = "Europe/Amsterdam";
@@ -497,7 +497,7 @@ describe("model/blog", function() {
         should.not.exist(err);
         should.exist(newBlog);
         const id = newBlog.id;
-        newBlog.closeBlog({ lang: "DE", user: { OSMUser: "user" }, status: true }, function(err) {
+        newBlog.closeLanguage("DE", { OSMUser: "user" }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", id, function(err, result) {
             should.not.exist(err);
@@ -522,7 +522,7 @@ describe("model/blog", function() {
       });
     });
   });
-  describe("closeBlog with articles not written (#1137)", function() {
+  describe("closeLanguage with articles not written (#1137)", function() {
     beforeEach(function (bddone) {
       testutil.importData({
         clear: true,
@@ -538,7 +538,7 @@ describe("model/blog", function() {
     function closeWN1(lang, status, cb) {
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);
-        blog.closeBlog({ user: { OSMUser: "test" }, lang: lang, status: status }, function(err) {
+        blog[status ? "closeLanguage" : "reopenLanguage"](lang, { OSMUser: "test" }, function(err) {
           blogModule.findOne({ name: "WN1" }, function(err2, reloaded) {
             should.not.exist(err2);
             cb(err, reloaded);
@@ -809,7 +809,7 @@ describe("model/blog", function() {
   });
 
 
-  describe("autoCloseBlog", function() {
+  describe("runAutoEditMode", function() {
     it("should do nothing if nothing to do", function(bddone) {
       const time = (new Date()).toISOString();
       const dataBefore = {
@@ -826,7 +826,7 @@ describe("model/blog", function() {
           { name: "WN4", status: "open", startDate: (new Date("2016-01-02")).toISOString(), endDate: (new Date("2016-01-08")).toISOString() }]
       };
       const testFunction = function testFunction(cb) {
-        blogModule.autoCloseBlog(cb);
+        blogModule.runAutoEditMode(cb);
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
@@ -846,7 +846,7 @@ describe("model/blog", function() {
           { name: "WN4", status: "open", startDate: (new Date("2016-01-02")).toISOString(), endDate: (new Date("2016-01-08")).toISOString() }]
       };
       const testFunction = function testFunction(cb) {
-        blogModule.autoCloseBlog(cb);
+        blogModule.runAutoEditMode(cb);
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
@@ -868,8 +868,8 @@ describe("model/blog", function() {
       };
       const testFunction = function testFunction(cb) {
         async.parallel([
-          blogModule.autoCloseBlog,
-          blogModule.autoCloseBlog
+          blogModule.runAutoEditMode,
+          blogModule.runAutoEditMode
         ], function (err) {
           should.not.exist(err);
           cb();
@@ -894,7 +894,7 @@ describe("model/blog", function() {
           { name: "WN3", status: "finished", startDate: "2015-01-01", endDate: "2016-01-01" }]
       };
       const testFunction = function testFunction(cb) {
-        blogModule.autoCloseBlog(cb);
+        blogModule.runAutoEditMode(cb);
       };
       testutil.doATest(dataBefore, testFunction, dataAfter, bddone);
     });
@@ -1044,7 +1044,7 @@ describe("model/blog", function() {
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);
         should.exist(blog);
-        // set directly, closeBlog refuses a language with empty articles (#1137)
+        // set directly, closeLanguage refuses a language with empty articles (#1137)
         blog.setAndSave({ OSMUser: "Test" }, { closeEN: true }, function(err) {
           should.not.exist(err);
           blog.copyAllArticles({ OSMUser: "Test" }, "DE", "EN", function(err) {
@@ -1115,7 +1115,7 @@ describe("model/blog", function() {
       blogModule.findOne({ name: "WN1" }, function(err, blog) {
         should.not.exist(err);
         should.exist(blog);
-        // set directly, closeBlog refuses a language with empty articles (#1137)
+        // set directly, closeLanguage refuses a language with empty articles (#1137)
         blog.setAndSave({ OSMUser: "Test" }, { closeEN: true }, function(err) {
           should.not.exist(err);
           blog.copyAllArticles({ OSMUser: "Test" }, "DE", "EN", function(err) {
@@ -1433,7 +1433,7 @@ describe("model/blog", function() {
     it("should return a blog closed on/after since", function(bddone) {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2400", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
-        blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
+        blog.closeLanguage("DE", { OSMUser: "test" }, function(err) {
           should.not.exist(err);
           blogModule.findBlogsClosedSince("2020-01-01", ["DE", "EN"], function(err, result) {
             should.not.exist(err);
@@ -1466,11 +1466,11 @@ describe("model/blog", function() {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2402", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         async.series([
-          function(cb) { blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb); },
+          function(cb) { blog.closeLanguage("DE", { OSMUser: "test" }, cb); },
           function(cb) {
             blogModule.findOne({ name: "WN2402" }, function(err, freshBlog) {
               if (err) return cb(err);
-              freshBlog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: false }, cb);
+              freshBlog.reopenLanguage("DE", { OSMUser: "test" }, cb);
             });
           }
         ], function(err) {
@@ -1488,11 +1488,11 @@ describe("model/blog", function() {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2403", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
         async.series([
-          function(cb) { blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb); },
+          function(cb) { blog.closeLanguage("DE", { OSMUser: "test" }, cb); },
           function(cb) {
             blogModule.findOne({ name: "WN2403" }, function(err, freshBlog) {
               if (err) return cb(err);
-              freshBlog.closeBlog({ user: { OSMUser: "test" }, lang: "EN", status: true }, cb);
+              freshBlog.closeLanguage("EN", { OSMUser: "test" }, cb);
             });
           }
         ], function(err) {
@@ -1510,7 +1510,7 @@ describe("model/blog", function() {
     it("should not require or touch exportedBy", function(bddone) {
       blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2404", status: "edit" }, true, function(err, blog) {
         should.not.exist(err);
-        blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
+        blog.closeLanguage("DE", { OSMUser: "test" }, function(err) {
           should.not.exist(err);
           blogModule.findBlogsClosedSince("2020-01-01", ["DE"], function(err, result) {
             should.not.exist(err);
@@ -1531,19 +1531,19 @@ describe("model/blog", function() {
           function(cb) {
             blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2410", status: "edit" }, true, function(err, blog) {
               if (err) return cb(err);
-              blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
+              blog.closeLanguage("DE", { OSMUser: "test" }, cb);
             });
           },
           function(cb) {
             blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2420", status: "edit" }, true, function(err, blog) {
               if (err) return cb(err);
-              blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
+              blog.closeLanguage("DE", { OSMUser: "test" }, cb);
             });
           },
           function(cb) {
             blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN2430", status: "edit" }, true, function(err, blog) {
               if (err) return cb(err);
-              blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, cb);
+              blog.closeLanguage("DE", { OSMUser: "test" }, cb);
             });
           }
         ], bddone);
@@ -1584,7 +1584,7 @@ describe("model/blog", function() {
     it("should render the blog closed since the given date and not touch exportedBy", function(bddone) {
       blogModule.findOne({ name: "WN2500" }, function(err, blog) {
         should.not.exist(err);
-        blog.closeBlog({ user: { OSMUser: "test" }, lang: "DE", status: true }, function(err) {
+        blog.closeLanguage("DE", { OSMUser: "test" }, function(err) {
           should.not.exist(err);
           blogModule.buildClosedSinceExportZip("HugoDownload", "2020-01-01", ["DE"], function(err, result) {
             should.not.exist(err);
@@ -1656,7 +1656,7 @@ describe("model/blog", function() {
       testutil.clearDB(bddone);
     });
 
-    it("should clear the exportedBy marker for a language when it is reopened via closeBlog", function(bddone) {
+    it("should clear the exportedBy marker for a language when it is reopened via reopenLanguage", function(bddone) {
       blogModule.createNewBlog({ OSMUser: "test" }, {
         name: "WN2100",
         status: "edit",
@@ -1667,7 +1667,7 @@ describe("model/blog", function() {
         }
       }, function(err, blog) {
         should.not.exist(err);
-        blog.closeBlog({ lang: "DE", user: { OSMUser: "user" }, status: false }, function(err) {
+        blog.reopenLanguage("DE", { OSMUser: "user" }, function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", blog.id, function(err, result) {
             should.not.exist(err);
