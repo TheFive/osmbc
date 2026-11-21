@@ -381,6 +381,29 @@ describe("routes/blog", function() {
       const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.closeEN).be.undefined();
     });
+    for (const action of ["startreview", "markexported", "deleteallreviews", "closelang", "editlang"]) {
+      for (const lang of ["XX", undefined]) {
+        it(`should refuse ${action} for the language ${lang}`, async function () {
+          const client = testutil.getWrappedAxiosClient();
+          await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+          const before = await blogModule.findOne({ name: "WN333" });
+          const body = await client.post(url, { lang: lang, action: action });
+
+          should(body.status).eql(HttpStatus.BAD_REQUEST);
+          should(body.data).containEql(`Unknown language &gt;${lang}&lt;`);
+          const blog = await blogModule.findOne({ name: "WN333" });
+          should(blog).eql(before);
+        });
+      }
+    }
+    it("should refuse an unknown action", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "DE", action: "startreviewX" });
+
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should(body.data).containEql("Unknown action &gt;startreviewX&lt;");
+    });
     it("should show the close button blocked while an article is not written", async function () {
       const client = testutil.getWrappedAxiosClient();
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
