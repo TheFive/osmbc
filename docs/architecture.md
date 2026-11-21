@@ -174,6 +174,32 @@ Rules:
   add a filter instead. Otherwise the version check, the change rules and
   every other receiver are bypassed too.
 
+## Checking input: in the model
+
+The database accepts any field (`jsonb`, no schema, no foreign keys), and
+the web UI is not the only caller: any logged-in user can send any
+request, and the API, the transition scheduler and the blog sync call the
+model without a UI. So the model is the only place where a wrong value
+can be stopped for every caller, even where today's UI never sends it.
+
+* **Public model methods check inputs that are saved or become part of a
+  field name** — language ids (`"close" + lang`), status values, ids,
+  action names. Internal helpers may rely on that check.
+* **A caller's mistake is an error with `status`, returned through the
+  callback before anything is broadcast or saved**: 400 (`BAD_REQUEST`)
+  for an invalid value, 409 (`CONFLICT`) for a state that forbids the
+  action. Example: `Blog.setAndSave` refuses an unknown blog status. The
+  error handler in `app.js` turns `err.status` into the HTTP status, so a
+  route only needs code of its own when the UI must show the message
+  differently (e.g. the 409 text for the close button).
+* **`assert` is for programming errors only** (a wrong type from our own
+  code). A value that can come from a request is not one: an `assert`
+  there becomes a 500 and hides the real cause.
+* **Not in the model:** access rights and the form of the answer stay in
+  the route.
+* Older code does not follow this everywhere. Add the check when you
+  touch a method anyway.
+
 ## Two kinds of configuration
 
 | | Technical config | Editorial config |
