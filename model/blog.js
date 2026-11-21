@@ -38,6 +38,11 @@ const debug = _debug("OSMBC:model:blog");
 // dropdown from this list.
 export const BLOG_STATUS = ["open", "edit", "closed", "trash"];
 
+// Marker entries in reviewComment<lang> (not comments): review of the
+// language started, personal review of a user running.
+const REVIEW_STARTED = "startreview";
+const REVIEW_RUNNING = "reviewing...";
+
 
 
 
@@ -47,6 +52,19 @@ function getGlobalCategories() {
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
 }
 
+/**
+ * Check a language id before it becomes part of a field name
+ * (`reviewComment<lang>`, `close<lang>`, `exported<lang>` …).
+ * @param {string} lang language id from the caller, e.g. "DE"
+ * @returns {Error|null} error with status 400 (BAD_REQUEST) for a language
+ *   that is not configured, null if the language is known
+ */
+function checkLanguage(lang) {
+  if (typeof lang === "string" && Object.hasOwn(language.getLanguages(), lang)) return null;
+  const error = new Error("Unknown language >" + lang + "<");
+  error.status = BAD_REQUEST;
+  return error;
+}
 
 function sanitizeBlogKey(blog) {
   if (blog === undefined || blog === null) return blog;
@@ -239,67 +257,152 @@ class Blog {
     return users.size;
   }
 
-  setReviewComment(lang, user, data, callback) {
-    debug("reviewComment");
+  /**
+   * Shared steps of every review change of a language: check the
+   * language, broadcast `status` (the receivers know these values, see
+   * sendReviewStatus), apply the change, save.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {string} status value for sendReviewStatus
+   * @param {function(Array, function(Error=))} applyChange gets the review
+   *   list of the language (created if missing)
+   * @param {function(Error=)} callback
+   */
+  _changeReview(lang, user, status, applyChange, callback) {
+    const languageError = checkLanguage(lang);
+    if (languageError) return callback(languageError);
+    assert(typeof (user) === "object");
+    assert.notEqual(typeof this.id, "undefined");
+    assert(this.id !== 0);
     const self = this;
     const rc = "reviewComment" + lang;
-    const exported = "exported" + lang;
-    assert(typeof (user) === "object");
-    assert.notEqual(typeof self.id, "undefined");
-    assert(self.id !== 0);
-    if (typeof (data) === "undefined") return callback();
-    if (typeof (self[rc]) === "undefined" || self[rc] === null) {
-      self[rc] = [];
-    }
-    for (let i = 0; i < self[rc].length; i++) {
-      if (self[rc][i].user === user && self[rc][i].text === data) return callback();
-    }
+    if (!Array.isArray(self[rc])) self[rc] = [];
     series([
-      function logInformation(cb) {
-        debug("setReviewComment->logInformation");
-        messageCenter.global.sendReviewStatus(user, self, lang, data, cb);
-      },
-      function checkSpecialCommands(cb) {
-        debug("setReviewComment->checkSpecialCommands");
-        const date = new Date();
-        if (data === "startreview") {
-          // Start Review, check wether review is done in WP or not
-          if (self[rc].length === 0) {
-            self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
-          }
-          // check Event articles (async with no real callback)
-          return self.fillEventArticle(lang, cb);
-        }
-        if (data === "markexported") {
-          self[exported] = true;
-          // nothing has to be written to review Comment
-          return cb();
-        }
-        if (data === "deleteallreviews") {
-          // review moduls has to be canceled.
-          // delete all reviews done
-          delete self[rc];
-          return cb();
-        }
-        for (let i = 0; i < self[rc].length; i++) {
-          if (self[rc][i].text === "reviewing..." && self[rc][i].user === user.OSMUser) {
-            if (data === "delete") {
-              self[rc].splice(i, 1);
-            } else {
-              self[rc][i].text = data;
-              self[rc][i].editstamp = date;
-            }
-            return cb();
-          }
-        }
-        self[rc].push({ user: user.OSMUser, text: data, timestamp: date });
-        return cb();
-      }
+      (cb) => messageCenter.global.sendReviewStatus(user, self, lang, status, cb),
+      (cb) => applyChange(self[rc], cb)
     ], function (err) {
-      debug("setReviewComment->FinalFunction");
       if (err) return callback(err);
       self.save(callback);
     });
+  }
+
+  /**
+   * @param {Array} [reviews] review list of a language
+   * @param {object} user user (OSMUser)
+   * @returns {number} index of the running personal review of `user`, or -1
+   */
+  static _personalReviewIndex(reviews, user) {
+    return (reviews || []).findIndex((r) => r.text === REVIEW_RUNNING && r.user === user.OSMUser);
+  }
+
+  /**
+   * Start the review of a language (status button "Start Review", Auto
+   * Review Start): adds the "startreview" marker if there is no review
+   * entry yet and fills the upcoming events article.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  startReview(lang, user, callback) {
+    debug("startReview");
+    const self = this;
+    this._changeReview(lang, user, REVIEW_STARTED, function(reviews, cb) {
+      if (reviews.length === 0) reviews.push({ user: user.OSMUser, text: REVIEW_STARTED, timestamp: new Date() });
+      self.fillEventArticle(lang, cb);
+    }, callback);
+  }
+
+  /**
+   * Mark a language as exported (status button "Did Export").
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  markExported(lang, user, callback) {
+    debug("markExported");
+    const self = this;
+    this._changeReview(lang, user, "markexported", function(reviews, cb) {
+      self["exported" + lang] = true;
+      cb();
+    }, callback);
+  }
+
+  /**
+   * Cancel the review of a language: removes every review entry,
+   * comments and markers alike.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  deleteAllReviews(lang, user, callback) {
+    debug("deleteAllReviews");
+    const self = this;
+    this._changeReview(lang, user, "deleteallreviews", function(reviews, cb) {
+      delete self["reviewComment" + lang];
+      cb();
+    }, callback);
+  }
+
+  /**
+   * Start the personal review of `user` ("... is reviewing since"). Does
+   * nothing if it is already running.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user reviewing user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  startPersonalReview(lang, user, callback) {
+    debug("startPersonalReview");
+    if (Blog._personalReviewIndex(this["reviewComment" + lang], user) >= 0) return callback();
+    this._changeReview(lang, user, REVIEW_RUNNING, function(reviews, cb) {
+      reviews.push({ user: user.OSMUser, text: REVIEW_RUNNING, timestamp: new Date() });
+      cb();
+    }, callback);
+  }
+
+  /**
+   * End the personal review of `user` without a comment ("Stop review").
+   * Does nothing if none is running.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user reviewing user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  stopPersonalReview(lang, user, callback) {
+    debug("stopPersonalReview");
+    if (Blog._personalReviewIndex(this["reviewComment" + lang], user) < 0) return callback();
+    this._changeReview(lang, user, "delete", function(reviews, cb) {
+      reviews.splice(Blog._personalReviewIndex(reviews, user), 1);
+      cb();
+    }, callback);
+  }
+
+  /**
+   * Add the review comment `text` of `user`. A running personal review of
+   * the user ends with it (its marker becomes the comment). The text is
+   * only a comment, never a command; the marker texts themselves are
+   * refused (400), the views would take them for markers.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user reviewing user (OSMUser)
+   * @param {string} text the comment; undefined does nothing
+   * @param {function(Error=)} callback
+   */
+  addReviewComment(lang, user, text, callback) {
+    debug("addReviewComment");
+    if (typeof text === "undefined") return callback();
+    if (text === REVIEW_STARTED || text === REVIEW_RUNNING) {
+      const error = new Error("Review comment >" + text + "< is reserved");
+      error.status = BAD_REQUEST;
+      return callback(error);
+    }
+    this._changeReview(lang, user, text, function(reviews, cb) {
+      const running = Blog._personalReviewIndex(reviews, user);
+      if (running >= 0) {
+        reviews[running].text = text;
+        reviews[running].editstamp = new Date();
+      } else {
+        reviews.push({ user: user.OSMUser, text: text, timestamp: new Date() });
+      }
+      cb();
+    }, callback);
   }
 
   fillEventArticle(lang, callback) {
@@ -467,8 +570,9 @@ class Blog {
   closeBlog(options, callback) {
     debug("closeBlog");
     assert(typeof (options.user) === "object");
-    assert(typeof (options.lang) === "string");
     assert(typeof (options.status) === "boolean");
+    const languageError = checkLanguage(options.lang);
+    if (languageError) return callback(languageError);
 
     const self = this;
     const closeField = "close" + options.lang;
@@ -718,7 +822,16 @@ class Blog {
         articleModule.find({ blog: self }, { column: "title" }, function (err, result) {
           if (err) return cb(err);
           if (options.collectors) {
-            each(result, calculateDependend, function finalFunction(err) {
+            // calculateDerived (e.g. from the blog route) already read the
+            // change log for these articles, reuse it instead of a second query
+            const known = {};
+            for (const a of (self.#articles || [])) if (a._lastChange) known[a.id] = a;
+            for (const a of result) {
+              if (!known[a.id]) continue;
+              a._lastChange = known[a.id]._lastChange;
+              a.author = known[a.id].author;
+            }
+            articleModule.calculateDerivedFromChangesForList(result, function finalFunction(err) {
               if (err) return cb(err);
               articleList = result;
               return cb();
@@ -1190,7 +1303,7 @@ class Blog {
       if (err) return callback(err);
       assert(Array.isArray(result));
       self.#articles = result;
-      each(result, calculateDependend, function(err) {
+      articleModule.calculateDerivedFromChangesForList(result, function(err) {
         if (err) return callback(err);
         for (const l in language.getLanguages()) {
           const statusLang = {};
@@ -1468,7 +1581,7 @@ export function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
     pgMap.findById(id, { table: "blog", create: create }, function(err, result) {
-      if (err) callback(err);
+      if (err) return callback(err);
       return callback(null, result);
     });
   }
@@ -2133,14 +2246,6 @@ function sortArticles(listOfArticles) {
   return result;
 }
 
-function calculateDependend(article, cb) {
-  debug("calculateDependend");
-
-  series([
-    article.calculateDerivedFromChanges.bind(article),
-    article.calculateDerivedFromSourceId.bind(article)
-  ], cb);
-}
 
 
 

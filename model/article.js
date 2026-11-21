@@ -763,62 +763,27 @@ class Article {
     return self.setAndSave(user, change, callback);
   }
 
-  /* This Function reads changes and adds some attributes (derived attributes) to the article
-  Object. For now this is mainly the last changed attribute and the author list.
-  article._lastChange.markdownDE e.g. contains the last timestamp, whenn markdownDE was changed
-  article.author._markdownDE contains all authors, worked on markdownDE
-  article.author.collection all collectors.
+  /**
+   * Adds derived values from the change log: `author[prop]` lists the users
+   * who changed `prop` (comma separated, newest first, e.g.
+   * `author.markdownDE`, `author.collection`) and `_lastChange[prop]` the
+   * latest timestamp. Both stay unset for an article without log entries.
+   * Does nothing if already calculated. For many articles use
+   * calculateDerivedFromChangesForList (one query instead of one per article).
+   * @param {Function} cb called with an error or when done
    */
   calculateDerivedFromChanges(cb) {
     debug("Article.prototype.calculateDerivedFromChanges");
-
-    const self = this;
-
-    // does info already exist, then return
-    if (self._lastChange) return cb();
-
-    // search all logentries for this article
-    logModule.find(
-      { table: "article", oid: self.id },
-      { column: "timestamp", desc: true },
-      function (err, result) {
-        if (err) return cb(err);
-        if (result && result.length > 0) {
-          const list = {};
-          self._lastChange = {};
-          for (let i = 0; i < result.length; i++) {
-            const r = result[i];
-            const prop = r.property;
-            if (!list[prop]) list[prop] = {};
-
-            // Mark the User for the current property
-            list[prop][r.user] = "-";
-
-            // set the _lastChange timestamp fo the current Property
-            if (typeof (self._lastChange[prop]) === "undefined") {
-              self._lastChange[prop] = r.timestamp;
-            } else if (r.timestamp > self._lastChange[prop]) {
-              self._lastChange[prop] = r.timestamp;
-            }
-          }
-          self.author = {};
-
-
-          for (const p in list) {
-            self.author[p] = "";
-            let sep = "";
-
-            // Iterate over all user and copy them to a list.
-            for (const k in list[p]) {
-              self.author[p] += sep + k;
-              sep = ",";
-            }
-          }
-        }
-        return cb();
-      });
+    calculateDerivedFromChangesForList([this], cb);
   }
 
+  /**
+   * True if the last author of the text in `lang` is a translation service
+   * (the text still needs a human review). Needs `author` from
+   * calculateDerivedFromChanges, else false.
+   * @param {string} lang language key, e.g. "DE"
+   * @returns {boolean} text is an unreviewed automated translation
+   */
   isTranslatedAutomated(lang) {
     if (!this) return false;
     if (!this.author) return false;
@@ -853,32 +818,56 @@ class Article {
   isNoTranslation(lang) {
     return (this["markdown" + lang] && this["markdown" + lang] === "no translation");
   }
+}
 
-  calculateDerivedFromSourceId(cb) {
-    debug("Article.prototype.calculateDerivedFromSourceId");
 
-    const self = this;
-    if (!self.originArticleId) return cb();
-    series([
-      function loadArticle(callback) {
-        findById(self.originArticleId, function (err, article) {
-          if (err) return callback(err);
-          self._originArticle = article;
-          return callback();
-        });
-      },
-      function loadBlog(callback) {
-        if (!self._originArticle) return callback();
-        __findOne({ name: self._originArticle.blog }, function (err, blog) {
-          if (err) return callback(err);
-          self._originBlog = blog;
-          return callback();
-        });
-      }
-    ], cb);
+/**
+ * Fills `author` and `_lastChange` (see calculateDerivedFromChanges) from
+ * the rows of logModule.findAuthorSummary. Articles that already have
+ * `_lastChange` are left as they are.
+ * @param {Array<Article>} articles articles to fill
+ * @param {Array<object>} rows {oid, property, user, timestamp}, per article
+ *   and property ordered newest first
+ */
+function applyAuthorSummary(articles, rows) {
+  const byId = {};
+  for (const row of rows) {
+    if (!byId[row.oid]) byId[row.oid] = [];
+    byId[row.oid].push(row);
+  }
+  for (const article of articles) {
+    if (article._lastChange) continue;
+    const list = byId[String(article.id)];
+    if (!list || list.length === 0) continue;
+    const users = {};
+    article._lastChange = {};
+    for (const r of list) {
+      if (!users[r.property]) users[r.property] = {};
+      users[r.property][r.user] = true;
+      const last = article._lastChange[r.property];
+      if (typeof last === "undefined" || r.timestamp > last) article._lastChange[r.property] = r.timestamp;
+    }
+    article.author = {};
+    for (const p in users) article.author[p] = Object.keys(users[p]).join(",");
   }
 }
 
+/**
+ * calculateDerivedFromChanges for many articles with one database query
+ * (used for every blog on every page, see routes/layout.js).
+ * @param {Array<Article>} articles articles to fill, may be empty
+ * @param {Function} cb called with an error or when done
+ */
+function calculateDerivedFromChangesForList(articles, cb) {
+  debug("calculateDerivedFromChangesForList");
+  const todo = (articles || []).filter((a) => !a._lastChange && a.id);
+  if (todo.length === 0) return cb();
+  logModule.findAuthorSummary(todo.map((a) => a.id), function(err, rows) {
+    if (err) return cb(err);
+    applyAuthorSummary(todo, rows);
+    return cb();
+  });
+}
 
 function create (proto) {
   debug("create");
@@ -956,7 +945,7 @@ function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
     pgMap.findById(id, { table: "article", create: create }, function(err, result) {
-      if (err) callback(err);
+      if (err) return callback(err);
       if (!result) return callback(null, result);
 
       __findOne({ name: result.blog }, function(err, blog) {
@@ -1116,6 +1105,7 @@ Article.prototype.remove = pgMap.remove;
 
 
 const articleModule = {
+  calculateDerivedFromChangesForList: calculateDerivedFromChangesForList,
   isMarkdown: isMarkdown,
   findOne: findOne,
   fullTextSearch: fullTextSearch,

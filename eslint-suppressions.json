@@ -12,7 +12,7 @@
       "count": 2
     },
     "jsdoc/require-jsdoc": {
-      "count": 35
+      "count": 31
     },
     "max-depth": {
       "count": 1
@@ -26,13 +26,13 @@
       "count": 4
     },
     "jsdoc/require-jsdoc": {
-      "count": 47
+      "count": 46
     },
     "max-depth": {
       "count": 1
     },
     "max-lines-per-function": {
-      "count": 4
+      "count": 3
     },
     "max-params": {
       "count": 1
@@ -49,14 +49,6 @@
   "model/blogSync/withReopenedBlog.js": {
     "jsdoc/require-jsdoc": {
       "count": 1
-    }
-  },
-  "model/blogTransitionScheduler.js": {
-    "complexity": {
-      "count": 1
-    },
-    "jsdoc/require-jsdoc": {
-      "count": 4
     }
   },
   "model/config.js": {
@@ -127,7 +119,7 @@
       "count": 1
     },
     "jsdoc/require-jsdoc": {
-      "count": 35
+      "count": 34
     },
     "max-lines-per-function": {
       "count": 1

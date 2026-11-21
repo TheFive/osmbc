@@ -3,7 +3,6 @@ import { program } from "commander";
 
 import config from "../config.js";
 import pgMap from "../model/pgMap.js";
-import db from "../model/db.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
@@ -60,21 +59,20 @@ const pgOptions = {
 
 
 function analyseTable(pgObject, pgOptions, callback) {
-  // first copy all expected indexes
-  const expected = {};
-  for (const k in pgObject.indexDefinition) {
-    expected[k] = pgObject.indexDefinition[k];
-  }
-
-  const pool = db.getPool();
-  pool.connect(function(err, client, pgdone) {
-    if (err) {
-      console.error("Can not connect to DB. " + err);
-      process.exit(1);
+  pgMap.analyseIndexes(pgObject, function(err, result) {
+    if (err) return callback(err);
+    if (pgOptions.verbose) {
+      console.info("");
+      console.info("Checking Table", pgObject.table);
+      const groups = { "Found indexes OK": result.foundOK, "Found indexes Need Update": result.foundNOK, "Missing indexes": result.expected, "Unnecessary indexes (kept)": result.foundUnnecessary };
+      for (const title in groups) {
+        console.info(" " + title);
+        for (const k in groups[title]) console.info("  " + k + ": " + groups[title][k]);
+      }
     }
-    // const query = client.query(new pg.Query(sql));
+    return callback(null, result);
   });
-};
+}
 
 
 
@@ -101,25 +99,29 @@ function clearDB(options, callback) {
       console.error("Error in Clear DB (createDB.js)");
       console.error(err);
     }
-    callback();
+    callback(err);
   });
 }
 
-clearDB(pgOptions, function() {
-  if (pgOptions.addUser) {
-    userModule.createNewUser({ OSMUser: pgOptions.addUser, access: "full" }, function (err, result) {
-      if (err) {
-        console.error("Error Clearing Database (in createDB.js)");
-        console.error(err);
-        return (err);
-      }
-      result.save(function () {
-        console.info("User " + pgOptions.addUser + " created. Ready.");
-      });
-    });
-  } else {
+clearDB(pgOptions, function(err) {
+  if (err) process.exit(1);
+  if (!pgOptions.addUser) {
     console.info("Ready...");
-    process.exit(1);
+    process.exit(0);
   }
+  userModule.createNewUser({ OSMUser: pgOptions.addUser, access: "full" }, function (err, result) {
+    if (err) {
+      console.error("Error creating user (in createDB.js)");
+      console.error(err);
+      process.exit(1);
+    }
+    result.save(function (err) {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      console.info("User " + pgOptions.addUser + " created. Ready.");
+      process.exit(0);
+    });
+  });
 });
-

@@ -26,6 +26,11 @@ that matter most, in short:
   `FilterReceiver` instead.
 - Every `messageCenter` receiver implements all eight methods
   (no-op stubs allowed); each receiver filters relevance itself.
+- Input checks belong in the model, also for values today's UI never
+  sends (language ids, status, ids, action names): return an error with
+  `status` (400/409) through the callback before anything is broadcast
+  or saved; `assert` only for programming errors. Details:
+  `docs/architecture.md` "Checking input: in the model".
 
 ## Configuration (`config.js`)
 

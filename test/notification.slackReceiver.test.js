@@ -357,7 +357,7 @@ describe("notification/slackReceiver", function() {
             })
           .reply(200, "ok");
         should.not.exist(err);
-        blog.setReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
+        blog.addReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
           waitForMocksToComplete([slack1a, slack1b, slack2a], function(waitErr) {
             should.not.exist(waitErr);
@@ -410,7 +410,7 @@ describe("notification/slackReceiver", function() {
             })
           .reply(200, "ok");
         should.not.exist(err);
-        blog.setReviewComment("PT-PT", { OSMUser: "testuser" }, "I have reviewed", function(err) {
+        blog.addReviewComment("PT-PT", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
           waitForMocksToComplete([slack1a, slack1b, slack2a], function(waitErr) {
             should.not.exist(waitErr);
@@ -463,7 +463,7 @@ describe("notification/slackReceiver", function() {
             })
           .reply(200, "ok");
         should.not.exist(err);
-        blog.setReviewComment("DE", { OSMUser: "testuser" }, "markexported", function(err) {
+        blog.markExported("DE", { OSMUser: "testuser" }, function(err) {
           should.not.exist(err);
           waitForMocksToComplete([slack1a, slack1b, slack2a], function(waitErr) {
             should.not.exist(waitErr);

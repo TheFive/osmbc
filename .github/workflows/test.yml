@@ -47,7 +47,11 @@ jobs:
           curl -sSLf -o "$RUNNER_TEMP/pandoc.deb" https://github.com/jgm/pandoc/releases/download/3.14/pandoc-3.14-1-amd64.deb
           sudo dpkg -i "$RUNNER_TEMP/pandoc.deb"
           pandoc --version | head -1
-      # Chrome + chromedriver are preinstalled on ubuntu-latest (Selenium UI tests)
+      # Chrome + chromedriver are preinstalled on ubuntu-latest (Selenium UI tests).
+      # The first Chrome start on a fresh runner is slow; doing it here keeps
+      # it out of the first UI test's 30 s hook timeout and logs both times.
+      - name: Warm up Chrome
+        run: NODE_ENV=test TEST_HEADLESS=TRUE node tools/warm-up-browser.mjs
       # same tests as `npm test`, measured with c8 (V8 coverage, works with ESM)
       - run: npm run test:coverage
       # coverage per directory against coverage-thresholds.json, table in the job summary

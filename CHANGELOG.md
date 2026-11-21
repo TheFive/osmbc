@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.8.2](https://github.com/TheFive/osmbc/tree/4.8.2) (2026-11-20)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.8.1...4.8.2)
+
+**Fixed bugs:**
+
+- db: createdb.js hangs since the index analysis was removed
+
+**Performance:**
+
+- blog: read authors of all articles of a blog with one query
+- user: find new users of the start page through an index
+
 ## [4.8.1](https://github.com/TheFive/osmbc/tree/4.8.1) (2026-11-20)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.8.0...4.8.1)

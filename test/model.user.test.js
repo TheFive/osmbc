@@ -7,7 +7,8 @@ import sinon from "sinon";
 
 import testutil from "./testutil.js";
 
-import userModule, { getAvatar, avatarTest } from "../model/user.js";
+import userModule, { getAvatar, avatarTest, resetNewUsersIndexCheck } from "../model/user.js";
+import db from "../model/db.js";
 import nock from "nock";
 import fs from "fs";
 import path from "path";
@@ -352,6 +353,49 @@ describe("model/user", function() {
       const again = nock("https://www.openstreetmap.org").get("/user/Nobody").reply(404);
       should(getAvatar("Nobody")).eql(avatarTest.placeholder);
       should(again.isDone()).be.False();
+    });
+  });
+  describe("getNewUsers", function() {
+    const daysAgo = (d) => new Date(Date.now() - d * 24 * 3600 * 1000).toISOString();
+    const query = (sql) => new Promise((resolve, reject) => db.query(sql, (err) => err ? reject(err) : resolve()));
+    const newUsers = () => new Promise((resolve, reject) => userModule.getNewUsers((err, r) => err ? reject(err) : resolve(r)));
+    let newbieFirst;
+    beforeEach(async function() {
+      await testutil.clearDB();
+      resetNewUsersIndexCheck();
+      await userModule.createNewUser({ OSMUser: "OldHand", access: "full" });
+      await userModule.createNewUser({ OSMUser: "Newbie", access: "full" });
+      await userModule.createNewUser({ OSMUser: "NewGuest", access: "guest" });
+      await userModule.createNewUser({ OSMUser: "LastMonth", access: "full" });
+      const log = (user, days) => logModule.log({ table: "article", oid: "1", property: "markdownDE", user: user, timestamp: daysAgo(days) });
+      await log("OldHand", 400);
+      await log("OldHand", 1);
+      newbieFirst = daysAgo(3);
+      await logModule.log({ table: "article", oid: "1", property: "markdownDE", user: "Newbie", timestamp: newbieFirst });
+      await log("Newbie", 2);
+      await log("NewGuest", 10);
+      await log("LastMonth", 40);
+      await log("LastMonth", 5);
+      await log("NotAUser", 4);
+    });
+    function check(result) {
+      const rows = result.map((r) => r.osmuser + "/" + r.access).sort();
+      should(rows).eql(["NewGuest/guest", "Newbie/full"]);
+      should(result.find((r) => r.osmuser === "Newbie").first).eql(newbieFirst);
+    }
+    it("should find users with their first change in the interval (with index)", async function() {
+      check(await newUsers());
+    });
+    it("should find the same users without the index and warn once", async function() {
+      await query("drop index changes_user_timestamp_idx");
+      const warn = sinon.spy(config.logger, "warn");
+      try {
+        check(await newUsers());
+        check(await newUsers());
+        should(warn.withArgs(sinon.match(/changes_user_timestamp_idx is missing/)).callCount).eql(1);
+      } finally {
+        warn.restore();
+      }
     });
   });
 });

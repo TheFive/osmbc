@@ -4,6 +4,7 @@
 
 import nock from "nock";
 import should from "should";
+import sinon from "sinon";
 import fs from "fs";
 import path from "path";
 import HttpStatus from "http-status-codes";
@@ -78,8 +79,52 @@ describe("routes/blog", function() {
 
 
 
+  describe("unknown blog", function () {
+    const requests = [
+      ["get", "/blog/WN9999"],
+      ["get", "/blog/WN9999/stat"],
+      ["get", "/blog/WN9999/preview"],
+      ["get", "/blog/WN9999/Review"],
+      ["get", "/blog/edit/WN9999"],
+      ["post", "/blog/edit/WN9999"],
+      ["post", "/blog/WN9999/setLangStatus"],
+      ["post", "/blog/WN9999/setReviewComment"]
+    ];
+    for (const [method, path] of requests) {
+      it(`should answer ${method.toUpperCase()} ${path} with 404`, async function () {
+        const client = testutil.getWrappedAxiosClient();
+        await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+        const body = await client[method](baseLink + path, { lang: "DE", action: "startreview", text: "x" });
+        should(body.status).eql(HttpStatus.NOT_FOUND);
+        should(body.data).containEql("Blog &gt;WN9999&lt; does not exist");
+      });
+    }
+    it("should check the access rights first",
+      testutil.checkUrlWithUser({
+        url: baseLink + "/blog/WN9999",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+  });
   describe("route GET /blog/edit/:blog_id", function () {
     const url = baseLink + "/blog/edit/WN333";
+    it("should only redirect for edit=false", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const errorSpy = sinon.spy(config.logger, "error");
+      try {
+        const body = await client.get(url + "?edit=false");
+        should(body.status).eql(HttpStatus.MOVED_TEMPORARILY);
+        should(body.headers.location).eql("/blog/edit/WN333");
+        // the page was rendered into the already sent redirect before
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        should(errorSpy.called).be.false();
+      } finally {
+        errorSpy.restore();
+      }
+    });
     it("should allow full user", async function () {
       const client = testutil.getWrappedAxiosClient();
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
@@ -231,6 +276,43 @@ describe("routes/blog", function() {
         user: "TestUser"
       }]);
     });
+    it("should keep a status command typed as comment a comment", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      await client.post(url, { lang: "EN", text: "first review" });
+      await client.post(url, { lang: "EN", text: "deleteallreviews" });
+      await client.post(url, { lang: "EN", text: "markexported" });
+
+      const blog = await blogModule.findOne({ name: "WN333" });
+      should(blog.reviewCommentEN.map(c => c.text)).eql(["first review", "deleteallreviews", "markexported"]);
+      should(blog.exportedEN).be.undefined();
+    });
+    it("should refuse a marker text as comment", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "EN", text: "startreview" });
+
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      const blog = await blogModule.findOne({ name: "WN333" });
+      should(blog.reviewCommentEN).be.undefined();
+    });
+    it("should start a personal review, end it with a comment, or stop it", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const texts = async () => (await blogModule.findOne({ name: "WN333" })).reviewCommentEN.map(c => c.text);
+
+      await client.post(url, { lang: "EN", text: "reviewing..." });
+      await client.post(url, { lang: "EN", text: "reviewing..." });
+      should(await texts()).eql(["reviewing..."]);
+      await client.post(url, { lang: "EN", text: "looks good" });
+      should(await texts()).eql(["looks good"]);
+
+      await client.post(url, { lang: "EN", text: "reviewing..." });
+      should(await texts()).eql(["looks good", "reviewing..."]);
+      await client.post(url, { lang: "EN", text: "delete" });
+      await client.post(url, { lang: "EN", text: "delete" });
+      should(await texts()).eql(["looks good"]);
+    });
     it("should deny denied access user",
       testutil.checkPostUrlWithUser({
         url: url,
@@ -380,6 +462,29 @@ describe("routes/blog", function() {
       should(body.data).eql("WN333 (EN) can not be closed: 1 article is not written yet. Write a text or \"no translation\", or give it a category.");
       const blog = await blogModule.findOne({ name: "WN333" });
       should(blog.closeEN).be.undefined();
+    });
+    for (const action of ["startreview", "markexported", "deleteallreviews", "closelang", "editlang"]) {
+      for (const lang of ["XX", undefined]) {
+        it(`should refuse ${action} for the language ${lang}`, async function () {
+          const client = testutil.getWrappedAxiosClient();
+          await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+          const before = await blogModule.findOne({ name: "WN333" });
+          const body = await client.post(url, { lang: lang, action: action });
+
+          should(body.status).eql(HttpStatus.BAD_REQUEST);
+          should(body.data).containEql(`Unknown language &gt;${lang}&lt;`);
+          const blog = await blogModule.findOne({ name: "WN333" });
+          should(blog).eql(before);
+        });
+      }
+    }
+    it("should refuse an unknown action", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "DE", action: "startreviewX" });
+
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should(body.data).containEql("Unknown action &gt;startreviewX&lt;");
     });
     it("should show the close button blocked while an article is not written", async function () {
       const client = testutil.getWrappedAxiosClient();
@@ -633,7 +738,7 @@ describe("routes/blog", function() {
       const body = await client.get(baseLink + "/blog/WN999");
 
       should(body.status).eql(404);
-      body.data.should.containEql('<h1 id="errorTitle">Page Not Found /blog/WN999</h1>');
+      body.data.should.containEql('<h1 id="errorTitle">Blog &gt;WN999&lt; does not exist</h1>');
     });
     it("should call next if blog exists twice", async function () {
       await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN333" });

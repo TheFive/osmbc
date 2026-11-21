@@ -6,6 +6,7 @@ import _debug from "debug";
 import async from "async";
 import should from "should";
 import nock from "nock";
+import sinon from "sinon";
 
 
 import testutil from "./testutil.js";
@@ -15,6 +16,7 @@ import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import messageCenter from "../notification/messageCenter.js";
+import pgMap from "../model/pgMap.js";
 const debug = _debug("OSMBC:test:article.test");
 
 
@@ -658,6 +660,21 @@ describe("model/article", function() {
             bddone();
           });
         });
+      });
+    });
+  });
+  describe("findById with a database error", function() {
+    afterEach(function() { sinon.restore(); });
+    it("should call the callback only once, with the error", function(bddone) {
+      sinon.stub(pgMap, "findById").callsFake(function(id, module, callback) {
+        callback(new Error("db down"));
+      });
+      const calls = [];
+      articleModule.findById(1, function(...args) { calls.push(args); });
+      setImmediate(function() {
+        should(calls.length).eql(1);
+        should(calls[0][0].message).eql("db down");
+        bddone();
       });
     });
   });
@@ -1556,6 +1573,60 @@ describe("model/article", function() {
     it("should  accept markdown", function(bddone) {
       should(articleModule.isMarkdown("adsfas")).is.True();
       bddone();
+    });
+  });
+  describe("derived values from the change log", function() {
+    const deepl = "deeplPro API Call";
+    let a, b, c;
+    function log(oid, property, user, minute, table) {
+      return logModule.log({ table: table || "article", oid: oid, blog: "DERIVED", property: property, user: user, to: "x", timestamp: "2026-11-20T10:" + String(minute).padStart(2, "0") + ":00.000Z" });
+    }
+    beforeEach(async function () {
+      await testutil.clearDB();
+      a = await articleModule.createNewArticle({ blog: "DERIVED", markdownDE: "DE", markdownEN: "EN", collection: "c" });
+      b = await articleModule.createNewArticle({ blog: "DERIVED", markdownDE: "DE" });
+      c = await articleModule.createNewArticle({ blog: "DERIVED", markdownEN: "EN" });
+      await log(a.id, "collection", "bob", 1);
+      await log(a.id, "markdownDE", deepl, 2);
+      await log(a.id, "markdownDE", "alice", 3);
+      await log(a.id, "markdownDE", deepl, 4);
+      await log(a.id, "collection", "alice", 5);
+      await log(a.id, "markdownEN", "alice", 6);
+      await log(a.id, "markdownEN", deepl, 7);
+      await log(a.id, "markdownEN", "carol", 8);
+      // same oid in another table must not count
+      await log(a.id, "markdownDE", "blogUser", 9, "blog");
+      await log(c.id, "markdownEN", deepl, 10);
+    });
+    function checkDerived() {
+      should(a.author).eql({ collection: "alice,bob", markdownDE: deepl + ",alice", markdownEN: "carol," + deepl + ",alice" });
+      should(a._lastChange).eql({ collection: "2026-11-20T10:05:00.000Z", markdownDE: "2026-11-20T10:04:00.000Z", markdownEN: "2026-11-20T10:08:00.000Z" });
+      should(a.isTranslatedAutomated("DE")).be.true();
+      should(a.isTranslatedAutomated("EN")).be.false();
+      should(b.author).be.undefined();
+      should(b._lastChange).be.undefined();
+      should(b.isTranslatedAutomated("DE")).be.false();
+      should(c.author).eql({ markdownEN: deepl });
+      should(c.isTranslatedAutomated("EN")).be.true();
+    }
+    it("should calculate authors and last changes per article", async function () {
+      for (const article of [a, b, c]) {
+        await new Promise((resolve, reject) => article.calculateDerivedFromChanges((err) => err ? reject(err) : resolve()));
+      }
+      checkDerived();
+    });
+    it("should calculate authors and last changes for a list with one query", async function () {
+      await new Promise((resolve, reject) => articleModule.calculateDerivedFromChangesForList([a, b, c], (err) => err ? reject(err) : resolve()));
+      checkDerived();
+    });
+    it("should count automated translations of a blog", async function () {
+      await blogModule.createNewBlog(testUser, { name: "DERIVED", status: "edit" }, true);
+      const blog = await blogModule.findOne({ name: "DERIVED" });
+      await new Promise((resolve, reject) => blog.calculateDerived(testUser, (err) => err ? reject(err) : resolve()));
+      should(blog.getAutoTranslate("DE")).eql(1);
+      should(blog.getAutoTranslate("EN")).eql(1);
+      should(blog.getUnEdited("DE")).eql(1);
+      should(blog.getUnEdited("EN")).eql(1);
     });
   });
   describe("Copy Articles", function() {

@@ -89,7 +89,9 @@ const testDevices = {
   }
 };
 
-async function getNewDriver(username, options = {}) {
+// Chrome options for a test device (see testDevices), headless when
+// TEST_HEADLESS=TRUE.
+function chromeOptionsFor(options) {
   const chromeOptions = new chrome.Options();
   const isHeadless = process.env.TEST_HEADLESS === "TRUE";
   const isLinux = process.platform === "linux";
@@ -130,9 +132,18 @@ async function getNewDriver(username, options = {}) {
   // them, so a slow external host stalled tests into the mocha timeout.
   // Server-side requests are mocked with nock and not affected.
   chromeOptions.addArguments("host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1");
+  return chromeOptions;
+}
 
-
-
+/**
+ * Start Chrome with the settings the UI tests depend on, without logging
+ * in. Used by getNewDriver and by tools/warm-up-browser.mjs, which starts
+ * Chrome once before the CI test run.
+ * @param {object} [options] `{ device }`, a key of testDevices
+ * @returns {Promise<WebDriver>} the driver; the caller quits it
+ */
+async function startBrowser(options = {}) {
+  const chromeOptions = chromeOptionsFor(options);
   // Pick the chromedriver port ourselves on 127.0.0.1. selenium probes a
   // free port on "::" only, which on macOS can hand out a port a Chrome
   // DevTools server already listens on at 127.0.0.1 - the session request
@@ -172,11 +183,37 @@ async function getNewDriver(username, options = {}) {
     });
     if (device.deviceMetrics.touch) await driver.sendDevToolsCommand("Emulation.setTouchEmulationEnabled", { enabled: true });
   }
-  const loginPage = new LoginPage(driver);
-  const loginChooserPage = new LoginChooserPage(driver);
   // pageLoad below the mocha timeout, so a hanging load fails with a stack
   // trace of the step instead of a bare "Timeout of 20000ms exceeded"
   await driver.manage().setTimeouts({ implicit: 700, script: 700, pageLoad: 10000 });
+  return driver;
+}
+
+// Setup steps of a UI test slower than this are reported on stderr, so a
+// hook that runs into the mocha timeout shows which step took the time.
+const SLOW_SETUP_MS = 10000;
+
+function reportSlowStep(step, startedAt) {
+  const ms = Math.round(performance.now() - startedAt);
+  if (ms > SLOW_SETUP_MS) console.error(`UI test setup: ${step} took ${ms} ms`);
+}
+
+/**
+ * Start Chrome (see startBrowser) and log in as `username` (password =
+ * user name, htaccess login of the test config).
+ * @param {string} username OSM user name of the test user
+ * @param {object} [options] `{ device }`, a key of testDevices; a small
+ *   device also gets the `osmbc_view` cookie of its view
+ * @returns {Promise<WebDriver>} logged-in driver; quit it with safeQuit
+ */
+async function getNewDriver(username, options = {}) {
+  let startedAt = performance.now();
+  const driver = await startBrowser(options);
+  reportSlowStep("browser start", startedAt);
+  const device = options.device && testDevices[options.device];
+  const loginPage = new LoginPage(driver);
+  const loginChooserPage = new LoginChooserPage(driver);
+  startedAt = performance.now();
   try {
     await driver.get(osmbcLink("/osmbc"));
     await loginChooserPage.clickHtAccessLogin();
@@ -202,6 +239,7 @@ async function getNewDriver(username, options = {}) {
     }
     throw err;
   }
+  reportSlowStep("login", startedAt);
   return driver;
 }
 
@@ -215,4 +253,4 @@ async function safeQuit(driver) {
   }
 }
 
-export { getNewDriver, safeQuit };
+export { getNewDriver, startBrowser, safeQuit };
