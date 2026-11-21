@@ -195,8 +195,8 @@
               </div>
               <div class="form-group">
                 <form id="reviewDE" name="reviewDE" action="/blog/WN290/setReviewComment" method="post">
-                  <div class="col-md-8"><input class="d-none form-control" type="text" name="text" value="reviewing..." id="reviewCommentDE" placeholder="Please Type your Review here"><input class="d-none" type="text" name="lang" value="DE"></div>
-                  <div class="col-md-4"><button class="btn btn-lg btn-primary" id="reviewButtonDE" type="submit">Start Personal Review</button></div>
+                  <div class="col-md-8"><input class="d-none" type="text" name="lang" value="DE"></div>
+                  <div class="col-md-4"><button class="btn btn-lg btn-primary" id="reviewButtonDE" type="submit" name="action" value="startpersonalreview">Start Personal Review</button></div>
                 </form>
               </div>
             </div>
@@ -238,8 +238,8 @@
               </div>
               <div class="form-group">
                 <form id="reviewEN" name="reviewEN" action="/blog/WN290/setReviewComment" method="post">
-                  <div class="col-md-8"><input class="d-none form-control" type="text" name="text" value="reviewing..." id="reviewCommentEN" placeholder="Please Type your Review here"><input class="d-none" type="text" name="lang" value="EN"></div>
-                  <div class="col-md-4"><button class="btn btn-lg btn-primary" id="reviewButtonEN" type="submit">Start Personal Review</button></div>
+                  <div class="col-md-8"><input class="d-none" type="text" name="lang" value="EN"></div>
+                  <div class="col-md-4"><button class="btn btn-lg btn-primary" id="reviewButtonEN" type="submit" name="action" value="startpersonalreview">Start Personal Review</button></div>
                 </form>
               </div>
             </div>
@@ -4217,11 +4217,6 @@ See where the roads are exciting (or boring) [[1]](#wn290_Kurvigkeit) |  [tortuO
       });
       $(document).on("input", "[data-review-text]", function() {
         document.getElementById("reviewButton" + this.dataset.reviewText).disabled = (this.value === "");
-      });
-      $(document).on("click", "[data-review-stop]", function() {
-        const lang = this.dataset.reviewStop;
-        document.getElementById("reviewComment" + lang).value = "delete";
-        document.getElementById("review" + lang).submit();
       });
 
       // status buttons of a language (blogReviewButtons); Close and Did Export

@@ -301,17 +301,36 @@ describe("routes/blog", function() {
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const texts = async () => (await blogModule.findOne({ name: "WN333" })).reviewCommentEN.map(c => c.text);
 
-      await client.post(url, { lang: "EN", text: "reviewing..." });
-      await client.post(url, { lang: "EN", text: "reviewing..." });
+      await client.post(url, { lang: "EN", action: "startpersonalreview" });
+      await client.post(url, { lang: "EN", action: "startpersonalreview" });
       should(await texts()).eql(["reviewing..."]);
-      await client.post(url, { lang: "EN", text: "looks good" });
+      await client.post(url, { lang: "EN", action: "comment", text: "looks good" });
       should(await texts()).eql(["looks good"]);
 
-      await client.post(url, { lang: "EN", text: "reviewing..." });
+      await client.post(url, { lang: "EN", action: "startpersonalreview" });
       should(await texts()).eql(["looks good", "reviewing..."]);
-      await client.post(url, { lang: "EN", text: "delete" });
-      await client.post(url, { lang: "EN", text: "delete" });
+      await client.post(url, { lang: "EN", action: "stoppersonalreview", text: "typed, then stopped" });
+      await client.post(url, { lang: "EN", action: "stoppersonalreview" });
       should(await texts()).eql(["looks good"]);
+    });
+    it("should keep the button values as plain comments", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      await client.post(url, { lang: "EN", action: "comment", text: "delete" });
+      await client.post(url, { lang: "EN", text: "stoppersonalreview" });
+
+      const blog = await blogModule.findOne({ name: "WN333" });
+      should(blog.reviewCommentEN.map(c => c.text)).eql(["delete", "stoppersonalreview"]);
+    });
+    it("should refuse an unknown action", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.post(url, { lang: "EN", action: "deleteallreviews", text: "x" });
+
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should(body.data).containEql("Unknown action &gt;deleteallreviews&lt;");
+      const blog = await blogModule.findOne({ name: "WN333" });
+      should(blog.reviewCommentEN).be.undefined();
     });
     it("should deny denied access user",
       testutil.checkPostUrlWithUser({
