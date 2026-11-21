@@ -4,6 +4,7 @@
 
 import nock from "nock";
 import should from "should";
+import sinon from "sinon";
 import fs from "fs";
 import path from "path";
 import HttpStatus from "http-status-codes";
@@ -78,8 +79,52 @@ describe("routes/blog", function() {
 
 
 
+  describe("unknown blog", function () {
+    const requests = [
+      ["get", "/blog/WN9999"],
+      ["get", "/blog/WN9999/stat"],
+      ["get", "/blog/WN9999/preview"],
+      ["get", "/blog/WN9999/Review"],
+      ["get", "/blog/edit/WN9999"],
+      ["post", "/blog/edit/WN9999"],
+      ["post", "/blog/WN9999/setLangStatus"],
+      ["post", "/blog/WN9999/setReviewComment"]
+    ];
+    for (const [method, path] of requests) {
+      it(`should answer ${method.toUpperCase()} ${path} with 404`, async function () {
+        const client = testutil.getWrappedAxiosClient();
+        await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+        const body = await client[method](baseLink + path, { lang: "DE", action: "startreview", text: "x" });
+        should(body.status).eql(HttpStatus.NOT_FOUND);
+        should(body.data).containEql("Blog &gt;WN9999&lt; does not exist");
+      });
+    }
+    it("should check the access rights first",
+      testutil.checkUrlWithUser({
+        url: baseLink + "/blog/WN9999",
+        username: "TestUserDenied",
+        password: "TestUserDenied",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "OSM User >TestUserDenied< has no access rights"
+      }));
+  });
   describe("route GET /blog/edit/:blog_id", function () {
     const url = baseLink + "/blog/edit/WN333";
+    it("should only redirect for edit=false", async function () {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const errorSpy = sinon.spy(config.logger, "error");
+      try {
+        const body = await client.get(url + "?edit=false");
+        should(body.status).eql(HttpStatus.MOVED_TEMPORARILY);
+        should(body.headers.location).eql("/blog/edit/WN333");
+        // the page was rendered into the already sent redirect before
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        should(errorSpy.called).be.false();
+      } finally {
+        errorSpy.restore();
+      }
+    });
     it("should allow full user", async function () {
       const client = testutil.getWrappedAxiosClient();
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
@@ -693,7 +738,7 @@ describe("routes/blog", function() {
       const body = await client.get(baseLink + "/blog/WN999");
 
       should(body.status).eql(404);
-      body.data.should.containEql('<h1 id="errorTitle">Page Not Found /blog/WN999</h1>');
+      body.data.should.containEql('<h1 id="errorTitle">Blog &gt;WN999&lt; does not exist</h1>');
     });
     it("should call next if blog exists twice", async function () {
       await blogModule.createNewBlog({ OSMUser: "test" }, { name: "WN333" });
