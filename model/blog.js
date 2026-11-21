@@ -576,84 +576,81 @@ class Blog {
    * @param {function(Error=)} callback
    */
   closeLanguage(lang, user, callback) {
-    this._setLanguageClosed(lang, user, true, callback);
+    debug("closeLanguage");
+    this._changeCloseState(lang, user, true, {
+      check: (cb) => this.checkClosable(lang, user, cb)
+    }, callback);
   }
 
   /**
-   * Reopen a closed language (status button "Edit"): drops a review that
-   * only consists of the start marker and the export markers of it.
+   * Reopen a closed language (status button "Edit"). The language has to
+   * be exported again, a review that was only started is dropped; real
+   * review comments stay.
    * @param {string} lang configured language id, else error 400
    * @param {object} user acting user (OSMUser)
    * @param {function(Error=)} callback
    */
   reopenLanguage(lang, user, callback) {
-    this._setLanguageClosed(lang, user, false, callback);
+    debug("reopenLanguage");
+    this._changeCloseState(lang, user, false, {
+      apply: () => {
+        this._dropReviewIfOnlyStarted(lang);
+        this._resetExportState(lang);
+      }
+    }, callback);
   }
 
   /**
-   * Shared code of closeLanguage / reopenLanguage.
+   * Frame of closeLanguage / reopenLanguage: does nothing if `close<lang>`
+   * is already `closed`; otherwise `steps.check` (may refuse), broadcast,
+   * set the field, `steps.apply`, save.
    * @param {string} lang configured language id, else error 400
    * @param {object} user acting user (OSMUser)
-   * @param {boolean} closed true = close, false = reopen
+   * @param {boolean} closed new value of `close<lang>`
+   * @param {{check: function(function(Error=))=, apply: function()=}} steps
    * @param {function(Error=)} callback
    */
-  _setLanguageClosed(lang, user, closed, callback) {
-    debug("_setLanguageClosed");
-    assert(typeof (user) === "object");
-    assert(typeof (closed) === "boolean");
+  _changeCloseState(lang, user, closed, steps, callback) {
     const languageError = checkLanguage(lang);
     if (languageError) return callback(languageError);
-
+    assert(typeof (user) === "object");
+    if (this["close" + lang] === closed) return callback();
+    assert(this.id);
     const self = this;
-    const closeField = "close" + lang;
-    const reviewField = "reviewComment" + lang;
-
-    if (self[closeField] === closed) return callback();
-    assert(self.id);
-    assert(self.id !== 0);
     series([
-      function checkArticles(callback) {
-        // only closing is checked, reopening is always possible
-        if (closed !== true) return callback();
-        self.checkClosable(lang, user, callback);
-      },
-      function logEntry(callback) {
-        messageCenter.global.sendCloseStatus(user, self, lang, closed, callback);
-      },
-      function setCloseField(callback) {
-        self[closeField] = closed;
-        callback();
-      },
-      function removeReview(callback) {
-        // Blog is reopened, so delete any review information
-        // e.g. that review is started.
-        // if there is some "substantial" review information (a review comment),
-        // keep it and do not delete anythingx
-        if (closed === false) {
-          if (self[reviewField] && self[reviewField].length === 0) {
-            delete self[reviewField];
-          }
-          if (self[reviewField] && self[reviewField].length === 1) {
-            if (self[reviewField][0].text === "startreview") {
-              delete self[reviewField];
-            }
-          }
-          self["exported" + lang] = false;
-          // Clear exportedBy marker for this language across all export profiles
-          if (self.exportedBy && typeof self.exportedBy === "object") {
-            for (const profile of Object.keys(self.exportedBy)) {
-              if (self.exportedBy[profile] && typeof self.exportedBy[profile] === "object") {
-                delete self.exportedBy[profile][lang];
-              }
-            }
-          }
-        }
-        callback();
-      }
-    ], function finalFunction(err) {
+      (cb) => (steps.check ? steps.check(cb) : cb()),
+      (cb) => messageCenter.global.sendCloseStatus(user, self, lang, closed, cb)
+    ], function(err) {
       if (err) return callback(err);
+      self["close" + lang] = closed;
+      if (steps.apply) steps.apply();
       self.save(callback);
     });
+  }
+
+  /**
+   * Remove the review list of `lang` if it holds nothing but the
+   * "review started" marker (or nothing at all).
+   * @param {string} lang language id
+   */
+  _dropReviewIfOnlyStarted(lang) {
+    const reviews = this["reviewComment" + lang];
+    if (!Array.isArray(reviews)) return;
+    const onlyStarted = reviews.length === 1 && reviews[0].text === REVIEW_STARTED;
+    if (reviews.length === 0 || onlyStarted) delete this["reviewComment" + lang];
+  }
+
+  /**
+   * Mark `lang` as not exported: `exported<lang>` and the per-profile
+   * markers in `exportedBy`.
+   * @param {string} lang language id
+   */
+  _resetExportState(lang) {
+    this["exported" + lang] = false;
+    if (!this.exportedBy || typeof this.exportedBy !== "object") return;
+    for (const markers of Object.values(this.exportedBy)) {
+      if (markers && typeof markers === "object") delete markers[lang];
+    }
   }
 
   /**
