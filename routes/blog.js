@@ -1,7 +1,7 @@
 
 
 import express from "express";
-import { BAD_REQUEST, CONFLICT } from "http-status-codes";
+import { BAD_REQUEST, CONFLICT, NOT_FOUND } from "http-status-codes";
 
 import async from "async";
 import { strict as assert } from "assert";
@@ -41,11 +41,20 @@ function findBlogId(req, res, next, id) {
   });
 }
 
+// Route middleware after the access check (router.param runs before it,
+// so the 404 must not come from findBlogId): every :blog_id route needs
+// an existing blog, its handler can rely on req.blog.
+function requireBlog(req, res, next) {
+  if (req.blog) return next();
+  const error = new Error("Blog >" + req.params.blog_id + "< does not exist");
+  error.status = NOT_FOUND;
+  return next(error);
+}
+
 
 function renderBlogStat(req, res, next) {
   debug("renderBlogStat");
   const blog = req.blog;
-  if (!blog) return next();
 
   const name = blog.name;
   let logs = {};
@@ -159,7 +168,6 @@ function renderBlogPreview(req, res, next) {
   debug("renderBlogPreview");
   if (req.session) req.session.articleReturnTo = req.originalUrl;
   const blog = req.blog;
-  if (!blog) return next();
 
   const returnToUrl = req.session ? req.session.articleReturnTo : req.originalUrl;
   const selectedExportProfile = (typeof req.query.exportProfile === "string") ? req.query.exportProfile : "";
@@ -213,7 +221,6 @@ function renderBlogPreviewHeader(req, res, next) {
   try {
     if (req.session) req.session.articleReturnTo = req.originalUrl;
     const blog = req.blog;
-    if (!blog) return next();
 
     function listify(result, value, index) {
       if (index === 0) return value;
@@ -254,7 +261,6 @@ function setReviewComment(req, res, next) {
   const user = req.user;
   const text = req.body.text;
 
-  if (!req.blog) return next();
   function redirectBack(err) {
     if (err) return next(err);
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
@@ -273,7 +279,6 @@ function editReviewComment(req, res, next) {
   const index = req.params.index;
 
 
-  if (!req.blog) return next();
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
@@ -293,7 +298,6 @@ const blogStatusActions = {
 function setBlogStatus(req, res, next) {
   debug("setBlogStatus");
 
-  if (!req.blog) return next();
   const action = req.body.action;
   if (!Object.hasOwn(blogStatusActions, action)) {
     const error = new Error("Unknown action >" + action + "<");
@@ -324,7 +328,6 @@ function renderBlogTab(req, res, next) {
   debug("renderBlogTab");
 
   const blog = req.blog;
-  if (!blog) return next();
 
   let tab = req.query.tab;
   if (!tab) tab = req.params.tab;
@@ -451,7 +454,6 @@ function copyAllArticles(req, res, next) {
   debug("copyCompleteLang");
 
   const blog = req.blog;
-  if (!blog) return next();
 
   const user = req.user;
 
@@ -469,7 +471,6 @@ function translateAllArticles(req, res, next) {
   debug("translateAllArticles");
 
   const blog = req.blog;
-  if (!blog) return next();
 
   const user = req.user;
 
@@ -498,11 +499,10 @@ function editBlogId(req, res, next) {
   debug("editBlogId");
   const blog = req.blog;
   assert(res.rendervar);
-  assert(blog);
   const params = {};
   if (req.query.edit) params.edit = req.query.edit;
   if (params.edit && params.edit === "false") {
-    res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
+    return res.redirect(htmlroot + "/blog/edit/" + req.params.blog_id);
   }
   blog._categories_yaml = yamlDump(blog.categories);
   res.set("content-type", "text/html");
@@ -526,7 +526,6 @@ function editBlogId(req, res, next) {
 function postBlogId(req, res, next) {
   debug("postBlogId");
   const blog = req.blog;
-  if (!blog) return next();
 
   let categories = null;
   try {
@@ -561,22 +560,22 @@ function postBlogId(req, res, next) {
 
 
 router.param("blog_id", findBlogId);
-router.get("/edit/:blog_id", auth.checkRole(["full"]), editBlogId);
-router.post("/edit/:blog_id", auth.checkRole(["full"]), postBlogId);
-router.post("/:blog_id/setReviewComment", auth.checkRole(["full"]), setReviewComment);
-router.post("/:blog_id/editReviewComment/:index", auth.checkRole(["full"]), editReviewComment);
-router.post("/:blog_id/setLangStatus", auth.checkRole(["full"]), setBlogStatus);
-router.post("/:blog_id/copy/:fromLang/:toLang", auth.checkRole(["full"]), copyAllArticles);
-router.post("/:blog_id/translate/:service/:fromLang/:toLang/", auth.checkRole(["full"]), translateAllArticles);
+router.get("/edit/:blog_id", auth.checkRole(["full"]), requireBlog, editBlogId);
+router.post("/edit/:blog_id", auth.checkRole(["full"]), requireBlog, postBlogId);
+router.post("/:blog_id/setReviewComment", auth.checkRole(["full"]), requireBlog, setReviewComment);
+router.post("/:blog_id/editReviewComment/:index", auth.checkRole(["full"]), requireBlog, editReviewComment);
+router.post("/:blog_id/setLangStatus", auth.checkRole(["full"]), requireBlog, setBlogStatus);
+router.post("/:blog_id/copy/:fromLang/:toLang", auth.checkRole(["full"]), requireBlog, copyAllArticles);
+router.post("/:blog_id/translate/:service/:fromLang/:toLang/", auth.checkRole(["full"]), requireBlog, translateAllArticles);
 
 
 router.get("/create", auth.checkRole(["full"]), createBlog);
 router.get("/list", auth.checkRole(["full"]), renderBlogList);
-router.get("/:blog_id", auth.checkRole(["full"]), renderBlogTab);
-router.get("/:blog_id/stat", auth.checkRole(["full"]), renderBlogStat);
-router.get("/:blog_id/preview", auth.checkRole(["full"]), renderBlogPreview);
-router.get("/:blog_id/previewHeader", auth.checkRole(["full"]), renderBlogPreviewHeader);
-router.get("/:blog_id/:tab", auth.checkRole(["full"]), renderBlogTab);
+router.get("/:blog_id", auth.checkRole(["full"]), requireBlog, renderBlogTab);
+router.get("/:blog_id/stat", auth.checkRole(["full"]), requireBlog, renderBlogStat);
+router.get("/:blog_id/preview", auth.checkRole(["full"]), requireBlog, renderBlogPreview);
+router.get("/:blog_id/previewHeader", auth.checkRole(["full"]), requireBlog, renderBlogPreviewHeader);
+router.get("/:blog_id/:tab", auth.checkRole(["full"]), requireBlog, renderBlogTab);
 
 
 
