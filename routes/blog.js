@@ -240,20 +240,28 @@ function renderBlogPreviewHeader(req, res, next) {
   }
 }
 
+// The review form sends one field "text": the comment, or one of two
+// values its buttons set ("Start Personal Review", "Stop review").
+const personalReviewTexts = {
+  "reviewing...": (blog, lang, user, cb) => blog.startPersonalReview(lang, user, cb),
+  delete: (blog, lang, user, cb) => blog.stopPersonalReview(lang, user, cb)
+};
+
 function setReviewComment(req, res, next) {
   debug("setReviewComment");
 
   const lang = req.body.lang;
   const user = req.user;
-  const data = req.body.text;
-
+  const text = req.body.text;
 
   if (!req.blog) return next();
-  req.blog.setReviewComment(lang, user, data, function(err) {
+  function redirectBack(err) {
     if (err) return next(err);
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
-  });
+  }
+  if (Object.hasOwn(personalReviewTexts, text)) return personalReviewTexts[text](req.blog, lang, user, redirectBack);
+  req.blog.addReviewComment(lang, user, text, redirectBack);
 }
 
 function editReviewComment(req, res, next) {
@@ -273,49 +281,34 @@ function editReviewComment(req, res, next) {
   });
 }
 
+// action of a status button (blogReviewButtons) -> blog method
+const blogStatusActions = {
+  startreview: (blog, lang, user, cb) => blog.startReview(lang, user, cb),
+  markexported: (blog, lang, user, cb) => blog.markExported(lang, user, cb),
+  deleteallreviews: (blog, lang, user, cb) => blog.deleteAllReviews(lang, user, cb),
+  closelang: (blog, lang, user, cb) => blog.closeBlog({ lang: lang, user: user, status: true }, cb),
+  editlang: (blog, lang, user, cb) => blog.closeBlog({ lang: lang, user: user, status: false }, cb)
+};
+
 function setBlogStatus(req, res, next) {
   debug("setBlogStatus");
 
-  const lang = req.body.lang;
-  const user = req.user;
-
   if (!req.blog) return next();
-
-  function finalFunction(err) {
+  const action = req.body.action;
+  if (!Object.hasOwn(blogStatusActions, action)) {
+    const error = new Error("Unknown action >" + action + "<");
+    error.status = BAD_REQUEST;
+    return next(error);
+  }
+  blogStatusActions[action](req.blog, req.body.lang, req.user, function(err) {
     // e.g. close refused because articles are not written yet:
     // the page shows the message to the editor
     if (err && err.status === CONFLICT) {
       return res.status(CONFLICT).type("text/plain").send(err.message);
     }
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
     res.send("OK");
-  }
-
-  // Start Review
-  if (req.body.action === "startreview") {
-    return req.blog.setReviewComment(lang, user, "startreview", finalFunction);
-  }
-  // Mark Exported
-  if (req.body.action === "markexported") {
-    return req.blog.setReviewComment(lang, user, "markexported", finalFunction);
-  }
-
-  // Close Language
-  if (req.body.action === "closelang") {
-    return req.blog.closeBlog({ lang: lang, user: user, status: true }, finalFunction);
-  }
-  // reopen Language
-  if (req.body.action === "editlang") {
-    return req.blog.closeBlog({ lang: lang, user: user, status: false }, finalFunction);
-  }
-  if (req.body.action === "deleteallreviews") {
-    return req.blog.setReviewComment(lang, user, "deleteallreviews", finalFunction);
-  }
-  const error = new Error("Unknown action >" + req.body.action + "<");
-  error.status = BAD_REQUEST;
-  return next(error);
+  });
 }
 
 // close problems of every language that is still open, and whether Auto

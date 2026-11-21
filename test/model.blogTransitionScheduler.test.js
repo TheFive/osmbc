@@ -863,7 +863,7 @@ describe("model/blogTransitionScheduler", function() {
         sweepAt(["12:00", "15:00"], function(err, blog) {
           should.not.exist(err);
           should(blog.closeDE).not.equal(true);
-          blog.setReviewComment("DE", { OSMUser: "reviewerB" }, "ok", function(err) {
+          blog.addReviewComment("DE", { OSMUser: "reviewerB" }, "ok", function(err) {
             should.not.exist(err);
             sweepAt(["15:30"], function(err, blog) {
               should.not.exist(err);

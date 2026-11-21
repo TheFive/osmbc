@@ -375,7 +375,7 @@ function runAutoReviewStartRule(callback) {
         if (err) return cbBlog(err);
         eachSeries(planReviewStart(blog, ruleConfig).start, function(lang, cbLanguage) {
           debug("Auto review start language %s for blog %s", lang, blog.name);
-          blog.setReviewComment(lang, actor, "startreview", function(err) {
+          blog.startReview(lang, actor, function(err) {
             // a problem in one language should not stop the others
             if (err) config.logger.error(err);
             cbLanguage();
