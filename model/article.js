@@ -945,7 +945,7 @@ function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
     pgMap.findById(id, { table: "article", create: create }, function(err, result) {
-      if (err) callback(err);
+      if (err) return callback(err);
       if (!result) return callback(null, result);
 
       __findOne({ name: result.blog }, function(err, blog) {

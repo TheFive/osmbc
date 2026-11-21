@@ -6,6 +6,7 @@ import _debug from "debug";
 import async from "async";
 import should from "should";
 import nock from "nock";
+import sinon from "sinon";
 
 
 import testutil from "./testutil.js";
@@ -15,6 +16,7 @@ import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import messageCenter from "../notification/messageCenter.js";
+import pgMap from "../model/pgMap.js";
 const debug = _debug("OSMBC:test:article.test");
 
 
@@ -658,6 +660,21 @@ describe("model/article", function() {
             bddone();
           });
         });
+      });
+    });
+  });
+  describe("findById with a database error", function() {
+    afterEach(function() { sinon.restore(); });
+    it("should call the callback only once, with the error", function(bddone) {
+      sinon.stub(pgMap, "findById").callsFake(function(id, module, callback) {
+        callback(new Error("db down"));
+      });
+      const calls = [];
+      articleModule.findById(1, function(...args) { calls.push(args); });
+      setImmediate(function() {
+        should(calls.length).eql(1);
+        should(calls[0][0].message).eql("db down");
+        bddone();
       });
     });
   });

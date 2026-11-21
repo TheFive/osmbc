@@ -1477,7 +1477,7 @@ export function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
     pgMap.findById(id, { table: "blog", create: create }, function(err, result) {
-      if (err) callback(err);
+      if (err) return callback(err);
       return callback(null, result);
     });
   }

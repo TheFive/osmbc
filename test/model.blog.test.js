@@ -12,6 +12,7 @@ import logModule from "../model/logModule.js";
 import blogModule from "../model/blog.js";
 import userModule from "../model/user.js";
 import articleModule from "../model/article.js";
+import pgMap from "../model/pgMap.js";
 import blogRenderer from "../render/BlogRenderer.js";
 import { ExportLogWriterForTestOnly } from "../notification/exportLogWriter.js";
 
@@ -712,6 +713,21 @@ describe("model/blog", function() {
             });
           });
         });
+      });
+    });
+  });
+  describe("findById with a database error", function() {
+    afterEach(function() { sinon.restore(); });
+    it("should call the callback only once, with the error", function(bddone) {
+      sinon.stub(pgMap, "findById").callsFake(function(id, module, callback) {
+        callback(new Error("db down"));
+      });
+      const calls = [];
+      blogModule.findById(1, function(...args) { calls.push(args); });
+      setImmediate(function() {
+        should(calls.length).eql(1);
+        should(calls[0][0].message).eql("db down");
+        bddone();
       });
     });
   });
