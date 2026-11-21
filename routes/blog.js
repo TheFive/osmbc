@@ -247,27 +247,29 @@ function renderBlogPreviewHeader(req, res, next) {
   }
 }
 
-// The review form sends one field "text": the comment, or one of two
-// values its buttons set ("Start Personal Review", "Stop review").
-const personalReviewTexts = {
-  "reviewing...": (blog, lang, user, cb) => blog.startPersonalReview(lang, user, cb),
-  delete: (blog, lang, user, cb) => blog.stopPersonalReview(lang, user, cb)
+// action of a button of the review form (views/blog/blogheader.pug)
+const reviewFormActions = {
+  startpersonalreview: (blog, lang, user, text, cb) => blog.startPersonalReview(lang, user, cb),
+  stoppersonalreview: (blog, lang, user, text, cb) => blog.stopPersonalReview(lang, user, cb),
+  comment: (blog, lang, user, text, cb) => blog.addReviewComment(lang, user, text, cb)
 };
 
 function setReviewComment(req, res, next) {
   debug("setReviewComment");
 
-  const lang = req.body.lang;
-  const user = req.user;
-  const text = req.body.text;
-
-  function redirectBack(err) {
+  // without action: a page loaded before the buttons sent one, its
+  // only field is the comment - keep it instead of losing the text
+  const action = req.body.action ?? "comment";
+  if (!Object.hasOwn(reviewFormActions, action)) {
+    const error = new Error("Unknown action >" + action + "<");
+    error.status = BAD_REQUEST;
+    return next(error);
+  }
+  reviewFormActions[action](req.blog, req.body.lang, req.user, req.body.text, function(err) {
     if (err) return next(err);
     const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
     res.redirect(referer);
-  }
-  if (Object.hasOwn(personalReviewTexts, text)) return personalReviewTexts[text](req.blog, lang, user, redirectBack);
-  req.blog.addReviewComment(lang, user, text, redirectBack);
+  });
 }
 
 function editReviewComment(req, res, next) {
