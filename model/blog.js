@@ -238,7 +238,6 @@ class Blog {
       }
     ], function (err) {
       if (err) return callback(err);
-      self.startCloseTimer();
       self.save(callback);
     });
   }
@@ -567,67 +566,100 @@ class Blog {
     });
   }
 
-  closeBlog(options, callback) {
-    debug("closeBlog");
-    assert(typeof (options.user) === "object");
-    assert(typeof (options.status) === "boolean");
-    const languageError = checkLanguage(options.lang);
-    if (languageError) return callback(languageError);
+  /**
+   * Close one language of the blog (status button "Close", Auto Close).
+   * Refused with 409 (CONFLICT) while the language has close problems
+   * (see getCloseProblems). The whole blog is closed by setting its
+   * `status` to "closed" with setAndSave.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  closeLanguage(lang, user, callback) {
+    debug("closeLanguage");
+    this._changeCloseState(lang, user, true, {
+      check: (cb) => this.checkClosable(lang, user, cb)
+    }, callback);
+  }
 
-    const self = this;
-    const closeField = "close" + options.lang;
-    const reviewField = "reviewComment" + options.lang;
-
-    if (self[closeField] === options.status) return callback();
-    assert(self.id);
-    assert(self.id !== 0);
-    series([
-      function checkArticles(callback) {
-        // only closing is checked, reopening is always possible
-        if (options.status !== true) return callback();
-        self.checkClosable(options.lang, options.user, callback);
-      },
-      function logEntry(callback) {
-        messageCenter.global.sendCloseStatus(options.user, self, options.lang, options.status, callback);
-      },
-      function setCloseField(callback) {
-        self[closeField] = options.status;
-        callback();
-      },
-      function removeReview(callback) {
-        // Blog is reopened, so delete any review information
-        // e.g. that review is started.
-        // if there is some "substantial" review information (a review comment),
-        // keep it and do not delete anythingx
-        if (options.status === false) {
-          if (self[reviewField] && self[reviewField].length === 0) {
-            delete self[reviewField];
-          }
-          if (self[reviewField] && self[reviewField].length === 1) {
-            if (self[reviewField][0].text === "startreview") {
-              delete self[reviewField];
-            }
-          }
-          self["exported" + options.lang] = false;
-          // Clear exportedBy marker for this language across all export profiles
-          if (self.exportedBy && typeof self.exportedBy === "object") {
-            for (const profile of Object.keys(self.exportedBy)) {
-              if (self.exportedBy[profile] && typeof self.exportedBy[profile] === "object") {
-                delete self.exportedBy[profile][options.lang];
-              }
-            }
-          }
-        }
-        callback();
+  /**
+   * Reopen a closed language (status button "Edit"). The language has to
+   * be exported again, a review that was only started is dropped; real
+   * review comments stay.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {function(Error=)} callback
+   */
+  reopenLanguage(lang, user, callback) {
+    debug("reopenLanguage");
+    this._changeCloseState(lang, user, false, {
+      apply: () => {
+        this._dropReviewIfOnlyStarted(lang);
+        this._resetExportState(lang);
       }
-    ], function finalFunction(err) {
+    }, callback);
+  }
+
+  /**
+   * Frame of closeLanguage / reopenLanguage: does nothing if `close<lang>`
+   * is already `closed`; otherwise `steps.check` (may refuse), broadcast,
+   * set the field, `steps.apply`, save.
+   * @param {string} lang configured language id, else error 400
+   * @param {object} user acting user (OSMUser)
+   * @param {boolean} closed new value of `close<lang>`
+   * @param {{check: function(function(Error=))=, apply: function()=}} steps
+   * @param {function(Error=)} callback
+   */
+  _changeCloseState(lang, user, closed, steps, callback) {
+    const languageError = checkLanguage(lang);
+    if (languageError) return callback(languageError);
+    assert(typeof (user) === "object");
+    if (this["close" + lang] === closed) return callback();
+    assert(this.id);
+    const self = this;
+    series([
+      (cb) => (steps.check ? steps.check(cb) : cb()),
+      (cb) => messageCenter.global.sendCloseStatus(user, self, lang, closed, cb)
+    ], function(err) {
       if (err) return callback(err);
+      self["close" + lang] = closed;
+      if (steps.apply) steps.apply();
       self.save(callback);
     });
   }
 
-  autoClose(cb) {
-    debug("autoClose");
+  /**
+   * Remove the review list of `lang` if it holds nothing but the
+   * "review started" marker (or nothing at all).
+   * @param {string} lang language id
+   */
+  _dropReviewIfOnlyStarted(lang) {
+    const reviews = this["reviewComment" + lang];
+    if (!Array.isArray(reviews)) return;
+    const onlyStarted = reviews.length === 1 && reviews[0].text === REVIEW_STARTED;
+    if (reviews.length === 0 || onlyStarted) delete this["reviewComment" + lang];
+  }
+
+  /**
+   * Mark `lang` as not exported: `exported<lang>` and the per-profile
+   * markers in `exportedBy`.
+   * @param {string} lang language id
+   */
+  _resetExportState(lang) {
+    this["exported" + lang] = false;
+    if (!this.exportedBy || typeof this.exportedBy !== "object") return;
+    for (const markers of Object.values(this.exportedBy)) {
+      if (markers && typeof markers === "object") delete markers[lang];
+    }
+  }
+
+  /**
+   * Switch an open blog whose endDate has passed to "edit" (Auto Edit
+   * Mode); does nothing before endDate or without one.
+   * @param {function(Error=)} cb
+   */
+  startEditModeIfEnded(cb) {
+    debug("startEditModeIfEnded");
     if (!this.endDate) return cb();
 
     const time = new Date().getTime();
@@ -1401,11 +1433,6 @@ class Blog {
     return result;
   }
 
-  startCloseTimer() {
-    debug("startCloseTimer");
-    // Legacy no-op: timer orchestration is handled centrally in blogTransitionScheduler.
-  }
-
   getBlogName(lang) {
     if (lang === "DE") return "Wochennotiz";
     return "Weekly";
@@ -2083,30 +2110,30 @@ function createNewBlog(user, proto, noArticle, callback) {
 }
 
 
-let _autoCloseRunning = 0;
+let _autoEditModeRunning = 0;
 
 // Switch open blogs past their endDate to edit and create a new blog if
 // none is open. Whether this runs at all (Transition.AutoEditMode.enabled)
 // is decided by the caller, model/blogTransitionScheduler.js.
-function autoCloseBlog(callback) {
-  debug("autoCloseBlog");
+function runAutoEditMode(callback) {
+  debug("runAutoEditMode");
   // Do not run this function twice !
-  if (_autoCloseRunning > 0) return callback();
-  _autoCloseRunning = _autoCloseRunning + 1;
+  if (_autoEditModeRunning > 0) return callback();
+  _autoEditModeRunning = _autoEditModeRunning + 1;
 
 
 
 
   find({ status: "open" }, { column: "endDate", desc: false }, function(err, result) {
     if (err) {
-      _autoCloseRunning = _autoCloseRunning - 1;
+      _autoEditModeRunning = _autoEditModeRunning - 1;
       return callback(err);
     }
     assert(Array.isArray(result));
     series([
       function series1CloseAllBlogs(cb) {
         each(result, function(data, cb) {
-          data.autoClose(cb);
+          data.startEditModeIfEnded(cb);
         }, function finish() { cb(); });
       },
       function series2CreateNewBlog(cb) {
@@ -2120,7 +2147,7 @@ function autoCloseBlog(callback) {
         });
       }
     ], function seriesFinal(err) {
-      _autoCloseRunning = _autoCloseRunning - 1;
+      _autoEditModeRunning = _autoEditModeRunning - 1;
       callback(err);
     });
   });
@@ -2298,11 +2325,6 @@ const pg = pgObject;
 
 
 
-/* commented as it should be replaced by a central scheduler, that calls the autoCloseBlog function of the blog model and the autoCreateBlog function of the blog model
-export function startAllTimers(callback) {
-  debug("startAllTimers");
-  autoCloseBlog(callback);
-}*/
 
 
 export function getTBC() {
@@ -2338,7 +2360,7 @@ const blogModule = {
   create: create,
   sortArticles: sortArticles,
   sanitizeBlogKey: sanitizeBlogKey,
-  autoCloseBlog: autoCloseBlog,
+  runAutoEditMode: runAutoEditMode,
   calculateNewBlogDates: calculateNewBlogDates,
   createNewBlog: createNewBlog,
   getCategories: getGlobalCategories,

@@ -212,7 +212,7 @@ class Renderer {
 
       // articles without a real category assigned yet are unfinished
       // editorial work (same tier as empty markdown, see
-      // Blog.autoCloseBlog's statusCount), not intended publish content -
+      // runAutoEditMode's statusCount), not intended publish content -
       // skip them here too, in case this placeholder ever ends up
       // registered as one of the blog's own categories (real case: WN230).
       if (category === "-- no category yet --") continue;
@@ -241,7 +241,7 @@ class Renderer {
     delete articles["--unpublished--"];
     // articles without a real category assigned yet are unfinished
     // editorial work (same tier as empty markdown, see
-    // Blog.autoCloseBlog's statusCount), not intended publish content -
+    // runAutoEditMode's statusCount), not intended publish content -
     // drop them from the preview/export like unpublished articles, instead
     // of falling through to the "missing category" warning below.
     delete articles["-- no category yet --"];
