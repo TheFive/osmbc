@@ -117,9 +117,16 @@ all `_actual.html` files in the current directory.
 
 ## Lint rules for readability
 
-The goal: code that a person can read and change without help. ESLint
-(`eslint.config.js`) checks the application code (not `test/`, not
-`tools/`) for
+The goal: code that a person can read and change without help.
+**Good function names and small functions are the best
+documentation.** A function does one business action and its name says
+which (`closeLanguage` / `reopenLanguage`, not `closeBlog({ status })`);
+a boolean or a command string that switches between actions is a sign
+that it wants to be two functions. Helper steps get a name of their own
+(`_resetExportState`) instead of a comment above an `if` block.
+
+ESLint (`eslint.config.js`) checks the application code (not `test/`,
+not `tools/`) for
 
 | Rule | Limit | Why |
 |---|---|---|

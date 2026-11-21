@@ -70,6 +70,10 @@ that matter most, in short:
 
 ## Readability rules (ESLint)
 
+- Good function names and small functions are the best documentation:
+  one business action per function, named after it; a boolean or command
+  string that switches between actions means two functions
+  (`docs/development.md` "Lint rules for readability").
 - New or changed application code keeps the limits in `eslint.config.js`
   (complexity 15, depth 4, 80 lines per function, 5 params) and gets a
   JSDoc comment on every exported function/class/method (what it does,
