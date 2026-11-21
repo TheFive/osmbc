@@ -234,7 +234,7 @@ describe("model/blog", function() {
         },
         function (cb1) {
           should(newBlog.isEditable("DE")).be.True();
-          newBlog.setReviewComment("DE", { OSMUser: "Test" }, "startreview", cb1);
+          newBlog.startReview("DE", { OSMUser: "Test" }, cb1);
         },
         function (cb1) {
           blogModule.find({ name: "test" }, function(err, result) {
@@ -271,15 +271,15 @@ describe("model/blog", function() {
         function (cb1) { blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); }); },
         function (cb1) {
           should(newBlog.isEditable("EN")).be.True();
-          newBlog.setReviewComment("EN", { OSMUser: "Test" }, "startreview", cb1);
+          newBlog.startReview("EN", { OSMUser: "Test" }, cb1);
         },
         function (cb1) {
-          newBlog.setReviewComment("EN", { OSMUser: "Test" }, "I have done a review", cb1);
+          newBlog.addReviewComment("EN", { OSMUser: "Test" }, "I have done a review", cb1);
         },
         function (cb1) { blogModule.findOne({ name: "test" }, function(err, result) { newBlog = result; cb1(err); }); },
         function (cb2) {
           should(newBlog.isEditable("EN")).be.True();
-          newBlog.setReviewComment("EN", { OSMUser: "Test" }, "markexported", cb2);
+          newBlog.markExported("EN", { OSMUser: "Test" }, cb2);
         },
         function (cb1) {
           should(newBlog.isEditable("EN")).be.False();
@@ -615,7 +615,7 @@ describe("model/blog", function() {
         should.not.exist(err);
         should.exist(newBlog);
         const id = newBlog.id;
-        newBlog.setReviewComment("DE", { OSMUser: "user" }, "it is approved.", function(err) {
+        newBlog.addReviewComment("DE", { OSMUser: "user" }, "it is approved.", function(err) {
           should.not.exist(err);
           testutil.getJsonWithId("blog", id, function(err, result) {
             should.not.exist(err);
@@ -652,7 +652,7 @@ describe("model/blog", function() {
         should.not.exist(err);
         should.exist(newBlog);
         const id = newBlog.id;
-        newBlog.setReviewComment("DE", { OSMUser: "user" }, "it is approved.", function(err) {
+        newBlog.addReviewComment("DE", { OSMUser: "user" }, "it is approved.", function(err) {
           should.not.exist(err);
 
           blogModule.findById(id, function(err, blog) {
@@ -697,13 +697,13 @@ describe("model/blog", function() {
         should.not.exist(err);
         should.exist(newBlog);
         const id = newBlog.id;
-        newBlog.setReviewComment("DE", { OSMUser: "user" }, "it is approved.", function(err) {
+        newBlog.addReviewComment("DE", { OSMUser: "user" }, "it is approved.", function(err) {
           should.not.exist(err);
 
           blogModule.findById(id, function(err, blog) {
             should.not.exist(err);
             should(blog.getStatus("DE")).eql("Review DE");
-            blog.setReviewComment("DE", { OSMUser: "user2" }, "deleteallreviews", function(err) {
+            blog.deleteAllReviews("DE", { OSMUser: "user2" }, function(err) {
               should.not.exist(err);
               blogModule.findById(id, function(err, blog) {
                 should.not.exist(err);

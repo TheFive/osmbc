@@ -368,7 +368,7 @@ describe("notification/mailReceiver", function() {
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         MailReceiverForTestOnly.transporter.sendMail = mailChecker;
-        blog.setReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
+        blog.addReviewComment("ES", { OSMUser: "testuser" }, "I have reviewed", function(err) {
           should.not.exist(err);
 
           const expectedMail = '<h2>Blog blog(ES) was reviewed by testuser</h2><p><span>Blog </span><a href="https://localhost:35043/blog/blog">blog</a><span> was changed by testuser</span></p><p>Review comment is:</p><p>I have reviewed</p>';
@@ -391,7 +391,7 @@ describe("notification/mailReceiver", function() {
         // reset sinon spy:
         const mailChecker = sinon.spy(function(obj, doit) { return doit(null, { response: "t" }); });
         MailReceiverForTestOnly.transporter.sendMail = mailChecker;
-        blog.setReviewComment("ES", { OSMUser: "testuser" }, "markexported", function(err) {
+        blog.markExported("ES", { OSMUser: "testuser" }, function(err) {
           should.not.exist(err);
           const expectedMail = '<h2>Blog blog(ES) has finished review.</h2><p>testuser has finished review for Blog<a href="https://localhost:35043/blog/blog">blog</a></p>';
           const expectedText = "BLOG BLOG(ES) HAS FINISHED REVIEW.\n\ntestuser has finished review for Blogblog [https://localhost:35043/blog/blog]";
