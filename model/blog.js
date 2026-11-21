@@ -47,6 +47,19 @@ function getGlobalCategories() {
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
 }
 
+/**
+ * Check a language id before it becomes part of a field name
+ * (`reviewComment<lang>`, `close<lang>`, `exported<lang>` …).
+ * @param {string} lang language id from the caller, e.g. "DE"
+ * @returns {Error|null} error with status 400 (BAD_REQUEST) for a language
+ *   that is not configured, null if the language is known
+ */
+function checkLanguage(lang) {
+  if (typeof lang === "string" && Object.hasOwn(language.getLanguages(), lang)) return null;
+  const error = new Error("Unknown language >" + lang + "<");
+  error.status = BAD_REQUEST;
+  return error;
+}
 
 function sanitizeBlogKey(blog) {
   if (blog === undefined || blog === null) return blog;
@@ -241,6 +254,8 @@ class Blog {
 
   setReviewComment(lang, user, data, callback) {
     debug("reviewComment");
+    const languageError = checkLanguage(lang);
+    if (languageError) return callback(languageError);
     const self = this;
     const rc = "reviewComment" + lang;
     const exported = "exported" + lang;
@@ -467,8 +482,9 @@ class Blog {
   closeBlog(options, callback) {
     debug("closeBlog");
     assert(typeof (options.user) === "object");
-    assert(typeof (options.lang) === "string");
     assert(typeof (options.status) === "boolean");
+    const languageError = checkLanguage(options.lang);
+    if (languageError) return callback(languageError);
 
     const self = this;
     const closeField = "close" + options.lang;

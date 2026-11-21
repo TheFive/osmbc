@@ -1,7 +1,7 @@
 
 
 import express from "express";
-import { CONFLICT } from "http-status-codes";
+import { BAD_REQUEST, CONFLICT } from "http-status-codes";
 
 import async from "async";
 import { strict as assert } from "assert";
@@ -313,7 +313,9 @@ function setBlogStatus(req, res, next) {
   if (req.body.action === "deleteallreviews") {
     return req.blog.setReviewComment(lang, user, "deleteallreviews", finalFunction);
   }
-  return next(new Error("Unknown Status Combination, Please Contact the Author"));
+  const error = new Error("Unknown action >" + req.body.action + "<");
+  error.status = BAD_REQUEST;
+  return next(error);
 }
 
 // close problems of every language that is still open, and whether Auto
