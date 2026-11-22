@@ -108,11 +108,11 @@ describe("model/link", function() {
       should((await knownResults([goneUrl]))[goneUrl]).eql({ state: "broken", status: 404, exists: false, by: "auto" });
     });
 
-    it("should be valid for 6 months", function() {
+    it("should be valid for 180 days", function() {
       const l = new linkModule.Class({ id: 1, data: { url: fineUrl, answer: { exists: true, by: "E", timestamp: "2026-01-15T10:00:00.000Z" } } });
-      should(l.answerValidUntil().toISOString()).eql("2026-07-15T10:00:00.000Z");
-      should(!!l.validAnswer(new Date("2026-07-15T09:59:00.000Z"))).be.true();
-      should(l.validAnswer(new Date("2026-07-15T10:01:00.000Z"))).be.null();
+      should(l.answerValidUntil().toISOString()).eql("2026-07-14T10:00:00.000Z");
+      should(!!l.validAnswer(new Date("2026-07-14T09:59:00.000Z"))).be.true();
+      should(l.validAnswer(new Date("2026-07-14T10:01:00.000Z"))).be.null();
     });
 
     it("should refuse guests, no url and an answer that is not true or false", async function() {
@@ -186,13 +186,13 @@ describe("model/link", function() {
   describe("settings (LinkCheck)", function() {
     it("should use the defaults without config", function() {
       should(linkModule.settings({})).eql({
-        confirmationValidMonths: 6, recheckOkDays: 90, recheckBrokenDays: 1, recheckBlockedDays: 1, recheckUnreachableHours: 1, cleanupAfterDays: 180
+        confirmationValidDays: 180, recheckOkDays: 90, recheckBrokenDays: 1, recheckBlockedDays: 1, recheckUnreachableDays: 0.25, cleanupAfterDays: 180
       });
       should(linkModule.settingsProblems({})).eql([]);
     });
     it("should take configured values and replace invalid ones by the default", function() {
-      const s = linkModule.settings({ recheckOkDays: 365, cleanupAfterDays: 400, recheckBrokenDays: 0.5, recheckBlockedDays: "2", confirmationValidMonths: -1 });
-      should(s).containDeep({ recheckOkDays: 365, cleanupAfterDays: 400, recheckBrokenDays: 0.5, recheckBlockedDays: 1, confirmationValidMonths: 6 });
+      const s = linkModule.settings({ recheckOkDays: 365, cleanupAfterDays: 400, recheckBrokenDays: 0.5, recheckBlockedDays: "2", confirmationValidDays: -1 });
+      should(s).containDeep({ recheckOkDays: 365, cleanupAfterDays: 400, recheckBrokenDays: 0.5, recheckBlockedDays: 1, confirmationValidDays: 180 });
     });
     it("should report unknown keys, invalid values and a cleanup shorter than the ok recheck", function() {
       should(linkModule.settingsProblems({ recheckOKDays: 30, recheckBlockedDays: "2", cleanupAfterDays: 30 })).eql([

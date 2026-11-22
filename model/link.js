@@ -4,7 +4,7 @@
 // - check: { state, status, checkedAt }; state ok / broken / blocked /
 //   unreachable. Valid for LinkCheck.recheck…, then checked again.
 // - answer: { exists, by, timestamp }, only from a full editor; valid for
-//   LinkCheck.confirmationValidMonths. While valid it wins over
+//   LinkCheck.confirmationValidDays. While valid it wins over
 //   the check, in both directions (a 404 that works in the browser, a page
 //   that answers 200 but is gone).
 // Without a valid answer the check decides: ok = exists, broken = missing,
@@ -22,19 +22,19 @@ import linkCheck from "../util/linkCheck.js";
 const debug = _debug("OSMBC:model:link");
 
 const TABLE = "link";
-const HOUR = 60 * 60 * 1000;
-const DAY = 24 * HOUR;
+const DAY = 24 * 60 * 60 * 1000;
 const PARALLEL_CHECKS = 5;
 const SEARCH_LIMIT = 200;
 
-// LinkCheck in the editorial config (docs/config.md "Link check"); a
-// missing or invalid value (not a number > 0) takes the default
+// LinkCheck in the editorial config (docs/config.md "Link check"), all in
+// days (fractions allowed); a missing or invalid value (not a number > 0)
+// takes the default
 const DEFAULTS = {
-  confirmationValidMonths: 6,
+  confirmationValidDays: 180,
   recheckOkDays: 90,
   recheckBrokenDays: 1,
   recheckBlockedDays: 1,
-  recheckUnreachableHours: 1,
+  recheckUnreachableDays: 0.25,
   cleanupAfterDays: 180
 };
 
@@ -72,12 +72,8 @@ function settingsProblems(linkCheck = config.getValue("LinkCheck", { default: {}
 // how long an automatic check result is used before the link is checked again
 function recheckAfterMs(state) {
   const s = settings();
-  return {
-    ok: s.recheckOkDays * DAY,
-    broken: s.recheckBrokenDays * DAY,
-    blocked: s.recheckBlockedDays * DAY,
-    unreachable: s.recheckUnreachableHours * HOUR
-  }[state];
+  const days = { ok: s.recheckOkDays, broken: s.recheckBrokenDays, blocked: s.recheckBlockedDays, unreachable: s.recheckUnreachableDays }[state];
+  return days ? days * DAY : undefined;
 }
 
 /**
@@ -106,9 +102,7 @@ class Link {
    */
   answerValidUntil() {
     if (!this.answer) return null;
-    const d = new Date(this.answer.timestamp);
-    d.setUTCMonth(d.getUTCMonth() + settings().confirmationValidMonths);
-    return d;
+    return new Date(new Date(this.answer.timestamp).getTime() + settings().confirmationValidDays * DAY);
   }
 
   /**

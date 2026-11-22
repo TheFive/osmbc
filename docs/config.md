@@ -182,17 +182,17 @@ An editor's answer wins over the link check while it is valid, in both
 directions (a 404 that works in the browser, a page that is gone
 although it answers). Without a valid answer the link check decides.
 
-All keys are optional and belong in the editorial file; every value must
-be a number > 0 (fractions allowed), otherwise the default is used and the
-start log shows a warning (also for unknown keys).
+All keys are optional and belong in the editorial file. Every value is a
+number of days > 0, fractions allowed (`0.25` = 6 hours); otherwise the
+default is used and the start log shows a warning (also for unknown keys).
 
 ```yaml
 LinkCheck:
-  confirmationValidMonths: 6   # how long an editor's answer counts
+  confirmationValidDays: 180   # how long an editor's answer counts
   recheckOkDays: 90            # check an ok link again after …
   recheckBrokenDays: 1         # … a broken one (pages come back)
   recheckBlockedDays: 1        # … a blocked one
-  recheckUnreachableHours: 1   # … an unreachable one (hours!)
+  recheckUnreachableDays: 0.25 # … an unreachable one (6 hours)
   cleanupAfterDays: 180        # delete automatic results older than this
 ```
 
