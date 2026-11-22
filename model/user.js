@@ -27,19 +27,6 @@ class User {
     }
   }
 
-  // Calculate derived values
-  // now: Calculate only number of changes
-  calculateChanges(callback) {
-    debug("User.prototype.calculateChanges");
-    const self = this;
-    if (self._countChanges) return;
-    pgMap.count("select count(*) as count from changes where data->>'user'=$1 and data->>'table'='article'", [this.OSMUser], function (err, result) {
-      if (err) return callback(err);
-      self._countChanges = result.count;
-      return callback();
-    });
-  }
-
   // This function is called by the link
   // send out via EMail if someone registers a new email
   validateEmail(user, validationCode, callback) {
@@ -235,13 +222,6 @@ class User {
     return false;
   }
 
-  getNotificationStatus(channel, type) {
-    debug("User.prototype.getNotificationStatus");
-    if (!this.notificationStatus) return null;
-    if (!this.notificationStatus[channel]) return null;
-    return this.notification[channel][type];
-  }
-
   getLanguageSet() {
     return this.languageSet;
   }
@@ -396,7 +376,7 @@ class User {
   }
 
   hasGuestAccess() {
-    debug("User.protoype.hasFullAccess");
+    debug("User::hasGuestAccess");
     return this.access === "guest";
   }
 

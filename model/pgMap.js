@@ -523,30 +523,6 @@ function analyseIndexes(pgObject, callback) {
   });
 }
 
-function count(sql, values, callback) {
-  debug("count");
-  if (typeof values === "function") {
-    callback = values;
-    values = undefined;
-  }
-  let result;
-
-  function resultFunction(err, pgResult) {
-    if (err) return callback(err);
-    result = {};
-    for (const k in pgResult.rows[0]) {
-      result[k] = pgResult.rows[0][k];
-    }
-    callback(null, result);
-  }
-
-  if (values) {
-    db.query(sql, values, resultFunction);
-  } else {
-    db.query(sql, resultFunction);
-  }
-}
-
 function select(sql, data, callback) {
   debug("select");
   if (typeof data === "function") {
@@ -575,7 +551,6 @@ const pgMap = {
   fullTextSearch: fullTextSearch,
   findById: findById,
   findOne: findOne,
-  count: count,
   createTables: createTables,
   analyseIndexes: analyseIndexes,
   select: select

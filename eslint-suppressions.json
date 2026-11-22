@@ -100,7 +100,7 @@
       "count": 1
     },
     "jsdoc/require-jsdoc": {
-      "count": 9
+      "count": 8
     },
     "max-depth": {
       "count": 1
@@ -119,7 +119,7 @@
       "count": 1
     },
     "jsdoc/require-jsdoc": {
-      "count": 34
+      "count": 32
     },
     "max-lines-per-function": {
       "count": 1
