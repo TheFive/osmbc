@@ -4,7 +4,7 @@
       "count": 1
     },
     "jsdoc/require-jsdoc": {
-      "count": 15
+      "count": 13
     }
   },
   "model/article.js": {
@@ -12,7 +12,7 @@
       "count": 2
     },
     "jsdoc/require-jsdoc": {
-      "count": 30
+      "count": 29
     },
     "max-depth": {
       "count": 1

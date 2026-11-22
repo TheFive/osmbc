@@ -4,6 +4,7 @@
 import config from "../config.js";
 import { strict as assert } from "assert";
 import _debug from "debug";
+import { BAD_REQUEST } from "http-status-codes";
 const debug = _debug("OSMBC:model:language");
 
 
@@ -99,8 +100,24 @@ function wpExportName(lang) {
 }
 
 
+/**
+ * Check a language id before it becomes part of a field name
+ * (`reviewComment<lang>`, `close<lang>`, `markdown<lang>` …).
+ * @param {string} lang language id from the caller, e.g. "DE"
+ * @returns {Error|null} error with status 400 (BAD_REQUEST) for a language
+ *   that is not configured, null if the language is known
+ */
+function checkLanguage(lang) {
+  if (typeof lang === "string" && Object.hasOwn(getLanguages(), lang)) return null;
+  const error = new Error("Unknown language >" + lang + "<");
+  error.status = BAD_REQUEST;
+  return error;
+}
+
+
 const language = {
   getLanguages: getLanguages,
+  checkLanguage: checkLanguage,
   getLid: getLid,
   momentLocale: momentLocale,
   deeplProSourceLang: deeplProSourceLang,

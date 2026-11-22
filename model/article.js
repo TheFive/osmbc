@@ -4,7 +4,7 @@
 
 import { series, each, eachSeries } from "async";
 import { strict as assert } from "assert";
-import { CONFLICT } from "http-status-codes";
+import { CONFLICT, BAD_REQUEST } from "http-status-codes";
 import _debug from "debug";
 
 
@@ -52,6 +52,24 @@ function addNoTranslationForClosedLanguages(article, targetBlog, data) {
     if (typeof md === "string" && md.trim() !== "") continue;
     data["markdown" + lang] = "no translation";
   }
+}
+
+/**
+ * Checks a list of language ids from a request.
+ * @param {*} languages the value to check
+ * @returns {Error|null} error with status 400 if it is not an array of known languages
+ */
+function checkLanguageList(languages) {
+  if (!Array.isArray(languages)) {
+    const error = new Error("Language list expected");
+    error.status = BAD_REQUEST;
+    return error;
+  }
+  for (const lang of languages) {
+    const error = language.checkLanguage(lang);
+    if (error) return error;
+  }
+  return null;
 }
 
 class Article {
@@ -739,18 +757,27 @@ class Article {
     return callback();
   }
 
-  addNotranslate(user, shownLang, callback) {
-    debug("Article.prototype.addNotranslate");
-    util.requireTypes([user, shownLang, callback], ["object", "object", "function"]);
-
-    const self = this;
-    const change = { version: self.version };
-    for (const lang in language.getLanguages()) {
-      if (shownLang[lang] && ((typeof (self["markdown" + lang]) === "undefined") || (self["markdown" + lang] === ""))) {
-        change["markdown" + lang] = "no translation";
-      }
+  /**
+   * The button "no translation to rest": every given language without text
+   * gets "no translation". Languages with text and the main language of the
+   * user stay as they are (a text of only spaces counts as empty).
+   * @param {object} user who clicked
+   * @param {string[]} languages the languages shown to the user, e.g. ["DE", "EN"]
+   * @param {function(Error=)} callback error with status 400 for a
+   *   language list that is not an array or holds an unknown language
+   */
+  setNoTranslationForEmpty(user, languages, callback) {
+    debug("Article::setNoTranslationForEmpty");
+    const inputError = checkLanguageList(languages);
+    if (inputError) return callback(inputError);
+    const change = { old: {} };
+    for (const lang of languages) {
+      if (lang === user.mainLang) continue;
+      if (this["markdown" + lang] && this["markdown" + lang].trim() !== "") continue;
+      change.old["markdown" + lang] = this["markdown" + lang] ?? "";
+      change["markdown" + lang] = "no translation";
     }
-    return self.setAndSave(user, change, callback);
+    return this.setAndSave(user, change, callback);
   }
 
   /**

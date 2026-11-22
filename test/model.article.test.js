@@ -213,6 +213,56 @@ describe("model/article", function() {
       });
     });
   });
+  describe("setNoTranslationForEmpty", function() {
+    const user = { OSMUser: "test", mainLang: "DE" };
+    let article;
+    beforeEach(async function () {
+      await testutil.clearDB();
+      article = await articleModule.createNewArticle({ blog: "TEST", markdownDE: "", markdownEN: "text", markdownES: "   " });
+    });
+    it("should set empty languages, keep texts and the main language", function (bddone) {
+      article.setNoTranslationForEmpty(user, ["DE", "EN", "ES", "FR"], function (err) {
+        should.not.exist(err);
+        articleModule.findById(article.id, function (err, result) {
+          should.not.exist(err);
+          should(result.markdownDE).eql("");
+          should(result.markdownEN).eql("text");
+          should(result.markdownES).eql("no translation");
+          should(result.markdownFR).eql("no translation");
+          bddone();
+        });
+      });
+    });
+    it("should keep a text written after the page was opened", function (bddone) {
+      article.setAndSave({ OSMUser: "other" }, { version: article.version, markdownFR: "new text" }, function (err) {
+        should.not.exist(err);
+        articleModule.findById(article.id, function (err, fresh) {
+          should.not.exist(err);
+          fresh.setNoTranslationForEmpty(user, ["FR"], function (err) {
+            should.not.exist(err);
+            articleModule.findById(article.id, function (err, result) {
+              should.not.exist(err);
+              should(result.markdownFR).eql("new text");
+              bddone();
+            });
+          });
+        });
+      });
+    });
+    it("should answer 400 for an unknown language", function (bddone) {
+      article.setNoTranslationForEmpty(user, ["EN", "XX"], function (err) {
+        should(err.status).eql(400);
+        should(err.message).eql("Unknown language >XX<");
+        bddone();
+      });
+    });
+    it("should answer 400 when the languages are not a list", function (bddone) {
+      article.setNoTranslationForEmpty(user, { EN: true }, function (err) {
+        should(err.status).eql(400);
+        bddone();
+      });
+    });
+  });
   describe("setAndSave", function() {
     beforeEach(function (bddone) {
       testutil.clearDB(bddone);

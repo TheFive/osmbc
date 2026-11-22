@@ -560,6 +560,36 @@ describe("router/article", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
+  describe("route POST /:article_id/notranslation", function() {
+    const url = baseLink + "/article/2/notranslation";
+    async function loggedInClient() {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return client;
+    }
+    it("should set the empty shown languages to no translation", async function () {
+      const client = await loggedInClient();
+      const body = await client.post(url, { language: JSON.stringify(["DE", "EN", "ES"]) });
+      should(body.status).eql(HttpStatus.OK);
+      const article = await articleModule.findById(2);
+      should(article.markdownDE).eql("* Dies ist ein grosser Testartikel.");
+      should(article.markdownEN).eql("no translation");
+      should(article.markdownES).eql("no translation");
+      should(article.markdownPT).be.undefined();
+    });
+    it("should answer 400 for a language list that is not JSON", async function () {
+      const client = await loggedInClient();
+      const body = await client.post(url, { language: "DE,EN" });
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should((await articleModule.findById(2)).version).eql(1);
+    });
+    it("should answer 400 for an unknown language", async function () {
+      const client = await loggedInClient();
+      const body = await client.post(url, { language: JSON.stringify(["EN", "XX"]) });
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should((await articleModule.findById(2)).markdownEN).be.undefined();
+    });
+  });
   describe("route POST /:article_id/witholdvalues", function() {
     const url = baseLink + "/article/2/witholdvalues";
     const params = {

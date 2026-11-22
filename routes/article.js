@@ -4,7 +4,7 @@ import { Router } from "express";
 import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
 import { resolve } from "path";
-import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY } from "http-status-codes";
+import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY, BAD_REQUEST } from "http-status-codes";
 import { renderFile } from "pug";
 
 
@@ -518,54 +518,31 @@ function postArticle(req, res, next) {
 }
 
 
+/**
+ * The button "no translation to rest": the form field `language` holds the
+ * shown languages as JSON; the article model decides which get
+ * "no translation".
+ * @param {object} req express request with req.article
+ * @param {object} res express response, redirected back to the article
+ * @param {Function} next error handler
+ */
 function postArticleNoTranslation(req, res, next) {
-  debug("postArticle");
-
-
-  const article = req.article;
-
-
-
-
-  let returnToUrl;
-  if (article) returnToUrl = htmlroot + "/article/" + article.id;
-  const changes = {};
-  changes.old = {};
-
-  parallel([
-  ],
-  function setValues(err) {
-    debug("postArticle->setValues");
-    if (err) { return next(err); }
-    assert(article);
-
-
-    const showLangs = JSON.parse(req.body.language);
-    showLangs.forEach(lang => {
-      if (changes["markdown" + lang]) return;
-      if (article["markdown" + lang] && article["markdown" + lang].trim() !== "") return;
-      if (lang === req.user.mainLang) return;
-      changes.old["markdown" + lang] = "";
-      changes["markdown" + lang] = "no translation";
-    });
-
-
-
-    article.setAndSave(req.user, changes, function(err) {
-      debug("postArticle->setValues->setAndSave");
-      if (err) {
-        return next(err);
-      }
-      res.redirect(returnToUrl);
-    });
+  debug("postArticleNoTranslation");
+  let languages;
+  try {
+    languages = JSON.parse(req.body.language);
+  } catch (err) {
+    return next(Object.assign(new Error("Language list is not valid JSON"), { status: BAD_REQUEST }));
   }
-  );
+  req.article.setNoTranslationForEmpty(req.user, languages, function(err) {
+    if (err) return next(err);
+    res.redirect(htmlroot + "/article/" + req.article.id);
+  });
 }
 
 function postArticleWithOldValues(req, res, next) {
   debug("postArticleWithOldValues");
 
-  const noTranslation = req.query.notranslation;
 
 
 
@@ -637,17 +614,6 @@ function postArticleWithOldValues(req, res, next) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
     assert(article);
-    if (noTranslation === "true") {
-      const showLangs = JSON.parse(req.body.languages);
-      for (const lang in language.getLanguages()) {
-        if (showLangs[lang]) {
-          if (changes["markdown" + lang]) continue;
-          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-          if (lang === req.user.mainLang) continue;
-          changes["markdown" + lang] = "no translation";
-        }
-      }
-    }
 
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
