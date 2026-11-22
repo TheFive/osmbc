@@ -24,7 +24,7 @@ a.osmbc-nonexist {
 
 /* Link the link check can't verify (bot protection, login, certificate):
    a grey question mark after the link, the page may well exist. What it
-   means is written out in the article's link area and on the blog page. */
+   means is written out in the list #uncheckableLinks (blog, article). */
 .osmbc-link-uncheckable .osmbc-linkmark {
   color: #6c757d;
   font-size: 1.15em;

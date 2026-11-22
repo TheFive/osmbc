@@ -53,18 +53,20 @@ describe("uc.article link confirmation", function() {
 
   describe("article page", function() {
     async function answerAndUndo(articlePage) {
-      should(await articlePage.getLinkCheckNote(blockedUrl)).match(/can't be checked automatically \(401\)/);
+      const rows = await articlePage.getUncheckableLinks();
+      should(rows.length).eql(1);
+      should(rows[0].text).match(/can't be checked automatically \(401\)/);
       should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("uncheckable");
 
-      await articlePage.answerLink(blockedUrl, true);
-      should(await articlePage.getLinkCheckNote(blockedUrl)).match(/✓ exists, said TheFive/);
+      await articlePage.answerUncheckableLink(blockedUrl, true);
+      should((await articlePage.getUncheckableLinks())[0].text).match(/✓ exists, said TheFive/);
       should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("none");
 
-      await articlePage.undoLinkAnswer(blockedUrl);
+      await articlePage.undoUncheckableLink(blockedUrl);
       should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("uncheckable");
 
-      await articlePage.answerLink(blockedUrl, false);
-      should(await articlePage.getLinkCheckNote(blockedUrl)).match(/✗ missing, said TheFive/);
+      await articlePage.answerUncheckableLink(blockedUrl, false);
+      should((await articlePage.getUncheckableLinks())[0].text).match(/✗ missing, said TheFive/);
       should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("broken");
     }
 
@@ -79,9 +81,27 @@ describe("uc.article link confirmation", function() {
       driver = await testutil.getNewDriver("TheFive", { device: "phone" });
       const articlePage = new ArticlePage(driver);
       await driver.get(osmbcLink("/article/" + articleId));
-      should(await articlePage.tapTargetsTooSmall("#linkArea .osmbc-linkconfirm button")).eql([]);
+      should(await articlePage.getUncheckableLinks()).have.length(1);
+      should(await articlePage.tapTargetsTooSmall("#uncheckableLinks button")).eql([]);
       await answerAndUndo(articlePage);
       should(await articlePage.hasHorizontalScroll()).be.False();
+    });
+
+    it("should list a link that is only in the text, not in the collection", async function() {
+      const textOnly = await articleModule.createNewArticle({
+        blog: "WN1",
+        categoryEN: "Mapping",
+        title: "Text only",
+        markdownDE: `Reuters [berichtet](${blockedUrl}) über Karten.`
+      });
+      driver = await testutil.getNewDriver("TheFive");
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + textOnly.id));
+      const rows = await articlePage.getUncheckableLinks();
+      should(rows.length).eql(1);
+      should(rows[0].text).match(/in: berichtet/);
+      await articlePage.answerUncheckableLink(blockedUrl, true);
+      should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("none");
     });
   });
 

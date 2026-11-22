@@ -61,7 +61,7 @@ function isMobileMode() {
   return document.documentElement.classList.contains("osmbc-mobile");
 }
 
-// What the link check says, as text for the link area and the blog list.
+// What the link check says, as text for the list #uncheckableLinks.
 function linkStateText(answer) {
   switch (linkState(answer)) {
     case "blocked": return "can't be checked automatically (" + answer.status + ")";
@@ -89,36 +89,24 @@ function linkAnswerButtons(url, answer) {
   return [];
 }
 
-// Text and buttons after a link in the article's #linkArea.
-// Phones: the text on its own line, the buttons in a row below it.
-function linkConfirmControls(url, answer) {
-  const text = linkStateText(answer);
-  if (!text) return null;
-  const mobile = isMobileMode();
-  return $("<span>", { class: "osmbc-linkconfirm flex-wrap align-items-center gap-2 text-body-secondary " + (mobile ? "d-flex mt-1" : "d-inline-flex ms-2") })
-    .append($("<span>", { class: "small" + (mobile ? " w-100" : "") }).text(text), linkAnswerButtons(url, answer));
-}
-
 // Marks one link; earlier marks are removed first, so a changed answer
 // (answered, undone) is shown without re-rendering the page.
 function markLink(k, answer) {
   k.removeClass("osmbc-nonexist osmbc-link-uncheckable");
   k.find(".osmbc-linkmark").remove();
-  k.next(".osmbc-linkconfirm").remove();
   const state = linkState(answer);
   if (state === "broken" || state === "missing") {
     k.addClass("osmbc-nonexist");
     k.append($("<span>", { class: "osmbc-linkmark" }).text(" #" + ((state === "missing") ? "missing" : answer)));
   } else if (state === "blocked" || state === "unreachable") {
-    // the meaning is written out in the link area and the blog list, no tooltip needed
+    // the meaning is written out in the list #uncheckableLinks, no tooltip needed
     k.addClass("osmbc-link-uncheckable");
     k.append($("<i>", { class: "fa fa-question-circle osmbc-linkmark", "aria-label": linkStateText(answer) }));
   }
-  if (k.closest("#linkArea").length > 0) k.after(linkConfirmControls(k.attr("href"), answer));
 }
 
-// Blog page: list of the links in the texts the link check can't verify,
-// open ones first, with Exists / Missing / Undo (views/blog/blogheader.pug).
+// Blog and article page: list of the links the link check can't verify,
+// open ones first, with Exists / Missing / Undo (mixin uncheckableLinks).
 function linkListRow(url, answer, texts) {
   return $("<li>", { class: "list-group-item d-flex flex-wrap align-items-center gap-2", "data-uncheckable-link": url }).append(
     $("<div>", { class: "flex-grow-1 text-break" }).append(

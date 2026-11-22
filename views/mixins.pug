@@ -494,3 +494,17 @@ mixin userAvatar
       
       
       
+
+
+//- Links the link check can't verify (bot protection ...) with Exists /
+//- Missing per link; blog page and article page. Filled by osmbc_staff.js
+//- showUncheckableLinks, hidden while empty.
+mixin uncheckableLinks
+  div#uncheckableLinks.card.mb-3.d-none
+    div.card-header.d-flex.flex-wrap.align-items-center.gap-2
+      span.fw-bold Links that can't be checked automatically
+      span.small.text-body-secondary(data-uncheckable-count="")
+    div.card-body.py-2.small.text-body-secondary
+      | Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
+      | The answer counts for every article with this link.
+    ul.list-group.list-group-flush

@@ -202,32 +202,9 @@ class ArticlePage extends StandardPage {
     return { text: value, warning: hasWarningClass };
   }
 
-  // Link check note after a link in the link area ("can't be checked ...",
-  // "confirmed by ..."); waits until the link check has answered.
-  async getLinkCheckNote(link) {
-    await this.assertPage();
-    const css = `div#linkArea a.badge[href='${link}'] + .osmbc-linkconfirm`;
-    const note = await this._driver.wait(until.elementLocated(By.css(css)), 5000, "no link check note for " + link);
-    return note.getText();
-  }
-
-  // "Exists" (true) / "Missing" (false) for a link the link check can't verify
-  async answerLink(link, exists) {
-    await this.assertPage();
-    await this.tap(await this._driver.findElement(By.css(`#linkArea button[data-link-answer='${exists}'][data-link-url='${link}']`)));
-    await this._driver.wait(until.elementLocated(By.css(`#linkArea button[data-link-revoke='${link}']`)), 5000, "link not answered");
-  }
-
-  // "Undo" of an answer, waits for the "Exists" button again
-  async undoLinkAnswer(link) {
-    await this.assertPage();
-    await this.tap(await this._driver.findElement(By.css(`#linkArea button[data-link-revoke='${link}']`)));
-    await this._driver.wait(until.elementLocated(By.css(`#linkArea button[data-link-answer='true'][data-link-url='${link}']`)), 5000, "answer not undone");
-  }
-
   // how the link check marks a link in the preview: "broken", "uncheckable" or "none"
   async getPreviewLinkMark(lang, link) {
-    await this.waitForBackgroundRequests();
+    await this.waitForLinkCheck();
     const cssClass = await (await this._driver.findElement(By.css(`#preview${lang} a[href='${link}']`))).getAttribute("class");
     if (/osmbc-nonexist/.test(cssClass)) return "broken";
     if (/osmbc-link-uncheckable/.test(cssClass)) return "uncheckable";

@@ -312,16 +312,7 @@ block content
 
 
 
-  //- links in the texts the link check can't verify (bot protection ...),
-  //- filled by osmbc_staff.js showUncheckableLinks, hidden while empty
-  div#uncheckableLinks.card.mb-3.d-none
-    div.card-header.d-flex.flex-wrap.align-items-center.gap-2
-      span.fw-bold Links that can't be checked automatically
-      span.small.text-body-secondary(data-uncheckable-count="")
-    div.card-body.py-2.small.text-body-secondary
-      | Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
-      | The answer counts for every article with this link.
-    ul.list-group.list-group-flush
+  +uncheckableLinks
   block blogcontent
   .row
     .col-md-8
