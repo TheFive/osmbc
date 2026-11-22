@@ -21,7 +21,7 @@ import config from "../config.js";
 import configModule from "../model/config.js";
 import { startTransitionScheduler, stopTransitionScheduler } from "../model/blogTransitionScheduler.js";
 import userModule from "../model/user.js";
-import linkConfirmation from "../model/linkConfirmation.js";
+import linkModule from "../model/link.js";
 import messageCenter from "../notification/messageCenter.js";
 import { initialiseMailReceiver } from "../notification/mailReceiver.js";
 import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
@@ -88,7 +88,7 @@ function initialiseServer() {
   debug("initialiseServer");
   auto({
     configModule: configModule.initialise,
-    linkConfirmation: linkConfirmation.ensureTable,
+    linkModule: linkModule.ensureTable,
     blogModule: ["configModule", startBlogTimer],
     messageCenter: messageCenter.initialise,
     startMailReceiver: startMailReceiver,
@@ -99,6 +99,8 @@ function initialiseServer() {
       config.logger.error(err);
       process.exit(1);
     }
+    // old automatic link check rows, once a day (also done at start)
+    setInterval(() => linkModule.cleanup(err => { if (err) config.logger.error(err); }), 24 * 60 * 60 * 1000).unref();
     server.listen(port, hostname);
     server.on("error", onError);
     server.on("listening", onListening);

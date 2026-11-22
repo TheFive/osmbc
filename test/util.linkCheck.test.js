@@ -11,7 +11,6 @@ function check(url) {
 
 describe("util/linkCheck", function() {
   beforeEach(function() {
-    linkCheck.cacheFlushAll();
     nock.cleanAll();
   });
   afterEach(function() {

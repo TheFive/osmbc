@@ -30,7 +30,6 @@ describe("router/article", function() {
   before(async function () {
     await testutil.clearDB();
     await initialiseModules();
-    articleRouterForTestOnly.cacheFlushAll();
     testutil.startServerSync();
   });
 
@@ -736,7 +735,6 @@ describe("router/article", function() {
     });
     afterEach(function() {
       nock.cleanAll();
-      articleRouterForTestOnly.cacheFlushAll();
     });
     async function login() {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
@@ -1215,6 +1213,11 @@ describe("router/article", function() {
   describe("route POST /article/urlexist", function() {
     const url = baseLink + "/article/urlexist";
     let form = { urls: ["https://www.site.ort/apage"] };
+    const OK = { state: "ok", status: "OK", exists: true, by: "auto" };
+    const NOT_FOUND = { state: "broken", status: 404, exists: false, by: "auto" };
+    beforeEach(async function() {
+      await testutil.clearLinks();
+    });
 
     it("should run with full access user existing site", async function () {
       form = { urls: ["https://www.site.ort/apage", "https://www.site.ort2/apage", "https://www.site.ort2/äpäge"] };
@@ -1233,9 +1236,9 @@ describe("router/article", function() {
       const body = await client.post(url, form);
 
       body.data.should.deepEqual({
-        "https://www.site.ort/apage": "OK",
-        "https://www.site.ort2/apage": 404,
-        "https://www.site.ort2/äpäge": "OK"
+        "https://www.site.ort/apage": OK,
+        "https://www.site.ort2/apage": NOT_FOUND,
+        "https://www.site.ort2/äpäge": OK
       });
       should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
@@ -1253,7 +1256,7 @@ describe("router/article", function() {
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, form);
 
-      body.data.should.deepEqual({ "https://www.site.ort2/apage": 404 });
+      body.data.should.deepEqual({ "https://www.site.ort2/apage": NOT_FOUND });
       should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
@@ -1267,7 +1270,7 @@ describe("router/article", function() {
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, form);
 
-      body.data.should.deepEqual({ "https://www.site.ort2/apage": 404 });
+      body.data.should.deepEqual({ "https://www.site.ort2/apage": NOT_FOUND });
       should(body.status).eql(HttpStatus.OK);
       should(sitecall.isDone()).be.true();
     });
@@ -1280,7 +1283,7 @@ describe("router/article", function() {
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, form);
 
-      body.data.should.deepEqual({ "https://www.site.ort2/apage": "OK" });
+      body.data.should.deepEqual({ "https://www.site.ort2/apage": OK });
       should(body.status).eql(HttpStatus.OK);
       should(sitecall.calledOnce).be.true();
     });
@@ -1300,7 +1303,7 @@ describe("router/article", function() {
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.post(url, form);
 
-      body.data.should.deepEqual({ "http://www.site.ort5/apage": "OK" });
+      body.data.should.deepEqual({ "http://www.site.ort5/apage": OK });
       should(body.status).eql(HttpStatus.OK);
       should(sitecall.calledOnce).be.true();
       const options = sitecall.firstCall.args[1];

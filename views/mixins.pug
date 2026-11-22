@@ -496,18 +496,29 @@ mixin userAvatar
       
 
 
-//- Links the link check can't verify (bot protection ...) with Exists /
-//- Missing per link; blog page and article page. Filled by osmbc_staff.js
-//- showUncheckableLinks, hidden while empty.
-mixin uncheckableLinks
-  div#uncheckableLinks.card.mb-3.d-none
+//- Card "Links to check" on blog and article page (model/link.js): links
+//- that are not known to exist, with Exists / Missing / Undo, and collapsed
+//- the links that are ok. Filled by osmbc_staff.js showLinkCheckCard,
+//- hidden while the page has no checked links (guests).
+mixin linkCheckCard
+  div#linkCheckCard.card.mb-3.d-none
     div.card-header.d-flex.flex-wrap.align-items-center.gap-2
-      span.fw-bold Links that can't be checked automatically
-      span.small.text-body-secondary(data-uncheckable-count="")
-    div.card-body.py-2.small.text-body-secondary
+      span.fw-bold(data-link-card-title="")
+      span.small.text-body-secondary(data-link-card-count="")
+      a.ms-auto.small(href=layout.htmlroot + "/link" class=layout.mobileView ? "osmbc-text-link" : undefined) All checked links
+    div.card-body.py-2.small.text-body-secondary(data-link-card-hint="")
       | Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
       | The answer counts for every article with this link.
-    ul.list-group.list-group-flush
+    ul.list-group.list-group-flush(data-link-list="check")
+    div.card-footer.py-1
+      button.btn.btn-link.px-0(type="button" data-link-toggle-ok="")
+    ul.list-group.list-group-flush.d-none(data-link-list="ok")
+
+//- Results the server already knows for the links of the page, so the
+//- browser only asks for the others (osmbc_staff.js checkAllLinks).
+mixin knownLinkResults(results)
+  if results
+    script(nonce=cspNonce)!= "window.cacheLink = " + JSON.stringify(results).replace(/</g, "\\u003c") + ";"
 
 //- within the coming week the weekday is enough, day and month only from the next week on (or when past); noZone leaves out the timezone name when the caller shows it once
 mixin upcomingTime(ts, tz, noZone)

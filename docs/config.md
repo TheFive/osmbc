@@ -120,7 +120,7 @@ a map of *where to look*, not a restatement of every field.
 | `manyTranslationEnabled` | `false` switches off the "translate into many languages" menu in the article editor (and the matching profile setting). Missing or `true` = available for every user, who still has to enable it via their own `translationServicesMany` setting ("Translation Services Used (One to Many)"). |
 | `FirstDraftConfig` | "First Draft" menu in the article view: Claude summarises a collected link into an empty language markdown. `apiKey` (else `ANTHROPIC_API_KEY`), `model` (default `claude-opus-5-5`), `effort` (default `medium`), `visibleFor` (list of OSM usernames, or `full`). Only these users see the menu and the admin config text `firstdraftprompt` (the system prompt). |
 | `wiki` | Optional. The built-in wiki: `directory` (absolute path outside the app directory; missing = wiki off), `readAccess`/`writeAccess` (`full`, `guest` and OSM user names), `autoPush`, `maxUploadBytes`, `mattermost`. See [docs/wiki.md](wiki.md). |
-| `LinkCheck` | Optional. `confirmationValidMonths` (default `6`): how long an editor's answer counts for a link the link check can't verify (401/403/451 or a certificate error, e.g. bot protection). Editors answer "exists" or "missing" (then shown as broken) on the blog page or in the article's link area. Computed when read, so a change applies to existing answers too. Answers are stored in the table `linkconfirmation` (created at server start if missing) and listed, searchable and filterable, on the admin page "Checked Links". |
+| `LinkCheck` | Optional, editorial. How long link check results and editors' answers count, see [Link check](#link-check-linkcheck). |
 | `ReviewInWP`, `urlWoErrorWhileEdit` | Misc per-language/per-URL editorial-workflow exceptions. |
 | `"media folder"` | Local-vs-published media path mapping used by markdown/export sanitizing (note the key needs quoting — it contains a space). |
 | `"Feature Image Base URL"` | **Required** (OSMBC refuses to start without it), e.g. `https://weeklyosm.eu`. When an editor saves a `Picture` article, its feature image must be a relative path (`/wp-content/...`) and must exist under this base url, otherwise the save is rejected. This keeps a broken `featureImage` out of the Hugo export. Migration/sync writes (API, `wp-reconcile`) are not checked. |
@@ -160,6 +160,46 @@ Mattermost channels are configured in the admin config
 `slacknotification` (Admin → "Configuration of IM Channel"), not in this
 file: see [admin-config.md](admin-config.md#slacknotification--configuration-of-im-channel-slack-mm),
 which describes every configuration of the admin page.
+
+## Link check (`LinkCheck`)
+
+OSMBC checks every http(s) link shown in an article or blog (a `HEAD`
+request, `GET` if the server refuses `HEAD`) and stores the result in the
+table `link`, one row per url. Pages bring the stored results with them;
+only unknown links and links whose result ran out are checked again.
+Full editors answer "exists" or "missing" for any link in the card "Links
+to check" (blog and article page); the admin page "Checked Links" lists,
+searches and filters all of them.
+
+| Result | Meaning | Shown as |
+|---|---|---|
+| ok | the server answered | exists |
+| broken | 404, 410, unknown host, invalid url … | missing (red) |
+| blocked | 401, 403, 451 or a certificate error (bot protection, login) | open (grey ?) |
+| unreachable | 429, 5xx, timeout (5xx/timeout are tried twice) | open (grey ?) |
+
+An editor's answer wins over the link check while it is valid, in both
+directions (a 404 that works in the browser, a page that is gone
+although it answers). Without a valid answer the link check decides.
+
+All keys are optional and belong in the editorial file. Every value is a
+number of days > 0, fractions allowed (`0.25` = 6 hours); otherwise the
+default is used and the start log shows a warning (also for unknown keys).
+
+```yaml
+LinkCheck:
+  confirmationValidDays: 180   # how long an editor's answer counts
+  recheckOkDays: 90            # check an ok link again after …
+  recheckBrokenDays: 1         # … a broken one (pages come back)
+  recheckBlockedDays: 1        # … a blocked one
+  recheckUnreachableDays: 0.25 # … an unreachable one (6 hours)
+  cleanupAfterDays: 180        # delete automatic results older than this
+```
+
+`cleanupAfterDays` only removes rows without an editor's answer; such a
+link is simply checked again when a page shows it. Keep it longer than
+`recheckOkDays` (the start log warns otherwise). Changed values apply to
+stored results and answers at once, they are computed when read.
 
 ## Automatic transitions (`Transition`)
 
