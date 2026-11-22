@@ -1154,6 +1154,18 @@ describe("model/blog", function() {
         });
       });
     });
+    it("excludes the service users ClaudeAI (First Draft) and DeepL from the credit sentence", async function() {
+      for (let i = 0; i < 3; i++) {
+        await logModule.log({ user: "Alice", blog: "WN1", oid: String(i), property: "markdownEN" });
+        await logModule.log({ user: "ClaudeAI", blog: "WN1", oid: String(i), property: "markdownEN" });
+        await logModule.log({ user: "deeplPro API Call", blog: "WN1", oid: String(i), property: "markdownEN" });
+      }
+      const blog = await blogModule.findOne({ name: "WN1" });
+      const result = await new Promise((resolve, reject) => blog.createTeamString("EN", (err, r) => (err) ? reject(err) : resolve(r)));
+      result.should.containEql("Alice");
+      result.should.not.containEql("ClaudeAI");
+      result.should.not.containEql("deeplPro");
+    });
     it("URL-encodes spaces in the OSM username instead of leaving them literal in the href", function(bddone) {
       userModule.createNewUser({ OSMUser: "Laura Barroso" }, function(err) {
         should.not.exist(err);
