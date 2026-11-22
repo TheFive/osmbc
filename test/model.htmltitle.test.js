@@ -3,6 +3,7 @@
 import should from "should";
 
 import nock from "nock";
+import http from "http";
 
 import testutil from "./testutil.js";
 import htmltitle from "../model/htmltitle.js";
@@ -89,10 +90,18 @@ describe("model/htmltitle", function() {
     }
   });
   it("should not allow internal IPs", async function() {
+    // a real local server counts whether the request reaches it; under
+    // nock the refused request runs into getTitle's 2 s timeout
+    this.timeout(5000);
+    let hits = 0;
+    const server = http.createServer((req, res) => { hits++; res.end("<title>internal</title>"); });
+    await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
     try {
-      await htmltitle.getTitle("https://127.0.0.1/testdd");
-    } catch (err) {
-      should(err.message).eql("Problem with url");
+      const title = await htmltitle.getTitle("http://127.0.0.1:" + server.address().port + "/").catch((err) => err.message);
+      should(title).not.containEql("internal");
+      should(hits).eql(0);
+    } finally {
+      server.close();
     }
   });
 });
