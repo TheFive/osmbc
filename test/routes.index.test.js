@@ -105,6 +105,41 @@ describe("routes/index", function() {
         expectedMessage: "You are logged in as guest. Please refer to "
       }));
   });
+  describe("route GET / next automatic actions", function() {
+    let originalGetValue = null;
+    afterEach(function() {
+      if (originalGetValue) config.getValue = originalGetValue;
+      originalGetValue = null;
+    });
+    it("should show the next action per rule in one line with a link to the admin page", async function () {
+      originalGetValue = config.getValue;
+      config.getValue = function(key, subkey, options) {
+        if (key === "Transition") {
+          return {
+            enabled: true,
+            AutoEditMode: { enabled: true },
+            AutoTranslate: { enabled: true, sourceLanguage: "EN", translateAt: { weekday: "THU", hour: 20 } },
+            AutoLanguageClose: { enabled: true, languages: ["DE"], closeAt: { weekday: "SUN", hour: 12 } }
+          };
+        }
+        return originalGetValue.call(config, key, subkey, options);
+      };
+      mockdate.set(new Date("2026-11-09T09:30:00Z"));
+      await testutil.importData({
+        blog: [{ name: "WN101", status: "edit", endDate: "2026-11-11T22:59:00.000Z" },
+          { name: "WN102", status: "open", endDate: "2026-11-18T22:59:00.000Z" }]
+      });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      const body = await client.get(baseLink + "/");
+      body.data.should.containEql("Next automatic actions: ");
+      body.data.should.containEql("auto translate WN101");
+      body.data.should.containEql("auto close complete languages of WN101");
+      body.data.should.containEql("set WN102 to edit");
+      body.data.should.containEql("/osmbc/admin#upcomingActions");
+      body.data.indexOf("auto translate WN101").should.be.below(body.data.indexOf("auto close complete languages of WN101"));
+    });
+  });
+
   describe("route GET /osmbc/admin", function() {
     let originalGetValue = null;
     afterEach(function() {

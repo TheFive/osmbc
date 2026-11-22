@@ -6,7 +6,8 @@ steps are switched on and their times are set by the admins of each OSMBC
 instance (configuration `Transition`, see [config.md](config.md#automatic-transitions-transition)).
 All times below are **examples**; ask your admins for the times of your
 instance. Every full user can see the planned steps on the admin page
-(menu *Admin*, table "Upcoming automatic actions").
+(menu *Admin*, table "Upcoming automatic actions"); the start page shows
+the next step of each rule in one line ("Next automatic actions").
 
 Each automatic step writes its own name into the blog log and the review
 list, so you can always see that it was not a person:

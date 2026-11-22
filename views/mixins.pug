@@ -508,3 +508,10 @@ mixin uncheckableLinks
       | Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
       | The answer counts for every article with this link.
     ul.list-group.list-group-flush
+
+//- within the coming week the weekday is enough, the date only from the next week on (or when past)
+mixin upcomingTime(ts, tz)
+  - var m = layout.moment(ts).tz(tz)
+  - var days = m.clone().startOf("day").diff(layout.moment().tz(tz).startOf("day"), "days")
+  - var text = (days === 0) ? m.format("[today] HH:mm z") : (days > 0 && days < 7) ? m.format("ddd HH:mm z") : m.format("ddd, YYYY-MM-DD HH:mm z")
+  time(datetime=new Date(ts).toISOString(), data-localtime="", data-tz=tz)= text

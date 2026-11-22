@@ -110,6 +110,19 @@ block content
 
 
 
+          //- one line with the next automatic action per rule, details on the admin page
+          if nextActions && nextActions.enabled && nextActions.actions.length > 0
+            - var actionText = { edit: "set %s to edit", translate: "auto translate %s", reviewStart: "start review of %s", close: "auto close complete languages of %s" }
+            p#nextActions
+              strong="Next automatic actions: "
+              each action, i in nextActions.actions
+                if i > 0
+                  | , 
+                +upcomingTime(action.ts, nextActions.timezone)
+                = " " + actionText[action.rule].replace("%s", action.name)
+              if !layout.mobileView
+                |  
+                a(href=layout.htmlroot + "/osmbc/admin#upcomingActions") (more…)
           //- admin is desktop only
           if !layout.mobileView
             p.row
