@@ -160,7 +160,7 @@ auth:
     tokenURL: https://www.openstreetmap.org/oauth2/token
     clientID: "#####"
     clientSecret: "#####"
-    callbackUrl: http://127.0.0.1:35043/auth/openstreetmap_oautb20/callback
+    callbackURL: http://127.0.0.1:35043/auth/openstreetmap_oautb20/callback
     scope: read_prefs
 
   # Media URL mapping used by markdown/export sanitizing.

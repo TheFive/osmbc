@@ -19,7 +19,7 @@ assert(typeof pgConfigValues.password !== "undefined");
 assert(pgConfigValues.server);
 assert(pgConfigValues.port);
 
-if (pgConfigValues.connectstr && pgConfigValues.connectStr !== "") {
+if (pgConfigValues.connectstr) {
   config.logger.error("Database connectstr is deprecated, please remove from config");
   process.exit(1);
 }
