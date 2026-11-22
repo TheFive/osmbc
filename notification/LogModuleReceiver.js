@@ -97,7 +97,7 @@ class LogModuleReceiver {
   }
 
   sendReviewStatus(user, blog, lang, status, cb) {
-    debug("LogModuleReceiver.prototype.sendReviewStatus");
+    debug("LogModuleReceiver::sendReviewStatus");
     assert(blog.id);
     assert(blog.id !== 0);
     assert(typeof (user) === "object");
@@ -125,12 +125,12 @@ class LogModuleReceiver {
    * @param {function(Error=)} cb called when done
    */
   sendCloseBlocked(user, blog, lang, problems, cb) {
-    debug("LogModuleReceiver.prototype.sendCloseBlocked");
+    debug("LogModuleReceiver::sendCloseBlocked");
     return cb();
   }
 
   sendCloseStatus(user, blog, lang, status, cb) {
-    debug("LogModuleReceiver.prototype.sendCloseStatus");
+    debug("LogModuleReceiver::sendCloseStatus");
     assert(blog.id);
     assert(blog.id !== 0);
     assert(typeof (user) === "object");
@@ -149,7 +149,7 @@ class LogModuleReceiver {
   }
 
   editComment(user, article, index, text, callback) {
-    debug("LogModuleReceiver.prototype.editComment");
+    debug("LogModuleReceiver::editComment");
     assert(article.id);
     assert(article.id !== 0);
     assert(typeof (user) === "object");
@@ -169,7 +169,7 @@ class LogModuleReceiver {
   }
 
   addComment(user, article, text, callback) {
-    debug("LogModuleReceiver.prototype.addComment");
+    debug("LogModuleReceiver::addComment");
     assert(article.id);
     assert(article.id !== 0);
     assert(typeof (user) === "object");

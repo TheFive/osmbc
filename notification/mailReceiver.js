@@ -117,8 +117,17 @@ class MailReceiver {
     }
   }
 
+  /**
+   * A changed user or configuration: no mail for it.
+   * @param {object} data the change log entry
+   * @param {function(Error=)} callback called at once
+   */
+  sendInfo(data, callback) {
+    return callback();
+  }
+
   sendWelcomeMail(inviter, callback) {
-    debug("MailReceiver.prototype.sendWelcomeMail");
+    debug("MailReceiver::sendWelcomeMail");
 
     const self = this;
     const data = { user: this.user, inviter: inviter, layout: layout };
@@ -142,7 +151,7 @@ class MailReceiver {
   }
 
   sendReviewStatus(user, blog, lang, status, callback) {
-    debug("MailReceiver.prototype.sendReviewStatus");
+    debug("MailReceiver::sendReviewStatus");
     if (this.invalidMail) return callback();
     const self = this;
 
@@ -185,12 +194,12 @@ class MailReceiver {
    * @param {function(Error=)} cb called when done
    */
   sendCloseBlocked(user, blog, lang, problems, cb) {
-    debug("MailReceiver.prototype.sendCloseBlocked");
+    debug("MailReceiver::sendCloseBlocked");
     return cb();
   }
 
   sendCloseStatus(user, blog, lang, status, callback) {
-    debug("MailReceiver.prototype.sendCloseStatus");
+    debug("MailReceiver::sendCloseStatus");
     if (this.invalidMail) return callback();
     const self = this;
 
@@ -221,7 +230,7 @@ class MailReceiver {
   }
 
   updateArticle(user, article, change, callback) {
-    debug("MailReceiver.prototype.updateArticle");
+    debug("MailReceiver::updateArticle");
     if (this.invalidMail) return callback();
     assert(typeof (change) === "object");
 
@@ -276,7 +285,7 @@ class MailReceiver {
   }
 
   addComment(user, article, text, callback) {
-    debug("MailReceiver.prototype.addComment");
+    debug("MailReceiver::addComment");
     if (this.invalidMail) return callback();
     assert(typeof (text) === "string");
 
@@ -312,7 +321,7 @@ class MailReceiver {
   }
 
   editComment(user, article, index, text, callback) {
-    debug("MailReceiver.prototype.addComment");
+    debug("MailReceiver::addComment");
     if (this.invalidMail) return callback();
     assert(typeof (text) === "string");
 
@@ -350,7 +359,7 @@ class MailReceiver {
   }
 
   updateBlog(user, blog, change, callback) {
-    debug("MailReceiver.prototype.updateBlog");
+    debug("MailReceiver::updateBlog");
     if (this.invalidMail) return callback();
 
     const self = this;
@@ -397,79 +406,8 @@ class MailReceiver {
 }
 
 
-
-
-
-
-
 const iteratorReceiver = new IteratorReceiver({});
 let userReceiverMap = {};
-
-/*
-function MailUserReceiver() {
-  debug('MailUserReceiver');
-}
-
-MailUserReceiver.prototype.sendReviewStatus = function sendReviewStatus(user,blog,lang,status,callback) {
-  debug('MailUserReceiver.prototype.sendReviewStatus');
-  async.eachOf(userReceiverMap,function(value,key,cb) {
-    value.sendReviewStatus(user,blog,lang,status,cb);
-  },function(err) {
-    return callback(err);
-  });
-};
-
-MailUserReceiver.prototype.sendCloseStatus = function sendCloseStatus(user,blog,lang,status,callback) {
-  debug('MailUserReceiver.prototype.sendCloseStatus');
-  async.eachOf(userReceiverMap,function(value,key,cb) {
-    value.sendCloseStatus(user,blog,lang,status,cb);
-  },function(err) {
-    return callback(err);
-  });
-};
-
-MailUserReceiver.prototype.updateArticle = function murUpdateArticle(user,article,change,callback) {
-  debug('MailUserReceiver.prototype.updateArticle');
-  async.eachOf(userReceiverMap,function(value,key,cb) {
-    debug('forEachOf'+key);
-    value.updateArticle(user,article,change,cb);
-  },function(err) {
-    return callback(err);
-  });
-};
-MailUserReceiver.prototype.addComment = function addComment(user,article,comment,callback) {
-  debug('MailUserReceiver.prototype.addComment');
-  async.eachOf(userReceiverMap,function(value,key,cb) {
-    debug('forEachOf'+key);
-    value.addComment(user,article,comment,cb);
-  },function(err) {
-    return callback(err);
-  });
-};
-MailUserReceiver.prototype.editComment = function editComment(user,article,index,comment,callback) {
-  debug('MailUserReceiver.prototype.editComment');
-  async.eachOf(userReceiverMap,function(value,key,cb) {
-    debug('forEachOf'+key);
-    value.editComment(user,article,index,comment,cb);
-  },function(err) {
-    return callback(err);
-  });
-};
-MailUserReceiver.prototype.updateBlog = function murUpdateBlog(user,blog,change,callback) {
-  debug('MailUserReceiver.prototype.updateBlog');
-  async.eachOf(userReceiverMap,function(value,key,cb) {
-    debug('forEachOf'+key);
-    value.updateBlog(user,blog,change,cb);
-  },function(err) {
-    return callback(err);
-  });
-};
-
-MailUserReceiver.prototype.sendInfo = function sendInfo(data,cb) {
-  debug("MailUserReceiver.prototype.sendInfo");
-  return cb();
-}; */
-
 let registered = false;
 
 function initialise(userList) {

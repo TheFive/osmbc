@@ -48,6 +48,15 @@ class ConfigFilter {
   }
 
   /**
+   * A changed user or configuration: no message for a channel.
+   * @param {object} data the change log entry
+   * @param {function(Error=)} cb called at once
+   */
+  sendInfo(data, cb) {
+    return cb();
+  }
+
+  /**
    * Passes an article change on if the channel wants it, see the
    * notifyNewCollection / notifyCollectionChange / notifyGuestTextChange
    * keys above (issue #1170).
@@ -57,7 +66,7 @@ class ConfigFilter {
    * @param {function(Error=)} cb called when done
    */
   updateArticle(user, article, change, cb) {
-    debug("ConfigFilter.prototype.updateArticle");
+    debug("ConfigFilter::updateArticle");
     const kind = classifyArticleChange(user, article, change);
     if (!articleChangeWanted(kind, channelArticleSettings(this.config))) return cb();
     debug("Notification because of article change");
@@ -65,7 +74,7 @@ class ConfigFilter {
   }
 
   addComment(user, article, comment, cb) {
-    debug("ConfigFilter.prototype.addComment");
+    debug("ConfigFilter::addComment");
     let notify = false;
 
     // check Collection
@@ -85,7 +94,7 @@ class ConfigFilter {
   }
 
   editComment(user, article, index, comment, cb) {
-    debug("ConfigFilter.prototype.addComment");
+    debug("ConfigFilter::addComment");
     let notify = false;
 
     // check Collection
@@ -105,7 +114,7 @@ class ConfigFilter {
   }
 
   updateBlog(user, blog, change, cb) {
-    debug("ConfigFilter.prototype.updateBlog");
+    debug("ConfigFilter::updateBlog");
     let notify = false;
 
 
@@ -121,7 +130,7 @@ class ConfigFilter {
   }
 
   sendReviewStatus(user, blog, lang, status, cb) {
-    debug("ConfigFilter.prototype.sendReviewStatus");
+    debug("ConfigFilter::sendReviewStatus");
     if (languageInFilter(this.config.notifyBlogLanguageStatusChange, lang)) {
       debug("Send out notification");
       return this.receiver.sendReviewStatus(user, blog, lang, status, cb);
@@ -138,7 +147,7 @@ class ConfigFilter {
    * @param {function(Error=)} cb called when done
    */
   sendCloseBlocked(user, blog, lang, problems, cb) {
-    debug("ConfigFilter.prototype.sendCloseBlocked");
+    debug("ConfigFilter::sendCloseBlocked");
     if (languageInFilter(this.config.notifyBlogLanguageStatusChange, lang) ||
       languageInFilter(this.config.notifyBlogLanguageClosed, lang)) {
       return this.receiver.sendCloseBlocked(user, blog, lang, problems, cb);
@@ -147,7 +156,7 @@ class ConfigFilter {
   }
 
   sendCloseStatus(user, blog, lang, status, cb) {
-    debug("ConfigFilter.prototype.sendCloseStatus");
+    debug("ConfigFilter::sendCloseStatus");
     if (languageInFilter(this.config.notifyBlogLanguageStatusChange, lang)) {
       debug("Send out notification");
       return this.receiver.sendCloseStatus(user, blog, lang, status, cb);

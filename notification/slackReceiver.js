@@ -206,7 +206,7 @@ export class SlackReceiver {
   }
 
   editComment(user, article, index, comment, callback) {
-    debug("SlackReceiver.prototype.editComment");
+    debug("SlackReceiver::editComment");
 
 
     const articleTitle = articleNameSlack(article, article.title);

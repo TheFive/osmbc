@@ -14,33 +14,33 @@ class ArticleCollectFilter {
   }
 
   sendInfo(object, callback) {
-    debug("ArticleCollectFilter.prototype.sendInfo");
+    debug("ArticleCollectFilter::sendInfo");
     return callback();
   }
 
   updateArticle(user, article, change, cb) {
-    debug("ArticleCollectFilter.prototype.updateArticle");
+    debug("ArticleCollectFilter::updateArticle");
     if (change.collection && change.collection === article.collection) return cb();
     this.receiver.updateArticle(user, article, change, cb);
   }
 
   updateBlog(user, blog, change, cb) {
-    debug("ArticleCollectFilter.prototype.updateBlog");
+    debug("ArticleCollectFilter::updateBlog");
     return cb();
   }
 
   addComment(user, article, comment, cb) {
-    debug("ArticleCollectFilter.prototype.addComment");
+    debug("ArticleCollectFilter::addComment");
     this.receiver.addComment(user, article, comment, cb);
   }
 
   editComment(user, article, index, comment, cb) {
-    debug("ArticleCollectFilter.prototype.editComment");
+    debug("ArticleCollectFilter::editComment");
     this.receiver.editComment(user, article, index, comment, cb);
   }
 
   sendReviewStatus(user, blog, lang, status, cb) {
-    debug("ArticleCollectFilter.prototype.sendReviewStatus");
+    debug("ArticleCollectFilter::sendReviewStatus");
     return cb();
   }
 
@@ -53,12 +53,12 @@ class ArticleCollectFilter {
    * @param {function(Error=)} cb called when done
    */
   sendCloseBlocked(user, blog, lang, problems, cb) {
-    debug("ArticleCollectFilter.prototype.sendCloseBlocked");
+    debug("ArticleCollectFilter::sendCloseBlocked");
     return cb();
   }
 
   sendCloseStatus(user, blog, lang, status, cb) {
-    debug("ArticleCollectFilter.prototype.sendCloseStatus");
+    debug("ArticleCollectFilter::sendCloseStatus");
     return cb();
   }
 }

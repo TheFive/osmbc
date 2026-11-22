@@ -17,32 +17,32 @@ class BlogStatusFilter {
   }
 
   sendInfo(object, callback) {
-    debug("BlogStatusFilter.prototype.sendInfo");
+    debug("BlogStatusFilter::sendInfo");
     return callback();
   }
 
   updateArticle(user, article, change, cb) {
-    debug("BlogStatusFilter.prototype.updateArticle");
+    debug("BlogStatusFilter::updateArticle");
     return cb();
   }
 
   addComment(user, article, comment, cb) {
-    debug("BlogStatusFilter.prototype.addComment");
+    debug("BlogStatusFilter::addComment");
     return cb();
   }
 
   editComment(user, article, index, comment, cb) {
-    debug("BlogStatusFilter.prototype.editComment");
+    debug("BlogStatusFilter::editComment");
     return cb();
   }
 
   updateBlog(user, blog, change, cb) {
-    debug("BlogStatusFilter.prototype.updateBlog");
+    debug("BlogStatusFilter::updateBlog");
     this.receiver.updateBlog(user, blog, change, cb);
   }
 
   sendReviewStatus(user, blog, lang, status, cb) {
-    debug("BlogStatusFilter.prototype.sendReviewStatus");
+    debug("BlogStatusFilter::sendReviewStatus");
     if (this.languages[lang]) {
       this.receiver.sendReviewStatus(user, blog, lang, status, cb);
     } else return cb();
@@ -57,14 +57,14 @@ class BlogStatusFilter {
    * @param {function(Error=)} cb called when done
    */
   sendCloseBlocked(user, blog, lang, problems, cb) {
-    debug("BlogStatusFilter.prototype.sendCloseBlocked");
+    debug("BlogStatusFilter::sendCloseBlocked");
     if (this.languages[lang]) {
       this.receiver.sendCloseBlocked(user, blog, lang, problems, cb);
     } else return cb();
   }
 
   sendCloseStatus(user, blog, lang, status, cb) {
-    debug("BlogStatusFilter.prototype.sendCloseStatus");
+    debug("BlogStatusFilter::sendCloseStatus");
     if (this.languages[lang]) {
       this.receiver.sendCloseStatus(user, blog, lang, status, cb);
     } else return cb();
@@ -73,7 +73,7 @@ class BlogStatusFilter {
 
 
 BlogStatusFilter.prototype.updateArticle = function ucfUpdateArticle(user, article, change, cb) {
-  debug("BlogStatusFilter.prototype.updateArticle");
+  debug("BlogStatusFilter::updateArticle");
   return cb();
 };
 

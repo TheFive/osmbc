@@ -145,11 +145,6 @@
       "count": 1
     }
   },
-  "notification/IteratorReceiver.js": {
-    "jsdoc/require-jsdoc": {
-      "count": 8
-    }
-  },
   "notification/LogModuleReceiver.js": {
     "jsdoc/require-jsdoc": {
       "count": 8

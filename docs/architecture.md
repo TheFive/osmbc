@@ -159,7 +159,15 @@ Rules:
 * **Every receiver implements all eight methods.** The message center
   calls them without checking whether they exist; a missing one throws as
   soon as that event happens. Use no-op stubs for events a receiver
-  doesn't care about (see `notification/exportReceiver.js`).
+  doesn't care about (see `notification/exportReceiver.js`). The list is
+  `RECEIVER_METHODS` in `notification/FilterReceiver.js`;
+  `test/notification.receiverMethods.test.js` checks every receiver
+  class against it — add a new receiver class there.
+* **Errors.** The message center gives every event to all receivers and
+  calls back with the first error. `IteratorReceiver` (mails, channels,
+  direct messages) is fire and forget: it calls back at once, so saving
+  does not wait for mails and webhooks, and only logs a failing receiver
+  (showing those in the admin UI: issue #1182).
 * **Each receiver decides itself whether a change is relevant.** This is
   not uniform: `UserConfigFilter` (mail per user) looks at
   `change.status`, `LogModuleReceiver` on its own logs every field it
