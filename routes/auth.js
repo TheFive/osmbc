@@ -220,21 +220,6 @@ function checkRole(role, functions) {
   };
 }
 
-function checkUser(user) {
-  debug("checkUser");
-  let userArray = user;
-  if (typeof user === "string") userArray = [user];
-  return function checkAuthentificationUser (req, res, next) {
-    debug("checkAuthentificationUser");
-    if (!req.isAuthenticated()) return next(new Error("Check Authentication runs in unauthenticated branch. Please inform your OSMBC Admin."));
-    const accessIndex = userArray.indexOf(req.user.OSMUser);
-    if (accessIndex >= 0) {
-      return next();
-    }
-    return res.status(FORBIDDEN).send("OSM User >" + req.user.OSMUser + "< has not enough access rights");
-  };
-}
-
 function hasRole(role) {
   debug("hasRole");
   let roleArray = role;
@@ -293,7 +278,6 @@ function ensureAuthenticated (req, res, next) {
 const auth = {
   passport: passport,
   checkRole: checkRole,
-  checkUser: checkUser,
   hasRole: hasRole,
   ensureAuthenticated: ensureAuthenticated,
   initialise: initialise

@@ -142,7 +142,7 @@
   },
   "notification/SlackAPI.js": {
     "jsdoc/require-jsdoc": {
-      "count": 4
+      "count": 3
     }
   },
   "notification/UserConfigFilter.js": {
@@ -231,7 +231,7 @@
   },
   "routes/auth.js": {
     "jsdoc/require-jsdoc": {
-      "count": 5
+      "count": 4
     },
     "max-lines-per-function": {
       "count": 1
@@ -263,11 +263,6 @@
   "routes/sessionStore.js": {
     "jsdoc/require-jsdoc": {
       "count": 1
-    }
-  },
-  "routes/slack.js": {
-    "jsdoc/require-jsdoc": {
-      "count": 2
     }
   },
   "routes/users.js": {
@@ -320,7 +315,7 @@
   },
   "util/util.js": {
     "jsdoc/require-jsdoc": {
-      "count": 13
+      "count": 12
     }
   },
   "wiki/dokuwikiMigration.js": {
