@@ -1,5 +1,29 @@
 # Changelog
 
+## [4.10.0](https://github.com/TheFive/osmbc/tree/4.10.0) (2026-11-22)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.9.0...4.10.0)
+
+**Features:**
+
+- article: confirm links the link check can't verify [#1183](https://github.com/TheFive/osmbc/issues/1183)
+- blog: answer exists or missing for links that can't be checked [#1183](https://github.com/TheFive/osmbc/issues/1183)
+- home: show the next automatic actions in one line
+- home: show only the next automatic action
+- firstdraft: show Claude the current issue and save drafts as ClaudeAI [#1185](https://github.com/TheFive/osmbc/issues/1185)
+- link: store link check results and editors' answers in one table [#1184](https://github.com/TheFive/osmbc/issues/1184)
+- link: all link check durations configurable in LinkCheck [#1184](https://github.com/TheFive/osmbc/issues/1184)
+
+**Fixed bugs:**
+
+- layout: centre the menu bar entries on the admin pages too
+- notification: a failing receiver no longer stops the others [#1182](https://github.com/TheFive/osmbc/issues/1182)
+- article: the charset decoder no longer breaks other requests
+- auth: a failed OSM login returns to the login page under htmlroot
+- tools: coverage:dead escapes function names in its regular expressions
+- article: list links that can't be checked on the article page too [#1183](https://github.com/TheFive/osmbc/issues/1183)
+- layout: keep the admin pages' content below the menu bar
+
 ## [4.9.0](https://github.com/TheFive/osmbc/tree/4.9.0) (2026-11-22)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.8.2...4.9.0)
