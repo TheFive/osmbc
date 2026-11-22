@@ -114,6 +114,40 @@ describe("model/osmcalLoader", function () {
         await doTest({ file: "t3", date: "2020-05-20T19:00:00Z", lang: "ES" });
       });
     });
+    describe("town column", function () {
+      it("should show a place tagged as town (Fulda, #1181)", async function () {
+        nock("https://osmcal.org")
+          .get("/api/v2/events/")
+          .reply(200, [{
+            name: "1. OSM Stammtisch Fulda",
+            url: "https://osmcal.org/event/5285/",
+            date: {
+              human: "22nd November 14:00 – 17:00",
+              human_short: "22nd November",
+              whole_day: false,
+              start: "2026-11-22T14:00:00+01:00",
+              end: "2026-11-22T17:00:00+01:00"
+            },
+            location: {
+              short: "Fulda, Hesse, Germany",
+              detailed: "Magrathea Laboratories e.V., 19, Rabanusstraße, Hesse, Germany",
+              coords: [9.680761, 50.552258],
+              venue: "Magrathea Laboratories e.V."
+            }
+          }]);
+        nock("https://nominatim.openstreetmap.org")
+          .get("/reverse?format=jsonv2&zoom=10&lat=50.552258&lon=9.680761&accept-language=EN")
+          .reply(200, {
+            addresstype: "town",
+            name: "Fulda",
+            address: { town: "Fulda", county: "Landkreis Fulda", state: "Hesse", country: "Germany", country_code: "de" }
+          });
+        mockdate.set(new Date("2026-11-16T19:00:00Z"));
+
+        const result = await osmcalLoader.getEventMd("EN");
+        should(result).match(/\|Magrathea Laboratories e\.V\.\s*\|Fulda\s*\|/);
+      });
+    });
     describe("Successfull Calls Missing Values", function () {
       it("should generate canceled Events", async function () {
         await doTest({ file: "t4", date: "2020-05-20T19:00:00Z", lang: "ES" });
@@ -204,6 +238,23 @@ describe("model/osmcalLoader", function () {
       should(filterTest({ date: { start: "2015-12-20" }, big: true }, option, blogStartDate)).be.False();
       should(filterTest({ date: { start: "2016-01-01" }, big: false }, option, blogStartDate)).be.True();
       should(filterTest({ date: { start: "2016-12-31" }, big: true }, option, blogStartDate)).be.True();
+    });
+  });
+  describe("townFromAddress", function () {
+    const townFromAddress = osmcalLoader.forTestOnly.townFromAddress;
+    it("should take city, town, village or municipality", function () {
+      should(townFromAddress({ city: "Berlin" })).eql("Berlin");
+      should(townFromAddress({ town: "Fulda" })).eql("Fulda");
+      should(townFromAddress({ village: "Kleinsassen" })).eql("Kleinsassen");
+      should(townFromAddress({ municipality: "Hilders" })).eql("Hilders");
+    });
+    it("should prefer city over the smaller place types", function () {
+      should(townFromAddress({ village: "V", town: "T", city: "C" })).eql("C");
+      should(townFromAddress({ village: "V", town: "T" })).eql("T");
+    });
+    it("should return an empty string without a place name", function () {
+      should(townFromAddress({ county: "Landkreis Fulda", state: "Hesse" })).eql("");
+      should(townFromAddress(undefined)).eql("");
     });
   });
   describe("enrichData (country_flag)", function () {
