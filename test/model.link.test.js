@@ -69,9 +69,9 @@ describe("model/link", function() {
       should(again.isDone()).be.false();
     });
 
-    it("should ask again when the check ran out (broken after a day, ok after 21 days)", async function() {
+    it("should ask again when the check ran out (broken after a day, ok after 90 days)", async function() {
       await storeRow({ url: goneUrl, check: { state: "broken", status: 404, checkedAt: daysAgo(2) } });
-      await storeRow({ url: fineUrl, check: { state: "ok", status: "OK", checkedAt: daysAgo(10) } });
+      await storeRow({ url: fineUrl, check: { state: "ok", status: "OK", checkedAt: daysAgo(80) } });
       const scope = nock("https://site.example").head("/gone").reply(200);
       const results = await checkUrls([goneUrl, fineUrl]);
       should(scope.isDone()).be.true();
@@ -183,11 +183,31 @@ describe("model/link", function() {
     });
   });
 
+  describe("settings (LinkCheck)", function() {
+    it("should use the defaults without config", function() {
+      should(linkModule.settings({})).eql({
+        confirmationValidMonths: 6, recheckOkDays: 90, recheckBrokenDays: 1, recheckBlockedDays: 1, recheckUnreachableHours: 1, cleanupAfterDays: 180
+      });
+      should(linkModule.settingsProblems({})).eql([]);
+    });
+    it("should take configured values and replace invalid ones by the default", function() {
+      const s = linkModule.settings({ recheckOkDays: 365, cleanupAfterDays: 400, recheckBrokenDays: 0.5, recheckBlockedDays: "2", confirmationValidMonths: -1 });
+      should(s).containDeep({ recheckOkDays: 365, cleanupAfterDays: 400, recheckBrokenDays: 0.5, recheckBlockedDays: 1, confirmationValidMonths: 6 });
+    });
+    it("should report unknown keys, invalid values and a cleanup shorter than the ok recheck", function() {
+      should(linkModule.settingsProblems({ recheckOKDays: 30, recheckBlockedDays: "2", cleanupAfterDays: 30 })).eql([
+        "LinkCheck.recheckOKDays is unknown",
+        "LinkCheck.recheckBlockedDays must be a number > 0, using 1",
+        "LinkCheck.cleanupAfterDays is shorter than recheckOkDays"
+      ]);
+    });
+  });
+
   describe("cleanup", function() {
     it("should remove old automatic rows and keep answered ones", async function() {
-      await storeRow({ url: "https://old.example/", check: { state: "ok", status: "OK", checkedAt: daysAgo(90) } });
-      await storeRow({ url: "https://new.example/", check: { state: "ok", status: "OK", checkedAt: daysAgo(5) } });
-      await storeRow({ url: "https://answered.example/", check: { state: "broken", status: 404, checkedAt: daysAgo(90) }, answer: { exists: true, by: "E", timestamp: daysAgo(90) } });
+      await storeRow({ url: "https://old.example/", check: { state: "ok", status: "OK", checkedAt: daysAgo(200) } });
+      await storeRow({ url: "https://new.example/", check: { state: "ok", status: "OK", checkedAt: daysAgo(100) } });
+      await storeRow({ url: "https://answered.example/", check: { state: "broken", status: 404, checkedAt: daysAgo(200) }, answer: { exists: true, by: "E", timestamp: daysAgo(200) } });
       await cleanup();
       const rows = await query("SELECT data->>'url' AS url FROM link ORDER BY 1", []);
       should(rows.rows.map(r => r.url)).eql(["https://answered.example/", "https://new.example/"]);

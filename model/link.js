@@ -2,9 +2,9 @@
 // the last automatic check (util/linkCheck.js) and an editor's answer.
 //
 // - check: { state, status, checkedAt }; state ok / broken / blocked /
-//   unreachable. Valid for CHECK_VALID_MS[state], then checked again.
+//   unreachable. Valid for LinkCheck.recheck…, then checked again.
 // - answer: { exists, by, timestamp }, only from a full editor; valid for
-//   LinkCheck.confirmationValidMonths (default 6). While valid it wins over
+//   LinkCheck.confirmationValidMonths. While valid it wins over
 //   the check, in both directions (a 404 that works in the browser, a page
 //   that answers 200 but is gone).
 // Without a valid answer the check decides: ok = exists, broken = missing,
@@ -24,17 +24,60 @@ const debug = _debug("OSMBC:model:link");
 const TABLE = "link";
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
-const CHECK_VALID_MS = { ok: 21 * DAY, broken: DAY, blocked: DAY, unreachable: HOUR };
-// automatic rows without an answer are removed when their check is older
-const CLEANUP_AFTER_MS = 60 * DAY;
 const PARALLEL_CHECKS = 5;
-const DEFAULT_VALID_MONTHS = 6;
 const SEARCH_LIMIT = 200;
 
-function validMonths() {
-  const months = (config.getValue("LinkCheck", { default: {} }) || {}).confirmationValidMonths;
-  if (typeof months === "number" && months > 0) return months;
-  return DEFAULT_VALID_MONTHS;
+// LinkCheck in the editorial config (docs/config.md "Link check"); a
+// missing or invalid value (not a number > 0) takes the default
+const DEFAULTS = {
+  confirmationValidMonths: 6,
+  recheckOkDays: 90,
+  recheckBrokenDays: 1,
+  recheckBlockedDays: 1,
+  recheckUnreachableHours: 1,
+  cleanupAfterDays: 180
+};
+
+/**
+ * The link check settings with defaults filled in.
+ * @param {object} [linkCheck] the LinkCheck config block (default: from config)
+ * @returns {object} every key of DEFAULTS with a number > 0
+ */
+function settings(linkCheck = config.getValue("LinkCheck", { default: {} })) {
+  const result = {};
+  for (const key in DEFAULTS) {
+    const value = (linkCheck || {})[key];
+    result[key] = (typeof value === "number" && value > 0) ? value : DEFAULTS[key];
+  }
+  return result;
+}
+
+/**
+ * Problems of a LinkCheck config block, as texts for the log at start.
+ * @param {object} [linkCheck] the LinkCheck config block (default: from config)
+ * @returns {string[]} unknown keys, values that are no number > 0, a cleanup
+ *   shorter than the ok recheck (would delete rows still in use)
+ */
+function settingsProblems(linkCheck = config.getValue("LinkCheck", { default: {} })) {
+  const problems = [];
+  for (const key in (linkCheck || {})) {
+    if (!Object.hasOwn(DEFAULTS, key)) problems.push(`LinkCheck.${key} is unknown`);
+    else if (!(typeof linkCheck[key] === "number" && linkCheck[key] > 0)) problems.push(`LinkCheck.${key} must be a number > 0, using ${DEFAULTS[key]}`);
+  }
+  const s = settings(linkCheck);
+  if (s.cleanupAfterDays < s.recheckOkDays) problems.push("LinkCheck.cleanupAfterDays is shorter than recheckOkDays");
+  return problems;
+}
+
+// how long an automatic check result is used before the link is checked again
+function recheckAfterMs(state) {
+  const s = settings();
+  return {
+    ok: s.recheckOkDays * DAY,
+    broken: s.recheckBrokenDays * DAY,
+    blocked: s.recheckBlockedDays * DAY,
+    unreachable: s.recheckUnreachableHours * HOUR
+  }[state];
 }
 
 /**
@@ -52,8 +95,9 @@ class Link {
    * @returns {boolean} false when there is no check or it ran out
    */
   isCheckFresh(now) {
-    if (!this.check || !CHECK_VALID_MS[this.check.state]) return false;
-    return now - new Date(this.check.checkedAt) < CHECK_VALID_MS[this.check.state];
+    const validMs = this.check ? recheckAfterMs(this.check.state) : undefined;
+    if (!validMs) return false;
+    return now - new Date(this.check.checkedAt) < validMs;
   }
 
   /**
@@ -63,7 +107,7 @@ class Link {
   answerValidUntil() {
     if (!this.answer) return null;
     const d = new Date(this.answer.timestamp);
-    d.setUTCMonth(d.getUTCMonth() + validMonths());
+    d.setUTCMonth(d.getUTCMonth() + settings().confirmationValidMonths);
     return d;
   }
 
@@ -114,11 +158,12 @@ function toLinks(result) {
 
 /**
  * Removes automatic rows without an editor's answer whose check is older
- * than 60 days; they are checked again when a page shows the link.
+ * than LinkCheck.cleanupAfterDays; they are checked again when a page
+ * shows the link.
  * @param {function(Error=)} callback
  */
 function cleanup(callback) {
-  const before = new Date(Date.now() - CLEANUP_AFTER_MS).toISOString();
+  const before = new Date(Date.now() - settings().cleanupAfterDays * DAY).toISOString();
   db.query("DELETE FROM link WHERE data->'answer' IS NULL AND data->'check'->>'checkedAt' < $1", [before], function(err) {
     return callback(err);
   });
@@ -132,6 +177,7 @@ function cleanup(callback) {
  */
 function ensureTable(callback) {
   debug("ensureTable");
+  settingsProblems().forEach(p => config.logger.warn("Config: " + p));
   db.query(pgObject.createString, function(err) {
     if (err) return callback(err);
     const indexes = Object.values(pgObject.indexDefinition).map(sql => sql.replace(/^CREATE (UNIQUE )?INDEX /, "CREATE $1INDEX IF NOT EXISTS "));
@@ -371,6 +417,8 @@ export default {
   table: TABLE,
   pg: pgObject,
   ensureTable: ensureTable,
+  settings: settings,
+  settingsProblems: settingsProblems,
   cleanup: cleanup,
   knownResults: knownResults,
   checkUrls: checkUrls,
