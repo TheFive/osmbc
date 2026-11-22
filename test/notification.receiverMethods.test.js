@@ -5,8 +5,6 @@ import FilterReceiver from "../notification/FilterReceiver.js";
 import IteratorReceiver from "../notification/IteratorReceiver.js";
 import ConfigFilter from "../notification/ConfigFilter.js";
 import UserConfigFilter from "../notification/UserConfigFilter.js";
-import BlogStatusFilter from "../notification/BlogStatusFilter.js";
-import ArticleCollectFilter from "../notification/ArticleCollectFilter.js";
 import LogModuleReceiver from "../notification/LogModuleReceiver.js";
 import ExportReceiver from "../notification/exportReceiver.js";
 import { MailReceiver } from "../notification/mailReceiver.js";
@@ -23,8 +21,6 @@ describe("notification receivers", function() {
     IteratorReceiver,
     ConfigFilter,
     UserConfigFilter,
-    BlogStatusFilter,
-    ArticleCollectFilter,
     LogModuleReceiver,
     ExportReceiver,
     MailReceiver,
@@ -36,6 +32,24 @@ describe("notification receivers", function() {
       should(missing).eql([]);
     });
   }
+
+  describe("sendInfo (changes log of users and configurations)", function() {
+    const notCalled = { sendInfo() { throw new Error("must not be passed on"); } };
+    const receivers = {
+      ConfigFilter: () => new ConfigFilter({}, notCalled),
+      UserConfigFilter: () => new UserConfigFilter({ OSMUser: "test", access: "full" }, notCalled),
+      MailReceiver: () => new MailReceiver({ OSMUser: "test", email: "test@example.org" }),
+      SlackReceiver: () => new SlackReceiver("test", "slackTeam", "#channel")
+    };
+    for (const [name, create] of Object.entries(receivers)) {
+      it(`${name} should send nothing for it`, function(done) {
+        create().sendInfo({ table: "usert" }, function(err) {
+          should(err).be.undefined();
+          done();
+        });
+      });
+    }
+  });
 
   describe("MessageCenter", function() {
     let MessageCenter;

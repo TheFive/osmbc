@@ -125,16 +125,6 @@
       "count": 1
     }
   },
-  "notification/ArticleCollectFilter.js": {
-    "jsdoc/require-jsdoc": {
-      "count": 8
-    }
-  },
-  "notification/BlogStatusFilter.js": {
-    "jsdoc/require-jsdoc": {
-      "count": 8
-    }
-  },
   "notification/ConfigFilter.js": {
     "jsdoc/require-jsdoc": {
       "count": 6
