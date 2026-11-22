@@ -18,7 +18,7 @@ import logModule from "../model/logModule.js";
 import messageCenter from "../notification/messageCenter.js";
 import userModule from "../model/user.js";
 import translator from "../model/translator.js";
-import { getKnownMigrationUserNames } from "../notification/migrationFilter.js";
+import { isServiceUser } from "../model/serviceUsers.js";
 import osmcalLoader from "../model/osmcalLoader.js";
 import { normaliseWeeklyTime, nextWeeklyTimeAtOrAfter } from "../util/weeklyTime.js";
 import { checkAnchor, findAnchors } from "../util/anchorCheck.js";
@@ -2143,24 +2143,11 @@ function runAutoEditMode(callback) {
 function convertLogsToTeamString(logs, lang, users) {
   debug("convertLogsToTeamString");
   const editors = [];
-  const apiEditors = [];
-  for (const f in translator) {
-    apiEditors.push(translator[f].user);
-  }
-  // Migration/API-key users (wp-backport plus every configured apiKeys
-  // value, see notification/migrationFilter.js) - never real contributors,
-  // so they must not show up in the public credit sentence, same as the
-  // API/translator users above. Shares its source of truth with the
-  // notification filter instead of hardcoding a second copy of this list.
-  apiEditors.push(...getKnownMigrationUserNames());
-  // wp-oldimport predates the migration/apiKeys mechanism entirely (the
-  // one-time pre-osmbc bulk import, see createTeamString's comment above)
-  // and isn't attributed through an apiKey, so it's excluded separately.
-  apiEditors.push("wp-oldimport");
   function addEditors(property, min) {
     for (const user in logs[property]) {
       if (logs[property][user] >= min) {
-        if (editors.indexOf(user) < 0 && apiEditors.indexOf(user) < 0) {
+        // service users (DeepL, Claude, migration, import) are no contributors
+        if (editors.indexOf(user) < 0 && !isServiceUser(user)) {
           editors.push(user);
         }
       }

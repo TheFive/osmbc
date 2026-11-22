@@ -4,7 +4,7 @@ import { Router } from "express";
 import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
 import { resolve } from "path";
-import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY, BAD_REQUEST } from "http-status-codes";
+import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY, BAD_REQUEST, CONFLICT } from "http-status-codes";
 import { renderFile } from "pug";
 
 
@@ -399,6 +399,8 @@ function renderArticleIdVotesBlog(req, res, next) {
 
 function searchAndCreate(req, res, next) {
   debug("searchAndCreate");
+  // a draft from an earlier collect page must not end up in this article
+  if (req.session) delete req.session.firstDraft;
   let search = req.query.search;
   let show = req.query.show;
   if (!show) show = "15";
@@ -478,6 +480,9 @@ function postArticle(req, res, next) {
   }
   let returnToUrl;
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
+  // a draft from the collect page is saved after the article, as ClaudeAI
+  const collectedDraft = (article) ? null : takeCollectedDraft(req);
+  if (collectedDraft) delete changes["markdown" + collectedDraft.lang];
 
   series([
     function checkFeatureImage(cb) {
@@ -511,7 +516,10 @@ function postArticle(req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect(returnToUrl);
+      if (!collectedDraft) return res.redirect(returnToUrl);
+      firstDraft.saveCollectedDraft(req.user, article, collectedDraft, req.body["markdown" + collectedDraft.lang])
+        .then(() => res.redirect(returnToUrl))
+        .catch(next);
     });
   }
   );
@@ -1069,16 +1077,58 @@ function translateWithPlugin(translatePlugin) {
 }
 
 
+// input and conflict errors from the model keep their status; everything
+// else (page not loadable, Claude failed) is a 502, also when the error
+// carries the status of the external page
+function sendDraftError(res, err) {
+  const status = ([BAD_REQUEST, NOT_FOUND, CONFLICT].includes(err.status)) ? err.status : BAD_GATEWAY;
+  res.status(status).type("text/plain").send(err.message);
+}
+
+/**
+ * Collect page: a draft with working title and category as JSON
+ * { markdown, title, category }. The draft is kept in the session; when the
+ * article is created (postArticle), it is saved as ClaudeAI first.
+ * @param {object} req express request, body { url, blog }
+ * @param {object} res express response
+ */
 function postFirstDraft(req, res) {
   debug("postFirstDraft");
   if (!firstDraft.isVisibleFor(req.user)) {
     return res.status(FORBIDDEN).type("text/plain").send("First Draft is not enabled for " + req.user.OSMUser);
   }
-  // withTitle (collect page): JSON { markdown, title, category }, else the markdown as text
-  const withTitle = req.body.withTitle === "true";
-  firstDraft.createDraft({ lang: req.params.lang, url: req.body.url, withTitle: withTitle })
-    .then((draft) => (withTitle) ? res.json(draft) : res.type("text/plain").send(draft))
-    .catch((err) => res.status(BAD_GATEWAY).type("text/plain").send(err.message));
+  const lang = req.params.lang;
+  firstDraft.draftForCollect(req.user, { lang: lang, url: req.body.url, blog: req.body.blog })
+    .then((draft) => {
+      req.session.firstDraft = { url: req.body.url, lang: lang, markdown: draft.markdown };
+      res.json(draft);
+    })
+    .catch((err) => sendDraftError(res, err));
+}
+
+/**
+ * Article page: the draft is saved into the article as ClaudeAI, the answer
+ * is the saved markdown.
+ * @param {object} req express request with req.article, body { url, old }
+ * @param {object} res express response
+ */
+function postArticleFirstDraft(req, res) {
+  debug("postArticleFirstDraft");
+  if (!firstDraft.isVisibleFor(req.user)) {
+    return res.status(FORBIDDEN).type("text/plain").send("First Draft is not enabled for " + req.user.OSMUser);
+  }
+  firstDraft.draftIntoArticle(req.user, req.article, { lang: req.params.lang, url: req.body.url, old: req.body.old })
+    .then((markdown) => res.type("text/plain").send(markdown))
+    .catch((err) => sendDraftError(res, err));
+}
+
+// The draft made on the collect page, if the new article is for its link.
+// Taken out of the session in any case: it belongs to one collect page.
+function takeCollectedDraft(req) {
+  const draft = req.session?.firstDraft;
+  if (req.session) delete req.session.firstDraft;
+  if (!draft || typeof req.body.collection !== "string") return null;
+  return (req.body.collection.includes(draft.url)) ? draft : null;
 }
 
 
@@ -1110,6 +1160,7 @@ router.post("/translate/deeplPro/:fromLang/:toLang", allowFullAccess, translateW
 router.post("/translate/copy/:fromLang/:toLang", allowFullAccess, translateWithPlugin("copy"));
 // who may use it decides FirstDraftConfig.visibleFor (also guests)
 router.post("/firstdraft/:lang", allowGuestAccess, postFirstDraft);
+router.post("/:article_id/firstdraft/:lang", allowGuestAccess, postArticleFirstDraft);
 router.post("/urlexist", allowGuestAccess, urlExist);
 router.post("/checkfeatureimage", allowFullAccess, checkFeatureImage);
 router.get("/readability", allowFullAccess, getExternalText);

@@ -137,6 +137,13 @@ sequenceDiagram
 * **Broadcast before save.** The message center gets the old object and
   the change. It forwards it to *every* registered receiver; it filters
   nothing itself.
+* **Service users.** Changes OSMBC makes itself are saved under a
+  service user instead of a person: `deeplPro API Call` (DeepL),
+  `ClaudeAI` (First Draft), the migration / API key users,
+  `wp-oldimport`. They show in the history like everybody else.
+  `model/serviceUsers.js` maps each name to its function; evaluations use
+  it to tell them from editors (today the credits of an issue; the others
+  follow with issue #1186).
 
 ### Receivers
 

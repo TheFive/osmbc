@@ -6,6 +6,9 @@
 // and saves the link only, or the
 // link with the (edited) draft. The draft is made for a new link right away, for a link
 // that was found in other articles only on request.
+// The server keeps the draft and saves it as user ClaudeAI when the article
+// is created, then the text sent here as the user ("Save link only": the
+// draft shows up in the history as removed).
 
 (function () {
   const area = document.getElementById("firstDraftArea");
@@ -41,7 +44,10 @@
     startButton.classList.add("d-none");
     error.classList.add("d-none");
     wait.classList.remove("d-none");
-    jQuery.post(window.htmlroot + "/article/firstdraft/" + encodeURIComponent(lang), { url: url, withTitle: "true" }, function (draft) {
+    // the blog chosen in the form: Claude sees its other items (#1185)
+    const blog = document.getElementById("blog");
+    const data = { url: url, blog: blog ? blog.value : "" };
+    jQuery.post(window.htmlroot + "/article/firstdraft/" + encodeURIComponent(lang), data, function (draft) {
       wait.classList.add("d-none");
       if (title && draft.title && title.value === pageTitle) {
         title.value = draft.title;
