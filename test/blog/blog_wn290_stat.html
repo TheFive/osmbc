@@ -438,19 +438,9 @@
       window.htmlroot = "";
     </script>
     <script nonce="">
-      // keep the content below the fixed navbar, whatever its height
+      // content below the fixed navbar: fitContentBelowNavbar in osmbc_staff.js
       (function() {
-        // an adopted style sheet does not change the DOM (style.css has a fallback)
         var navbar = document.getElementById("fixedNavbar");
-        if (window.CSSStyleSheet && document.adoptedStyleSheets && window.ResizeObserver) {
-          var sheet = new CSSStyleSheet();
-          document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
-          var fit = function() {
-            sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }");
-          };
-          fit();
-          new ResizeObserver(fit).observe(navbar);
-        }
         // small screens: hide the bar when scrolling down, show it when scrolling up
         var lastY = window.scrollY;
         window.addEventListener("scroll", function() {

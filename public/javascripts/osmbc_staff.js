@@ -321,3 +321,17 @@ function addSpinnerAndSubmit(element) {
 }
 
 
+// Keeps the content below the fixed navbar (#fixedNavbar in layout.pug and
+// adminlayout.pug), whatever its height (avatar, beta marker, wrapped
+// entries). An adopted style sheet does not change the DOM; style.css has
+// a fixed fallback for older browsers.
+function fitContentBelowNavbar() {
+  const navbar = document.getElementById("fixedNavbar");
+  if (!navbar || !window.CSSStyleSheet || !document.adoptedStyleSheets || !window.ResizeObserver) return;
+  const sheet = new CSSStyleSheet();
+  document.adoptedStyleSheets = document.adoptedStyleSheets.concat([sheet]);
+  const fit = function () { sheet.replaceSync("body { padding-top: " + navbar.offsetHeight + "px; } :root { --osmbc-navbar-height: " + navbar.offsetHeight + "px; }"); };
+  fit();
+  new ResizeObserver(fit).observe(navbar);
+}
+fitContentBelowNavbar();

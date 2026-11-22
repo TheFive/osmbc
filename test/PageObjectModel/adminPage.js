@@ -27,6 +27,14 @@ class AdminPage extends Page {
     return await header.getText();
   }
 
+  // the first heading starts below the fixed navbar, not hidden under it
+  async isFirstHeaderBelowNavbar() {
+    await this.assertPage();
+    return this._driver.executeScript(`
+      window.scrollTo(0, 0);
+      return document.querySelector("h1").getBoundingClientRect().top >= document.getElementById("fixedNavbar").getBoundingClientRect().bottom;`);
+  }
+
   async clickCreateUserMenu() {
     await this.assertPage();
     // User List Menu
