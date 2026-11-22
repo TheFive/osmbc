@@ -211,18 +211,18 @@ class ArticlePage extends StandardPage {
     return note.getText();
   }
 
-  // "Link works": confirms a link the link check can't verify
-  async confirmLink(link) {
+  // "Exists" (true) / "Missing" (false) for a link the link check can't verify
+  async answerLink(link, exists) {
     await this.assertPage();
-    await this.tap(await this._driver.findElement(By.css(`#linkArea button[data-link-confirm='${link}']`)));
-    await this._driver.wait(until.elementLocated(By.css(`#linkArea button[data-link-revoke='${link}']`)), 5000, "link not confirmed");
+    await this.tap(await this._driver.findElement(By.css(`#linkArea button[data-link-answer='${exists}'][data-link-url='${link}']`)));
+    await this._driver.wait(until.elementLocated(By.css(`#linkArea button[data-link-revoke='${link}']`)), 5000, "link not answered");
   }
 
-  // "Undo" of a link confirmation, waits for the "Link works" button again
-  async undoLinkConfirmation(link) {
+  // "Undo" of an answer, waits for the "Exists" button again
+  async undoLinkAnswer(link) {
     await this.assertPage();
     await this.tap(await this._driver.findElement(By.css(`#linkArea button[data-link-revoke='${link}']`)));
-    await this._driver.wait(until.elementLocated(By.css(`#linkArea button[data-link-confirm='${link}']`)), 5000, "confirmation not undone");
+    await this._driver.wait(until.elementLocated(By.css(`#linkArea button[data-link-answer='true'][data-link-url='${link}']`)), 5000, "answer not undone");
   }
 
   // how the link check marks a link in the preview: "broken", "uncheckable" or "none"

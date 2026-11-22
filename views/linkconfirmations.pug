@@ -1,25 +1,41 @@
 extends adminlayout
 
-//- Links an editor confirmed although the link check can't verify them
-//- (routes/linkConfirmation.js). Undo: delegated handler in osmbc_staff.js.
+//- Answers for links the link check can't verify (routes/linkConfirmation.js).
+//- Search and filter are a plain GET form; undo: delegated handler in osmbc_staff.js.
 block content
-  h1 Confirmed links
+  h1 Checked links
   p.text-muted
     | Links behind bot protection, a login or with a certificate problem can't be checked automatically.
-    | An editor who opened such a link in the browser confirms it on the article page; it then shows as a normal link.
+    | An editor who opened such a link answers on the blog page or in the article whether it exists.
+    | Links marked "missing" are shown as broken.
+  form#linkConfirmationFilter.d-flex.flex-wrap.align-items-end.gap-2.mb-3(method="get" action=layout.htmlroot + "/linkconfirmation")
+    div.flex-grow-1
+      label.form-label(for="linkConfirmationSearch") Search url or user
+      input.form-control#linkConfirmationSearch(type="search" name="q" value=q)
+    div
+      label.form-label(for="linkConfirmationAnswer") Answer
+      select.form-select#linkConfirmationAnswer(name="answer")
+        each f in answerFilters
+          option(value=f selected=(f === answer))= f
+    button.btn.btn-primary(type="submit") Filter
   if entries.length === 0
-    p#noLinkConfirmations No confirmed links.
+    p#noLinkConfirmations No checked links.
   else
+    p.text-muted.small #{entries.length} links
     ul.list-group#linkConfirmations
       each e in entries
         li.list-group-item.d-flex.flex-wrap.align-items-center.gap-2(data-link-row=e.url)
+          if e.exists
+            span.badge.text-bg-success exists
+          else
+            span.badge.text-bg-danger missing
           div.flex-grow-1.text-break
             a(href=e.url target="_blank" rel="noopener noreferrer")= e.url
             div.small.text-muted
-              | confirmed by #{e.user} on #{layout.moment(e.timestamp).format("YYYY-MM-DD")}
+              | answered by #{e.user} on #{layout.moment(e.timestamp).format("YYYY-MM-DD")}
               | , link check said #{e.status}
               if e.expired
                 span.badge.text-bg-secondary.ms-2 expired #{layout.moment(e.validUntil).format("YYYY-MM-DD")}
               else
                 |  · valid until #{layout.moment(e.validUntil).format("YYYY-MM-DD")}
-          button.btn.btn-outline-secondary.btn-sm(type="button" data-link-revoke=e.url) Undo
+          button.btn.btn-outline-secondary(type="button" data-link-revoke=e.url) Undo

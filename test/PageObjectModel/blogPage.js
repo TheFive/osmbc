@@ -29,6 +29,55 @@ class BlogPage extends StandardPage {
     throw new Error(`No element found for selector: ${selector}`);
   }
 
+  // the link check starts 500 ms after the page is shown (osmbc_staff.js)
+  async #waitForLinkCheck() {
+    await this._driver.wait(() => this._driver.executeScript("return !!window.cacheLink && Object.keys(window.cacheLink).length > 0;"), 5000, "link check did not run");
+    await this.waitForBackgroundRequests();
+  }
+
+  // Rows of the list "Links that can't be checked automatically" as
+  // {url, text}; empty while the list is hidden. Waits for the link check.
+  async getUncheckableLinks() {
+    await this.#waitForLinkCheck();
+    const area = await this._driver.findElement(By.id("uncheckableLinks"));
+    if (!(await area.isDisplayed())) return [];
+    const rows = await area.findElements(By.css("li[data-uncheckable-link]"));
+    const result = [];
+    for (const row of rows) {
+      result.push({ url: await row.getAttribute("data-uncheckable-link"), text: await row.getText() });
+    }
+    return result;
+  }
+
+  #uncheckableRow(url) {
+    return `#uncheckableLinks li[data-uncheckable-link='${url}']`;
+  }
+
+  // "Exists" (true) / "Missing" (false) in that list
+  async answerUncheckableLink(url, exists) {
+    await this.tap(await this._driver.findElement(By.css(`${this.#uncheckableRow(url)} button[data-link-answer='${exists}']`)));
+    await this._driver.wait(until.elementLocated(By.css(`${this.#uncheckableRow(url)} button[data-link-revoke]`)), 5000, "link not answered");
+  }
+
+  // "Undo" in that list, waits for the "Exists" button again
+  async undoUncheckableLink(url) {
+    await this.tap(await this._driver.findElement(By.css(`${this.#uncheckableRow(url)} button[data-link-revoke]`)));
+    await this._driver.wait(until.elementLocated(By.css(`${this.#uncheckableRow(url)} button[data-link-answer='true']`)), 5000, "answer not undone");
+  }
+
+  // how the link check marks the link in the article texts: "broken",
+  // "uncheckable" or "none", one entry per shown text
+  async getTextLinkMarks(url) {
+    await this.#waitForLinkCheck();
+    const marks = [];
+    for (const a of await this._driver.findElements(By.css(`.preview a[href='${url}']`))) {
+      if (!(await a.isDisplayed())) continue;
+      const cssClass = await a.getAttribute("class") || "";
+      marks.push(/osmbc-nonexist/.test(cssClass) ? "broken" : /osmbc-link-uncheckable/.test(cssClass) ? "uncheckable" : "none");
+    }
+    return marks;
+  }
+
   async assertPage() {
     await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/blog"));

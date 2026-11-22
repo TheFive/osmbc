@@ -1,8 +1,9 @@
 // Links the link check can't verify (bot protection, login wall, geo
-// blocking, certificate error) can be confirmed by a full editor who opened
-// them in the browser. A confirmation belongs to the url, not to an
-// article, and is valid for LinkCheck.confirmationValidMonths (default 6).
-// Confirm and undo are written to the change log (table "linkconfirmation").
+// blocking, certificate error) get an answer from a full editor who opened
+// them in the browser: the link exists, or it is missing (then it is shown
+// as broken). An answer belongs to the url, not to an article, and is valid
+// for LinkCheck.confirmationValidMonths (default 6). Answer and undo are
+// written to the change log (table "linkconfirmation").
 
 import _debug from "debug";
 import { BAD_REQUEST, CONFLICT, FORBIDDEN, NOT_FOUND } from "http-status-codes";
@@ -24,7 +25,10 @@ function validMonths() {
   return DEFAULT_VALID_MONTHS;
 }
 
-/** One confirmed url: `url`, `user` (OSMUser), `timestamp`, `status` (check result at confirmation). */
+/**
+ * One answered url: `url`, `exists` (true/false), `user` (OSMUser),
+ * `timestamp`, `status` (link check result when answered).
+ */
 class LinkConfirmation {
   constructor(proto) {
     this.id = 0;
@@ -60,13 +64,23 @@ class LinkConfirmation {
   }
 
   /**
-   * The link check result for a confirmed link, as sent to the browser.
+   * Whether the editor said the link exists (entries from before the
+   * yes/no answer only knew "exists").
+   * @returns {boolean} false for a link marked missing
+   */
+  linkExists() {
+    return this.exists !== false;
+  }
+
+  /**
+   * The link check result for an answered link, as sent to the browser.
    * @param {(number|string)} status the current result of the link check
-   * @returns {object} state "confirmed" plus who confirmed it, when and until when
+   * @returns {object} state "confirmed", `exists`, who answered, when and until when
    */
   toCheckResult(status) {
     return {
       state: "confirmed",
+      exists: this.linkExists(),
       status: status,
       user: this.user,
       timestamp: this.timestamp,
@@ -133,23 +147,25 @@ function findByUrl(url, callback) {
 
 // change: {property, from, to} of the change log entry
 function logChange(user, entry, change, callback) {
-  messageCenter.global.sendInfo(Object.assign({ oid: entry.id, user: user.OSMUser, table: TABLE }, change), callback);
+  messageCenter.global.sendInfo(Object.assign({ oid: entry.id, user: user.OSMUser, table: TABLE, url: entry.url }, change), callback);
 }
 
 /**
- * A full editor confirms that a link works. The link is checked again
+ * A full editor answers whether a link exists. The link is checked again
  * first: only a "blocked" result (401, 403, 451, certificate error) can be
- * confirmed, a link that is ok or broken (404, 410 ...) gets a 409.
- * An existing confirmation of the url is renewed.
+ * answered, a link that is ok or broken (404, 410 ...) gets a 409.
+ * An existing answer for the url is replaced.
  * @param {object} user the logged in user
  * @param {string} url the link
+ * @param {boolean} exists true: the link works, false: it is missing
  * @param {function(Error|null, object=)} callback the new check result
  *   (state "confirmed"); errors carry `status` 400/403/409
  */
-function confirm(user, url, callback) {
-  debug("confirm %s", url);
+function confirm(user, url, exists, callback) {
+  debug("confirm %s %s", url, exists);
   const inputError = checkRequest(user, url);
   if (inputError) return callback(inputError);
+  if (typeof exists !== "boolean") return callback(httpError(BAD_REQUEST, "Expected exists true or false"));
   linkCheck.checkLink(url, function(err, result) {
     if (err) return callback(err);
     if (result.state !== "blocked") {
@@ -158,13 +174,14 @@ function confirm(user, url, callback) {
     findByUrl(url, function(err, existing) {
       if (err) return callback(err);
       const entry = existing || create({ url: url });
-      const before = existing ? existing.user + " " + existing.timestamp : null;
+      const before = existing ? existing.linkExists() : null;
+      entry.exists = exists;
       entry.user = user.OSMUser;
       entry.timestamp = new Date().toISOString();
       entry.status = result.status;
       entry.save(function(err) {
         if (err) return callback(err);
-        logChange(user, entry, { property: "confirm", from: before, to: url }, function(err) {
+        logChange(user, entry, { property: "exists", from: before, to: exists }, function(err) {
           if (err) return callback(err);
           return callback(null, entry.toCheckResult(result.status));
         });
@@ -174,7 +191,7 @@ function confirm(user, url, callback) {
 }
 
 /**
- * A full editor takes back the confirmation of a link (also an expired one).
+ * A full editor takes back the answer for a link (also an expired one).
  * @param {object} user the logged in user
  * @param {string} url the link
  * @param {function(Error=)} callback errors carry `status` 400/403/404
@@ -188,15 +205,15 @@ function revoke(user, url, callback) {
     if (!entry) return callback(httpError(NOT_FOUND, "Link is not confirmed"));
     entry.remove(function(err) {
       if (err) return callback(err);
-      logChange(user, entry, { property: "revoke", from: url, to: null }, callback);
+      logChange(user, entry, { property: "exists", from: entry.linkExists(), to: null }, callback);
     });
   });
 }
 
 /**
- * Replaces the "blocked" results of a link check by "confirmed" where a
- * valid confirmation exists. Other results stay as they are, so a confirmed
- * link that later answers 404 is shown as broken again.
+ * Replaces the "blocked" results of a link check by "confirmed" (with
+ * `exists`) where a valid answer exists. Other results stay as they are, so
+ * a confirmed link that later answers 404 is shown as broken again.
  * @param {object} results url -> check result, changed in place
  * @param {function(Error=)} callback
  */
@@ -215,11 +232,40 @@ function applyConfirmations(results, callback) {
 }
 
 /**
- * All confirmations, newest first, expired ones included.
+ * All answers, newest first, expired ones included.
  * @param {function(Error|null, LinkConfirmation[]=)} callback
  */
 function findAll(callback) {
   pgMap.find(linkConfirmationModule, null, { column: "timestamp", desc: true }, callback);
+}
+
+const ANSWER_FILTERS = {
+  all: () => true,
+  exists: (e, now) => e.linkExists() && e.isValid(now),
+  missing: (e, now) => !e.linkExists() && e.isValid(now),
+  expired: (e, now) => !e.isValid(now)
+};
+
+/**
+ * Answers for the admin list, newest first.
+ * @param {{text: string=, answer: string=}} filter `text` is searched in url
+ *   and user (case ignored); `answer` is all (default), exists, missing
+ *   (both only valid ones) or expired
+ * @param {function(Error|null, LinkConfirmation[]=)} callback errors carry
+ *   `status` 400 for an unknown `answer`
+ */
+function search(filter, callback) {
+  const answer = filter.answer || "all";
+  if (!Object.hasOwn(ANSWER_FILTERS, answer)) return callback(httpError(BAD_REQUEST, "Unknown answer filter " + answer));
+  const text = (typeof filter.text === "string") ? filter.text.trim().toLowerCase() : "";
+  findAll(function(err, entries) {
+    if (err) return callback(err);
+    const now = new Date();
+    callback(null, entries.filter(function(e) {
+      if (!ANSWER_FILTERS[answer](e, now)) return false;
+      return text === "" || String(e.url).toLowerCase().includes(text) || String(e.user).toLowerCase().includes(text);
+    }));
+  });
 }
 
 export default {
@@ -231,5 +277,7 @@ export default {
   revoke: revoke,
   applyConfirmations: applyConfirmations,
   findAll: findAll,
+  search: search,
+  answerFilters: Object.keys(ANSWER_FILTERS),
   Class: LinkConfirmation
 };

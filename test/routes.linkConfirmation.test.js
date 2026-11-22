@@ -47,9 +47,9 @@ describe("routes/linkConfirmation", function() {
     let body = await client.post(baseLink + "/article/urlexist", { urls: [blockedUrl] });
     should(body.data).eql({ [blockedUrl]: { state: "blocked", status: 401 } });
 
-    body = await client.post(baseLink + "/linkconfirmation/confirm", { url: blockedUrl });
+    body = await client.post(baseLink + "/linkconfirmation/confirm", { url: blockedUrl, exists: "true" });
     should(body.status).eql(HttpStatus.OK);
-    should(body.data).containDeep({ state: "confirmed", status: 401, user: "TestUser" });
+    should(body.data).containDeep({ state: "confirmed", exists: true, status: 401, user: "TestUser" });
 
     body = await client.post(baseLink + "/article/urlexist", { urls: [blockedUrl] });
     should(body.data[blockedUrl]).containDeep({ state: "confirmed", user: "TestUser" });
@@ -58,10 +58,14 @@ describe("routes/linkConfirmation", function() {
   it("should list confirmations on the admin page and undo them", async function() {
     blocked(2);
     const client = await login("TestUser");
-    await client.post(baseLink + "/linkconfirmation/confirm", { url: blockedUrl });
+    await client.post(baseLink + "/linkconfirmation/confirm", { url: blockedUrl, exists: "true" });
     let body = await client.get(baseLink + "/linkconfirmation");
     should(body.status).eql(HttpStatus.OK);
-    should(body.data).containEql("confirmed by TestUser");
+    should(body.data).containEql("answered by TestUser");
+    body = await client.get(baseLink + "/linkconfirmation?answer=missing");
+    should(body.data).containEql("No checked links.");
+    body = await client.get(baseLink + "/linkconfirmation?q=reuters&answer=exists");
+    should(body.data).containEql("answered by TestUser");
     should(body.data).containEql(`data-link-revoke="${blockedUrl}"`);
 
     body = await client.post(baseLink + "/linkconfirmation/revoke", { url: blockedUrl });
@@ -73,13 +77,13 @@ describe("routes/linkConfirmation", function() {
   it("should refuse to confirm a 404", async function() {
     nock("https://site.example").head("/gone").reply(404);
     const client = await login("TestUser");
-    const body = await client.post(baseLink + "/linkconfirmation/confirm", { url: "https://site.example/gone" });
+    const body = await client.post(baseLink + "/linkconfirmation/confirm", { url: "https://site.example/gone", exists: "false" });
     should(body.status).eql(HttpStatus.CONFLICT);
   });
 
   it("should not let guests confirm or see the list", async function() {
     const client = await login("GuestUser");
-    let body = await client.post(baseLink + "/linkconfirmation/confirm", { url: blockedUrl });
+    let body = await client.post(baseLink + "/linkconfirmation/confirm", { url: blockedUrl, exists: "true" });
     should(body.status).eql(HttpStatus.FORBIDDEN);
     body = await client.post(baseLink + "/linkconfirmation/revoke", { url: blockedUrl });
     should(body.status).eql(HttpStatus.FORBIDDEN);

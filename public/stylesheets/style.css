@@ -23,10 +23,12 @@ a.osmbc-nonexist {
 }
 
 /* Link the link check can't verify (bot protection, login, certificate):
-   only a small grey icon, the page may well exist. */
+   a grey question mark after the link, the page may well exist. What it
+   means is written out in the article's link area and on the blog page. */
 .osmbc-link-uncheckable .osmbc-linkmark {
   color: #6c757d;
-  font-size: 0.8em;
+  font-size: 1.15em;
+  margin-left: 0.2em;
 }
 
 /* OSMBC Marker for not formulated article texts */

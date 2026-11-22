@@ -8,14 +8,17 @@ import blogModule from "../../model/blog.js";
 import linkCheck from "../../util/linkCheck.js";
 import util from "../../util/util.js";
 import ArticlePage from "../PageObjectModel/articlePage.js";
+import BlogPage from "../PageObjectModel/blogPage.js";
 
 const osmbcLink = util.osmbcLink;
 
 const maxTimer = 30000;
+// no trailing slash: the collection's link regex drops it
 const blockedUrl = "https://www.reuters.example/world/news-2026-11-13";
 
-// A link behind bot protection is not shown as broken; an editor confirms
-// it in the link area, then it looks like a normal link (issue #1183).
+// A link behind bot protection is not shown as broken; an editor answers
+// whether it exists, in the article's link area or in the list on the blog
+// page (issue #1183).
 describe("uc.article link confirmation", function() {
   this.timeout(maxTimer);
   let driver;
@@ -37,7 +40,8 @@ describe("uc.article link confirmation", function() {
       categoryEN: "Mapping",
       title: "Title",
       collection: blockedUrl,
-      markdownDE: `Reuters [berichtet](${blockedUrl}) über Karten.`
+      markdownDE: `Reuters [berichtet](${blockedUrl}) über Karten.`,
+      markdownEN: `Reuters [reports](${blockedUrl}) on maps.`
     });
     articleId = article.id;
   });
@@ -47,32 +51,75 @@ describe("uc.article link confirmation", function() {
     testutil.stopServer();
   });
 
-  async function confirmAndUndo(articlePage) {
-    should(await articlePage.getLinkCheckNote(blockedUrl)).match(/can't be checked automatically \(401\)/);
-    should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("uncheckable");
+  describe("article page", function() {
+    async function answerAndUndo(articlePage) {
+      should(await articlePage.getLinkCheckNote(blockedUrl)).match(/can't be checked automatically \(401\)/);
+      should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("uncheckable");
 
-    await articlePage.confirmLink(blockedUrl);
-    should(await articlePage.getLinkCheckNote(blockedUrl)).match(/✓ confirmed by TheFive/);
-    should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("none");
+      await articlePage.answerLink(blockedUrl, true);
+      should(await articlePage.getLinkCheckNote(blockedUrl)).match(/✓ exists, said TheFive/);
+      should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("none");
 
-    await articlePage.undoLinkConfirmation(blockedUrl);
-    should(await articlePage.getLinkCheckNote(blockedUrl)).match(/can't be checked automatically/);
-    should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("uncheckable");
-  }
+      await articlePage.undoLinkAnswer(blockedUrl);
+      should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("uncheckable");
 
-  it("should confirm a blocked link and undo it on a desktop", async function() {
-    driver = await testutil.getNewDriver("TheFive");
-    const articlePage = new ArticlePage(driver);
-    await driver.get(osmbcLink("/article/" + articleId));
-    await confirmAndUndo(articlePage);
+      await articlePage.answerLink(blockedUrl, false);
+      should(await articlePage.getLinkCheckNote(blockedUrl)).match(/✗ missing, said TheFive/);
+      should(await articlePage.getPreviewLinkMark("DE", blockedUrl)).eql("broken");
+    }
+
+    it("should answer for a blocked link and undo it on a desktop", async function() {
+      driver = await testutil.getNewDriver("TheFive");
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + articleId));
+      await answerAndUndo(articlePage);
+    });
+
+    it("should answer for a blocked link and undo it on a phone", async function() {
+      driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+      const articlePage = new ArticlePage(driver);
+      await driver.get(osmbcLink("/article/" + articleId));
+      should(await articlePage.tapTargetsTooSmall("#linkArea .osmbc-linkconfirm button")).eql([]);
+      await answerAndUndo(articlePage);
+      should(await articlePage.hasHorizontalScroll()).be.False();
+    });
   });
 
-  it("should confirm a blocked link and undo it on a phone", async function() {
-    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
-    const articlePage = new ArticlePage(driver);
-    await driver.get(osmbcLink("/article/" + articleId));
-    await confirmAndUndo(articlePage);
-    should(await articlePage.hasHorizontalScroll()).be.False();
-    should(await articlePage.tapTargetsTooSmall("#linkArea .osmbc-linkconfirm button")).eql([]);
+  describe("blog page", function() {
+    async function answerInList(blogPage) {
+      let rows = await blogPage.getUncheckableLinks();
+      should(rows.length).eql(1);
+      should(rows[0].url).eql(blockedUrl);
+      should(rows[0].text).match(/can't be checked automatically \(401\)/);
+      should(rows[0].text).match(/berichtet/);
+      should(await blogPage.getTextLinkMarks(blockedUrl)).matchEach("uncheckable");
+
+      await blogPage.answerUncheckableLink(blockedUrl, false);
+      rows = await blogPage.getUncheckableLinks();
+      should(rows[0].text).match(/✗ missing, said TheFive/);
+      should(await blogPage.getTextLinkMarks(blockedUrl)).matchEach("broken");
+
+      await blogPage.undoUncheckableLink(blockedUrl);
+      await blogPage.answerUncheckableLink(blockedUrl, true);
+      should(await blogPage.getTextLinkMarks(blockedUrl)).matchEach("none");
+    }
+
+    it("should list the blocked link and take the answer on a desktop", async function() {
+      driver = await testutil.getNewDriver("TheFive");
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN1/full"));
+      await answerInList(blogPage);
+    });
+
+    it("should list the blocked link and take the answer on a phone", async function() {
+      driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+      const blogPage = new BlogPage(driver);
+      await driver.get(osmbcLink("/blog/WN1/full"));
+      should(await blogPage.getUncheckableLinks()).have.length(1);
+      should(await blogPage.tapTargetsTooSmall("#uncheckableLinks button")).eql([]);
+      should(await blogPage.tapTargetsTooClose("#uncheckableLinks button")).eql([]);
+      await answerInList(blogPage);
+      should(await blogPage.hasHorizontalScroll()).be.False();
+    });
   });
 });

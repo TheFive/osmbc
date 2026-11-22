@@ -146,6 +146,12 @@ while layout.user["blogSetting"+v]
           </ul>
         </div>
       </div>
+      <div class="card mb-3 d-none" id="uncheckableLinks">
+        <div class="card-header d-flex flex-wrap align-items-center gap-2"><span class="fw-bold">Links that can't be checked automatically</span><span class="small text-body-secondary" data-uncheckable-count=""></span></div>
+        <div class="card-body py-2 small text-body-secondary">Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
+          The answer counts for every article with this link.</div>
+        <ul class="list-group list-group-flush"></ul>
+      </div>
       <table>
         <tbody>
           <tr>
