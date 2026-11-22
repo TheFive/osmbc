@@ -64,11 +64,16 @@ function codeFiles() {
   return files.map((f) => ({ file: f, lines: fs.readFileSync(path.join(rootDir, f), "utf8").split("\n") }));
 }
 
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function isExportLine(text, name) {
   const t = text.trim();
+  const n = escapeRegExp(name);
   return t === `${name}: ${name},` || t === `${name}: ${name}` ||
-    new RegExp(`^export\\s*\\{[^}]*\\b${name}\\b`).test(t) ||
-    new RegExp(`^\\w+\\.${name}\\s*=\\s*${name};?$`).test(t);
+    new RegExp(`^export\\s*\\{[^}]*\\b${n}\\b`).test(t) ||
+    new RegExp(`^\\w+\\.${n}\\s*=\\s*${n};?$`).test(t);
 }
 
 // A name inside a string or comment is no call (debug("getCategory")).
@@ -77,7 +82,7 @@ function withoutStringsAndComments(text) {
 }
 
 function usedElsewhere(fn, code) {
-  const word = new RegExp(`\\b${fn.name.replace(/\$/g, "\\$")}\\b`);
+  const word = new RegExp(`\\b${escapeRegExp(fn.name)}\\b`);
   for (const { file, lines } of code) {
     for (let i = 0; i < lines.length; i++) {
       if (!word.test(withoutStringsAndComments(lines[i]))) continue;
