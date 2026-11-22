@@ -252,7 +252,7 @@ describe("uc.article", function() {
     });
     it("should check a typed link once, not every partial link while typing", async function() {
       const typedUrl = "https://www.openstreetmap.org/a_brilliant_map";
-      const checkUrl = sinon.spy(linkCheck, "checkUrl");
+      const checkUrl = sinon.spy(linkCheck, "checkLink");
       try {
         // sendKeys types char by char, every keyup redraws the link area
         await osmbcApp.getArticlePage().fillCollectionInput(typedUrl);

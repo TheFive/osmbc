@@ -305,7 +305,7 @@
   },
   "util/linkCheck.js": {
     "jsdoc/require-jsdoc": {
-      "count": 2
+      "count": 1
     }
   },
   "util/md_util.js": {

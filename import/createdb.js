@@ -9,6 +9,7 @@ import logModule from "../model/logModule.js";
 import userModule from "../model/user.js";
 import configModule from "../model/config.js";
 import session from "../model/session.js";
+import linkConfirmation from "../model/linkConfirmation.js";
 
 
 
@@ -92,7 +93,8 @@ function clearDB(options, callback) {
     function(done) { ct(logModule.pg, pgOptions, done); },
     function(done) { ct(userModule.pg, pgOptions, done); },
     function(done) { ct(configModule.pg, pgOptions, done); },
-    function(done) { ct(session.pg, pgOptions, done); }
+    function(done) { ct(session.pg, pgOptions, done); },
+    function(done) { ct(linkConfirmation.pg, pgOptions, done); }
 
   ], function(err) {
     if (err) {

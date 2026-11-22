@@ -84,7 +84,7 @@ flowchart LR
 ## Data and persistence
 
 * Every table (`article`, `blog`, `usert`, `config`, `changes`,
-  `session`) is `id` + one `jsonb` column `data`. There are no typed
+  `session`, `linkconfirmation`) is `id` + one `jsonb` column `data`. There are no typed
   columns. A field is queried as `data->>'field'`
   (e.g. `data->>'categoryEN'`).
 * The user table is called `usert`, not `users`.

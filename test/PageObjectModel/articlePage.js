@@ -202,6 +202,15 @@ class ArticlePage extends StandardPage {
     return { text: value, warning: hasWarningClass };
   }
 
+  // how the link check marks a link in the preview: "broken", "uncheckable" or "none"
+  async getPreviewLinkMark(lang, link) {
+    await this.waitForLinkCheck();
+    const cssClass = await (await this._driver.findElement(By.css(`#preview${lang} a[href='${link}']`))).getAttribute("class");
+    if (/osmbc-nonexist/.test(cssClass)) return "broken";
+    if (/osmbc-link-uncheckable/.test(cssClass)) return "uncheckable";
+    return "none";
+  }
+
   // Small screens (mobile mode): one language, the second one on demand,
   // Save in the bar at the bottom, insert buttons at the collection links.
 

@@ -41,18 +41,147 @@ function collectAllLinks() {
   return mapping;
 }
 
-function markWrongLinks(mapping) {
-  for (const l in mapping) {
-    const status = window.cacheLink[l];
-    if (!status || status === "OK") continue;
-    mapping[l].forEach(function(k) {
-      // #linkArea and the blog previews are not re-rendered between checks
-      if (k.hasClass("osmbc-nonexist")) return;
-      k.addClass("osmbc-nonexist");
-      k.text(k.text() + " #" + status);
-    });
+// A link check answer (routes/article.js urlExist) is "OK", a broken link
+// (HTTP status or error text) or {state, status} with state "blocked"
+// (can't be checked, an editor can answer), "unreachable" (try later) or
+// "confirmed" (an editor answered: `exists` true/false, model/linkConfirmation.js).
+// linkState gives "ok", "broken", "blocked", "unreachable", "exists" or "missing".
+function linkState(answer) {
+  if (!answer || answer === "OK") return "ok";
+  if (typeof answer !== "object") return "broken";
+  if (answer.state === "confirmed") return (answer.exists === false) ? "missing" : "exists";
+  return answer.state;
+}
+
+function shortDate(iso) {
+  return new Date(iso).toLocaleDateString();
+}
+
+function isMobileMode() {
+  return document.documentElement.classList.contains("osmbc-mobile");
+}
+
+// What the link check says, as text for the list #uncheckableLinks.
+function linkStateText(answer) {
+  switch (linkState(answer)) {
+    case "blocked": return "can't be checked automatically (" + answer.status + ")";
+    case "unreachable": return "temporarily unreachable (" + answer.status + ")";
+    case "exists": return "✓ exists, said " + answer.user + " on " + shortDate(answer.timestamp) + ", valid until " + shortDate(answer.validUntil);
+    case "missing": return "✗ missing, said " + answer.user + " on " + shortDate(answer.timestamp) + ", valid until " + shortDate(answer.validUntil);
+    default: return null;
   }
 }
+
+// "Exists" / "Missing" for an open link, "Undo" for an answered one.
+// Phones: normal button height for the tap target (docs/ui-guidelines.md).
+function linkAnswerButtons(url, answer) {
+  const state = linkState(answer);
+  const size = isMobileMode() ? "" : " btn-sm";
+  if (state === "blocked") {
+    return [
+      $("<button>", { type: "button", class: "btn btn-outline-success" + size, "data-link-answer": "true", "data-link-url": url }).text("Exists"),
+      $("<button>", { type: "button", class: "btn btn-outline-danger" + size, "data-link-answer": "false", "data-link-url": url }).text("Missing")
+    ];
+  }
+  if (state === "exists" || state === "missing") {
+    return [$("<button>", { type: "button", class: "btn btn-outline-secondary" + size, "data-link-revoke": url }).text("Undo")];
+  }
+  return [];
+}
+
+// Marks one link; earlier marks are removed first, so a changed answer
+// (answered, undone) is shown without re-rendering the page.
+function markLink(k, answer) {
+  k.removeClass("osmbc-nonexist osmbc-link-uncheckable");
+  k.find(".osmbc-linkmark").remove();
+  const state = linkState(answer);
+  if (state === "broken" || state === "missing") {
+    k.addClass("osmbc-nonexist");
+    k.append($("<span>", { class: "osmbc-linkmark" }).text(" #" + ((state === "missing") ? "missing" : answer)));
+  } else if (state === "blocked" || state === "unreachable") {
+    // the meaning is written out in the list #uncheckableLinks, no tooltip needed
+    k.addClass("osmbc-link-uncheckable");
+    k.append($("<i>", { class: "fa fa-question-circle osmbc-linkmark", "aria-label": linkStateText(answer) }));
+  }
+}
+
+// Blog and article page: list of the links the link check can't verify,
+// open ones first, with Exists / Missing / Undo (mixin uncheckableLinks).
+function linkListRow(url, answer, texts) {
+  return $("<li>", { class: "list-group-item d-flex flex-wrap align-items-center gap-2", "data-uncheckable-link": url }).append(
+    $("<div>", { class: "flex-grow-1 text-break" }).append(
+      $("<a>", { href: url, target: "_blank", rel: "noopener noreferrer" }).text(url),
+      $("<div>", { class: "small text-body-secondary" }).text(linkStateText(answer) + (texts.length ? " · in: " + texts.join(", ") : ""))
+    ),
+    $("<div>", { class: "d-flex flex-wrap gap-2" }).append(linkAnswerButtons(url, answer))
+  );
+}
+
+// the text of a link without the link check's mark
+function linkText(k) {
+  const copy = k.clone();
+  copy.find(".osmbc-linkmark").remove();
+  return copy.text().trim();
+}
+
+function showUncheckableLinks(mapping) {
+  const area = $("#uncheckableLinks");
+  if (area.length === 0) return;
+  const rows = { open: [], answered: [] };
+  for (const url in mapping) {
+    const answer = window.cacheLink[url];
+    const state = linkState(answer);
+    if (["blocked", "unreachable", "exists", "missing"].indexOf(state) < 0) continue;
+    const texts = [...new Set(mapping[url].filter(k => k.closest(".preview").length > 0).map(linkText).filter(t => t !== ""))];
+    rows[(state === "blocked" || state === "unreachable") ? "open" : "answered"].push(linkListRow(url, answer, texts));
+  }
+  const count = rows.open.length + rows.answered.length;
+  area.toggleClass("d-none", count === 0);
+  area.find("[data-uncheckable-count]").text(rows.open.length + " open, " + rows.answered.length + " answered");
+  area.find("ul").empty().append(rows.open, rows.answered);
+}
+
+function markWrongLinks(mapping) {
+  for (const l in mapping) {
+    const answer = window.cacheLink[l];
+    if (!answer) continue;
+    mapping[l].forEach(function(k) { markLink(k, answer); });
+  }
+  showUncheckableLinks(mapping);
+}
+
+// asks the server again, e.g. after an undo or a refused answer
+function recheckLink(url) {
+  delete window.cacheLink[url];
+  checkAllLinks();
+}
+
+jQuery(document).on("click", "[data-link-answer]", function(event) {
+  event.preventDefault();
+  const url = $(this).attr("data-link-url");
+  $(this).prop("disabled", true);
+  jQuery.post(window.htmlroot + "/linkconfirmation/confirm", { url: url, exists: $(this).attr("data-link-answer") }, function(answer) {
+    window.cacheLink[url] = answer;
+    markWrongLinks(collectAllLinks());
+  }, "json").fail(function() {
+    // the link check answers differently now (ok, 404 ...): show that
+    recheckLink(url);
+  });
+});
+
+jQuery(document).on("click", "[data-link-revoke]", function(event) {
+  event.preventDefault();
+  const button = $(this);
+  const url = button.attr("data-link-revoke");
+  button.prop("disabled", true);
+  jQuery.post(window.htmlroot + "/linkconfirmation/revoke", { url: url }, function() {
+    const row = button.closest("[data-link-row]");
+    if (row.length > 0) row.remove();
+    else recheckLink(url);
+  }, "json").fail(function() {
+    button.prop("disabled", false);
+  });
+});
 
 function checkAllLinks() {
   if (!window.cacheLink) window.cacheLink = {};

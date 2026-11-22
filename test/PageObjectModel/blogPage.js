@@ -29,6 +29,19 @@ class BlogPage extends StandardPage {
     throw new Error(`No element found for selector: ${selector}`);
   }
 
+  // how the link check marks the link in the article texts: "broken",
+  // "uncheckable" or "none", one entry per shown text
+  async getTextLinkMarks(url) {
+    await this.waitForLinkCheck();
+    const marks = [];
+    for (const a of await this._driver.findElements(By.css(`.preview a[href='${url}']`))) {
+      if (!(await a.isDisplayed())) continue;
+      const cssClass = await a.getAttribute("class") || "";
+      marks.push(/osmbc-nonexist/.test(cssClass) ? "broken" : /osmbc-link-uncheckable/.test(cssClass) ? "uncheckable" : "none");
+    }
+    return marks;
+  }
+
   async assertPage() {
     await super.assertPage();
     await this._assertUrlStartsWith(osmbcLink("/blog"));
