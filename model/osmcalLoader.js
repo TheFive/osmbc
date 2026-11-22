@@ -15,6 +15,21 @@ const nominatimCache = new InternalCache({ file: "nominatim.cache", stdTTL: 21 *
 const osmbcDateFormat = config.getValue("CalendarDateFormat", { mustExist: true });
 
 
+// Nominatim puts the place name into the field that matches its place=* tag,
+// largest first. Only big cities are place=city (e.g. Fulda is place=town).
+const townFields = ["city", "town", "village", "municipality"];
+
+/**
+ * Picks the place name from a Nominatim reverse geocoding address.
+ * @param {object|undefined} address the `address` object of a Nominatim answer
+ * @returns {string} the name of the city, town, village or municipality, "" if none
+ */
+function townFromAddress(address) {
+  if (!address) return "";
+  const field = townFields.find((f) => address[f]);
+  return field ? address[field] : "";
+}
+
 async function loadEvents(lang) {
   const url = "https://osmcal.org/api/v2/events/";
   let json;
@@ -46,10 +61,7 @@ async function loadEvents(lang) {
       }
       if (loc && !loc.error) nominatimCache.set(requestString, loc);
     }
-    if (loc && loc.address && loc.address.city) event.town = loc.address.city; else event.town = "";
-
-    // special fix for not delivering town (e.g. Berlin) (after change in citiy name obsolete ?)
-    // if (loc && loc.addresstype === "postcode" && loc.address && loc.address.state) event.town = loc.address.state;
+    event.town = townFromAddress(loc && loc.address);
     if (loc && loc.address && loc.address.country) event.country = loc.address.country;
     if (loc && loc.address && loc.address.country_code) event.country_code = loc.address.country_code;
     if (event.location.venue) event.venue = event.location.venue;
@@ -249,6 +261,7 @@ function getEventMdCb(lang, blogStartDate, cb) {
 export const forTestOnly = {};
 forTestOnly.filterEvent = filterEvent;
 forTestOnly.enrichData = enrichData;
+forTestOnly.townFromAddress = townFromAddress;
 
 const osmcalLoader = {
   getEventMd: getEventMd,
