@@ -15,10 +15,10 @@
   </head>
 
   <body><!-- Fixed navbar-->
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-top" id="fixedNavbar">
       <div class="container-fluid"><a class="navbar-brand" href="/osmbc.html">TESTBC</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav">
+          <ul class="navbar-nav align-items-lg-center">
             <li class="dropdown nav-item"><a class="nav-link dropdown-toggle active" id="userLists" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">UserLists</a>
               <div class="dropdown-menu" aria-labelledby="userLists"> <a class="dropdown-item" id="createUser" href="/usert/create">Create</a><a class="dropdown-header">User Lists</a><a class="dropdown-item" href="/usert/list?access=full">List Active</a><a class="dropdown-item" href="/usert/list?access=guest">List Guest</a><a class="dropdown-item" href="/usert/list?temporaryGuest=true">List Full User Testing Guest</a><a class="dropdown-item" href="/usert/list?access=denied">List Denied</a><a class="dropdown-item" href="/usert/list">List All</a><a class="dropdown-item" href="/usert/list?access=full&amp;sort=lastAccess&amp;desc=true&amp;lastAccess=!=never">Who Is Online</a></div>
             </li>
@@ -26,7 +26,7 @@
               <div class="dropdown-menu" aria-labelledby="toolsMenu"> <a class="dropdown-header">Action</a><a class="dropdown-item" id="createblog" href="/createblog">Create Blog</a></div>
             </li>
           </ul>
-          <ul class="navbar-nav ms-auto">
+          <ul class="navbar-nav ms-auto align-items-lg-center">
             <li class="dropdown nav-item"><a class="nav-link dropdown-toggle" id="helpDropdown" href="#" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="helpDropdown"><a class="dropdown-header">OSMBC</a><a class="dropdown-item" href="https://github.com/TheFive/osmbc/blob/master/CHANGELOG.md">Changelog</a><a class="dropdown-item" href="/wiki">Wiki</a>
                 <div class="dropdown-divider"></div><span class="dropdown-item-text text-muted small" id="osmbcVersion">OSMBC T.V.S</span>
