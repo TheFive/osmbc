@@ -131,12 +131,12 @@ describe("routes/index", function() {
       });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.get(baseLink + "/");
-      body.data.should.containEql("Next automatic actions: ");
-      body.data.should.containEql("auto translate WN101");
-      body.data.should.containEql("auto close complete languages of WN101");
-      body.data.should.containEql("set WN102 to edit");
+      body.data.should.containEql("Next Automatic Actions");
+      body.data.should.containEql("Auto translate <strong>WN101</strong>");
+      body.data.should.containEql("Close complete languages of <strong>WN101</strong>");
+      body.data.should.containEql("Set <strong>WN102</strong> to edit");
       body.data.should.containEql("/osmbc/admin#upcomingActions");
-      body.data.indexOf("auto translate WN101").should.be.below(body.data.indexOf("auto close complete languages of WN101"));
+      body.data.indexOf("Auto translate <strong>WN101</strong>").should.be.below(body.data.indexOf("Close complete languages of <strong>WN101</strong>"));
     });
   });
 

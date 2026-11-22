@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const days = Math.round((new Date(date).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 86400000);
     const options = (days >= 0 && days < 7)
       ? { weekday: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" }
-      : { weekday: "short", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZoneName: "short" };
+      : { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" };
     span.textContent = " (local: " + date.toLocaleString(undefined, options) + ")";
     element.after(span);
   });
