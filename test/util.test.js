@@ -135,7 +135,7 @@ describe("util", function() {
       should(util.linkify("#WN271_Titel Des Artikels")).equal("#wn271_titel_des_artikels");
     });
   });
-  describe("md_render", function() {
+  describe("mdUtil.osmbcMarkdown", function() {
     function mdRenderInline(text, accessMap) {
       const osmbcMarkdown = mdUtil.osmbcMarkdown({ target: "editor" }, accessMap);
       return osmbcMarkdown.render(text ?? "");
@@ -272,75 +272,3 @@ describe("util", function() {
     });
   });
 });
-  describe("getSafeRedirectUrl", function() {
-    it("should return referer when it has same origin as requestOrigin", function() {
-      const refererHeader = "https://osmbc.openstreetmap.de/blog/WN824";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(refererHeader);
-    });
-    it("should return referer when requestOrigin is invalid but defaultUrl matches", function() {
-      const refererHeader = "https://osmbc.openstreetmap.de/blog/WN824";
-      const defaultUrl = "https://osmbc.openstreetmap.de/osmbc";
-      const requestOrigin = "invalid-format";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(refererHeader);
-    });
-    it("should return default URL when referer origin does not match", function() {
-      const refererHeader = "https://malicious-site.com/blog/WN824";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(defaultUrl);
-    });
-    it("should allow relative redirects", function() {
-      const refererHeader = "/blog/WN824";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(refererHeader);
-    });
-    it("should return defaultUrl when referer is empty", function() {
-      const refererHeader = "";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(defaultUrl);
-    });
-    it("should return defaultUrl when referer is null", function() {
-      const refererHeader = null;
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(defaultUrl);
-    });
-    it("should reject protocol-relative URLs", function() {
-      const refererHeader = "//malicious-site.com/blog/WN824";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(defaultUrl);
-    });
-    it("should handle invalid referer URLs gracefully", function() {
-      const refererHeader = "not-a-valid-url";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(defaultUrl);
-    });
-    it("should use requestOrigin preferentially over defaultUrl", function() {
-      const refererHeader = "https://osmbc.openstreetmap.de/blog/WN824";
-      const defaultUrl = "https://other-site.com/osmbc";
-      const requestOrigin = "https://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(refererHeader);
-    });
-    it("should allow same host when protocol differs", function() {
-      const refererHeader = "https://osmbc.openstreetmap.de/blog/WN824";
-      const defaultUrl = "/osmbc";
-      const requestOrigin = "http://osmbc.openstreetmap.de";
-      const result = util.getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin);
-      should(result).equal(refererHeader);
-    });
-  });

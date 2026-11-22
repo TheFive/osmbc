@@ -3,30 +3,17 @@ import { strict as assert } from "assert";
 import moment from "moment";
 import language from "../model/language.js";
 import iconv from "iconv-lite";
-import markdownIt from "markdown-it";
-import { full as markdownItEmoji } from "markdown-it-emoji";
-import markdownItSup from "../util/markdown-it-sup.js";
-import markdownItImsize from "../util/markdown-it-imsize.js";
-
-
 
 import config from "../config.js";
 
 
 const debug = _debug("OSMBC:util:util");
-const htmlRoot = config.htmlRoot();
-const url = config.url();
 
 
 function sanitizeString(str) {
   str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
   return str.trim();
 };
-
-const markdown = markdownIt()
-  .use(markdownItEmoji)
-  .use(markdownItSup)
-  .use(markdownItImsize, { autofill: true });
 
 function isTrue(expr) {
   return (expr === true || expr === "true");
@@ -90,33 +77,6 @@ function linkify(string) {
   return result;
 };
 
-// eslint-disable-next-line camelcase
-function mdRender(text, accessMap) {
-  if (typeof text === "undefined") text = "";
-  if (text === null) text = "";
-
-  // search a free standing link and make a markdown link from it.
-  text = text.replace(/\s(https?:\/\/[^\[\]\(\)\s]*)\s/gi, " [$1]($1) ");
-  text = text.replace(/^(https?:\/\/[^\[\]\(\)\s]*)\s/gi, "[$1]($1) ");
-  text = text.replace(/\s(https?:\/\/[^\[\]\(\)\s]*$)/gi, " [$1]($1)");
-  text = text.replace(/^(https?:\/\/[^\[\]\(\)\s]*$)/gi, "[$1]($1)");
-  text = text.replace(/#([0-9]+)/gi, "[#$1](" + url + htmlRoot + "/article/$1)");
-  text = markdown.render(text);
-  while (text.search("<a href=") >= 0) {
-    text = text.replace("<a href=", '<a target="_blank" href=');
-  }
-  if (accessMap) {
-    for (const user in accessMap) {
-      const mention = "\\@" + user;
-      let cl = "bg-success";
-      if (accessMap[user] === "guest") cl = "bg-warning";
-      if (accessMap[user] === "denied") cl = "bg-danger";
-      const userUrl = user.replace(" ", "%20");
-      text = text.replace(new RegExp("( |\n|<p>)" + mention + "( |\n|</p>)", "i"), "$1<a class='" + cl + "' style='color:black' href=" + htmlRoot + "/usert/" + userUrl + ">@" + user + "</a>$2");
-    }
-  }
-  return text;
-}
 
 
 const isUrlRegex =      /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
@@ -193,63 +153,6 @@ function charsetDecoder(response) {
   return response;
 };
 
-/**
- * Validates Referer header against same-origin policy to prevent open redirect attacks.
- * Only allows redirects to URLs on the same hostname as the provided default URL.
- * @param {string} refererHeader - The Referer header from the request
- * @param {string} defaultUrl - The fallback URL (used to extract the expected hostname)
- * @returns {string} - The validated referer URL or the defaultUrl if validation fails
- */
-function getSafeRedirectUrl(refererHeader, defaultUrl, requestOrigin) {
-  if (!refererHeader) {
-    return defaultUrl;
-  }
-
-  // Allow internal relative redirects like "/blog/edit/WN123".
-  if (typeof refererHeader === "string" && refererHeader.startsWith("/") && !refererHeader.startsWith("//")) {
-    return refererHeader;
-  }
-
-  try {
-    const refererUrl = new URL(refererHeader);
-    let allowedOrigin = null;
-
-    // Try to use requestOrigin first
-    if (typeof requestOrigin === "string" && /^https?:\/\//i.test(requestOrigin)) {
-      try {
-        allowedOrigin = new URL(requestOrigin).origin;
-      } catch (err) {
-        debug(`Invalid requestOrigin URL: ${requestOrigin}`);
-      }
-    }
-
-    // Fallback to defaultUrl if requestOrigin didn't work
-    if (!allowedOrigin && typeof defaultUrl === "string" && /^https?:\/\//i.test(defaultUrl)) {
-      try {
-        allowedOrigin = new URL(defaultUrl).origin;
-      } catch (err) {
-        debug(`Invalid defaultUrl URL: ${defaultUrl}`);
-      }
-    }
-    // Allow redirects to same origin.
-    if (allowedOrigin && refererUrl.origin === allowedOrigin) {
-      return refererHeader;
-    }
-
-    // Production setups behind proxies may report requestOrigin as http while referer is https.
-    // In that case allow redirect if hostname matches exactly.
-    if (allowedOrigin) {
-      const allowedUrl = new URL(allowedOrigin);
-      if (refererUrl.hostname === allowedUrl.hostname) {
-        return refererHeader;
-      }
-    }
-  } catch (err) {
-    debug(`Invalid Referer URL: ${refererHeader}`);
-  }
-
-  return defaultUrl;
-};
 
 /**
  * Replaces all ##key## placeholders in a template string with values from a variables object.
@@ -310,8 +213,6 @@ const util = {
   charsetDecoder: charsetDecoder,
   sleep: sleep,
   osmbcLink: osmbcLink,
-  md_render: mdRender,
-  getSafeRedirectUrl: getSafeRedirectUrl,
   replaceTemplateVariables: replaceTemplateVariables
 };
 
