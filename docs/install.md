@@ -70,7 +70,7 @@ At runtime OSMBC reads its config file and writes these files:
 | What | Default location | Set with |
 |---|---|---|
 | config file `config.production.yaml` | app directory | environment variable `OSMBC_CONFIG_DIR` |
-| caches: link check, avatars, geocoding (rebuilt when lost) | `<app>/cache/` | config key `cache_directory` |
+| caches: avatars, geocoding (rebuilt when lost; link check results are in the database, table `link`) | `<app>/cache/` | config key `cache_directory` |
 | public user profiles, written when a user saves their settings | `<app>/public/profile/` | config key `profile_directory` |
 | mail log, export log | — | config keys `maillog_directory`, `exportlog_directory` (always set them) |
 

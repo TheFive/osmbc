@@ -9,15 +9,22 @@
 
 
 // Link check for #linkArea and the .preview elements.
-// The previews fire "change" on every keyup, so the check waits until
-// changes pause, then sends all unknown links of the page in one request.
-// Links already requested are not requested again while waiting for the
-// answer, so several previews firing at once share one request.
+// The page brings the results the server already knows (window.cacheLink,
+// mixin knownLinkResults); they are shown at once. The previews fire
+// "change" on every keyup, so the check waits until changes pause, then
+// sends all unknown links of the page in one request. Links already
+// requested are not requested again while waiting for the answer, so
+// several previews firing at once share one request.
 const LINK_CHECK_DELAY_MS = 500;
 const pendingLinks = new Set();
 let linkCheckTimer = null;
+let knownLinksShown = false;
 
 function highlightWrongLinks() {
+  if (!knownLinksShown && window.cacheLink) {
+    knownLinksShown = true;
+    markWrongLinks(collectAllLinks());
+  }
   clearTimeout(linkCheckTimer);
   linkCheckTimer = setTimeout(checkAllLinks, LINK_CHECK_DELAY_MS);
 }
@@ -41,52 +48,62 @@ function collectAllLinks() {
   return mapping;
 }
 
-// A link check answer (routes/article.js urlExist) is "OK", a broken link
-// (HTTP status or error text) or {state, status} with state "blocked"
-// (can't be checked, an editor can answer), "unreachable" (try later) or
-// "confirmed" (an editor answered: `exists` true/false, model/linkConfirmation.js).
-// linkState gives "ok", "broken", "blocked", "unreachable", "exists" or "missing".
+// A link check answer (routes/article.js urlExist) is "OK" or an error
+// text (footnote anchors, guests) or, for http(s) links, an object from
+// model/link.js: { state, status, exists, by, timestamp, validUntil } with
+// state ok / broken / blocked / unreachable, exists true / false / null
+// (open) and by "auto" or the editor who answered.
+// linkState gives "ok", "broken", "missing", "blocked" or "unreachable".
 function linkState(answer) {
   if (!answer || answer === "OK") return "ok";
   if (typeof answer !== "object") return "broken";
-  if (answer.state === "confirmed") return (answer.exists === false) ? "missing" : "exists";
+  if (answer.exists === true) return "ok";
+  if (answer.exists === false) return (answer.by === "auto") ? "broken" : "missing";
   return answer.state;
 }
 
+// same date format as the admin list "Checked Links"
 function shortDate(iso) {
-  return new Date(iso).toLocaleDateString();
+  return String(iso).substring(0, 10);
 }
 
 function isMobileMode() {
   return document.documentElement.classList.contains("osmbc-mobile");
 }
 
-// What the link check says, as text for the list #uncheckableLinks.
+const CHECK_TEXTS = {
+  ok: () => "ok",
+  broken: (a) => "not found (" + a.status + ")",
+  blocked: (a) => "can't be checked automatically (" + a.status + ")",
+  unreachable: (a) => "temporarily unreachable (" + a.status + ")"
+};
+
+// What is known about a link, as text for the card (as in the admin list).
 function linkStateText(answer) {
-  switch (linkState(answer)) {
-    case "blocked": return "can't be checked automatically (" + answer.status + ")";
-    case "unreachable": return "temporarily unreachable (" + answer.status + ")";
-    case "exists": return "✓ exists, said " + answer.user + " on " + shortDate(answer.timestamp) + ", valid until " + shortDate(answer.validUntil);
-    case "missing": return "✗ missing, said " + answer.user + " on " + shortDate(answer.timestamp) + ", valid until " + shortDate(answer.validUntil);
-    default: return null;
-  }
+  const check = "link check: " + (CHECK_TEXTS[answer.state] || (() => "not checked yet"))(answer);
+  if (answer.by === "auto" || answer.exists === null) return check;
+  return check + " · " + (answer.exists ? "exists" : "missing") + ", said " + answer.by + " on " + shortDate(answer.timestamp) +
+    " · valid until " + shortDate(answer.validUntil);
 }
 
-// "Exists" / "Missing" for an open link, "Undo" for an answered one.
-// Phones: normal button height for the tap target (docs/ui-guidelines.md).
+// badge in front of a row: exists / missing / open (as in the admin list)
+function linkBadge(answer) {
+  if (answer.exists === true) return $("<span>", { class: "badge text-bg-success" }).text("exists");
+  if (answer.exists === false) return $("<span>", { class: "badge text-bg-danger" }).text("missing");
+  return $("<span>", { class: "badge text-bg-secondary" }).text("open");
+}
+
+// Undo for an editor's answer; otherwise Exists / Missing, each only when
+// it changes something. Phones: normal button height (docs/ui-guidelines.md).
 function linkAnswerButtons(url, answer) {
-  const state = linkState(answer);
   const size = isMobileMode() ? "" : " btn-sm";
-  if (state === "blocked") {
-    return [
-      $("<button>", { type: "button", class: "btn btn-outline-success" + size, "data-link-answer": "true", "data-link-url": url }).text("Exists"),
-      $("<button>", { type: "button", class: "btn btn-outline-danger" + size, "data-link-answer": "false", "data-link-url": url }).text("Missing")
-    ];
-  }
-  if (state === "exists" || state === "missing") {
+  if (answer.by !== "auto" && answer.exists !== null) {
     return [$("<button>", { type: "button", class: "btn btn-outline-secondary" + size, "data-link-revoke": url }).text("Undo")];
   }
-  return [];
+  const buttons = [];
+  if (answer.exists !== true) buttons.push($("<button>", { type: "button", class: "btn btn-outline-success" + size, "data-link-answer": "true", "data-link-url": url }).text("Exists"));
+  if (answer.exists !== false) buttons.push($("<button>", { type: "button", class: "btn btn-outline-danger" + size, "data-link-answer": "false", "data-link-url": url }).text("Missing"));
+  return buttons;
 }
 
 // Marks one link; earlier marks are removed first, so a changed answer
@@ -97,24 +114,13 @@ function markLink(k, answer) {
   const state = linkState(answer);
   if (state === "broken" || state === "missing") {
     k.addClass("osmbc-nonexist");
-    k.append($("<span>", { class: "osmbc-linkmark" }).text(" #" + ((state === "missing") ? "missing" : answer)));
+    const status = (typeof answer === "object") ? answer.status : answer;
+    k.append($("<span>", { class: "osmbc-linkmark" }).text(" #" + ((state === "missing") ? "missing" : status)));
   } else if (state === "blocked" || state === "unreachable") {
-    // the meaning is written out in the list #uncheckableLinks, no tooltip needed
+    // the meaning is written out in the card #linkCheckCard, no tooltip needed
     k.addClass("osmbc-link-uncheckable");
     k.append($("<i>", { class: "fa fa-question-circle osmbc-linkmark", "aria-label": linkStateText(answer) }));
   }
-}
-
-// Blog and article page: list of the links the link check can't verify,
-// open ones first, with Exists / Missing / Undo (mixin uncheckableLinks).
-function linkListRow(url, answer, texts) {
-  return $("<li>", { class: "list-group-item d-flex flex-wrap align-items-center gap-2", "data-uncheckable-link": url }).append(
-    $("<div>", { class: "flex-grow-1 text-break" }).append(
-      $("<a>", { href: url, target: "_blank", rel: "noopener noreferrer" }).text(url),
-      $("<div>", { class: "small text-body-secondary" }).text(linkStateText(answer) + (texts.length ? " · in: " + texts.join(", ") : ""))
-    ),
-    $("<div>", { class: "d-flex flex-wrap gap-2" }).append(linkAnswerButtons(url, answer))
-  );
 }
 
 // the text of a link without the link check's mark
@@ -124,22 +130,49 @@ function linkText(k) {
   return copy.text().trim();
 }
 
-function showUncheckableLinks(mapping) {
-  const area = $("#uncheckableLinks");
-  if (area.length === 0) return;
-  const rows = { open: [], answered: [] };
+function linkCardRow(url, answer, texts) {
+  return $("<li>", { class: "list-group-item d-flex flex-wrap align-items-center gap-2", "data-link-check-row": url }).append(
+    linkBadge(answer),
+    $("<div>", { class: "flex-grow-1 text-break" }).append(
+      $("<a>", { href: url, target: "_blank", rel: "noopener noreferrer" }).text(url),
+      $("<div>", { class: "small text-body-secondary" }).text(linkStateText(answer) + (texts.length ? " · in: " + texts.join(", ") : ""))
+    ),
+    $("<div>", { class: "d-flex flex-wrap gap-2" }).append(linkAnswerButtons(url, answer))
+  );
+}
+
+// the collapsed list of links that are ok stays open while the page is shown
+let showOkLinks = false;
+
+// Blog and article page (mixin linkCheckCard): links not known to exist,
+// with buttons; below, collapsed, the links that are ok.
+function showLinkCheckCard(mapping) {
+  const card = $("#linkCheckCard");
+  if (card.length === 0) return;
+  const rows = { check: [], ok: [] };
   for (const url in mapping) {
     const answer = window.cacheLink[url];
-    const state = linkState(answer);
-    if (["blocked", "unreachable", "exists", "missing"].indexOf(state) < 0) continue;
+    if (!answer || typeof answer !== "object") continue;
     const texts = [...new Set(mapping[url].filter(k => k.closest(".preview").length > 0).map(linkText).filter(t => t !== ""))];
-    rows[(state === "blocked" || state === "unreachable") ? "open" : "answered"].push(linkListRow(url, answer, texts));
+    rows[(answer.exists === true) ? "ok" : "check"].push(linkCardRow(url, answer, texts));
   }
-  const count = rows.open.length + rows.answered.length;
-  area.toggleClass("d-none", count === 0);
-  area.find("[data-uncheckable-count]").text(rows.open.length + " open, " + rows.answered.length + " answered");
-  area.find("ul").empty().append(rows.open, rows.answered);
+  const count = rows.check.length + rows.ok.length;
+  card.toggleClass("d-none", count === 0);
+  card.find("[data-link-card-title]").text(rows.check.length > 0 ? "Links to check" : "Links: all ok");
+  card.find("[data-link-card-count]").text(rows.check.length + " to check, " + rows.ok.length + " ok");
+  card.find("[data-link-card-hint]").toggleClass("d-none", rows.check.length === 0);
+  card.find("[data-link-list='check']").empty().append(rows.check);
+  card.find("[data-link-list='ok']").empty().append(rows.ok).toggleClass("d-none", !showOkLinks);
+  const okText = (rows.ok.length === 1) ? "the link that is ok" : "the " + rows.ok.length + " links that are ok";
+  card.find("[data-link-toggle-ok]").text((showOkLinks ? "Hide " : "Show ") + okText)
+    .closest(".card-footer").toggleClass("d-none", rows.ok.length === 0);
 }
+
+jQuery(document).on("click", "[data-link-toggle-ok]", function(event) {
+  event.preventDefault();
+  showOkLinks = !showOkLinks;
+  showLinkCheckCard(collectAllLinks());
+});
 
 function markWrongLinks(mapping) {
   for (const l in mapping) {
@@ -147,25 +180,25 @@ function markWrongLinks(mapping) {
     if (!answer) continue;
     mapping[l].forEach(function(k) { markLink(k, answer); });
   }
-  showUncheckableLinks(mapping);
+  showLinkCheckCard(mapping);
 }
 
-// asks the server again, e.g. after an undo or a refused answer
-function recheckLink(url) {
-  delete window.cacheLink[url];
-  checkAllLinks();
+// after a change: the admin list reloads, the other pages show the new result
+function showLinkResult(button, url, answer) {
+  if (button.closest("[data-link-row]").length > 0) return window.location.reload();
+  window.cacheLink[url] = answer;
+  markWrongLinks(collectAllLinks());
 }
 
 jQuery(document).on("click", "[data-link-answer]", function(event) {
   event.preventDefault();
-  const url = $(this).attr("data-link-url");
-  $(this).prop("disabled", true);
-  jQuery.post(window.htmlroot + "/linkconfirmation/confirm", { url: url, exists: $(this).attr("data-link-answer") }, function(answer) {
-    window.cacheLink[url] = answer;
-    markWrongLinks(collectAllLinks());
+  const button = $(this);
+  const url = button.attr("data-link-url");
+  button.prop("disabled", true);
+  jQuery.post(window.htmlroot + "/link/answer", { url: url, exists: button.attr("data-link-answer") }, function(answer) {
+    showLinkResult(button, url, answer);
   }, "json").fail(function() {
-    // the link check answers differently now (ok, 404 ...): show that
-    recheckLink(url);
+    button.prop("disabled", false);
   });
 });
 
@@ -174,10 +207,8 @@ jQuery(document).on("click", "[data-link-revoke]", function(event) {
   const button = $(this);
   const url = button.attr("data-link-revoke");
   button.prop("disabled", true);
-  jQuery.post(window.htmlroot + "/linkconfirmation/revoke", { url: url }, function() {
-    const row = button.closest("[data-link-row]");
-    if (row.length > 0) row.remove();
-    else recheckLink(url);
+  jQuery.post(window.htmlroot + "/link/revoke", { url: url }, function(answer) {
+    showLinkResult(button, url, answer);
   }, "json").fail(function() {
     button.prop("disabled", false);
   });

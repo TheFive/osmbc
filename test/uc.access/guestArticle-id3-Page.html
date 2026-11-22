@@ -199,11 +199,13 @@
         <div class="row">
           <div class="col-md-1"></div>
           <div class="col-md-10">
-            <div class="card mb-3 d-none" id="uncheckableLinks">
-              <div class="card-header d-flex flex-wrap align-items-center gap-2"><span class="fw-bold">Links that can't be checked automatically</span><span class="small text-body-secondary" data-uncheckable-count=""></span></div>
-              <div class="card-body py-2 small text-body-secondary">Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
+            <div class="card mb-3 d-none" id="linkCheckCard">
+              <div class="card-header d-flex flex-wrap align-items-center gap-2"><span class="fw-bold" data-link-card-title=""></span><span class="small text-body-secondary" data-link-card-count=""></span><a class="ms-auto small" href="/link">All checked links</a></div>
+              <div class="card-body py-2 small text-body-secondary" data-link-card-hint="">Open the link in the browser, then say whether it exists. A link marked missing is shown as broken.
                 The answer counts for every article with this link.</div>
-              <ul class="list-group list-group-flush"></ul>
+              <ul class="list-group list-group-flush" data-link-list="check"></ul>
+              <div class="card-footer py-1"><button class="btn btn-link px-0" type="button" data-link-toggle-ok=""></button></div>
+              <ul class="list-group list-group-flush d-none" data-link-list="ok"></ul>
             </div>
           </div>
         </div>

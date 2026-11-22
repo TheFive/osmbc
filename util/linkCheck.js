@@ -2,20 +2,17 @@ import axios from "axios";
 import _debug from "debug";
 
 import config from "../config.js";
-import InternalCache from "../util/internalCache.js";
 import ssrfAgents from "../util/ssrfAgents.js";
 
 const debug = _debug("OSMBC:util:linkCheck");
 
 const userAgent = config.getValue("User-Agent", { mustExist: true });
 
-const linkCache = new InternalCache({ file: "linkExist.cache", stdTTL: 21 * 24 * 60 * 60, checkperiod: 24 * 60 * 60 });
-
 const REQUEST_TIMEOUT_MS = 20000;
 
 // Answers that say nothing about whether the page exists: bot protection
 // (DataDome, Cloudflare), login walls, geo blocking. An editor can confirm
-// such a link (model/linkConfirmation.js).
+// such a link (model/link.js).
 const BLOCKED_STATUS = new Set([401, 403, 451]);
 
 // Certificate problems Node reports although browsers often open the page
@@ -87,7 +84,7 @@ function requestOnce(url) {
 /**
  * Checks whether an absolute url exists. A temporary problem (5xx, timeout,
  * dropped connection) is tried a second time, a rate limit (429) is not.
- * Successful results are cached in linkExist.cache.
+ * No cache here: model/link.js stores the results.
  * @param {string} url absolute http(s) url
  * @param {function(null, {state: string, status: (number|string)})} callback
  *   state is "ok", "broken" (404, 410, unknown host ...), "blocked" (401,
@@ -96,8 +93,6 @@ function requestOnce(url) {
  */
 function checkLink(url, callback) {
   debug("checkLink %s", url);
-  if (linkCache.get(url) === "OK") return callback(null, { state: "ok", status: "OK" });
-
   try {
     // eslint-disable-next-line no-unused-vars
     const testurl = new URL(url);
@@ -110,7 +105,6 @@ function checkLink(url, callback) {
     debug("retry %s after %s", url, result.status);
     return requestOnce(url);
   }).then(function(result) {
-    if (result.state === "ok") linkCache.set(url, "OK");
     return callback(null, result);
   });
 }
@@ -127,14 +121,9 @@ function checkUrl(url, callback) {
   });
 }
 
-function cacheFlushAll() {
-  linkCache.flushAll();
-}
-
 const linkCheck = {
   checkLink: checkLink,
-  checkUrl: checkUrl,
-  cacheFlushAll: cacheFlushAll
+  checkUrl: checkUrl
 };
 
 export default linkCheck;

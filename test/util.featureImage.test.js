@@ -2,13 +2,9 @@ import should from "should";
 import nock from "nock";
 
 import featureImage from "../util/featureImage.js";
-import linkCheck from "../util/linkCheck.js";
 
 
 describe("util/featureImage", function() {
-  beforeEach(function() {
-    linkCheck.cacheFlushAll();
-  });
   afterEach(function() {
     nock.cleanAll();
   });

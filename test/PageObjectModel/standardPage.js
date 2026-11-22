@@ -52,41 +52,61 @@ export default class StandardPage extends Page {
     await (await this._driver.findElement(By.css("#navbarSupportedContent #userAvatar"))).click();
   }
 
-  // List "Links that can't be checked automatically" (blog and article page)
+  // Card "Links to check" (blog and article page, mixin linkCheckCard)
 
-  // the link check starts 500 ms after the page is shown (osmbc_staff.js)
+  // waits until every link of the page has a link check result (known with
+  // the page or asked for 500 ms after it is shown, osmbc_staff.js)
   async waitForLinkCheck() {
-    await this._driver.wait(() => this._driver.executeScript("return !!window.cacheLink && Object.keys(window.cacheLink).length > 0;"), 5000, "link check did not run");
-    await this.waitForBackgroundRequests();
+    await this._driver.wait(() => this._driver.executeScript(`
+      const urls = Object.keys(collectAllLinks());
+      return urls.length > 0 && !!window.cacheLink && urls.every(u => window.cacheLink[u]) && window.jQuery.active === 0;`),
+    5000, "link check did not finish");
   }
 
-  // Rows of the list "Links that can't be checked automatically" as
-  // {url, text}; empty while the list is hidden. Waits for the link check.
-  async getUncheckableLinks() {
+  // {title, check: [{url, text}], ok: number}; null while the card is hidden
+  async getLinkCard() {
     await this.waitForLinkCheck();
-    const area = await this._driver.findElement(By.id("uncheckableLinks"));
-    if (!(await area.isDisplayed())) return [];
-    const rows = await area.findElements(By.css("li[data-uncheckable-link]"));
-    const result = [];
-    for (const row of rows) {
-      result.push({ url: await row.getAttribute("data-uncheckable-link"), text: await row.getText() });
+    const card = await this._driver.findElement(By.id("linkCheckCard"));
+    if (!(await card.isDisplayed())) return null;
+    const check = [];
+    for (const row of await card.findElements(By.css("[data-link-list='check'] li[data-link-check-row]"))) {
+      check.push({ url: await row.getAttribute("data-link-check-row"), text: await row.getText() });
     }
-    return result;
+    const ok = (await card.findElements(By.css("[data-link-list='ok'] li[data-link-check-row]"))).length;
+    return { title: await (await card.findElement(By.css("[data-link-card-title]"))).getText(), check: check, ok: ok };
   }
 
-  #uncheckableRow(url) {
-    return `#uncheckableLinks li[data-uncheckable-link='${url}']`;
+  // label of the button that opens / closes the links that are ok
+  async getOkLinksToggleText() {
+    await this.waitForLinkCheck();
+    return (await this._driver.findElement(By.css("#linkCheckCard [data-link-toggle-ok]"))).getText();
   }
 
-  // "Exists" (true) / "Missing" (false) in that list
-  async answerUncheckableLink(url, exists) {
-    await this.tap(await this._driver.findElement(By.css(`${this.#uncheckableRow(url)} button[data-link-answer='${exists}']`)));
-    await this._driver.wait(until.elementLocated(By.css(`${this.#uncheckableRow(url)} button[data-link-revoke]`)), 5000, "link not answered");
+  // opens the collapsed list of links that are ok, returns its rows {url, text}
+  async showOkLinks() {
+    await this.waitForLinkCheck();
+    const list = await this._driver.findElement(By.css("#linkCheckCard [data-link-list='ok']"));
+    if (!(await list.isDisplayed())) await this.tap(await this._driver.findElement(By.css("#linkCheckCard [data-link-toggle-ok]")));
+    const rows = [];
+    for (const row of await list.findElements(By.css("li[data-link-check-row]"))) {
+      rows.push({ url: await row.getAttribute("data-link-check-row"), text: await row.getText() });
+    }
+    return rows;
   }
 
-  // "Undo" in that list, waits for the "Exists" button again
-  async undoUncheckableLink(url) {
-    await this.tap(await this._driver.findElement(By.css(`${this.#uncheckableRow(url)} button[data-link-revoke]`)));
-    await this._driver.wait(until.elementLocated(By.css(`${this.#uncheckableRow(url)} button[data-link-answer='true']`)), 5000, "answer not undone");
+  #linkRow(url) {
+    return `#linkCheckCard li[data-link-check-row='${url}']`;
+  }
+
+  // "Exists" (true) / "Missing" (false) for a link in the card
+  async answerLink(url, exists) {
+    await this.tap(await this._driver.findElement(By.css(`${this.#linkRow(url)} button[data-link-answer='${exists}']`)));
+    await this._driver.wait(until.elementLocated(By.css(`${this.#linkRow(url)} button[data-link-revoke]`)), 5000, "link not answered");
+  }
+
+  // "Undo" of an editor's answer in the card
+  async undoLinkAnswer(url) {
+    await this.tap(await this._driver.findElement(By.css(`${this.#linkRow(url)} button[data-link-revoke]`)));
+    await this._driver.wait(until.elementLocated(By.css(`${this.#linkRow(url)} button[data-link-answer]`)), 5000, "answer not undone");
   }
 };
