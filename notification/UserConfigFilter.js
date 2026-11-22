@@ -18,6 +18,15 @@ class UserConfigFilter {
   }
 
   /**
+   * A changed user or configuration: no message for a user.
+   * @param {object} data the change log entry
+   * @param {function(Error=)} cb called at once
+   */
+  sendInfo(data, cb) {
+    return cb();
+  }
+
+  /**
    * Passes an article change on if the user wants it: new submission,
    * collection change (each "all" or "only by guests") or a text change by
    * a guest (issue #1170). Only full users get article changes; guests are
@@ -28,7 +37,7 @@ class UserConfigFilter {
    * @param {function(Error=)} cb called when done
    */
   updateArticle(user, article, change, cb) {
-    debug("UserConfigFilter.prototype.updateArticle");
+    debug("UserConfigFilter::updateArticle");
     if (this.user.access !== "full") return cb();
     const kind = classifyArticleChange(user, article, change);
     if (!articleChangeWanted(kind, userArticleSettings(this.user))) return cb();
@@ -37,7 +46,7 @@ class UserConfigFilter {
   }
 
   addComment(user, article, comment, cb) {
-    debug("UserConfigFilter.prototype.addComment");
+    debug("UserConfigFilter::addComment");
     let sendMail = false;
 
     // check Collection
@@ -77,7 +86,7 @@ class UserConfigFilter {
   }
 
   editComment(user, article, index, comment, cb) {
-    debug("UserConfigFilter.prototype.addComment");
+    debug("UserConfigFilter::addComment");
     let sendMail = false;
 
     // check Collection
@@ -115,7 +124,7 @@ class UserConfigFilter {
   }
 
   updateBlog(user, blog, change, cb) {
-    debug("UserConfigFilter.prototype.updateBlog");
+    debug("UserConfigFilter::updateBlog");
     let sendMail = false;
 
 
@@ -132,7 +141,7 @@ class UserConfigFilter {
   }
 
   sendReviewStatus(user, blog, lang, status, cb) {
-    debug("UserConfigFilter.prototype.sendReviewStatus");
+    debug("UserConfigFilter::sendReviewStatus");
     let wnList = [];
     let sendMail = false;
     if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;
@@ -155,12 +164,12 @@ class UserConfigFilter {
    * @param {function(Error=)} cb called when done
    */
   sendCloseBlocked(user, blog, lang, problems, cb) {
-    debug("UserConfigFilter.prototype.sendCloseBlocked");
+    debug("UserConfigFilter::sendCloseBlocked");
     return cb();
   }
 
   sendCloseStatus(user, blog, lang, status, cb) {
-    debug("UserConfigFilter.prototype.sendCloseStatus");
+    debug("UserConfigFilter::sendCloseStatus");
     let wnList = [];
     let sendMail = false;
     if (this.user.mailBlogLanguageStatusChange) wnList = this.user.mailBlogLanguageStatusChange;

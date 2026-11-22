@@ -22,45 +22,85 @@ function isEditorialBlogChange(user, blog, change) {
 
 
 
+/**
+ * The notification stream of OSMBC. Models report every editorial change
+ * here (usually through setAndSave); the message center passes it on to
+ * every registered receiver: changes log, export marker, Mattermost
+ * channels, mails and direct messages. Each receiver decides itself
+ * whether the event is relevant for it.
+ *
+ * Every method waits for all receivers and calls back with the first error,
+ * so a failing receiver does not keep the others from getting the event.
+ * The method list is RECEIVER_METHODS in FilterReceiver.js; every receiver
+ * implements all of them.
+ */
 class MessageCenter {
   constructor() {
-    debug("MessageCenter::MessageCenter");
     this.receiverList = [];
   }
 
-  sendInfo(object, callback) {
-    debug("MessageCenter::sendInfo");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.sendInfo(object, cb);
-    }, function final(err) { callback(err); });
+  /**
+   * Adds a receiver; it gets every event from now on.
+   * @param {object} receiver implements all RECEIVER_METHODS
+   */
+  registerReceiver(receiver) {
+    debug("MessageCenter::registerReceiver");
+    this.receiverList.push(receiver);
   }
 
+  /**
+   * A changed user or configuration, for the changes log.
+   * @param {object} data the change log entry (oid, user, table, property, from, to)
+   * @param {function(Error=)} callback called when all receivers are done
+   */
+  sendInfo(data, callback) {
+    this._sendToAll("sendInfo", [data], callback);
+  }
+
+  /**
+   * An article was created or changed.
+   * @param {object} user who changed it
+   * @param {object} article the article before the change
+   * @param {object} change the changed fields
+   * @param {function(Error=)} callback called when all receivers are done
+   */
   updateArticle(user, article, change, callback) {
-    debug("MessageCenter::updateArticle");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.updateArticle(user, article, change, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("updateArticle", [user, article, change], callback);
   }
 
+  /**
+   * A blog was created or changed.
+   * @param {object} user who changed it
+   * @param {object} blog the blog before the change
+   * @param {object} change the changed fields
+   * @param {function(Error=)} callback called when all receivers are done
+   */
   updateBlog(user, blog, change, callback) {
-    debug("MessageCenter::updateBlog");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.updateBlog(user, blog, change, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("updateBlog", [user, blog, change], callback);
   }
 
+  /**
+   * The review state of a language changed (review started, comment, exported).
+   * @param {object} user who did it
+   * @param {object} blog the blog
+   * @param {string} lang language id
+   * @param {string} status the review comment or state marker
+   * @param {function(Error=)} callback called when all receivers are done
+   */
   sendReviewStatus(user, blog, lang, status, callback) {
-    debug("MessageCenter.prototype.sendReviewStatus");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.sendReviewStatus(user, blog, lang, status, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("sendReviewStatus", [user, blog, lang, status], callback);
   }
 
+  /**
+   * A language was closed or reopened.
+   * @param {object} user who did it
+   * @param {object} blog the blog
+   * @param {string} lang language id
+   * @param {boolean} status true = closed
+   * @param {function(Error=)} callback called when all receivers are done
+   */
   sendCloseStatus(user, blog, lang, status, callback) {
-    debug("MessageCenter.prototype.sendCloseStatus");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.sendCloseStatus(user, blog, lang, status, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("sendCloseStatus", [user, blog, lang, status], callback);
   }
 
   /**
@@ -69,40 +109,53 @@ class MessageCenter {
    * @param {object} blog the blog
    * @param {string} lang language id
    * @param {string[]} problems messages for the editors
-   * @param {function(Error=)} callback called when done
+   * @param {function(Error=)} callback called when all receivers are done
    */
   sendCloseBlocked(user, blog, lang, problems, callback) {
-    debug("MessageCenter.prototype.sendCloseBlocked");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.sendCloseBlocked(user, blog, lang, problems, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("sendCloseBlocked", [user, blog, lang, problems], callback);
   }
 
-  registerReceiver(receiver) {
-    debug("MessageCenter::registerReceiver");
-    this.receiverList.push(receiver);
-  }
-
+  /**
+   * A comment was added to an article.
+   * @param {object} user who wrote it
+   * @param {object} article the article
+   * @param {string} text the comment
+   * @param {function(Error=)} callback called when all receivers are done
+   */
   addComment(user, article, text, callback) {
-    debug("MessageCenter.prototype.addComment");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.addComment(user, article, text, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("addComment", [user, article, text], callback);
   }
 
+  /**
+   * A comment of an article was edited.
+   * @param {object} user who edited it
+   * @param {object} article the article
+   * @param {number} index position of the comment
+   * @param {string} text the new comment
+   * @param {function(Error=)} callback called when all receivers are done
+   */
   editComment(user, article, index, text, callback) {
-    debug("MessageCenter.prototype.addComment");
-    async.each(this.receiverList, function sendIt(element, cb) {
-      element.editComment(user, article, index, text, cb);
-    }, function final(err) { callback(err); });
+    this._sendToAll("editComment", [user, article, index, text], callback);
+  }
+
+  /**
+   * Hands the event to all receivers in parallel and calls back when all
+   * are done, with the first error if any failed.
+   * @param {string} method one of RECEIVER_METHODS
+   * @param {Array} args the event arguments without the callback
+   * @param {function(Error=)} callback called when all receivers are done
+   */
+  _sendToAll(method, args, callback) {
+    debug("MessageCenter::%s", method);
+    let firstError = null;
+    async.each(this.receiverList, function (receiver, next) {
+      receiver[method](...args, function (err) {
+        if (err && !firstError) firstError = err;
+        next();
+      });
+    }, function () { callback(firstError); });
   }
 }
-
-
-
-
-
-
 
 
 const messageCenter = {
@@ -117,9 +170,6 @@ function initialise(callback) {
     return;
   }
   messageCenter.global = new MessageCenter();
-
-
-
   messageCenter.global.registerReceiver(
     new FilterReceiver(new LogModuleReceiver(), { updateBlog: isEditorialBlogChange })
   );
@@ -128,8 +178,6 @@ function initialise(callback) {
   config.logger.info("Message Center initialised.");
   if (callback) return callback();
 };
-
-
 
 
 export default messageCenter;

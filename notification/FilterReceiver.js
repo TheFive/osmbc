@@ -20,7 +20,7 @@ import _debug from "debug";
 
 const debug = _debug("OSMBC:notification:FilterReceiver");
 
-const RECEIVER_METHODS = [
+export const RECEIVER_METHODS = [
   "sendInfo",
   "updateArticle",
   "updateBlog",
