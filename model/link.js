@@ -323,14 +323,16 @@ function revoke(user, url, callback) {
 }
 
 // filters of the admin list, on Link#toResult and the stored answer
-const FILTERS = {
-  all: () => true,
-  open: (r) => r.exists === null,
-  missing: (r) => r.exists === false,
-  exists: (r) => r.exists === true,
-  answered: (r) => r.by !== "auto" && r.exists !== null,
-  expired: (r, l, now) => !!l.answer && !l.validAnswer(now)
-};
+// a Map: the filter name comes from the request, a Map has no inherited
+// entries like "constructor" that a plain object lookup could reach
+const FILTERS = new Map([
+  ["all", () => true],
+  ["open", (r) => r.exists === null],
+  ["missing", (r) => r.exists === false],
+  ["exists", (r) => r.exists === true],
+  ["answered", (r) => r.by !== "auto" && r.exists !== null],
+  ["expired", (r, l, now) => !!l.answer && !l.validAnswer(now)]
+]);
 
 function lastChange(link) {
   const a = link.answer ? link.answer.timestamp : "";
@@ -349,13 +351,14 @@ function lastChange(link) {
  */
 function search(options, callback) {
   const filter = options.filter || "all";
-  if (!Object.hasOwn(FILTERS, filter)) return callback(httpError(BAD_REQUEST, "Unknown filter " + filter));
+  const matches = FILTERS.get(filter);
+  if (!matches) return callback(httpError(BAD_REQUEST, "Unknown filter " + filter));
   const text = (typeof options.text === "string") ? options.text.trim().toLowerCase() : "";
   db.query("SELECT id, data FROM link", [], function(err, result) {
     if (err) return callback(err);
     const now = new Date();
     const links = toLinks(result).filter(function(l) {
-      if (!FILTERS[filter](l.toResult(now), l, now)) return false;
+      if (!matches(l.toResult(now), l, now)) return false;
       const user = l.answer ? String(l.answer.by).toLowerCase() : "";
       return text === "" || String(l.url).toLowerCase().includes(text) || user.includes(text);
     }).sort((a, b) => (lastChange(a) < lastChange(b) ? 1 : -1));
@@ -419,7 +422,7 @@ export default {
   answer: answer,
   revoke: revoke,
   search: search,
-  filters: Object.keys(FILTERS),
+  filters: [...FILTERS.keys()],
   urlsOfArticles: urlsOfArticles,
   knownResultsForArticles: knownResultsForArticles,
   Class: Link
