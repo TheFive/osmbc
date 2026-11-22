@@ -31,8 +31,7 @@ import firstDraft from "../model/firstDraft.js";
 
 import auth from "../routes/auth.js";
 
-import linkCheck from "../util/linkCheck.js";
-import linkConfirmation from "../model/linkConfirmation.js";
+import linkModule from "../model/link.js";
 import { ANCHOR_RE, checkAnchor } from "../util/anchorCheck.js";
 import featureImage from "../util/featureImage.js";
 import { fetchExternalPage } from "../util/externalPage.js";
@@ -162,6 +161,7 @@ function renderArticleId(req, res, next) {
   auto({
     // Find usage of Links in other articles
     articleReferences: article.calculateUsedLinks.bind(article, { ignoreStandard: true }),
+    knownLinks: (cb) => linkModule.knownResultsForArticles(req.user, [article], cb),
     // Find the associated blog for this article
 
     firstCollectorAccess: function (cb) {
@@ -265,6 +265,7 @@ function renderArticleId(req, res, next) {
       originArticle: result.originArticle,
       originBlog: result.originBlog,
       articleReferences: result.articleReferences,
+      knownLinks: result.knownLinks,
       usedLinks: result.usedLinks,
       categories: categories,
       languageFlags: languageFlags,
@@ -903,6 +904,9 @@ function searchArticles(req, res, next) {
 }
 
 
+// Link check for the page (osmbc_staff.js checkAllLinks): footnote anchors
+// against the database, http(s) links through model/link.js (stored check,
+// a new request only for unknown or stale urls). Guests get "OK".
 function urlExist(req, res) {
   debug("urlExists");
   let urls = req.body.urls;
@@ -910,6 +914,7 @@ function urlExist(req, res) {
   if (typeof urls === "string") urls = [urls];
   if (!Array.isArray(urls)) return req.next(new Error("Expected Paramter urls as Array"));
   const result = {};
+  const toCheck = [];
 
   each(urls,
     (url, callback) => {
@@ -920,37 +925,23 @@ function urlExist(req, res) {
           return callback();
         });
       }
-      if (req.user.access === "guest") {
-        result[url] = "OK";
-        return callback();
-      }
       // Do not test google translate links
       // this test is generating to much false positive
-      if (url.search(".translate.goog/") > 0) {
+      if (req.user.access === "guest" || url.search(".translate.goog/") > 0) {
         result[url] = "OK";
         return callback();
       }
-      linkCheck.checkLink(url, function(err, check) {
-        if (err) return callback(err);
-        result[url] = linkCheckAnswer(check);
-        return callback();
-      });
+      toCheck.push(url);
+      return callback();
     },
     function final(err) {
       if (err) return req.next(err);
-      linkConfirmation.applyConfirmations(result, function(err) {
+      linkModule.checkUrls(toCheck, function(err, checked) {
         if (err) return req.next(err);
-        res.json(result);
+        res.json(Object.assign(result, checked));
       });
     }
   );
-}
-
-// "OK" and broken links keep the old short answer ("OK", 404, error text),
-// blocked and unreachable links are sent as {state, status}.
-function linkCheckAnswer(check) {
-  if (check.state === "ok" || check.state === "broken") return check.status;
-  return { state: check.state, status: check.status };
 }
 
 
@@ -1199,14 +1190,9 @@ router.post("/:article_id/witholdvalues", allowGuestAccess, postArticleWithOldVa
 const _router = router;
 export { _router as router };
 
-function cacheFlushAll() {
-  linkCheck.cacheFlushAll();
-}
-
 const fortestonly = {};
 fortestonly.getArticleFromID = getArticleFromID;
 fortestonly.fixMarkdownLinks = fixMarkdownLinks;
-fortestonly.cacheFlushAll = cacheFlushAll;
 
 const articleRouter = {
   fortestonly: fortestonly,

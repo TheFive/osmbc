@@ -209,6 +209,8 @@ describe("uc/blog", function() {
     let driver;
     beforeEach(async function() {
       await testutil.importData("blog/DataWN290.json");
+      // the snapshots must not depend on links an earlier test checked
+      await testutil.clearLinks();
       await userModule.createNewUser({ OSMUser: "TheFive", access: "full", mainLang: "DE", secondLang: "EN", email: "a@b.c", translationServices: ["deeplPro"] });
       driver = await testutil.getNewDriver("TheFive");
     });

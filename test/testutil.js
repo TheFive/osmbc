@@ -31,7 +31,7 @@ import logModule from "../model/logModule.js";
 import userModule from "../model/user.js";
 import session from "../model/session.js";
 import configModule from "../model/config.js";
-import linkConfirmation from "../model/linkConfirmation.js";
+import linkModule from "../model/link.js";
 
 import { initialiseMailReceiver, mailReceiverUpdateUser } from "../notification/mailReceiver.js";
 import messageCenter from "../notification/messageCenter.js";
@@ -104,7 +104,7 @@ function clearDB(done) {
       function(done) { pgMap.createTables(userModule.pg, pgOptions, done); },
       function(done) { pgMap.createTables(session.pg, pgOptions, done); },
       function(done) { pgMap.createTables(configModule.pg, pgOptions, done); },
-      function(done) { pgMap.createTables(linkConfirmation.pg, pgOptions, done); }
+      function(done) { pgMap.createTables(linkModule.pg, pgOptions, done); }
 
     ], function(err) {
       if (err) {
@@ -631,6 +631,12 @@ function getWrappedAxiosClient(options) {
 // timeout with a real timer instead (setTimeout is not mocked).
 
 
+// forget all stored link check results (table link), e.g. between tests
+// that answer the same url differently
+function clearLinks() {
+  return new Promise((resolve, reject) => db.query("DELETE FROM link", (err) => err ? reject(err) : resolve()));
+}
+
 const testutil = {
   getNewDriver: getNewDriver,
   safeQuit: safeQuit,
@@ -640,6 +646,7 @@ const testutil = {
   getJsonWithId: getJsonWithId,
   findJSON: findJSON,
   clearDB: clearDB,
+  clearLinks: clearLinks,
   importData: importData,
   checkData: checkData,
   generateTests: generateTests,

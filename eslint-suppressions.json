@@ -220,7 +220,7 @@
   },
   "routes/article.js": {
     "jsdoc/require-jsdoc": {
-      "count": 3
+      "count": 2
     },
     "max-lines-per-function": {
       "count": 1
@@ -296,11 +296,6 @@
     "complexity": {
       "count": 2
     },
-    "jsdoc/require-jsdoc": {
-      "count": 1
-    }
-  },
-  "util/linkCheck.js": {
     "jsdoc/require-jsdoc": {
       "count": 1
     }

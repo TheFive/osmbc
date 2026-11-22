@@ -22,6 +22,7 @@ import blogTransitionScheduler from "../model/blogTransitionScheduler.js";
 import blogRenderer from "../render/BlogRenderer.js";
 import logModule from "../model/logModule.js";
 import userModule from "../model/user.js";
+import linkModule from "../model/link.js";
 import translator from "../model/translator.js";
 
 import auth from "../routes/auth.js";
@@ -396,6 +397,14 @@ function renderBlogTab(req, res, next) {
     closeInfo: function (callback) {
       collectCloseInfo(blog, req.user, callback);
     },
+    // link check results already known for the links of the shown articles
+    knownLinks: ["dataCollect", function (result, callback) {
+      const shown = [];
+      for (const group of [result.dataCollect.articles, result.dataCollect.futureArticles]) {
+        for (const category in (group || {})) shown.push(...group[category]);
+      }
+      linkModule.knownResultsForArticles(req.user, shown, callback);
+    }],
     closeLang: function (callback) {
       if (typeof (req.query.closeLang) !== "undefined") {
         return callback(new Error("?closelang= parameter is not supported any longer"));
@@ -441,7 +450,8 @@ function renderBlogTab(req, res, next) {
       util: util,
       categories: blog.getCategories(),
       apiAuthors: apiAuthors,
-      closeInfo: result.closeInfo
+      closeInfo: result.closeInfo,
+      knownLinks: result.knownLinks
     });
   }
   );
