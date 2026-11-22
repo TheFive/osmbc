@@ -1,4 +1,3 @@
-import axios from "axios";
 import Anthropic from "@anthropic-ai/sdk";
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
@@ -9,7 +8,7 @@ import configModule from "../model/config.js";
 import language from "../model/language.js";
 import blogModule from "../model/blog.js";
 import util from "../util/util.js";
-import ssrfAgents from "../util/ssrfAgents.js";
+import { fetchExternalPage } from "../util/externalPage.js";
 
 const debug = _debug("OSMBC:model:firstDraft");
 
@@ -30,7 +29,6 @@ const defaultModel = "claude-opus-5-5";
 const defaultEffort = "medium";
 
 const firstDraftConfig = config.getValue("FirstDraftConfig", { default: {} });
-const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 let client = null;
 
@@ -73,18 +71,8 @@ function isVisibleFor(user) {
 
 async function loadPageText(url) {
   debug("loadPageText %s", url);
-  // own axios instance, so the charset decoder does not affect
-  // other requests running at the same time
-  const instance = axios.create();
-  instance.interceptors.response.use(util.charsetDecoder);
-  const response = await instance.get(url, {
-    httpAgent: ssrfAgents.httpAgent,
-    httpsAgent: ssrfAgents.httpsAgent,
-    headers: { "User-Agent": userAgent },
-    responseType: "arraybuffer",
-    responseEncoding: "binary"
-  });
-  const doc = new JSDOM(response.data, { url: url });
+  const html = await fetchExternalPage(url);
+  const doc = new JSDOM(html, { url: url });
   const article = new Readability(doc.window.document).parse();
   if (!article || !article.textContent || article.textContent.trim() === "") {
     throw new Error("Could not extract text from " + url);

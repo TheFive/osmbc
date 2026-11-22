@@ -34,7 +34,7 @@ import auth from "../routes/auth.js";
 import linkCheck from "../util/linkCheck.js";
 import { ANCHOR_RE, checkAnchor } from "../util/anchorCheck.js";
 import featureImage from "../util/featureImage.js";
-import ssrfAgents from "../util/ssrfAgents.js";
+import { fetchExternalPage } from "../util/externalPage.js";
 
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
@@ -42,7 +42,6 @@ import createDOMPurify from "dompurify";
 
 
 
-import axios from "axios";
 import _debug from "debug";
 const debug = _debug("OSMBC:routes:article");
 
@@ -50,7 +49,6 @@ const router      = Router();
 const slackrouter = Router();
 
 
-const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 
 
@@ -779,40 +777,30 @@ function doAction(req, res, next) {
     res.end("OK");
   });
 }
-function getExternalText(req, res, next) {
+/**
+ * Readability view of an external page for the editor (button next to a
+ * link): JSON with the extracted article, its HTML sanitized. Errors are
+ * answered as plain text with status 200 (the page script shows them).
+ * @param {object} req express request, query `link` is the page
+ * @param {object} res express response
+ */
+function getExternalText(req, res) {
   debug("getExternalText");
-
-
   const link = req.query.link;
-  const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
-  if (link) {
-    axios.get(link, {
-      httpAgent: ssrfAgents.httpAgent,
-      httpsAgent: ssrfAgents.httpsAgent,
-      headers:
-      { "User-Agent": userAgent },
-      responseType: "arraybuffer",
-      responseEncoding: "binary"
-    }).then(function(response) {
-      const doc = new JSDOM(response.data, link);
-      const reader = new Readability(doc.window.document);
-      const article = reader.parse();
-      axios.interceptors.response.eject(responseInterseptor);
-      if (article && article.content) {
-        // Readability does not sanitize, external pages could inject
-        // event handlers (e.g. onerror) into the editor's OSMBC session
-        article.content = createDOMPurify(doc.window).sanitize(article.content);
-        res.json(article);
-      } else {
-        res.type("text/plain").end("Readability Failed for " + link);
-      };
-    }).catch(function(err) {
-      axios.interceptors.response.eject(responseInterseptor);
-      res.type("text/plain").end(err.message);
-    });
-  } else {
-    res.type("text/plain").end("No Link Found");
-  }
+  if (!link) return res.type("text/plain").end("No Link Found");
+  fetchExternalPage(link).then(function(html) {
+    const doc = new JSDOM(html, link);
+    const article = new Readability(doc.window.document).parse();
+    if (!article || !article.content) {
+      return res.type("text/plain").end("Readability Failed for " + link);
+    }
+    // Readability does not sanitize, external pages could inject
+    // event handlers (e.g. onerror) into the editor's OSMBC session
+    article.content = createDOMPurify(doc.window).sanitize(article.content);
+    res.json(article);
+  }).catch(function(err) {
+    res.type("text/plain").end(err.message);
+  });
 }
 
 function createArticle(req, res, next) {
