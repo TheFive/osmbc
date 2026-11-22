@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.9.0](https://github.com/TheFive/osmbc/tree/4.9.0) (2026-11-22)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.8.2...4.9.0)
+
+**Features:**
+
+- layout: show the running version at the end of the Help menu
+
+**Fixed bugs:**
+
+- model: findById of article and blog calls back twice on a DB error
+- blog: refuse unknown languages for review and close status
+- blog: a review comment is never a status command
+- blog: answer an unknown blog with 404 on every blog route
+- blog: name the close functions after what they do
+- blog: the review form buttons send an action, not a magic text
+- calendar: show the town for places not tagged as city [#1181](https://github.com/TheFive/osmbc/issues/1181)
+
 ## [4.8.2](https://github.com/TheFive/osmbc/tree/4.8.2) (2026-11-20)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.8.1...4.8.2)
