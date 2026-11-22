@@ -43,7 +43,8 @@ function renderHome(req, res, next) {
     activeUser: userModule.find.bind(userModule, { lastAccess: ">" + date.toISOString() }, { column: "lastAccess", desc: true }),
     fullVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "full" }, { column: "OSMUser", desc: false }),
     guestVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "guest" }, { column: "OSMUser", desc: false }),
-    newUsers: userModule.getNewUsers.bind(userModule)
+    newUsers: userModule.getNewUsers.bind(userModule),
+    nextActions: blogTransitionScheduler.getNextActions
   }, function(err, result) {
     if (err) return next(err);
 
@@ -57,6 +58,7 @@ function renderHome(req, res, next) {
       fullVisitorsToday: result.fullVisitorsToday,
       guestVisitorsToday: result.guestVisitorsToday,
       newUsers: result.newUsers,
+      nextActions: result.nextActions,
       changes: result.historie
     });
   }

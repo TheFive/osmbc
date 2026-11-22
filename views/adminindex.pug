@@ -1,12 +1,5 @@
 extends adminlayout
 
-//- within the coming week the weekday is enough, the date only from the next week on (or when past)
-mixin upcomingTime(ts, tz)
-  - var m = layout.moment(ts).tz(tz)
-  - var days = m.clone().startOf("day").diff(layout.moment().tz(tz).startOf("day"), "days")
-  - var text = (days === 0) ? m.format("[today] HH:mm z") : (days > 0 && days < 7) ? m.format("ddd HH:mm z") : m.format("ddd, YYYY-MM-DD HH:mm z")
-  time(datetime=new Date(ts).toISOString(), data-localtime="", data-tz=tz)= text
-
 //- recheck of a rule: checked again every n minutes until untilTs
 mixin recheckTime(b, everyMinutes, tz)
   if b.untilTs

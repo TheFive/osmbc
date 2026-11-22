@@ -546,6 +546,71 @@ export function getLanguageCloseState(blog) {
   return result;
 }
 
+// first blog of a rule whose action is still to come (with a recheck: until its end)
+function nextOfRule(rule, blogs, isCandidate, timingOf, now) {
+  let next = null;
+  blogs.forEach(function(blog) {
+    if (!isCandidate(blog)) return;
+    const timing = timingOf(blog);
+    if (!isUpcoming(timing, now)) return;
+    if (!next || timing.dueTs < next.ts) next = { rule: rule, name: blog.name, ts: timing.dueTs };
+  });
+  return next;
+}
+
+/**
+ * Short form of getUpcomingActions for the start page: per rule only the
+ * next blog and its due time, no languages. Needs one blog query and no
+ * article, so it is cheap enough for every start page view. Auto Blog Close
+ * has no due time and is left out, Auto Translate also when its config has a
+ * problem (the admin page shows it).
+ * @param {function(Error|null, object=)} callback gets `{ enabled, timezone,
+ *   actions }`, actions sorted by time, each `{ rule, name, ts }` with rule
+ *   one of `edit`, `translate`, `reviewStart`, `close`
+ */
+export function getNextActions(callback) {
+  debug("getNextActions");
+  const transitionConfig = getTransitionConfig();
+  const result = {
+    enabled: transitionConfig.enabled === true,
+    timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
+    actions: []
+  };
+  if (!result.enabled) return callback(null, result);
+
+  const now = Date.now();
+  const autoEditEnabled = transitionConfig.autoEditMode.enabled === true;
+  const translateConfig = transitionConfig.autoTranslate;
+  const reviewConfig = transitionConfig.autoReviewStart;
+  const closeConfig = transitionConfig.autoLanguageClose;
+  const statusList = ["open"].concat(translateConfig.blogStatusFilter, reviewConfig.blogStatusFilter, closeConfig.blogStatusFilter)
+    .filter((status, index, list) => list.indexOf(status) === index);
+  const candidateFor = (ruleConfig) => (blog) => isPreviewCandidate(blog, ruleConfig.blogStatusFilter, autoEditEnabled);
+
+  findBlogsWithStatus(statusList, function(err, blogs) {
+    if (err) return callback(err);
+    const next = [];
+    if (autoEditEnabled) {
+      next.push(nextOfRule("edit", blogs, (blog) => blog.status === "open",
+        (blog) => ({ dueTs: ruleDueTs(blog, 0, null) }), now));
+    }
+    if (translateConfig.enabled === true && !autoTranslateProblem(translateConfig)) {
+      next.push(nextOfRule("translate", blogs, candidateFor(translateConfig),
+        (blog) => ({ dueTs: ruleDueTs(blog, translateConfig.delayDays, translateConfig.translateAt) }), now));
+    }
+    if (reviewConfig.enabled === true) {
+      next.push(nextOfRule("reviewStart", blogs, candidateFor(reviewConfig),
+        (blog) => ruleTiming(blog, reviewConfig, reviewConfig.reviewStartAt, closeConfig), now));
+    }
+    if (closeConfig.enabled === true) {
+      next.push(nextOfRule("close", blogs, candidateFor(closeConfig),
+        (blog) => ruleTiming(blog, closeConfig, closeConfig.closeAt), now));
+    }
+    result.actions = next.filter((action) => action !== null).sort(byTs);
+    callback(null, result);
+  });
+}
+
 /**
  * Read only preview of what the next sweeps will do, for the admin page.
  * Uses the same decisions as the rules, but changes nothing. Due times are
@@ -686,6 +751,7 @@ const blogTransitionScheduler = {
   stop: stopTransitionScheduler,
   runSweep: runTransitionSweep,
   getUpcomingActions: getUpcomingActions,
+  getNextActions: getNextActions,
   getLanguageCloseState: getLanguageCloseState
 };
 

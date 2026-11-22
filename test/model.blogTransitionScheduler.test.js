@@ -8,7 +8,7 @@ import config from "../config.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
-import { runTransitionSweep, getUpcomingActions, stopTransitionScheduler } from "../model/blogTransitionScheduler.js";
+import { runTransitionSweep, getUpcomingActions, getNextActions, stopTransitionScheduler } from "../model/blogTransitionScheduler.js";
 
 describe("model/blogTransitionScheduler", function() {
   let originalGetValue;
@@ -530,6 +530,45 @@ describe("model/blogTransitionScheduler", function() {
               });
             });
           });
+        });
+      });
+
+      it("getNextActions lists only the next blog and time per rule, sorted by time", function(done) {
+        useTransitionConfig({}, closeConfig, true);
+        const endDate101 = inDays(1);
+        const endDate102 = inDays(8);
+        importBlogs([
+          { name: "WN100", status: "closed", closeDE: true },
+          { name: "WN101", status: "edit", endDate: endDate101 },
+          { name: "WN102", status: "open", endDate: endDate102 }
+        ], null, function(err) {
+          should.not.exist(err);
+          getNextActions(function(err, next) {
+            should.not.exist(err);
+            should(next.enabled).be.true();
+            should(next.timezone).be.a.String();
+            const end101 = new Date(endDate101).getTime();
+            should(next.actions).eql([
+              { rule: "close", name: "WN101", ts: end101 + 2 * 86400000 },
+              { rule: "translate", name: "WN101", ts: end101 + 3 * 86400000 },
+              { rule: "edit", name: "WN102", ts: new Date(endDate102).getTime() }
+            ]);
+            done();
+          });
+        });
+      });
+
+      it("getNextActions returns no actions with transitions off", function(done) {
+        originalGetValue = config.getValue;
+        config.getValue = function(key, subkey, options) {
+          if (key === "Transition") return { enabled: false };
+          return originalGetValue.call(config, key, subkey, options);
+        };
+        getNextActions(function(err, next) {
+          should.not.exist(err);
+          should(next.enabled).be.false();
+          should(next.actions).eql([]);
+          done();
         });
       });
 
