@@ -34,6 +34,7 @@ Tests use mocha; the files are in `test/`. Requirements:
 | `npm run test:ui` | Selenium use case tests `test/**/uc.*.test.js` |
 | `npm run test:coverage` | everything, with coverage (`c8`), report in `coverage/` |
 | `npm run coverage:check` | coverage per directory against `coverage-thresholds.json` |
+| `npm run coverage:dead` | candidates for dead code, after `test:coverage` (see below) |
 
 Single files: `npm test -- test/model.blog.test.js`
 (add `-g "<name part>"` for single tests).
@@ -55,6 +56,23 @@ the floors with `node tools/coverage-check.mjs --write` (it writes the
 current values rounded down, minus one point of headroom, because the UI
 tests don't hit exactly the same code in every run) and commit the file.
 Never lower a floor just to get CI green without saying why in the commit.
+
+`coverage:check` also fails for a file in `model`, `routes`,
+`notification`, `util`, `render` or `wiki` with 0 % lines: no test loads
+it, which usually means nothing in the app imports it either. Such a file
+hides in the directory average (two unused notification filters did for
+years). Delete it, or write a test if it is used.
+
+**Dead code.** `npm run coverage:dead` (after `npm run test:coverage`)
+lists functions that no test executed *and* whose name appears nowhere
+else in the code (outside strings and comments, not counting the
+definition and plain export lines). These are candidates, not facts: it
+is a text search over the code, not the call tree of production. A
+function called through a computed name (`receiver[method](...)`, an
+action table, a callback a library calls, such as `pathRewrite`) is
+listed although it is used; a dead function with a common name is
+missed. Check every hit (`git log -S <name>` shows when its last caller
+went) before deleting it.
 
 More useful than the percentage is the list of untested code: open
 `coverage/index.html` and look for red branches in code you touch.

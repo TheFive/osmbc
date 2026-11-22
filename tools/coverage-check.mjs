@@ -8,7 +8,10 @@
 // - sums lines/branches/functions per top-level directory (files in the
 //   repo root count as "(root)")
 // - prints a table and, in GitHub Actions, adds it to the job summary
-// - exits 1 if a directory falls below its threshold
+// - exits 1 if a directory falls below its threshold, or if a file in an
+//   application directory (UNTESTED_FILE_DIRS) has 0 % lines: no test
+//   loads it, which usually means nothing in the app imports it either
+//   (dead file) - a single such file hides in the directory average
 // - --write stores the current values as new thresholds, rounded down and
 //   minus one point of headroom (the UI tests don't hit exactly the same
 //   code in every run); use it after tests were added, so the level can't
@@ -66,6 +69,22 @@ if (write) {
   process.exit(0);
 }
 
+// Application code: every file here must be loaded by at least one test.
+// The command line folders (bin, import, export, tools, wp-reconcile) are
+// started by hand and stay out.
+const UNTESTED_FILE_DIRS = ["model", "routes", "notification", "util", "render", "wiki"];
+
+function untestedFiles() {
+  const result = [];
+  for (const [file, data] of Object.entries(summary)) {
+    if (file === "total") continue;
+    const relative = path.relative(rootDir, file);
+    if (!UNTESTED_FILE_DIRS.includes(relative.split(path.sep)[0])) continue;
+    if (data.lines.total > 0 && data.lines.covered === 0) result.push(relative);
+  }
+  return result.sort();
+}
+
 const thresholds = fs.existsSync(thresholdFile) ? JSON.parse(fs.readFileSync(thresholdFile, "utf8")) : {};
 const failures = [];
 const canRaise = [];
@@ -108,7 +127,11 @@ if (missing.length > 0) {
 if (canRaise.length > 0) {
   console.log("Above threshold, could be raised with --write: " + canRaise.join(", "));
 }
+const zeroFiles = untestedFiles();
+if (zeroFiles.length > 0) {
+  console.error("\nFiles no test loads (0 % lines) - dead, or missing a test:\n  " + zeroFiles.join("\n  "));
+}
 if (failures.length > 0) {
   console.error("\nCoverage below threshold:\n  " + failures.join("\n  "));
-  process.exit(1);
 }
+if (failures.length > 0 || zeroFiles.length > 0) process.exit(1);
