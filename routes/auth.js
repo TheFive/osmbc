@@ -33,24 +33,13 @@ function initialise(app) {
     debug("renderLogin");
     res.render("login", { layout: layoutRouter.layoutConst });
   }
-  function renderLoginFailure(req, res) {
-    debug("renderLoginFailure");
-    res.render("login failure", { layout: layoutRouter.layoutConst });
-  }
   app.get(htmlRoot + "/login", renderLogin);
-  app.get(htmlRoot + "/login_failure", renderLoginFailure);
 
   if (authConfig.htaccess.enabled) {
     function renderHtAccessLogin(req, res) {
       res.render("login-wpwd", { layout: layoutRouter.layoutConst });
     }
     app.get(htmlRoot + "/htaccess/login", renderHtAccessLogin);
-    /* app.post(htmlRoot + "/login", passport.authenticate("local-htpasswd",
-      {
-        successReturnToOrRedirect: htmlRoot + "/",
-        failureRedirect: htmlRoot + "/login_failure",
-        keepSessionInfo: true
-      })); */
     app.post(htmlRoot + "/login",
       // wrap passport.authenticate call in a middleware function
       function (req, res, next) {
@@ -82,13 +71,13 @@ function initialise(app) {
     app.get(htmlRoot + "/auth/openstreetmap_oauth20", passport.authenticate("oauth2",
       {
         successReturnToOrRedirect: htmlRoot + "/",
-        failureRedirect: "/login",
+        failureRedirect: htmlRoot + "/login",
         keepSessionInfo: true
       }));
     app.get(htmlRoot + "/auth/openstreetmap_oauth20/callback", passport.authenticate("oauth2",
       {
         successReturnToOrRedirect: htmlRoot + "/",
-        failureRedirect: "/login",
+        failureRedirect: htmlRoot + "/login",
         keepSessionInfo: true
       }));
   }
