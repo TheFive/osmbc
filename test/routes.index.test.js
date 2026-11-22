@@ -111,7 +111,7 @@ describe("routes/index", function() {
       if (originalGetValue) config.getValue = originalGetValue;
       originalGetValue = null;
     });
-    it("should show the next action per rule in one line with a link to the admin page", async function () {
+    it("should show only the next automatic action with a link to the admin page", async function () {
       originalGetValue = config.getValue;
       config.getValue = function(key, subkey, options) {
         if (key === "Transition") {
@@ -131,12 +131,12 @@ describe("routes/index", function() {
       });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
       const body = await client.get(baseLink + "/");
-      body.data.should.containEql("Next Automatic Actions");
+      body.data.should.containEql("Next Automatic Action");
+      // only the earliest action of all rules: Auto Translate Thu, before Close Sun and Edit Wed
       body.data.should.containEql("Auto translate <strong>WN101</strong>");
-      body.data.should.containEql("Close complete languages of <strong>WN101</strong>");
-      body.data.should.containEql("Set <strong>WN102</strong> to edit");
+      body.data.should.not.containEql("Close complete languages of");
+      body.data.should.not.containEql("to edit");
       body.data.should.containEql("/osmbc/admin#upcomingActions");
-      body.data.indexOf("Auto translate <strong>WN101</strong>").should.be.below(body.data.indexOf("Close complete languages of <strong>WN101</strong>"));
     });
   });
 

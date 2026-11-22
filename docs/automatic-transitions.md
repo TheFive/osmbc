@@ -7,7 +7,7 @@ instance (configuration `Transition`, see [config.md](config.md#automatic-transi
 All times below are **examples**; ask your admins for the times of your
 instance. Every full user can see the planned steps on the admin page
 (menu *Admin*, table "Upcoming automatic actions"); the start page shows
-the next step of each rule in one line ("Next automatic actions").
+only the next step ("Next Automatic Action").
 
 Each automatic step writes its own name into the blog log and the review
 list, so you can always see that it was not a person:

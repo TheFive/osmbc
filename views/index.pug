@@ -100,26 +100,26 @@ block content
                     a(href="https://hdyc.neis-one.org/?"+user.osmuser)
                       i.fa.fa-line-chart.text-body-secondary
                   td=user.access
-          //- next automatic action per rule (no languages), details on the admin page
+          //- only the next automatic action (no languages), the rest on the admin page
           if nextActions && nextActions.enabled && nextActions.actions.length > 0
             - var actionText = { edit: ["Set ", " to edit"], translate: ["Auto translate ", ""], reviewStart: ["Start review of ", ""], close: ["Close complete languages of ", ""] }
             h4.h5.mt-3
-              | Next Automatic Actions 
+              | Next Automatic Action 
               span.text-body-secondary.small="(" + layout.moment().tz(nextActions.timezone).format("z") + ")"
               if !layout.mobileView
                 |  
                 a(href=layout.htmlroot + "/osmbc/admin#upcomingActions") (more)
-            table.table#nextActions
-              each action in nextActions.actions
-                - var t = actionText[action.rule]
-                tr
-                  td
-                    | #{t[0]}
-                    strong=action.name
-                    | #{t[1]}
-                  td.text-end.text-body-secondary.small
-                    span.text-nowrap
-                      +upcomingTime(action.ts, nextActions.timezone, true)
+            - var action = nextActions.actions[0]
+            - var t = actionText[action.rule]
+            table.table#nextAction
+              tr
+                td
+                  | #{t[0]}
+                  strong=action.name
+                  | #{t[1]}
+                td.text-end.text-body-secondary.small
+                  span.text-nowrap
+                    +upcomingTime(action.ts, nextActions.timezone, true)
           //- admin is desktop only
           if !layout.mobileView
             h4.h5.mt-3 Admin View
