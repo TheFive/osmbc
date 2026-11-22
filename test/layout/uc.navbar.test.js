@@ -5,6 +5,7 @@ import testutil from "../testutil.js";
 import userModule from "../../model/user.js";
 import blogModule from "../../model/blog.js";
 import MainPage from "../PageObjectModel/mainPage.js";
+import AdminPage from "../PageObjectModel/adminPage.js";
 
 const maxTimer = 30000;
 
@@ -34,6 +35,14 @@ describe("uc/navbar on large screens", function() {
     const mainPage = new MainPage(driver);
     await mainPage.assertPage();
     should(await mainPage.navbarEntriesOffCenter()).eql([]);
+  });
+
+  it("should show every entry vertically centred in the bar of the admin pages", async function() {
+    const mainPage = new MainPage(driver);
+    await mainPage.clickLinkToAdminPage();
+    const adminPage = new AdminPage(driver);
+    await adminPage.assertPage();
+    should(await adminPage.navbarEntriesOffCenter()).eql([]);
   });
 
   it("should show the running version at the end of the Help menu", async function() {

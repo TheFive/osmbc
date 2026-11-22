@@ -23,7 +23,7 @@ block all
     body
 
         // Fixed navbar
-        nav.navbar.navbar-light.bg-light.navbar-expand-lg.fixed-top
+        nav.navbar.navbar-light.bg-light.navbar-expand-lg.fixed-top#fixedNavbar
           div.container-fluid
             +homeButton("navbar-brand")
             button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
@@ -31,7 +31,7 @@ block all
             div.collapse.navbar-collapse#navbarSupportedContent  
         
               if (layout.user.access === "full")
-                ul.navbar-nav
+                ul.navbar-nav.align-items-lg-center
                   li.dropdown.nav-item
                     a.nav-link.dropdown-toggle.active#userLists(href='#', data-bs-toggle='dropdown', role='button',aria-haspopup="true",aria-expanded="false")
                       | UserLists
@@ -51,7 +51,7 @@ block all
                       a.dropdown-header Action
                       a.dropdown-item#createblog(href=layout.htmlroot+"/createblog") Create Blog
 
-                ul.navbar-nav.ms-auto
+                ul.navbar-nav.ms-auto.align-items-lg-center
                   
                   +helpMenu(layout.helpMenu)
 
