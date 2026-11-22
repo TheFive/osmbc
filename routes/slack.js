@@ -75,33 +75,6 @@ function ensureAuthentificated(req, res, next) {
 }
 
 
-function searchUrlInSlack(text) {
-  debug("searchUrlInSlack");
-  if (text.search("<") >= 0) {
-    const from = text.search("<");
-    const to = text.search(">");
-    if (from < to) {
-      return text.substring(from + 1, to);
-    }
-  }
-  return null;
-}
-
-function extractTextWithoutUrl(text) {
-  debug("extractTextWithoutUrl");
-  const url = searchUrlInSlack(text);
-  if (url) text = text.replace("<" + url + ">", "");
-  return text;
-}
-
-
-
-
-
-
-
-
-
 function postSlackCreateUseTBC(req, res, next) {
   debug("postSlackCreateUseTBC");
 
@@ -168,10 +141,5 @@ router.post("/create/:team", ensureAuthentificated, postSlackCreateUseTBC);
 
 
 
-const fortestonly = {};
-fortestonly.searchUrlInSlack = searchUrlInSlack;
-fortestonly.extractTextWithoutUrl = extractTextWithoutUrl;
-
-router.fortestonly = fortestonly;
 
 export default router;

@@ -17,7 +17,6 @@ const debug = _debug("OSMBC:config");
 const env      = process.env.NODE_ENV || "development";
 
 
-let pgstring;
 
 
 
@@ -88,26 +87,6 @@ function readConfigByBaseName(baseName, dirName = __dirname) {
 
 
 
-function getPostgresDBString() {
-  debug("getPostgresDBString");
-  const conf = getValue("postgres");
-  let userString = "";
-  if (conf.username !== "") {
-    userString = conf.username + ":" + conf.password + "@";
-  }
-  let connectStr = "postgres://" +
-              userString +
-              conf.database;
-  if ((typeof (conf.connectstr) !== "undefined") &&
-      (conf.connectstr !== "")) {
-    connectStr = conf.connectstr;
-  }
-  if (!connectStr) {
-    logger.error("Could not build a connection string for postgres. App is terminating");
-    process.exit(1);
-  }
-  return connectStr;
-}
 
 
 
@@ -171,17 +150,11 @@ function initialise(callback) {
 
 
 
-  pgstring = getPostgresDBString();
   if (callback) callback();
 };
 
 
 
-function getConfiguration() {
-  assert(false, "Function obsolote use single values");
-  initialise();
-  return configuration;
-};
 
 function getValue(key, subkey, options) {
   debug("getValue %s", key);
@@ -268,10 +241,6 @@ function getServerCert() {
   return getValue("servercert");
 };
 
-function getCallbackUrl() {
-  initialise();
-  return configuration.callbackUrl;
-};
 
 // Directories OSMBC writes into at runtime. Default inside the app
 // directory; set them to move all runtime data out of it. Relative
@@ -335,8 +304,6 @@ const config = {
   env: env,
   logger: logger,
   version: packageJson.version,
-  getConfiguration: getConfiguration,
-  getPGString: () => { return pgstring; },
   getLanguages: getLanguages,
   htmlRoot: htmlRoot,
   url: url,
@@ -344,7 +311,6 @@ const config = {
   getServerPort: getServerPort,
   getServerKey: getServerKey,
   getServerCert: getServerCert,
-  getCallbackUrl: getCallbackUrl,
   initialise: initialise,
   getDirName: () => { return __dirname; },
   getConfigDir: () => { return configurationDir; },

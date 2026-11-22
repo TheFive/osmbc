@@ -98,7 +98,7 @@ a map of *where to look*, not a restatement of every field.
 | Key | Purpose |
 |---|---|
 | `serverport`, `serverkey`, `servercert` | HTTP(S) server port + TLS cert/key paths. |
-| `postgres` | `{database, username, password, server, port, connectstr?, postgresLogStatements?}` — `connectstr`, if set, overrides the assembled connection string entirely. `test` env also sets `postgres.initialise: true` (creates the DB/tables before running). |
+| `postgres` | `{database, username, password, server, port, postgresLogStatements?}`. `test` env also sets `postgres.initialise: true` (creates the DB/tables before running). |
 | `url`, `htmlroot` | Public base URL and the path prefix every route/asset is mounted under (often empty in `test`). |
 | `slacktool`, `slack` | Outbound Mattermost/Slack webhook endpoints for blog/article notifications. |
 | `MattermostUserNotification` | Optional. `team: <key of slacktool>`: users may get their notifications as Mattermost direct message, see [Notifications](#notifications). Missing = mail only. |

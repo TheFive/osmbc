@@ -10,11 +10,6 @@ import config from "../config.js";
 const debug = _debug("OSMBC:util:util");
 
 
-function sanitizeString(str) {
-  str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
-  return str.trim();
-};
-
 function isTrue(expr) {
   return (expr === true || expr === "true");
 };
@@ -200,7 +195,6 @@ function replaceTemplateVariables(template, variables = {}) {
 
 
 const util = {
-  sanitizeString: sanitizeString,
   isTrue: isTrue,
   shorten: shorten,
   summarizeError: summarizeError,

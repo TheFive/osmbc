@@ -52,19 +52,6 @@ function getGlobalCategories() {
   return categoryTranslation.filter((category) => { return (category.EN !== wpExpressTitle); });
 }
 
-/**
- * Check a language id before it becomes part of a field name
- * (`reviewComment<lang>`, `close<lang>`, `exported<lang>` …).
- * @param {string} lang language id from the caller, e.g. "DE"
- * @returns {Error|null} error with status 400 (BAD_REQUEST) for a language
- *   that is not configured, null if the language is known
- */
-function checkLanguage(lang) {
-  if (typeof lang === "string" && Object.hasOwn(language.getLanguages(), lang)) return null;
-  const error = new Error("Unknown language >" + lang + "<");
-  error.status = BAD_REQUEST;
-  return error;
-}
 
 function sanitizeBlogKey(blog) {
   if (blog === undefined || blog === null) return blog;
@@ -268,7 +255,7 @@ class Blog {
    * @param {function(Error=)} callback
    */
   _changeReview(lang, user, status, applyChange, callback) {
-    const languageError = checkLanguage(lang);
+    const languageError = language.checkLanguage(lang);
     if (languageError) return callback(languageError);
     assert(typeof (user) === "object");
     assert.notEqual(typeof this.id, "undefined");
@@ -611,7 +598,7 @@ class Blog {
    * @param {function(Error=)} callback
    */
   _changeCloseState(lang, user, closed, steps, callback) {
-    const languageError = checkLanguage(lang);
+    const languageError = language.checkLanguage(lang);
     if (languageError) return callback(languageError);
     assert(typeof (user) === "object");
     if (this["close" + lang] === closed) return callback();

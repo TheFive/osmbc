@@ -31,6 +31,7 @@
     "test:fast": "npm test --",
     "test:coverage": "NODE_ENV=test TEST_HEADLESS=TRUE node tools/run-tests.mjs sh -c 'npx c8 --temp-directory \"$OSMBC_TEST_TMPDIR/c8\" mocha \"$@\"' --",
     "coverage:check": "node tools/coverage-check.mjs",
+    "coverage:dead": "node tools/coverage-dead.mjs",
     "test:coverage:render": "NODE_ENV=test TEST_HEADLESS=TRUE node tools/run-tests.mjs npx c8 --all --include='render/**/*.js' --reporter=text-summary --reporter=text --reporter=html mocha test/render.blogrenderer.test.js",
     "test:coverage:render:detail": "NODE_ENV=test TEST_HEADLESS=TRUE node tools/run-tests.mjs npx c8 --all --include='render/**/*.js' --reporter=text-summary --reporter=text --reporter=html --reporter=lcov mocha test/render.blogrenderer.test.js",
     "test:coverage:render:functions": "npm run -s test:coverage:render:detail && node tools/coverage-uncovered-functions.js coverage/lcov.info render/",

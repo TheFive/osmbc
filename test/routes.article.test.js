@@ -560,6 +560,74 @@ describe("router/article", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
+  describe("route GET /article/readability", function() {
+    const url = baseLink + "/article/readability";
+    async function login(user) {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: user, password: user });
+      return client;
+    }
+    it("should answer without a link", async function () {
+      const client = await login("TestUser");
+      const body = await client.get(url);
+      should(body.data).eql("No Link Found");
+    });
+    it("should give the article with its HTML sanitized", async function () {
+      nock("https://news.example.org").get("/story").reply(200,
+        "<html><head><title>Story</title></head><body><article><h1>Story</h1>" +
+        "<p>" + "OpenStreetMap is a map of the world, made by volunteers. ".repeat(20) + "</p>" +
+        "<p><img src=\"x.png\" onerror=\"alert(1)\">" + "More text about mapping. ".repeat(20) + "</p>" +
+        "</article></body></html>", { "Content-Type": "text/html; charset=utf-8" });
+      const client = await login("TestUser");
+      const body = await client.get(url + "?link=" + encodeURIComponent("https://news.example.org/story"));
+      should(body.data.title).eql("Story");
+      should(body.data.content).containEql("OpenStreetMap is a map of the world");
+      should(body.data.content).not.containEql("onerror");
+    });
+    it("should say so when the page has no readable text", async function () {
+      nock("https://empty.example.org").get("/").reply(200, "<html><body></body></html>");
+      const client = await login("TestUser");
+      const body = await client.get(url + "?link=" + encodeURIComponent("https://empty.example.org/"));
+      should(body.data).eql("Readability Failed for https://empty.example.org/");
+    });
+    it("should not be open for guests", async function () {
+      // GuestUser is not in the database, the first login creates a guest
+      const client = await login("GuestUser");
+      const body = await client.get(url + "?link=" + encodeURIComponent("https://news.example.org/story"));
+      should(body.status).eql(HttpStatus.FORBIDDEN);
+      should(body.data).containEql("has not enough access rights");
+    });
+  });
+  describe("route POST /:article_id/notranslation", function() {
+    const url = baseLink + "/article/2/notranslation";
+    async function loggedInClient() {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return client;
+    }
+    it("should set the empty shown languages to no translation", async function () {
+      const client = await loggedInClient();
+      const body = await client.post(url, { language: JSON.stringify(["DE", "EN", "ES"]) });
+      should(body.status).eql(HttpStatus.OK);
+      const article = await articleModule.findById(2);
+      should(article.markdownDE).eql("* Dies ist ein grosser Testartikel.");
+      should(article.markdownEN).eql("no translation");
+      should(article.markdownES).eql("no translation");
+      should(article.markdownPT).be.undefined();
+    });
+    it("should answer 400 for a language list that is not JSON", async function () {
+      const client = await loggedInClient();
+      const body = await client.post(url, { language: "DE,EN" });
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should((await articleModule.findById(2)).version).eql(1);
+    });
+    it("should answer 400 for an unknown language", async function () {
+      const client = await loggedInClient();
+      const body = await client.post(url, { language: JSON.stringify(["EN", "XX"]) });
+      should(body.status).eql(HttpStatus.BAD_REQUEST);
+      should((await articleModule.findById(2)).markdownEN).be.undefined();
+    });
+  });
   describe("route POST /:article_id/witholdvalues", function() {
     const url = baseLink + "/article/2/witholdvalues";
     const params = {

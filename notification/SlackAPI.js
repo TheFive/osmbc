@@ -59,25 +59,6 @@ class SlackAPI {
         if (cb) return cb(null, err, body);
       });
   }
-
-  respond(query, cb) {
-    const obj = {};
-
-    obj.token = query.token;
-    obj.team_id = query.team_id;
-    obj.channel_id = query.channel_id;
-    obj.channel_name = query.channel_name;
-    obj.timestamp = new Date(query.timestamp);
-    obj.user_id = query.user_id;
-    obj.user_name = query.user_name;
-    obj.text = query.text;
-
-    if (!cb) {
-      return { text: "" };
-    } else {
-      return cb(null, obj);
-    }
-  }
 }
 
 

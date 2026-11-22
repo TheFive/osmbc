@@ -4,7 +4,7 @@ import { Router } from "express";
 import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
 import { resolve } from "path";
-import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY } from "http-status-codes";
+import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY, BAD_REQUEST } from "http-status-codes";
 import { renderFile } from "pug";
 
 
@@ -34,7 +34,7 @@ import auth from "../routes/auth.js";
 import linkCheck from "../util/linkCheck.js";
 import { ANCHOR_RE, checkAnchor } from "../util/anchorCheck.js";
 import featureImage from "../util/featureImage.js";
-import ssrfAgents from "../util/ssrfAgents.js";
+import { fetchExternalPage } from "../util/externalPage.js";
 
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
@@ -42,7 +42,6 @@ import createDOMPurify from "dompurify";
 
 
 
-import axios from "axios";
 import _debug from "debug";
 const debug = _debug("OSMBC:routes:article");
 
@@ -50,7 +49,6 @@ const router      = Router();
 const slackrouter = Router();
 
 
-const userAgent = config.getValue("User-Agent", { mustExist: true });
 
 
 
@@ -518,54 +516,31 @@ function postArticle(req, res, next) {
 }
 
 
+/**
+ * The button "no translation to rest": the form field `language` holds the
+ * shown languages as JSON; the article model decides which get
+ * "no translation".
+ * @param {object} req express request with req.article
+ * @param {object} res express response, redirected back to the article
+ * @param {Function} next error handler
+ */
 function postArticleNoTranslation(req, res, next) {
-  debug("postArticle");
-
-
-  const article = req.article;
-
-
-
-
-  let returnToUrl;
-  if (article) returnToUrl = htmlroot + "/article/" + article.id;
-  const changes = {};
-  changes.old = {};
-
-  parallel([
-  ],
-  function setValues(err) {
-    debug("postArticle->setValues");
-    if (err) { return next(err); }
-    assert(article);
-
-
-    const showLangs = JSON.parse(req.body.language);
-    showLangs.forEach(lang => {
-      if (changes["markdown" + lang]) return;
-      if (article["markdown" + lang] && article["markdown" + lang].trim() !== "") return;
-      if (lang === req.user.mainLang) return;
-      changes.old["markdown" + lang] = "";
-      changes["markdown" + lang] = "no translation";
-    });
-
-
-
-    article.setAndSave(req.user, changes, function(err) {
-      debug("postArticle->setValues->setAndSave");
-      if (err) {
-        return next(err);
-      }
-      res.redirect(returnToUrl);
-    });
+  debug("postArticleNoTranslation");
+  let languages;
+  try {
+    languages = JSON.parse(req.body.language);
+  } catch (err) {
+    return next(Object.assign(new Error("Language list is not valid JSON"), { status: BAD_REQUEST }));
   }
-  );
+  req.article.setNoTranslationForEmpty(req.user, languages, function(err) {
+    if (err) return next(err);
+    res.redirect(htmlroot + "/article/" + req.article.id);
+  });
 }
 
 function postArticleWithOldValues(req, res, next) {
   debug("postArticleWithOldValues");
 
-  const noTranslation = req.query.notranslation;
 
 
 
@@ -637,17 +612,6 @@ function postArticleWithOldValues(req, res, next) {
     debug("postArticle->setValues");
     if (err) { return next(err); }
     assert(article);
-    if (noTranslation === "true") {
-      const showLangs = JSON.parse(req.body.languages);
-      for (const lang in language.getLanguages()) {
-        if (showLangs[lang]) {
-          if (changes["markdown" + lang]) continue;
-          if (article["markdown" + lang] && article["markdown" + lang].trim() === "") continue;
-          if (lang === req.user.mainLang) continue;
-          changes["markdown" + lang] = "no translation";
-        }
-      }
-    }
 
     article.setAndSave(req.user, changes, function(err) {
       debug("postArticle->setValues->setAndSave");
@@ -813,40 +777,30 @@ function doAction(req, res, next) {
     res.end("OK");
   });
 }
-function getExternalText(req, res, next) {
+/**
+ * Readability view of an external page for the editor (button next to a
+ * link): JSON with the extracted article, its HTML sanitized. Errors are
+ * answered as plain text with status 200 (the page script shows them).
+ * @param {object} req express request, query `link` is the page
+ * @param {object} res express response
+ */
+function getExternalText(req, res) {
   debug("getExternalText");
-
-
   const link = req.query.link;
-  const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
-  if (link) {
-    axios.get(link, {
-      httpAgent: ssrfAgents.httpAgent,
-      httpsAgent: ssrfAgents.httpsAgent,
-      headers:
-      { "User-Agent": userAgent },
-      responseType: "arraybuffer",
-      responseEncoding: "binary"
-    }).then(function(response) {
-      const doc = new JSDOM(response.data, link);
-      const reader = new Readability(doc.window.document);
-      const article = reader.parse();
-      axios.interceptors.response.eject(responseInterseptor);
-      if (article && article.content) {
-        // Readability does not sanitize, external pages could inject
-        // event handlers (e.g. onerror) into the editor's OSMBC session
-        article.content = createDOMPurify(doc.window).sanitize(article.content);
-        res.json(article);
-      } else {
-        res.type("text/plain").end("Readability Failed for " + link);
-      };
-    }).catch(function(err) {
-      axios.interceptors.response.eject(responseInterseptor);
-      res.type("text/plain").end(err.message);
-    });
-  } else {
-    res.type("text/plain").end("No Link Found");
-  }
+  if (!link) return res.type("text/plain").end("No Link Found");
+  fetchExternalPage(link).then(function(html) {
+    const doc = new JSDOM(html, link);
+    const article = new Readability(doc.window.document).parse();
+    if (!article || !article.content) {
+      return res.type("text/plain").end("Readability Failed for " + link);
+    }
+    // Readability does not sanitize, external pages could inject
+    // event handlers (e.g. onerror) into the editor's OSMBC session
+    article.content = createDOMPurify(doc.window).sanitize(article.content);
+    res.json(article);
+  }).catch(function(err) {
+    res.type("text/plain").end(err.message);
+  });
 }
 
 function createArticle(req, res, next) {

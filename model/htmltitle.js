@@ -1,9 +1,8 @@
 
 
 import { load } from "cheerio";
-import axios from "axios";
 import util from "../util/util.js";
-import ssrfAgents from "../util/ssrfAgents.js";
+import { fetchExternalPage } from "../util/externalPage.js";
 
 import _debug from "debug";
 const debug = _debug("OSMBC:model:htmltitle");
@@ -62,19 +61,9 @@ async function getTitle(url) {
 
   let body = null;
   let r = null;
-  const responseInterseptor = axios.interceptors.response.use(util.charsetDecoder);
   try {
-    const response = await axios.get(url, {
-      httpAgent: ssrfAgents.httpAgent,
-      httpsAgent: ssrfAgents.httpsAgent,
-      timeout: 2000,
-      responseType: "arraybuffer",
-      responseEncoding: "binary"
-    });
-    body = response.data;
-    axios.interceptors.response.eject(responseInterseptor);
+    body = await fetchExternalPage(url, { timeout: 2000 });
   } catch (err) {
-    axios.interceptors.response.eject(responseInterseptor);
     if (err.code === "ECONNABORTED") {
       r = url + " TIMEOUT";
     } else throw new Error("Problem with url");

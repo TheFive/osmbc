@@ -6,6 +6,7 @@ import sinon from "sinon";
 import config from "../config.js";
 import articleModule from "../model/article.js";
 import blogModule from "../model/blog.js";
+import userModule from "../model/user.js";
 import blogRenderer from "../render/BlogRenderer.js";
 import nock from "nock";
 import axios from "axios";
@@ -66,11 +67,21 @@ describe("router/api", function() {
     });
   });
   describe("monitor postgres functions", function() {
+    afterEach(function() {
+      sinon.restore();
+    });
     it("should give OK with correct ApiKey", async function () {
-      const body = await axios.get(baseLink + "/api/monitor/testapikey", { validateStatus: (status) => true });
+      const body = await axios.get(baseLink + "/api/monitorPostgres/testapikey", { validateStatus: (status) => true });
 
       should(body.status).eql(200);
       should(body.data).eql("OK");
+    });
+    it("should give Postgres Error (still status 200, see docs/API.md) when the query fails", async function () {
+      sinon.stub(userModule, "find").callsFake(function(_query, callback) { callback(new Error("connection refused")); });
+      const body = await axios.get(baseLink + "/api/monitorPostgres/testapikey", { validateStatus: (status) => true });
+
+      should(body.status).eql(200);
+      should(body.data).eql("Postgres Error");
     });
     it("should give unauthorised with incorrect ApiKey", async function () {
       const body = await axios.get(baseLink + "/api/monitorpostgres/incorrecttestapikey", { validateStatus: (status) => true });
