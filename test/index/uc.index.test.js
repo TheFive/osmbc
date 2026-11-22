@@ -84,6 +84,7 @@ describe("uc/index", function() {
         const adminPage = new AdminPage(driver);
         await adminPage.assertPage();
         should(await adminPage.getFirstHeader()).eql("Configuration");
+        should(await adminPage.isFirstHeaderBelowNavbar()).be.true();
 
         await testutil.expectHtml(driver, "index", "admin_home");
       });
