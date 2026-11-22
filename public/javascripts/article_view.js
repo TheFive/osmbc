@@ -946,23 +946,27 @@ function translate(langFrom, langToParam, service) {
 
 
 
-// First Draft: let the server ask Claude for a summary of the link
-// and put it into the (empty) markdown of the language
+// First Draft: the server asks Claude for a summary of the link and saves
+// it into the markdown of the language as user ClaudeAI; the page shows it
+// as the saved state, so the editor's next save is a change on top of it
 function firstDraft(event) {
   event.preventDefault();
   const item = $(this);
   const lang = item.data("lang");
   const url = item.data("url");
   const markdown = $("#markdown" + lang);
+  const oldMarkdown = $("#old_markdown" + lang);
   if (item.hasClass("disabled")) return false;
   if (markdown.val() !== "" && !window.confirm("Markdown " + lang + " is not empty, replace it?")) return false;
   const sameLang = $(".firstDraftItem").filter(function() { return $(this).data("lang") === lang; });
   sameLang.addClass("disabled");
   item.find(".firstDraftDone, .firstDraftError").addClass("d-none");
   item.find(".firstDraftWait").removeClass("d-none");
-  $.post(window.htmlroot + "/article/firstdraft/" + encodeURIComponent(lang), { url: url }, function (data) {
+  const target = window.htmlroot + "/article/" + encodeURIComponent(item.data("article")) + "/firstdraft/" + encodeURIComponent(lang);
+  $.post(target, { url: url, old: oldMarkdown.val() }, function (data) {
     item.find(".firstDraftWait").addClass("d-none");
     item.find(".firstDraftDone").removeClass("d-none");
+    oldMarkdown.val(data);
     markdown.val(data).trigger("change");
   }).fail(function (jqXHR) {
     item.find(".firstDraftWait").addClass("d-none");

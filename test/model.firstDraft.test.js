@@ -5,6 +5,9 @@ import initialiseModules from "../util/initialise.js";
 import testutil from "./testutil.js";
 
 import firstDraft from "../model/firstDraft.js";
+import userModule from "../model/user.js";
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
 
 
 const page = "<html><head><title>Mapping Party</title></head><body><article>" +
@@ -169,6 +172,133 @@ describe("model/firstDraft", function() {
       create.resolves({ stop_reason: "refusal", content: [] });
 
       await should(firstDraft.createDraft({ lang: "EN", url: "https://news.example.org/party" })).be.rejectedWith(/declined/);
+    });
+  });
+
+  describe("with the current issue (#1185)", function() {
+    const partyUrl = "https://news.example.org/party";
+    const full = userModule.create({ OSMUser: "Full", access: "full" });
+    const guest = userModule.create({ OSMUser: "Guest", access: "guest" });
+    let current;
+
+    function importIssue(done) {
+      testutil.importData({
+        clear: true,
+        blog: [{ name: "WN1", status: "edit" }],
+        article: [
+          { blog: "WN1", categoryEN: "Mapping", title: "Written", markdownEN: "Alice has developed a map of benches." },
+          { blog: "WN1", categoryEN: "Mapping", title: "Open item", markdownEN: "" },
+          { blog: "WN1", categoryEN: "Picture", title: "Picture", markdownEN: "Text of the picture" },
+          { blog: "WN1", categoryEN: "Upcoming Events", title: "Events", markdownEN: "Text of the events" },
+          { blog: "WN1", categoryEN: "Mapping", title: "Party", collection: "Look at " + partyUrl, markdownEN: "" }
+        ]
+      }, done);
+    }
+    function loadParty() {
+      return new Promise((resolve, reject) => articleModule.findOne({ title: "Party" }, null, (err, a) => (err) ? reject(err) : resolve(a)));
+    }
+    function changesOf(article) {
+      return logModule.find({ table: "article", oid: article.id, property: "markdownEN" }, { column: "id" });
+    }
+
+    beforeEach(async function() {
+      await new Promise((resolve, reject) => importIssue((err) => (err) ? reject(err) : resolve()));
+      current = await loadParty();
+    });
+
+    describe("issueContext", function() {
+      it("should render the issue with marker and placeholders, without picture and events", async function() {
+        const context = await firstDraft.fortestonly.issueContext(full, "EN", "WN1", current.id);
+
+        should(context.markerPlaced).be.true();
+        should(context.text).containEql("## Mapping");
+        should(context.text).containEql("* Alice has developed a map of benches.");
+        should(context.text).containEql("* [[ITEM STILL TO COME: Open item]]");
+        should(context.text).containEql("* [[YOUR ITEM GOES HERE]]");
+        should(context.text).not.containEql("Text of the picture");
+        should(context.text).not.containEql("Text of the events");
+      });
+      it("should not place the marker for a new article", async function() {
+        const context = await firstDraft.fortestonly.issueContext(full, "EN", "WN1", null);
+
+        should(context.markerPlaced).be.false();
+        should(context.text).not.containEql("YOUR ITEM GOES HERE");
+        should(context.text).containEql("[[ITEM STILL TO COME: Party]]");
+      });
+      it("should give guests no context, they may not see blogs", async function() {
+        should(await firstDraft.fortestonly.issueContext(guest, "EN", "WN1", current.id)).be.null();
+      });
+      it("should give no context for an unknown blog", async function() {
+        should(await firstDraft.fortestonly.issueContext(full, "EN", "Future", null)).be.null();
+      });
+    });
+
+    describe("draftIntoArticle", function() {
+      it("should send the issue and save the draft as ClaudeAI", async function() {
+        nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+        create.resolves(claudeAnswer("The Bonn group [mapped](https://news.example.org/party) all benches."));
+
+        const markdown = await firstDraft.draftIntoArticle(full, current, { lang: "EN", url: partyUrl, old: "" });
+
+        should(markdown).eql("The Bonn group [mapped](https://news.example.org/party) all benches.");
+        const message = create.firstCall.args[0].messages[0].content;
+        should(message).containEql("<current_issue>");
+        should(message).containEql("Your item goes where [[YOUR ITEM GOES HERE]] stands.");
+        should(message).containEql("Alice has developed a map of benches.");
+        should((await loadParty()).markdownEN).eql(markdown);
+        const changes = await changesOf(current);
+        should(changes.map((c) => [c.user, c.to])).eql([["ClaudeAI", markdown]]);
+      });
+      it("should not send the issue for a guest", async function() {
+        nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+        create.resolves(claudeAnswer("Draft"));
+
+        await firstDraft.draftIntoArticle(guest, current, { lang: "EN", url: partyUrl, old: "" });
+
+        should(create.firstCall.args[0].messages[0].content).not.containEql("<current_issue>");
+      });
+      it("should reject a url that is not in the collection", async function() {
+        await should(firstDraft.draftIntoArticle(full, current, { lang: "EN", url: "https://other.example.org/", old: "" }))
+          .be.rejectedWith({ status: 400 });
+        should(create.called).be.false();
+      });
+      it("should reject an unknown language", async function() {
+        await should(firstDraft.draftIntoArticle(full, current, { lang: "XX", url: partyUrl, old: "" }))
+          .be.rejectedWith({ status: 400 });
+        should(create.called).be.false();
+      });
+      it("should not overwrite a text changed in the meantime", async function() {
+        await new Promise((resolve, reject) => current.setAndSave(full, { markdownEN: "Typed by Bob", old: { markdownEN: "" } }, (err) => (err) ? reject(err) : resolve()));
+        nock("https://news.example.org").get("/party").reply(200, page, { "Content-Type": "text/html" });
+        create.resolves(claudeAnswer("Draft"));
+
+        await should(firstDraft.draftIntoArticle(full, await loadParty(), { lang: "EN", url: partyUrl, old: "" }))
+          .be.rejectedWith({ status: 409 });
+        should((await loadParty()).markdownEN).eql("Typed by Bob");
+      });
+    });
+
+    describe("saveCollectedDraft", function() {
+      it("should save the draft as ClaudeAI, then the edited text as the user", async function() {
+        await firstDraft.saveCollectedDraft(full, current, { lang: "EN", markdown: "Claude's draft" }, "Edited draft\r\nsecond line");
+
+        should((await loadParty()).markdownEN).eql("Edited draft\nsecond line");
+        const changes = await changesOf(current);
+        should(changes.map((c) => [c.user, c.to])).eql([["ClaudeAI", "Claude's draft"], ["Full", "Edited draft\nsecond line"]]);
+      });
+      it("should keep an unchanged draft with one change", async function() {
+        await firstDraft.saveCollectedDraft(full, current, { lang: "EN", markdown: "Claude's draft" }, "Claude's draft");
+
+        const changes = await changesOf(current);
+        should(changes.map((c) => c.user)).eql(["ClaudeAI"]);
+      });
+      it("should remove the draft for \"Save link only\", so the history shows it as not usable", async function() {
+        await firstDraft.saveCollectedDraft(full, current, { lang: "EN", markdown: "Claude's draft" }, undefined);
+
+        should((await loadParty()).markdownEN ?? "").eql("");
+        const changes = await changesOf(current);
+        should(changes.map((c) => [c.user, c.to])).eql([["ClaudeAI", "Claude's draft"], ["Full", ""]]);
+      });
     });
   });
 });

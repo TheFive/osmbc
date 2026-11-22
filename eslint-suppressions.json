@@ -62,11 +62,8 @@
     }
   },
   "model/firstDraft.js": {
-    "complexity": {
-      "count": 1
-    },
     "jsdoc/require-jsdoc": {
-      "count": 7
+      "count": 6
     }
   },
   "model/htmltitle.js": {

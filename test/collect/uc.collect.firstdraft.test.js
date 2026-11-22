@@ -7,6 +7,7 @@ import userModule from "../../model/user.js";
 import blogModule from "../../model/blog.js";
 import articleModule from "../../model/article.js";
 import firstDraft from "../../model/firstDraft.js";
+import logModule from "../../model/logModule.js";
 import util from "../../util/util.js";
 import SearchAndCollectPage from "../PageObjectModel/searchAndCollectPage.js";
 
@@ -28,6 +29,11 @@ describe("uc/collect with First Draft", function() {
     const articles = await articleModule.find({ collection: link });
     should(articles.length).eql(1);
     return articles[0];
+  }
+  // who wrote markdownDE, in order: the draft is saved as ClaudeAI first (#1185)
+  async function markdownHistory(article) {
+    const changes = await logModule.find({ table: "article", oid: article.id, property: "markdownDE" }, { column: "id" });
+    return changes.map((c) => [c.user, c.to]);
   }
 
   beforeEach(async function() {
@@ -69,6 +75,7 @@ describe("uc/collect with First Draft", function() {
     await collectPage.clickSaveWithDraft();
     const article = await articleOfLink();
     should(article.markdownDE).eql("Angepasster Entwurf.");
+    should(await markdownHistory(article)).eql([["ClaudeAI", draft], ["TestUser", "Angepasster Entwurf."]]);
     // Claude's compact title replaces the page title
     should(article.title).eql("Bänke im Bonner Stadtpark");
     // and Claude's category the "no category yet"
@@ -81,7 +88,10 @@ describe("uc/collect with First Draft", function() {
     await collectPage.fillAndStartSearch(link);
     await collectPage.waitForDraft();
     await collectPage.clickSaveLinkOnly();
-    should((await articleOfLink()).markdownDE).be.undefined();
+    // the draft stays in the history, removed by the collector: not usable
+    const article = await articleOfLink();
+    should(article.markdownDE).eql("");
+    should(await markdownHistory(article)).eql([["ClaudeAI", draft], ["TestUser", ""]]);
   });
   it("should make the draft only on request for a link that was found", async function() {
     await articleModule.createNewArticle({ blog: "WN1", title: "Party", collection: link });

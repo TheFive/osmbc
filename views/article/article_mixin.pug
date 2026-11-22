@@ -104,7 +104,7 @@ mixin mobileFirstDraftButtons(lang)
       each url in firstDraftUrls
         - let shortUrl = url.replace(/^https?:\/\/(www\.)?/, "")
         - if (shortUrl.length > 30) shortUrl = shortUrl.substring(0, 27) + "..."
-        button.btn.btn-outline-primary.firstDraftItem.text-start(type="button" data-lang=lang data-url=url title=url)
+        button.btn.btn-outline-primary.firstDraftItem.text-start(type="button" data-lang=lang data-url=url data-article=article.id title=url)
           span.firstDraftLabel="First Draft "
           small=shortUrl
           span.ms-1.firstDraftWait.d-none
@@ -256,7 +256,7 @@ mixin firstDraftMenu
               - let shortUrl = url.replace(/^https?:\/\/(www\.)?/, "")
               - if (shortUrl.length > 50) shortUrl = shortUrl.substring(0, 47) + "..."
               li
-                a.dropdown-item.firstDraftItem(href="#" data-lang=lang data-url=url title=url)
+                a.dropdown-item.firstDraftItem(href="#" data-lang=lang data-url=url data-article=article.id title=url)
                   span.firstDraftLabel=lang + " -> "
                   small.text-body-secondary=shortUrl
                   span.ms-1.firstDraftWait.d-none

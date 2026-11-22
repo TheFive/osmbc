@@ -9,6 +9,7 @@ import blogModule from "../../model/blog.js";
 import util from "../../util/util.js";
 import ArticlePage from "../PageObjectModel/articlePage.js";
 import firstDraft from "../../model/firstDraft.js";
+import logModule from "../../model/logModule.js";
 import sinon from "sinon";
 
 const osmbcLink = util.osmbcLink;
@@ -213,6 +214,16 @@ describe("uc.article save bar", function() {
       should(await articlePage.hasHorizontalScroll()).be.False();
       await articlePage.tapFirstDraft("DE");
       should(await articlePage.getMarkdown("DE")).eql("Die Bonner Gruppe hat Bänke kartiert.");
+      // saved as ClaudeAI (#1185): nothing unsaved on the page
+      should((await articleModule.findById(draftArticle.id)).markdownDE).eql("Die Bonner Gruppe hat Bänke kartiert.");
+      should(await articlePage.isSaveBarShown()).be.False();
+
+      // the editor's change is a normal save on top of the draft
+      await articlePage.fillMarkdownInput("DE", "Die Bonner Gruppe hat alle Bänke kartiert.");
+      await articlePage.clickSaveBar();
+      await driver.wait(async () => (await articleModule.findById(draftArticle.id)).markdownDE === "Die Bonner Gruppe hat alle Bänke kartiert.", 5000, "text not saved");
+      const changes = await logModule.find({ table: "article", oid: draftArticle.id, property: "markdownDE" }, { column: "id" });
+      should(changes.map((c) => c.user)).eql(["ClaudeAI", "TestUser"]);
     });
     it("should keep the First Draft menu on a desktop", async function() {
       driver = await testutil.getNewDriver("TestUser");
