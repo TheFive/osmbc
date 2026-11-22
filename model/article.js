@@ -513,16 +513,6 @@ class Article {
     );
   }
 
-  getCategory(lang) {
-    debug("getCategory");
-    let result = this.categoryEN;
-    const categoryTranslation = configModule.getConfig("categorytranslation");
-    if (categoryTranslation[result] && categoryTranslation[result][lang]) {
-      result = categoryTranslation[result][lang];
-    }
-    return result;
-  }
-
   /**
    * Adds a comment on its own (the "Add Comment" buttons), saves the article
    * and then tells the message center. A comment that comes with other
