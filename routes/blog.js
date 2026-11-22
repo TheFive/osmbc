@@ -11,6 +11,7 @@ import config from "../config.js";
 import language from "../model/language.js";
 
 import util from "../util/util.js";
+import { redirectBack } from "./redirectBack.js";
 import moment from "moment";
 import { dump as yamlDump, load as yamlLoad } from "js-yaml";
 import configModule from "../model/config.js";
@@ -267,8 +268,7 @@ function setReviewComment(req, res, next) {
   }
   reviewFormActions[action](req.blog, req.body.lang, req.user, req.body.text, function(err) {
     if (err) return next(err);
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 
@@ -283,8 +283,7 @@ function editReviewComment(req, res, next) {
 
   req.blog.editReviewComment(lang, user, index, data, function(err) {
     if (err) return next(err);
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 
@@ -390,11 +389,7 @@ function renderBlogTab(req, res, next) {
         const changes = { status: req.query.setStatus };
         blog.setAndSave(req.user, changes, function(err) {
           if (err) return callback(err);
-          let referer =  config.htmlRoot() + "/osmbc";
-          if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
-            referer = util.getSafeRedirectUrl(req.header("Referer"), referer, req.protocol + "://" + req.get("host"));
-          }
-          res.redirect(referer);
+          redirectBack(req, res);
         });
       } else return callback();
     },
@@ -464,8 +459,7 @@ function copyAllArticles(req, res, next) {
 
   blog.copyAllArticles(user, fromLang, toLang, function (err) {
     if (err) return next(err);
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 
@@ -482,8 +476,7 @@ function translateAllArticles(req, res, next) {
 
   blog.translateAllArticles(user, fromLang, toLang, service, function (err) {
     if (err) return next(err);
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 

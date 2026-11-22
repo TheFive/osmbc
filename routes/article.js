@@ -10,6 +10,7 @@ import { renderFile } from "pug";
 
 
 import util from "../util/util.js";
+import { redirectBack, sameHostReferer } from "./redirectBack.js";
 import config from "../config.js";
 import language from "../model/language.js";
 import { osmbcMarkdown } from "../util/md_util.js";
@@ -719,9 +720,7 @@ function postSetMarkdown(req, res, next) {
         res.json({ markdown: markdown, state: article.translationState(lang) });
       });
     }
-    // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 
@@ -739,9 +738,7 @@ function postReviewChange(req, res, next) {
 
   article.reviewChanges(req.user, object, function(err) {
     if (err) return next(err);
-    // var returnToUrl = htmlroot+"/blog/"+article.blog+"/previewNEdit";
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 
@@ -785,10 +782,7 @@ function markCommentRead(req, res, next) {
     }
     let returnToUrl  = htmlroot + "/article/" + article.id;
 
-    // Do not loop with auth (can happen in tests)
-    if (req.header("Referer") && req.header("Referer").indexOf("/auth/openstreetmap") < 0) {
-      returnToUrl = util.getSafeRedirectUrl(req.header("Referer"), returnToUrl, req.protocol + "://" + req.get("host"));
-    }
+    returnToUrl = sameHostReferer(req) ?? returnToUrl;
     if (req.query.reload === "false") {
       res.end("OK");
     } else {

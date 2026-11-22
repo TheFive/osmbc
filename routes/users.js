@@ -7,6 +7,7 @@ import { parallel, series } from "async";
 import { Router } from "express";
 import auth from "../routes/auth.js";
 import util from "../util/util.js";
+import { redirectBack } from "./redirectBack.js";
 
 import config from "../config.js";
 import language from "../model/language.js";
@@ -313,8 +314,7 @@ function createApiKey(req, res, next) {
   debug("createApiKey");
   req.user.createApiKey(function(err) {
     if (err) return next(err);
-    const referer = util.getSafeRedirectUrl(req.header("Referer"), config.htmlRoot() + "/osmbc", req.protocol + "://" + req.get("host"));
-    res.redirect(referer);
+    redirectBack(req, res);
   });
 }
 
