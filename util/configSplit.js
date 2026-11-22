@@ -26,7 +26,8 @@ export const editorialKeys = [
   "WelcomeRefreshInSeconds",
   "BlogDurationDays",
   "MaxDiffLength",
-  "CalendarDateFormat"
+  "CalendarDateFormat",
+  "LinkCheck"
 ];
 
 // Keys with both kinds of values: these sub keys are technical, all other

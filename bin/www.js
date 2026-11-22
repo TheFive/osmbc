@@ -21,6 +21,7 @@ import config from "../config.js";
 import configModule from "../model/config.js";
 import { startTransitionScheduler, stopTransitionScheduler } from "../model/blogTransitionScheduler.js";
 import userModule from "../model/user.js";
+import linkConfirmation from "../model/linkConfirmation.js";
 import messageCenter from "../notification/messageCenter.js";
 import { initialiseMailReceiver } from "../notification/mailReceiver.js";
 import { initialiseSlackReceiver } from "../notification/slackReceiver.js";
@@ -87,6 +88,7 @@ function initialiseServer() {
   debug("initialiseServer");
   auto({
     configModule: configModule.initialise,
+    linkConfirmation: linkConfirmation.ensureTable,
     blogModule: ["configModule", startBlogTimer],
     messageCenter: messageCenter.initialise,
     startMailReceiver: startMailReceiver,

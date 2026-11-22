@@ -32,6 +32,7 @@ import firstDraft from "../model/firstDraft.js";
 import auth from "../routes/auth.js";
 
 import linkCheck from "../util/linkCheck.js";
+import linkConfirmation from "../model/linkConfirmation.js";
 import { ANCHOR_RE, checkAnchor } from "../util/anchorCheck.js";
 import featureImage from "../util/featureImage.js";
 import ssrfAgents from "../util/ssrfAgents.js";
@@ -967,17 +968,27 @@ function urlExist(req, res) {
         result[url] = "OK";
         return callback();
       }
-      linkCheck.checkUrl(url, function(err, status) {
+      linkCheck.checkLink(url, function(err, check) {
         if (err) return callback(err);
-        result[url] = status;
+        result[url] = linkCheckAnswer(check);
         return callback();
       });
     },
     function final(err) {
       if (err) return req.next(err);
-      else res.json(result);
+      linkConfirmation.applyConfirmations(result, function(err) {
+        if (err) return req.next(err);
+        res.json(result);
+      });
     }
   );
+}
+
+// "OK" and broken links keep the old short answer ("OK", 404, error text),
+// blocked and unreachable links are sent as {state, status}.
+function linkCheckAnswer(check) {
+  if (check.state === "ok" || check.state === "broken") return check.status;
+  return { state: check.state, status: check.status };
 }
 
 

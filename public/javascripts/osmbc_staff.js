@@ -41,18 +41,102 @@ function collectAllLinks() {
   return mapping;
 }
 
+// A link check answer (routes/article.js urlExist) is "OK", a broken link
+// (HTTP status or error text) or {state, status} with state "blocked"
+// (can't be checked, can be confirmed), "unreachable" (try later) or
+// "confirmed" (an editor opened it, model/linkConfirmation.js).
+function linkState(answer) {
+  if (!answer || answer === "OK") return "ok";
+  if (typeof answer === "object") return answer.state;
+  return "broken";
+}
+
+function shortDate(iso) {
+  return new Date(iso).toLocaleDateString();
+}
+
+// Text and buttons after a link in #linkArea; only there can an editor
+// confirm a link or take the confirmation back.
+function linkConfirmControls(url, answer) {
+  const state = linkState(answer);
+  // phones: normal button height for the tap target (docs/ui-guidelines.md)
+  const mobile = document.documentElement.classList.contains("osmbc-mobile");
+  const buttonClass = "btn btn-outline-secondary" + (mobile ? "" : " btn-sm");
+  const box = $("<span>", { class: "osmbc-linkconfirm d-inline-flex flex-wrap align-items-center gap-2 ms-2 text-body-secondary" });
+  if (state === "blocked") {
+    box.append(
+      $("<span>", { class: "small" }).text("can't be checked automatically (" + answer.status + ")"),
+      $("<button>", { type: "button", class: buttonClass, "data-link-confirm": url }).text("Link works")
+    );
+  } else if (state === "unreachable") {
+    box.append($("<span>", { class: "small" }).text("temporarily unreachable (" + answer.status + ")"));
+  } else if (state === "confirmed") {
+    box.append(
+      $("<span>", { class: "small" }).text("✓ confirmed by " + answer.user + " on " + shortDate(answer.timestamp) + ", valid until " + shortDate(answer.validUntil)),
+      $("<button>", { type: "button", class: buttonClass, "data-link-revoke": url }).text("Undo")
+    );
+  } else return null;
+  return box;
+}
+
+// Marks one link; earlier marks are removed first, so a changed answer
+// (confirmed, undone) is shown without re-rendering the page.
+function markLink(k, answer) {
+  k.removeClass("osmbc-nonexist osmbc-link-uncheckable");
+  k.find(".osmbc-linkmark").remove();
+  k.next(".osmbc-linkconfirm").remove();
+  const state = linkState(answer);
+  if (state === "broken") {
+    k.addClass("osmbc-nonexist");
+    k.append($("<span>", { class: "osmbc-linkmark" }).text(" #" + answer));
+  } else if (state === "blocked" || state === "unreachable") {
+    k.addClass("osmbc-link-uncheckable");
+    const hint = (state === "blocked") ? "Can't be checked automatically (" : "Temporarily unreachable (";
+    k.append($("<i>", { class: "fa fa-question-circle-o osmbc-linkmark ms-1", title: hint + answer.status + ")", "aria-label": hint + answer.status + ")" }));
+  }
+  if (k.closest("#linkArea").length > 0) k.after(linkConfirmControls(k.attr("href"), answer));
+}
+
 function markWrongLinks(mapping) {
   for (const l in mapping) {
-    const status = window.cacheLink[l];
-    if (!status || status === "OK") continue;
-    mapping[l].forEach(function(k) {
-      // #linkArea and the blog previews are not re-rendered between checks
-      if (k.hasClass("osmbc-nonexist")) return;
-      k.addClass("osmbc-nonexist");
-      k.text(k.text() + " #" + status);
-    });
+    const answer = window.cacheLink[l];
+    if (!answer) continue;
+    mapping[l].forEach(function(k) { markLink(k, answer); });
   }
 }
+
+// asks the server again, e.g. after an undo or a refused confirmation
+function recheckLink(url) {
+  delete window.cacheLink[url];
+  checkAllLinks();
+}
+
+jQuery(document).on("click", "[data-link-confirm]", function(event) {
+  event.preventDefault();
+  const url = $(this).attr("data-link-confirm");
+  $(this).prop("disabled", true);
+  jQuery.post(window.htmlroot + "/linkconfirmation/confirm", { url: url }, function(answer) {
+    window.cacheLink[url] = answer;
+    markWrongLinks(collectAllLinks());
+  }, "json").fail(function() {
+    // the link check answers differently now (ok, 404 ...): show that
+    recheckLink(url);
+  });
+});
+
+jQuery(document).on("click", "[data-link-revoke]", function(event) {
+  event.preventDefault();
+  const button = $(this);
+  const url = button.attr("data-link-revoke");
+  button.prop("disabled", true);
+  jQuery.post(window.htmlroot + "/linkconfirmation/revoke", { url: url }, function() {
+    const row = button.closest("[data-link-row]");
+    if (row.length > 0) row.remove();
+    else recheckLink(url);
+  }, "json").fail(function() {
+    button.prop("disabled", false);
+  });
+});
 
 function checkAllLinks() {
   if (!window.cacheLink) window.cacheLink = {};

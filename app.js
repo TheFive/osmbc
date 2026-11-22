@@ -25,6 +25,7 @@ import toolRouter from "./routes/tool.js";
 import publicApiRouter from "./routes/api.js";
 import layoutRouter from "./routes/layout.js";
 import configRouter from "./routes/config.js";
+import linkConfirmationRouter from "./routes/linkConfirmation.js";
 import { createOsmbcWikiRouter } from "./routes/wiki.js";
 import auth from "./routes/auth.js";
 import rateLimit from "express-rate-limit";
@@ -232,6 +233,7 @@ app.use(htmlRoot + "/changes", changesRouter);
 app.use(htmlRoot + "/blog", blogRouter);
 app.use(htmlRoot + "/tool", toolRouter);
 app.use(htmlRoot + "/config", configRouter);
+app.use(htmlRoot + "/linkconfirmation", linkConfirmationRouter);
 
 // editorial wiki, only if wiki.directory is configured
 const wikiRouter = createOsmbcWikiRouter();

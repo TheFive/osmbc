@@ -17,7 +17,7 @@ start for a change). Read it before changing unfamiliar code. The rules
 that matter most, in short:
 
 - Every table (`blog`, `article`, `changes`, `config`, `usert`,
-  `session`) is `id` + `jsonb` `data`; query `data->>'field'`. The user
+  `session`, `linkconfirmation`) is `id` + `jsonb` `data`; query `data->>'field'`. The user
   table is `usert`. No foreign keys.
 - `blog.categories` order drives heading order and the lead-picture
   caption position; reorder relative to an existing category.

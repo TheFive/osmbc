@@ -22,6 +22,13 @@ a.osmbc-nonexist {
   padding-left: 7px
 }
 
+/* Link the link check can't verify (bot protection, login, certificate):
+   only a small grey icon, the page may well exist. */
+.osmbc-link-uncheckable .osmbc-linkmark {
+  color: #6c757d;
+  font-size: 0.8em;
+}
+
 /* OSMBC Marker for not formulated article texts */
 .osmbc-not-formulated {
   color: #000 !important;

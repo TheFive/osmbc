@@ -1,0 +1,25 @@
+extends adminlayout
+
+//- Links an editor confirmed although the link check can't verify them
+//- (routes/linkConfirmation.js). Undo: delegated handler in osmbc_staff.js.
+block content
+  h1 Confirmed links
+  p.text-muted
+    | Links behind bot protection, a login or with a certificate problem can't be checked automatically.
+    | An editor who opened such a link in the browser confirms it on the article page; it then shows as a normal link.
+  if entries.length === 0
+    p#noLinkConfirmations No confirmed links.
+  else
+    ul.list-group#linkConfirmations
+      each e in entries
+        li.list-group-item.d-flex.flex-wrap.align-items-center.gap-2(data-link-row=e.url)
+          div.flex-grow-1.text-break
+            a(href=e.url target="_blank" rel="noopener noreferrer")= e.url
+            div.small.text-muted
+              | confirmed by #{e.user} on #{layout.moment(e.timestamp).format("YYYY-MM-DD")}
+              | , link check said #{e.status}
+              if e.expired
+                span.badge.text-bg-secondary.ms-2 expired #{layout.moment(e.validUntil).format("YYYY-MM-DD")}
+              else
+                |  · valid until #{layout.moment(e.validUntil).format("YYYY-MM-DD")}
+          button.btn.btn-outline-secondary.btn-sm(type="button" data-link-revoke=e.url) Undo
