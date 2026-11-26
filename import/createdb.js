@@ -65,7 +65,8 @@ function analyseTable(pgObject, pgOptions, callback) {
     if (pgOptions.verbose) {
       console.info("");
       console.info("Checking Table", pgObject.table);
-      const groups = { "Found indexes OK": result.foundOK, "Found indexes Need Update": result.foundNOK, "Missing indexes": result.expected, "Unnecessary indexes (kept)": result.foundUnnecessary };
+      if (result.tableMissing) console.info(" Table missing (--updateIndex creates it)");
+      const groups = { "Found indexes OK": result.foundOK, "Found indexes Need Update": result.foundNOK, "Missing indexes": result.expected, "Missing primary key": result.missingPrimaryKey,"Unnecessary indexes (kept)": result.foundUnnecessary };
       for (const title in groups) {
         console.info(" " + title);
         for (const k in groups[title]) console.info("  " + k + ": " + groups[title][k]);

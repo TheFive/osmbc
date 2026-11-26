@@ -124,10 +124,12 @@ sudo -u osmbc NODE_ENV=production node import/createdb.js \
   --createTables --createView --createIndex --addUser <OSM user name> --verbose
 ```
 
-To compare an existing database with the expected indexes, run
-`import/createdb.js --verbose` without the create options;
-`--updateIndex` adds missing indexes and rebuilds changed ones, indexes
-OSMBC does not know are kept. Run it after an update whose release notes
+To compare an existing database with the expected indexes and primary
+keys, run `import/createdb.js --verbose` without the create options;
+`--updateIndex` adds missing indexes and primary keys and rebuilds changed
+indexes, indexes OSMBC does not know are kept. Run it after restoring a
+dump from another server (databases created by old versions can lack a
+primary key, e.g. on `usert`) and after an update whose release notes
 mention a new index (creating an index on a large `changes` table takes a
 few seconds and blocks writes to that table meanwhile).
 
