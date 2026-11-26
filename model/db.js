@@ -13,12 +13,6 @@ const pgConfigValues = config.getValue("postgres", { mustexist: true });
 const logTime = config.getValue("postgresLogStatements", { default: 1000 });
 
 
-assert(pgConfigValues.username);
-assert(pgConfigValues.database);
-assert(typeof pgConfigValues.password !== "undefined");
-assert(pgConfigValues.server);
-assert(pgConfigValues.port);
-
 if (pgConfigValues.connectstr) {
   config.logger.error("Database connectstr is deprecated, please remove from config");
   process.exit(1);
@@ -27,8 +21,7 @@ if (pgConfigValues.connectstr) {
 
 // create a config to configure both pooling behavior
 // and client options
-// note: all config is optional and the environment variables
-// will be read if the config is not present
+// note: the environment variables below override the config values
 const pgConfig = {
   user: pgConfigValues.username,
   database: pgConfigValues.database,
@@ -50,6 +43,14 @@ if (process.env.POSTGRES_HOST) pgConfig.host = process.env.POSTGRES_HOST;
 if (process.env.POSTGRES_USER) pgConfig.user = process.env.POSTGRES_USER;
 if (process.env.POSTGRES_PORT) pgConfig.port = process.env.POSTGRES_PORT;
 if (process.env.POSTGRES_PASSWORD) pgConfig.password = process.env.POSTGRES_PASSWORD;
+
+// checked after the environment, so e.g. the password may come only from
+// POSTGRES_PASSWORD (a container secret) and not from the config file
+assert(pgConfig.user, "postgres.username (or POSTGRES_USER) missing");
+assert(pgConfigValues.database, "postgres.database missing");
+assert(typeof pgConfig.password !== "undefined", "postgres.password (or POSTGRES_PASSWORD) missing");
+assert(pgConfig.host, "postgres.server (or POSTGRES_HOST) missing");
+assert(pgConfig.port, "postgres.port (or POSTGRES_PORT) missing");
 
 // this initializes a connection pool
 // it will keep idle connections open for 30 seconds
