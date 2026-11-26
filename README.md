@@ -57,6 +57,7 @@ The server uses Express with Pug templates. Details are in the
 ## Documentation
 
 * [Installation Guide](docs/install.md): setting up a server
+* [Containers](docs/container.md): running OSMBC with Podman (Quadlet), own PostgreSQL and daily dumps
 * [Configuration](docs/config.md): the configuration file
 * [Admin configurations](docs/admin-config.md): what can be set on the admin page (channels, votes, categories …)
 * [Automatic steps](docs/automatic-transitions.md): what OSMBC does by itself in the editorial week

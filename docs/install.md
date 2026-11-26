@@ -2,8 +2,9 @@
 
 This guide installs OSMBC on a Linux server: Node.js runs the app as a
 systemd service, PostgreSQL holds the data, and a reverse proxy (nginx in
-the examples) terminates TLS. For a local development setup see
-[development.md](development.md).
+the examples) terminates TLS. To run it in containers instead (Podman,
+own PostgreSQL container) see [container.md](container.md); for a local
+development setup see [development.md](development.md).
 
   1. [Requirements](#1-requirements)
   2. [User and checkout](#2-user-and-checkout)
@@ -124,10 +125,12 @@ sudo -u osmbc NODE_ENV=production node import/createdb.js \
   --createTables --createView --createIndex --addUser <OSM user name> --verbose
 ```
 
-To compare an existing database with the expected indexes, run
-`import/createdb.js --verbose` without the create options;
-`--updateIndex` adds missing indexes and rebuilds changed ones, indexes
-OSMBC does not know are kept. Run it after an update whose release notes
+To compare an existing database with the expected indexes and primary
+keys, run `import/createdb.js --verbose` without the create options;
+`--updateIndex` adds missing indexes and primary keys and rebuilds changed
+indexes, indexes OSMBC does not know are kept. Run it after restoring a
+dump from another server (databases created by old versions can lack a
+primary key, e.g. on `usert`) and after an update whose release notes
 mention a new index (creating an index on a large `changes` table takes a
 few seconds and blocks writes to that table meanwhile).
 
@@ -232,7 +235,6 @@ Environment=TZ=Europe/Berlin
 # only when the config is not in the app directory:
 # Environment=OSMBC_CONFIG_DIR=/etc/osmbc
 ExecStart=/usr/bin/node bin/www.js
-KillSignal=SIGINT
 Restart=on-failure
 
 [Install]
@@ -249,14 +251,14 @@ Notes:
 
 - Start `bin/www.js` directly. `npm start` always sets
   `NODE_ENV=development`.
-- `KillSignal=SIGINT`: OSMBC shuts down cleanly on SIGINT; systemd's default
-  SIGTERM ends it without stopping the scheduler first.
 - `TZ`: the automatic workflow (`Transition`, e.g. "translate on Thursday
   20:00") runs in the time zone of the process. Set the zone your editors
   plan in; when moving a server, keep the zone of the old one.
-- The environment variables `PORT` and `HOSTNAME` override `serverport`
-  and `serverhostname`; `ANTHROPIC_API_KEY` is used when the config has no
-  key of its own. Don't set them unless you mean to.
+- The environment variables `PORT` and `OSMBC_HOSTNAME` override
+  `serverport` and `serverhostname` (older versions read `HOSTNAME`, which
+  containers and many shells set to the machine name); `ANTHROPIC_API_KEY`
+  is used when the config has no key of its own. Don't set them unless you
+  mean to.
 
 At start the log shows `Node: v22.… NPM: …` and
 `Server Listening on port:3000`.

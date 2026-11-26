@@ -6,6 +6,13 @@ import async from "async";
 
 import pgMap from "../model/pgMap.js";
 import db from "../model/db.js";
+import blogModule from "../model/blog.js";
+import articleModule from "../model/article.js";
+import logModule from "../model/logModule.js";
+import userModule from "../model/user.js";
+import configModule from "../model/config.js";
+import session from "../model/session.js";
+import linkModule from "../model/link.js";
 
 
 function TestTable(proto) {
@@ -92,6 +99,68 @@ describe("model/pgMap", function() {
       result = await analyse();
       should(Object.keys(result.foundOK).sort()).eql(["indextest_a_idx", "indextest_b_idx"]);
       should(Object.keys(result.foundUnnecessary)).eql(["indextest_own_idx"]);
+    });
+    it("should report no missing primary key right after creation", async function() {
+      const result = await analyse();
+      should(result.missingPrimaryKey).eql({});
+    });
+    it("should add a missing primary key with updateIndex (production usert had none)", async function() {
+      await query("insert into indextest (data) values ('{}'), ('{}')");
+      await query("alter table indextest drop constraint indextest_pkey");
+      let result = await analyse();
+      should(Object.keys(result.missingPrimaryKey)).eql(["indextest_pkey"]);
+      // the primary key index is no regular index, so nothing else changes
+      should(result.expected).eql({});
+      should(result.foundUnnecessary).eql({});
+
+      await run({ updateIndex: true }, result);
+      result = await analyse();
+      should(result.missingPrimaryKey).eql({});
+      const keys = await query("select c.conname from pg_constraint c join pg_class t on t.oid = c.conrelid where t.relname = 'indextest' and c.contype = 'p'");
+      should(keys.rows.map(r => r.conname)).eql(["indextest_pkey"]);
+    });
+    it("should leave a missing primary key alone without updateIndex", async function() {
+      await query("alter table indextest drop constraint indextest_pkey");
+      const result = await analyse();
+      await run({ verbose: true }, result);
+      should(Object.keys((await analyse()).missingPrimaryKey)).eql(["indextest_pkey"]);
+    });
+    it("should create a missing table with its key and indexes with updateIndex (dump older than the table)", async function() {
+      await run({ dropTable: "indextest" }, { foundNOK: {}, expected: {} });
+      let result = await analyse();
+      should(result.tableMissing).be.true();
+      // the key comes with the create statement, not as separate step
+      should(result.missingPrimaryKey).eql({});
+      should(Object.keys(result.expected).sort()).eql(["indextest_a_idx", "indextest_b_idx"]);
+
+      await run({ updateIndex: true }, result);
+      result = await analyse();
+      should(result.tableMissing).be.false();
+      should(result.missingPrimaryKey).eql({});
+      should(result.expected).eql({});
+      should(Object.keys(result.foundOK).sort()).eql(["indextest_a_idx", "indextest_b_idx"]);
+    });
+  });
+  describe("primaryKeyOf", function() {
+    it("should read the primary key of every model table from its createString", function() {
+      const tables = [blogModule, articleModule, logModule, userModule, configModule, session, linkModule].map(m => m.pg);
+      const keys = Object.fromEntries(tables.map(pg => [pg.table, pgMap.primaryKeyOf(pg)?.name]));
+      should(keys).eql({
+        blog: "blog_pkey",
+        article: "article_pkey",
+        changes: "changes_pkey",
+        usert: "user_pkey",
+        config: "config_pkey",
+        session: "session_pkey",
+        link: "link_pkey"
+      });
+    });
+    it("should build the statement that adds the key", function() {
+      should(pgMap.primaryKeyOf(session.pg).sql).eql("ALTER TABLE \"session\" ADD CONSTRAINT \"session_pkey\" PRIMARY KEY (\"sid\")");
+      should(pgMap.primaryKeyOf(userModule.pg).sql).eql("ALTER TABLE \"usert\" ADD CONSTRAINT \"user_pkey\" PRIMARY KEY (\"id\")");
+    });
+    it("should return null for a table without primary key", function() {
+      should(pgMap.primaryKeyOf({ table: "x", createString: "CREATE TABLE x (data json)" })).be.null();
     });
   });
   describe("find functions", function() {

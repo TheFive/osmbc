@@ -1,0 +1,33 @@
+# OSMBC example Quadlet: PostgreSQL for OSMBC only, see docs/container.md.
+
+[Unit]
+Description=OSMBC database (PostgreSQL)
+
+[Container]
+ContainerName=osmbc-db
+# Pin the major version; a new major needs dump + restore, see
+# docs/container.md "Updating".
+Image=docker.io/library/postgres:18
+Network=osmbc.network
+# No PublishPort: only reachable inside the network, as host name osmbc-db.
+Environment=POSTGRES_USER=osmbc
+Environment=POSTGRES_DB=osmbc
+Secret=osmbc-db-password,type=env,target=POSTGRES_PASSWORD
+# postgres:18 and newer keep their data below /var/lib/postgresql
+# (/var/lib/postgresql/18/docker), not in .../data as up to 17.
+# :U hands the folder to the container's postgres user; Z labels it for
+# this container only (SELinux; ignored without SELinux).
+Volume=%h/osmbc/db:/var/lib/postgresql:U,Z
+HealthCmd=pg_isready -U osmbc -d osmbc
+HealthInterval=10s
+# The unit counts as started only once the check passes (Podman 5.0+), so
+# osmbc.service doesn't start before the database accepts connections.
+Notify=healthy
+
+[Service]
+Restart=always
+# a large database needs a while to shut down cleanly
+TimeoutStopSec=90
+
+[Install]
+WantedBy=default.target

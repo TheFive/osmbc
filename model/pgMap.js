@@ -394,6 +394,24 @@ function findOne(module, obj, order, callback) {
 }
 
 
+// --createTables / --createTable <name> create the table; --updateIndex
+// creates it only if analyseIndexes found it missing (e.g. a dump from a
+// version before the table existed).
+function shouldCreateTable(pgObject, options, analyse) {
+  if (options.createTables) return true;
+  if (options.createTable && options.createTable === pgObject.table) return true;
+  return !!(options.updateIndex && analyse.tableMissing);
+}
+
+// Adds the primary keys analyseIndexes found missing. Fails (and reports
+// it) if the column holds duplicates or NULLs.
+function addPrimaryKeys(missingPrimaryKey, options, callback) {
+  eachOf(missingPrimaryKey, function(sql, name, eachofcb) {
+    if (options.verbose) config.logger.info("Add Primary Key " + name);
+    db.query(sql, eachofcb);
+  }, callback);
+}
+
 function createTables(pgObject, options, analyse, callback) {
   debug("pgMap.createTables %s %s", pgObject.table, JSON.stringify(options));
   assert(typeof (options) === "object");
@@ -413,12 +431,16 @@ function createTables(pgObject, options, analyse, callback) {
       } else return cb();
     },
     function tablecreation(cb) {
-      if (options.createTables || (options.createTable && options.createTable === pgObject.table)) {
+      if (shouldCreateTable(pgObject, options, analyse)) {
         debug("tablecreation");
         if (options.verbose)config.logger.info("Create Table " + pgObject.table);
         if (options.verbose)config.logger.info("Query: " + pgObject.createString);
         db.query(pgObject.createString, cb);
       } else return cb();
+    },
+    function primarykeycreation(cb) {
+      if (!options.updateIndex) return cb();
+      addPrimaryKeys(analyse.missingPrimaryKey || {}, options, cb);
     },
     function indexdrop(cb) {
       const toBeDropped = [];
@@ -491,20 +513,40 @@ function createTables(pgObject, options, analyse, callback) {
 
 
 /**
- * Compares the indexes of `pgObject.indexDefinition` with the database
- * (pg_indexes, without constraint indexes like primary keys). Definitions
- * count as equal when they differ only in the schema prefix "public." or
- * in white space. Used by import/createdb.js (--updateIndex) and at start
- * to warn about missing indexes.
+ * Reads the primary key a model's table is created with from its
+ * `createString` (`CONSTRAINT <name> PRIMARY KEY (<column>)`), so the
+ * create statement stays the only place that defines it.
+ * @param {object} pgObject table definition of a model (`module.pg`)
+ * @returns {{name: string, sql: string}|null} constraint name and the
+ *   ALTER TABLE statement that adds it; null if the table has none
+ */
+function primaryKeyOf(pgObject) {
+  const match = /CONSTRAINT\s+"?(\w+)"?\s+PRIMARY KEY\s*\(\s*"?(\w+)"?\s*\)/i.exec(pgObject.createString);
+  if (!match) return null;
+  const [, name, column] = match;
+  return { name, sql: `ALTER TABLE "${pgObject.table}" ADD CONSTRAINT "${name}" PRIMARY KEY ("${column}")` };
+}
+
+/**
+ * Compares the table, the indexes of `pgObject.indexDefinition` and the
+ * primary key of its `createString` with the database. Indexes are read from pg_indexes
+ * without constraint indexes; definitions count as equal when they differ
+ * only in the schema prefix "public." or in white space. Used by
+ * import/createdb.js (--verbose, --updateIndex) and at start to warn about
+ * missing indexes.
  * @param {object} pgObject table definition of a model (`module.pg`)
  * @param {Function} callback (err, {foundOK, foundNOK, foundUnnecessary,
- *   expected}) — `expected` holds the missing indexes; every entry maps
- *   index name to its definition (database definition for foundUnnecessary)
+ *   expected, tableMissing, missingPrimaryKey}) — `expected` holds the
+ *   missing indexes (all of them if `tableMissing`);
+ *   every entry maps index name to its definition (database definition for
+ *   foundUnnecessary). `missingPrimaryKey` maps the name of a primary key
+ *   the table lacks to the statement that adds it (old databases had
+ *   tables without one), else it is empty.
  */
 function analyseIndexes(pgObject, callback) {
   debug("analyseIndexes %s", pgObject.table);
   const normalise = (sql) => sql.replace(/\bpublic\./g, "").replace(/\s+/g, " ").trim();
-  const result = { foundOK: {}, foundNOK: {}, foundUnnecessary: {}, expected: {} };
+  const result = { foundOK: {}, foundNOK: {}, foundUnnecessary: {}, expected: {}, tableMissing: false, missingPrimaryKey: {} };
   for (const k in pgObject.indexDefinition) result.expected[k] = pgObject.indexDefinition[k];
   const sql = "select indexname, indexdef from pg_indexes where tablename = $1 and indexname not in (select conname from pg_constraint)";
   db.query(sql, [pgObject.table], function(err, res) {
@@ -519,7 +561,27 @@ function analyseIndexes(pgObject, callback) {
       else result.foundNOK[row.indexname] = expected;
       delete result.expected[row.indexname];
     }
-    return callback(null, result);
+    checkTable(pgObject, function(err, check) {
+      if (err) return callback(err);
+      result.tableMissing = check.tableMissing;
+      result.missingPrimaryKey = check.missingPrimaryKey;
+      return callback(null, result);
+    });
+  });
+}
+
+// {tableMissing, missingPrimaryKey}: whether the table doesn't exist, and
+// {name: sql} if the existing table has no primary key (else {}). A
+// missing table gets its key from createString.
+function checkTable(pgObject, callback) {
+  const sql = "select exists (select 1 from pg_class where relname = $1 and relkind = 'r') as table_exists, " +
+    "exists (select 1 from pg_constraint c join pg_class t on t.oid = c.conrelid where t.relname = $1 and c.contype = 'p') as has_key";
+  db.query(sql, [pgObject.table], function(err, res) {
+    if (err) return callback(err);
+    const { table_exists: tableExists, has_key: hasKey } = res.rows[0];
+    const primaryKey = primaryKeyOf(pgObject);
+    const missingPrimaryKey = (tableExists && !hasKey && primaryKey) ? { [primaryKey.name]: primaryKey.sql } : {};
+    return callback(null, { tableMissing: !tableExists, missingPrimaryKey });
   });
 }
 
@@ -553,6 +615,7 @@ const pgMap = {
   findOne: findOne,
   createTables: createTables,
   analyseIndexes: analyseIndexes,
+  primaryKeyOf: primaryKeyOf,
   select: select
 };
 

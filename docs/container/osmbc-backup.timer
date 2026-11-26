@@ -1,0 +1,14 @@
+# OSMBC example: starts osmbc-backup.service daily. A plain systemd timer:
+# copy to ~/.config/systemd/user/ (not into the Quadlet folder), then
+# systemctl --user daemon-reload && systemctl --user enable --now osmbc-backup.timer
+
+[Unit]
+Description=Daily OSMBC database backup
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+# catch up after the machine was off at that time
+Persistent=true
+
+[Install]
+WantedBy=timers.target

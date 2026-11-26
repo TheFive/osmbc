@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 60
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -72,3 +72,41 @@ jobs:
           path: |
             test/**/*_actual.*
           if-no-files-found: ignore
+
+  # Builds the container image (Containerfile) so a broken build or
+  # `npm ci --omit=dev` shows up before a release; then starts it against
+  # PostgreSQL and expects the login page. Nothing is pushed.
+  container-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -f Containerfile -t osmbc:ci .
+      - name: No config files in the image
+        run: |
+          found=$(docker run --rm osmbc:ci sh -c 'ls /app/config.*.yaml /app/config.*.yml /app/config.*.json 2>/dev/null' || true)
+          if [ -n "$found" ]; then echo "config files in image: $found"; exit 1; fi
+      - name: Start against PostgreSQL
+        run: |
+          docker network create osmbc
+          docker run -d --name osmbc-db --network osmbc -e POSTGRES_USER=osmbc -e POSTGRES_PASSWORD=ci -e POSTGRES_DB=osmbc postgres:18
+          until docker exec osmbc-db pg_isready -U osmbc -d osmbc; do sleep 1; done
+          mkdir -p "$RUNNER_TEMP/config" "$RUNNER_TEMP/data"
+          chmod 777 "$RUNNER_TEMP/data"
+          # runs inside the image (js-yaml is there); the test config is not
+          docker run --rm -v "$PWD/config.test.yaml:/tmp/config.test.yaml:ro" -v "$RUNNER_TEMP/config:/out" -u "$(id -u)" osmbc:ci \
+            node tools/container-test-config.mjs /tmp/config.test.yaml /out/config.production.yaml
+          docker run --rm --network osmbc -e POSTGRES_PASSWORD=ci -v "$RUNNER_TEMP/config:/config:ro" osmbc:ci \
+            node import/createdb.js --createTables --createIndex --addUser CIUser
+          docker run -d --name osmbc --network osmbc -p 127.0.0.1:3000:3000 -e POSTGRES_PASSWORD=ci \
+            -v "$RUNNER_TEMP/config:/config:ro" -v "$RUNNER_TEMP/data:/data" osmbc:ci
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/login || true)
+            [ "$code" = 200 ] && break
+            sleep 1
+          done
+          docker stop osmbc
+          docker logs osmbc
+          [ "$code" = 200 ] || { echo "login page answered $code"; exit 1; }
+          docker logs osmbc 2>&1 | grep -q "Received a stoprequest (SIGTERM)"

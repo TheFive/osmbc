@@ -1,0 +1,40 @@
+# Build context exclusions for the Containerfile.
+# Named .dockerignore on purpose: Podman/Buildah read it when there is no
+# .containerignore, Docker reads only this name. One file for both.
+
+# Secrets: every environment config (the image gets its config from the
+# /config volume), keys, editor swap files (they can hold an open config).
+config.*.yaml
+config.*.yml
+config.*.json
+*.swp
+*.swo
+osmbc-blogsync-key
+**/.sync-state.json
+
+# Local data and runtime output
+log/
+cache/
+script_logs/
+public/profile/
+sessions/
+tempDB/
+db-backup/
+WP Data/
+*.dump
+*.pgdump
+*.pgdump.gz
+exportlog*.log
+maillog*.log
+
+# Build/dev artefacts, rebuilt in the image or not needed there
+node_modules/
+test/
+coverage/
+.nyc_output/
+.git/
+.github/
+.vscode/
+.claude/
+CLAUDE.local.md
+.DS_Store

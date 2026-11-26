@@ -1,0 +1,6 @@
+# OSMBC example Quadlet: private network for OSMBC and its database.
+# Copy to ~/.config/containers/systemd/ (rootless), see docs/container.md.
+
+[Network]
+# Without NetworkName Podman calls it systemd-osmbc.
+NetworkName=osmbc
