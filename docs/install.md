@@ -234,7 +234,6 @@ Environment=TZ=Europe/Berlin
 # only when the config is not in the app directory:
 # Environment=OSMBC_CONFIG_DIR=/etc/osmbc
 ExecStart=/usr/bin/node bin/www.js
-KillSignal=SIGINT
 Restart=on-failure
 
 [Install]
@@ -251,14 +250,14 @@ Notes:
 
 - Start `bin/www.js` directly. `npm start` always sets
   `NODE_ENV=development`.
-- `KillSignal=SIGINT`: OSMBC shuts down cleanly on SIGINT; systemd's default
-  SIGTERM ends it without stopping the scheduler first.
 - `TZ`: the automatic workflow (`Transition`, e.g. "translate on Thursday
   20:00") runs in the time zone of the process. Set the zone your editors
   plan in; when moving a server, keep the zone of the old one.
-- The environment variables `PORT` and `HOSTNAME` override `serverport`
-  and `serverhostname`; `ANTHROPIC_API_KEY` is used when the config has no
-  key of its own. Don't set them unless you mean to.
+- The environment variables `PORT` and `OSMBC_HOSTNAME` override
+  `serverport` and `serverhostname` (older versions read `HOSTNAME`, which
+  containers and many shells set to the machine name); `ANTHROPIC_API_KEY`
+  is used when the config has no key of its own. Don't set them unless you
+  mean to.
 
 At start the log shows `Node: v22.… NPM: …` and
 `Server Listening on port:3000`.

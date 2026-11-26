@@ -35,8 +35,9 @@ const debug = _debug("OSMBC:server");
 const port = normalizePort(process.env.PORT || config.getServerPort());
 app.set("port", port);
 
-let hostname = null;
-if (process.env.HOSTNAME || config.getServerHostname()) hostname = (process.env.HOSTNAME || config.getServerHostname());
+// Not HOSTNAME: containers (and many shells) set it to the machine name,
+// so OSMBC listened on that instead of serverhostname.
+const hostname = process.env.OSMBC_HOSTNAME || config.getServerHostname() || null;
 
 (async function logRuntimeVersions() {
   const nodeVersion = process.version;
@@ -112,12 +113,20 @@ function initialiseServer() {
   });
 }
 
-process.on("SIGINT", function() {
-  config.logger.info("Received a stoprequest (SIGINT)");
+/**
+ * Stop the scheduler and the HTTP server, then end the process.
+ * SIGINT comes from Ctrl-C, SIGTERM from systemd, podman/docker stop.
+ * @param {string} signal name of the received signal, for the log
+ */
+function shutdown(signal) {
+  config.logger.info(`Received a stoprequest (${signal})`);
   stopTransitionScheduler();
   server.stop();
   process.exit();
-});
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 
 initialiseServer();
