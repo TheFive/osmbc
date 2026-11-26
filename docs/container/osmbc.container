@@ -1,0 +1,32 @@
+# OSMBC example Quadlet: the OSMBC app, see docs/container.md.
+
+[Unit]
+Description=OSMBC
+Requires=osmbc-db.service
+After=osmbc-db.service
+
+[Container]
+ContainerName=osmbc
+# Built from a release tag: podman build -t localhost/osmbc:<version> .
+# Change the tag here for an update.
+Image=localhost/osmbc:4.11.0
+Network=osmbc.network
+# Only the host's reverse proxy talks to OSMBC (port = serverport).
+PublishPort=127.0.0.1:3000:3000
+# The automatic workflow (e.g. "translate on Thursday 20:00") plans in
+# this zone.
+Environment=TZ=Europe/Berlin
+# Overrides postgres.password in the config, so the config holds no
+# database password.
+Secret=osmbc-db-password,type=env,target=POSTGRES_PASSWORD
+# The host user becomes the image's user node (uid 1000): files in data/
+# belong to the host user, config/ only needs to be readable by it.
+UserNS=keep-id:uid=1000,gid=1000
+Volume=%h/osmbc/config:/config:ro
+Volume=%h/osmbc/data:/data
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

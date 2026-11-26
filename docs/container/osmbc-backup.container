@@ -1,0 +1,29 @@
+# OSMBC example Quadlet: daily database dump, started by
+# osmbc-backup.timer (which goes to ~/.config/systemd/user/, Quadlet
+# doesn't read timers). See docs/container.md "Backup".
+
+[Unit]
+Description=OSMBC database backup
+Requires=osmbc-db.service
+After=osmbc-db.service
+
+[Container]
+ContainerName=osmbc-backup
+# Same image as osmbc-db.container: pg_dump must not be older than the server.
+Image=docker.io/library/postgres:18
+Network=osmbc.network
+Secret=osmbc-db-password,type=env,target=PGPASSWORD
+# The host user becomes the image's user postgres (uid 999), so the dumps
+# in backup/ belong to the host user and the server backup can read them.
+UserNS=keep-id:uid=999,gid=999
+Volume=%h/osmbc/backup:/backup
+# Custom format (-Fc): compressed, restorable with pg_restore. Written to
+# a temporary name first, so a failed dump never looks like a good one.
+# Keeps 14 days. In systemd units %% is a literal % and $$ a literal $
+# (else systemd puts in its own variables).
+Exec=sh -c 'set -e; f=/backup/osmbc-$$(date +%%Y-%%m-%%d_%%H%%M).dump; pg_dump -h osmbc-db -U osmbc -Fc -f "$$f.part" osmbc; mv "$$f.part" "$$f"; find /backup -name "osmbc-*.dump" -mtime +14 -delete'
+
+[Service]
+# Run once and exit; no Restart and no RemainAfterExit (that would keep
+# the job "started" and the timer could not start it again).
+Type=oneshot

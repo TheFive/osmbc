@@ -2,8 +2,9 @@
 
 This guide installs OSMBC on a Linux server: Node.js runs the app as a
 systemd service, PostgreSQL holds the data, and a reverse proxy (nginx in
-the examples) terminates TLS. For a local development setup see
-[development.md](development.md).
+the examples) terminates TLS. To run it in containers instead (Podman,
+own PostgreSQL container) see [container.md](container.md); for a local
+development setup see [development.md](development.md).
 
   1. [Requirements](#1-requirements)
   2. [User and checkout](#2-user-and-checkout)
