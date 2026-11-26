@@ -57,13 +57,23 @@ Rootless Quadlet needs cgroup v2 (default on current distributions).
 
 ## 3. Building the image
 
-Build from a release tag; the image needs no registry:
+Build from a release tag; the image needs no registry. Podman can build
+straight from the repository:
+
+```sh
+podman build -t localhost/osmbc:<version> "https://github.com/TheFive/osmbc.git#<version>"
+```
+
+or from a checkout:
 
 ```sh
 git clone https://github.com/TheFive/osmbc.git && cd osmbc
 git checkout <version>
 podman build -t localhost/osmbc:<version> .
 ```
+
+Every release tag also has a GitHub Release, so a tool like Renovate can
+propose the next `<version>` (GitHub releases datasource).
 
 On a machine with another CPU architecture than the server (e.g. Apple
 Silicon), add `--platform linux/amd64`. Instead of building by hand,
