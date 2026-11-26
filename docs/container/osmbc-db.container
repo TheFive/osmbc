@@ -15,8 +15,9 @@ Environment=POSTGRES_DB=osmbc
 Secret=osmbc-db-password,type=env,target=POSTGRES_PASSWORD
 # postgres:18 and newer keep their data below /var/lib/postgresql
 # (/var/lib/postgresql/18/docker), not in .../data as up to 17.
-# :U hands the folder to the container's postgres user.
-Volume=%h/osmbc/db:/var/lib/postgresql:U
+# :U hands the folder to the container's postgres user; Z labels it for
+# this container only (SELinux; ignored without SELinux).
+Volume=%h/osmbc/db:/var/lib/postgresql:U,Z
 HealthCmd=pg_isready -U osmbc -d osmbc
 HealthInterval=10s
 # The unit counts as started only once the check passes (Podman 5.0+), so

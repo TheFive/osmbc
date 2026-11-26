@@ -41,7 +41,7 @@ OSMBC has no health endpoint; `GET /login` answers 200 without a session.
 
 | Software | Version |
 |---|---|
-| Podman | **5.0 or newer** (`Notify=healthy` in `osmbc-db.container`), tested with the units' syntax of the Podman 5 documentation |
+| Podman | **5.0 or newer** (`Notify=healthy` in `osmbc-db.container`), tested with 6.2.1 (Fedora CoreOS, SELinux enforcing) |
 | PostgreSQL image | `postgres:18`, tested with 18.7 |
 | Node.js | comes with the image (`node:22-bookworm-slim`) |
 | Reverse proxy with TLS | on the host, as in [install.md](install.md#6-reverse-proxy), forwarding to `127.0.0.1:3000` |
@@ -99,9 +99,15 @@ subfolders of `data/` itself at start.
 Ownership: `osmbc.container` and `osmbc-backup.container` map the service
 user to the image's user (`UserNS=keep-id:uid=…`), so files in `data/` and
 `backup/` belong to the service user. `db/` is handed to the database
-container with `:U` and then belongs to a sub-uid; look into it with
-`podman unshare ls ~/osmbc/db`. On SELinux systems add `Z` to the volume
-options (e.g. `:ro,Z`).
+container with `:U`; PostgreSQL's files inside belong to a sub-uid, look
+into them with `podman unshare ls -R ~/osmbc/db`.
+
+SELinux: the units label the folders (`z` for `config/` and `data/`,
+shared with the one-off admin containers; `Z` for `db/` and `backup/`,
+private to one container). Without these, PostgreSQL fails with
+`mkdir: cannot create directory '/var/lib/postgresql/18': Permission
+denied`. On systems without SELinux (e.g. Debian with AppArmor) the
+options do nothing.
 
 ## 5. Configuration
 
@@ -172,6 +178,13 @@ journalctl --user -u osmbc -f
 
 The log shows `Reading Config from: /config/config.production.yaml`,
 `Node: v22.…` and `Server Listening on port:3000 hostname: 0.0.0.0`.
+`osmbc` starts only once the database answers (`Notify=healthy`), also at
+boot.
+
+Check that the port is published on the loopback address only:
+`ss -ltn | grep 3000` must show `127.0.0.1:3000`, not `*:3000`. (Inside a
+`podman machine` VM on macOS or Windows it shows `*:3000`, because Podman
+binds all addresses there to forward the port to the host.)
 
 ## 7. New database or restoring a dump
 
@@ -185,7 +198,7 @@ the same network, config and secret as the service:
 osmbc-tool() {
   podman run --rm --network osmbc --userns keep-id:uid=1000,gid=1000 \
     --secret osmbc-db-password,type=env,target=POSTGRES_PASSWORD \
-    -v ~/osmbc/config:/config:ro localhost/osmbc:<version> "$@"
+    -v ~/osmbc/config:/config:ro,z localhost/osmbc:<version> "$@"
 }
 ```
 
@@ -237,14 +250,16 @@ A test instance on a copy of production data must stay passive: set
 empty, else it translates and closes blogs and sends mails a second time.
 
 Tested with a production dump (plain SQL from PostgreSQL 16, pg_dump 17)
-restored into `postgres:18`.
+restored into `postgres:18`, with Docker and with these units under
+Podman 6.2.1.
 
 ## 8. Backup
 
 `osmbc-backup.timer` starts `osmbc-backup.service` daily at 02:30
 (`Persistent=true` catches up after downtime). The job connects to
 `osmbc-db` over the network and writes
-`backup/osmbc-<YYYY-MM-DD_HHMM>.dump` (`pg_dump -Fc`, compressed), first
+`backup/osmbc-<YYYY-MM-DD_HHMM>.dump` (`pg_dump -Fc`, compressed; the time
+in the zone of `TZ=` in the unit), first
 under a `.part` name, so a failed dump never looks like a good one. Dumps
 older than 14 days are deleted. It uses the same PostgreSQL image as the
 database, because `pg_dump` must not be older than the server.

@@ -11,7 +11,8 @@ ContainerName=osmbc
 # Change the tag here for an update.
 Image=localhost/osmbc:4.11.0
 Network=osmbc.network
-# Only the host's reverse proxy talks to OSMBC (port = serverport).
+# Only the host's reverse proxy talks to OSMBC (port = serverport). Check
+# after the first start: `ss -ltn | grep 3000` shows 127.0.0.1:3000.
 PublishPort=127.0.0.1:3000:3000
 # The automatic workflow (e.g. "translate on Thursday 20:00") plans in
 # this zone.
@@ -22,8 +23,10 @@ Secret=osmbc-db-password,type=env,target=POSTGRES_PASSWORD
 # The host user becomes the image's user node (uid 1000): files in data/
 # belong to the host user, config/ only needs to be readable by it.
 UserNS=keep-id:uid=1000,gid=1000
-Volume=%h/osmbc/config:/config:ro
-Volume=%h/osmbc/data:/data
+# z: SELinux label shared with the one-off admin containers (osmbc-tool in
+# docs/container.md); ignored without SELinux.
+Volume=%h/osmbc/config:/config:ro,z
+Volume=%h/osmbc/data:/data:z
 
 [Service]
 Restart=always
