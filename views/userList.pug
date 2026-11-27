@@ -3,10 +3,21 @@ extends adminlayout
 
 
 
+mixin userListPaging(paging)
+  //- previous / next page; buttons (tap targets) in a wrapping row
+  if paging.pages > 1
+    div.d-flex.flex-wrap.gap-2.align-items-center.my-2
+      if paging.previousUrl
+        a.btn.btn-outline-secondary#previousPage(href=paging.previousUrl) « Previous
+      span="Page " + paging.page + " of " + paging.pages + " (" + paging.total + " users)"
+      if paging.nextUrl
+        a.btn.btn-outline-secondary#nextPage(href=paging.nextUrl) Next »
+
 block content
 
   row
     div
+      +userListPaging(paging)
       table.table.table-striped.table-responsive
         - var params="?";
         - for (k in query) params+=k+"="+query[k]+"&";
@@ -87,3 +98,4 @@ block content
 
 
   
+      +userListPaging(paging)

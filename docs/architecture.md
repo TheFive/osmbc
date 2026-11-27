@@ -100,7 +100,11 @@ flowchart LR
   pgMap.save`, `find`, `findById`, `findOne`, `fullTextSearch`), and
   `find` takes a small query object (`{ status: "open" }`,
   `{ access: "IN(full,guest)" }`, `"!="`, `">="` …) that `generateQuery`
-  turns into SQL with parameters.
+  turns into SQL with parameters. A list of such strings puts several
+  conditions on one field, e.g. a time range
+  `{ timestamp: ["GE:2026-11-21", "<2026-11-22"] }`. Prefer ranges to
+  `%` (LIKE) on indexed fields: a LIKE with a parameter does not use the
+  btree index and reads the whole table (`changes` has > 1 million rows).
 * Every object has a `version`. `save` increases it and refuses to
   overwrite a newer version in the DB ("Version Number Differs"). This is
   how two editors working on the same article don't silently overwrite

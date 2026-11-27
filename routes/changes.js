@@ -51,7 +51,7 @@ function renderHistoryLog(req, res, next) {
   if (date && typeof date !== "string") return next(new Error("Datatype Error"));
 
   const search = {};
-  if (date) search.timestamp = date + "%";
+  if (date) search.timestamp = logModule.timestampCondition(date);
   if (date && ((date.indexOf("<") >= 0) || (date.indexOf(">") >= 0))) search.timestamp = date;
   if (date && ((date.indexOf("GE:") >= 0) || (date.indexOf(">") >= 0))) search.timestamp = date;
   if (user) search.user = user;

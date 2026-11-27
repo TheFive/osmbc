@@ -214,7 +214,9 @@ pgObject.indexDefinition = {
   changes_user_to_idx: "CREATE INDEX changes_user_to_idx ON changes USING btree (((data ->> 'user'::text)))",
   changes_timestamp_idx: "CREATE INDEX changes_timestamp_idx ON changes USING btree (((data ->> 'timestamp'::text)))",
   // first change of a user (new users on the start page, model/user.js getNewUsers)
-  changes_user_timestamp_idx: "CREATE INDEX changes_user_timestamp_idx ON changes USING btree (((data ->> 'user'::text)), ((data ->> 'timestamp'::text)))"
+  changes_user_timestamp_idx: "CREATE INDEX changes_user_timestamp_idx ON changes USING btree (((data ->> 'user'::text)), ((data ->> 'timestamp'::text)))",
+  // article changes per user (user list column "OSMBC Changes", getCountsForUsers)
+  changes_article_user_idx: "CREATE INDEX changes_article_user_idx ON changes USING btree (((data ->> 'user'::text))) WHERE ((data ->> 'table'::text) = 'article'::text)"
 };
 
 pgObject.viewDefinition = {};
@@ -315,8 +317,37 @@ function findAuthorSummary(oids, callback) {
   });
 }
 
+/**
+ * Find condition on `timestamp` for a date filter of the history log:
+ * "2026", "2026-11" or "2026-11-21" become the time range of that year,
+ * month or day (timestamps are ISO strings in UTC, so text comparison is
+ * time comparison, and the timestamp index is used — a LIKE prefix
+ * search reads the whole changes table). Any other text keeps the old
+ * meaning, a prefix match.
+ * @param {string} date date filter as typed in the URL
+ * @returns {string|Array} value for find({ timestamp: … })
+ */
+function timestampCondition(date) {
+  const m = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(date);
+  if (!m) return date + "%";
+  const [, y, mo, d] = m;
+  const year = Number(y);
+  let end;
+  if (d) {
+    const next = new Date(Date.UTC(year, Number(mo) - 1, Number(d) + 1));
+    end = next.toISOString().substring(0, 10);
+  } else if (mo) {
+    const next = new Date(Date.UTC(year, Number(mo), 1));
+    end = next.toISOString().substring(0, 7);
+  } else {
+    end = String(year + 1);
+  }
+  return ["GE:" + date, "<" + end];
+}
+
 const logModule = {
   table: "changes",
+  timestampCondition: timestampCondition,
   findAuthorSummary: findAuthorSummary,
   findLastChangesForBlog: findLastChangesForBlog,
   countLogsForBlog: countLogsForBlog,

@@ -1,7 +1,7 @@
 
 
 import { strict as assert } from "assert";
-import { parallel, series } from "async";
+import { series } from "async";
 
 
 import { Router } from "express";
@@ -26,13 +26,42 @@ const router     = Router();
 
 const htmlroot = config.htmlRoot();
 
+const USERS_PER_PAGE = 100;
+
+// page number from the query, 1 for anything that is not a positive number
+function requestedPage(req) {
+  const page = Number.parseInt(req.query.page, 10);
+  return (Number.isInteger(page) && page > 0) ? page : 1;
+}
+
+// URL of another page of the list, keeping filters and sort order
+function listPageUrl(req, page) {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(req.query)) {
+    if (k !== "page" && typeof v === "string") params.set(k, v);
+  }
+  params.set("page", String(page));
+  return htmlroot + "/usert/list?" + params.toString();
+}
+
+function addCounts(users, callback) {
+  logModule.getCountsForUsers(users.map(u => u.OSMUser), function(err, countsMap) {
+    if (err) return callback(err);
+    users.forEach(user => { user._countChanges = countsMap[user.OSMUser] || 0; });
+    return callback();
+  });
+}
+
+// One page of the user list. Change counts (from changes) and the rendering
+// are the expensive parts, so both are done for the shown page only; sorting
+// by count needs the counts of all users first.
 function renderList(req, res, next) {
   debug("renderList");
-  let users;
   const query = {};
   const sort = { column: "OSMUser" };
+  const sortByCount = req.query.sort === "OSMBC-changes";
   if (req.query.access) query.access = req.query.access;
-  if (req.query.sort && req.query.sort !== "OSMBC-changes") {
+  if (req.query.sort && !sortByCount) {
     sort.column = req.query.sort.replace(/[\W]/gim, "");
   }
 
@@ -44,45 +73,34 @@ function renderList(req, res, next) {
     if (req.query.temporaryGuest === "false") query.temporaryGuest = false;
   }
 
-  parallel([
-    function(callback) {
-      userModule.find(query, sort, function(err, result) {
-        if (err) return callback(err);
-        users = result;
+  userModule.find(query, sort, function(err, allUsers) {
+    if (err) return next(err);
+    const pages = Math.max(1, Math.ceil(allUsers.length / USERS_PER_PAGE));
+    const page = Math.min(requestedPage(req), pages);
+    const pageSlice = (list) => list.slice((page - 1) * USERS_PER_PAGE, page * USERS_PER_PAGE);
 
-        // Lade alle User-Counts in einer Query statt N Queries
-        if (users.length === 0) return callback();
-
-        const userNames = users.map(u => u.OSMUser);
-        logModule.getCountsForUsers(userNames, function(err, countsMap) {
-          if (err) return callback(err);
-
-          // Weise Counts den Usern zu
-          users.forEach(user => {
-            user._countChanges = countsMap[user.OSMUser] || 0;
-            user._notifiesNewCollection = userArticleSettings(user).newSubmission !== "off";
-          });
-
-          // Sortierung nach Counts falls gewünscht
-          if (req.query.sort === "OSMBC-changes") {
-            users.sort(function(b, a) { return a._countChanges - b._countChanges; });
-          }
-
-          return callback(err);
-        });
+    const counted = sortByCount ? allUsers : pageSlice(allUsers);
+    addCounts(counted, function(err) {
+      if (err) return next(err);
+      if (sortByCount) allUsers.sort((a, b) => b._countChanges - a._countChanges);
+      const users = pageSlice(allUsers);
+      users.forEach(user => { user._notifiesNewCollection = userArticleSettings(user).newSubmission !== "off"; });
+      assert(res.rendervar);
+      res.set("content-type", "text/html");
+      res.render("userList", {
+        layout: res.rendervar.layout,
+        query: query,
+        users: users,
+        paging: {
+          page: page,
+          pages: pages,
+          total: allUsers.length,
+          previousUrl: (page > 1) ? listPageUrl(req, page - 1) : null,
+          nextUrl: (page < pages) ? listPageUrl(req, page + 1) : null
+        }
       });
-    }
-  ], function(error) {
-    if (error) return next(error);
-    assert(res.rendervar);
-    res.set("content-type", "text/html");
-    res.render("userList", {
-      layout: res.rendervar.layout,
-      query: query,
-      users: users
     });
-  }
-  );
+  });
 }
 
 

@@ -101,4 +101,17 @@ describe("model/changes", function() {
     });
     /* eslint-enable mocha/no-synchronous-tests */
   });
+  describe("timestampCondition", function() {
+    it("should turn a day, month or year into a time range", async function () {
+      should(logModule.timestampCondition("2026-11-21")).eql(["GE:2026-11-21", "<2026-11-22"]);
+      should(logModule.timestampCondition("2026-11-30")).eql(["GE:2026-11-30", "<2026-12-01"]);
+      should(logModule.timestampCondition("2026-12-31")).eql(["GE:2026-12-31", "<2027-01-01"]);
+      should(logModule.timestampCondition("2026-12")).eql(["GE:2026-12", "<2027-01"]);
+      should(logModule.timestampCondition("2026")).eql(["GE:2026", "<2027"]);
+    });
+    it("should keep a prefix match for anything else", async function () {
+      should(logModule.timestampCondition("2026-11-21T10")).eql("2026-11-21T10%");
+      should(logModule.timestampCondition("2026-1")).eql("2026-1%");
+    });
+  });
 });
