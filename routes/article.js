@@ -1140,7 +1140,7 @@ function isFirstCollector(req, res, next) {
   if (comments) {
     for (let i = 0; i < comments.length; i++) {
       const comment = comments[i];
-      if (comment.text.search(new RegExp("@" + user + "\\b", "i")) >= 0) return next();
+      if (util.mentions(comment.text, user)) return next();
     }
   }
   res.status(FORBIDDEN).send("This article is not allowed for guests");

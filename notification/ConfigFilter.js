@@ -84,7 +84,7 @@ class ConfigFilter {
     let userList = [];
     if (this.config.notifyComment) userList = this.config.notifyComment;
     for (let i = 0; i < userList.length; i++) {
-      if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
+      if (util.mentions(comment, userList[i])) {
         notify = true;
         debug("Notification because comment for @" + userList[i]);
       }
@@ -104,7 +104,7 @@ class ConfigFilter {
     let userList = [];
     if (this.config.notifyComment) userList = this.config.notifyComment;
     for (let i = 0; i < userList.length; i++) {
-      if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
+      if (util.mentions(comment, userList[i])) {
         notify = true;
         debug("Notification because comment for @" + userList[i]);
       }

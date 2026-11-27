@@ -18,7 +18,7 @@ if !MIXIN_INCLUDE
         i.fa.fa-refresh
 if (article.commentList)
   each comment,i in article.commentList
-    if (   (layout.user.access === "full")|| (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i"))>=0)|| (comment.user === layout.user.OSMUser))
+    if (   (layout.user.access === "full")|| layout.mentions(comment.text, layout.user.OSMUser)|| (comment.user === layout.user.OSMUser))
       .row
         .col-sm-1
           img.osmbc-avatar(src=layout.getAvatar(comment.user) alt="" style="height:40px;width:40px")

@@ -227,6 +227,7 @@ function prepareRenderLayout(req, res, next) {
       language_locale: language.momentLocale(req.user.getMainLang()),
       language2_locale: language.momentLocale(req.user.getSecondLang()),
       md_renderInline: (text) => markdown.renderInline(text ?? ""),
+      mentions: util.mentions,
       getAvatar: _getAvatar,
       manyTranslationEnabled: manyTranslationEnabled,
       blogTranslationVisibleFor: blogTranslationVisibleFor,

@@ -2,6 +2,7 @@
 
 import { classifyArticleChange, articleChangeWanted, userArticleSettings } from "./articleChangeFilter.js";
 import _debug from "debug";
+import util from "../util/util.js";
 
 import { strict as assert } from "assert";
 const debug = _debug("OSMBC:notification:messageFilter");
@@ -69,7 +70,7 @@ class UserConfigFilter {
       });
     }
     for (let i = 0; i < userList.length; i++) {
-      if (checkComment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
+      if (util.mentions(checkComment, userList[i])) {
         sendMail = true;
         debug("Mail send because comment for @" + userList[i]);
       }
@@ -78,7 +79,7 @@ class UserConfigFilter {
 
     if (this.user.access === "guest") {
       sendMail = false;
-      if (comment.search(new RegExp("@" + this.user.OSMUser + "\\b", "i")) >= 0) sendMail = true;
+      if (util.mentions(comment, this.user.OSMUser)) sendMail = true;
     }
 
     if (!sendMail) return cb();
@@ -110,14 +111,14 @@ class UserConfigFilter {
     }
     if (this.user.mailComment) userList = this.user.mailComment;
     for (let i = 0; i < userList.length; i++) {
-      if (comment.search(new RegExp("@" + userList[i] + "\\b", "i")) >= 0) {
+      if (util.mentions(comment, userList[i])) {
         sendMail = true;
         debug("Mail send because comment for @" + userList[i]);
       }
     }
     if (this.user.access === "guest") {
       sendMail = false;
-      if (comment.search(new RegExp("@" + this.user.OSMUser + "\\b", "i")) >= 0) sendMail = true;
+      if (util.mentions(comment, this.user.OSMUser)) sendMail = true;
     }
     if (!sendMail) return cb();
     this.receiver.editComment(user, article, index, comment, cb);

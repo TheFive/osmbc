@@ -12,7 +12,7 @@ import config from "../config.js";
 import { strict as assert } from "assert";
 import moment from "moment";
 
-import articleModule, { mentions } from "../model/article.js";
+import articleModule from "../model/article.js";
 import configModule from "../model/config.js";
 import logModule from "../model/logModule.js";
 import messageCenter from "../notification/messageCenter.js";
@@ -1370,15 +1370,15 @@ class Blog {
             for (j = 0; j < result[i].commentList.length; j++) {
               const comment = result[i].commentList[j].text;
 
-              if (mentions(comment, user.OSMUser)) {
+              if (util.mentions(comment, user.OSMUser)) {
                 self._userMention.push(result[i]);
                 break;
               }
-              if ((mainLang && mentions(comment, mainLang)) || mentions(comment, "all")) {
+              if ((mainLang && util.mentions(comment, mainLang)) || util.mentions(comment, "all")) {
                 self._mainLangMention.push(result[i]);
                 break;
               }
-              if ((secondLang && mentions(comment, secondLang)) || mentions(comment, "all")) {
+              if ((secondLang && util.mentions(comment, secondLang)) || util.mentions(comment, "all")) {
                 self._secondLangMention.push(result[i]);
                 break;
               }

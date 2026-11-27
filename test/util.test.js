@@ -135,6 +135,26 @@ describe("util", function() {
       should(util.linkify("#WN271_Titel Des Artikels")).equal("#wn271_titel_des_artikels");
     });
   });
+  describe("mentions", function() {
+    it("should find a mention ignoring case", function() {
+      should(util.mentions("hi @thefive, look", "TheFive")).be.true();
+      should(util.mentions("hi @DE", "DE")).be.true();
+    });
+    it("should need the whole name", function() {
+      should(util.mentions("@derFred", "DE")).be.false();
+      should(util.mentions("@TheFiveX", "TheFive")).be.false();
+    });
+    it("should match regex characters literally", function() {
+      should(util.mentions("@aXb", "a.b")).be.false();
+      should(util.mentions("@a.b", "a.b")).be.true();
+      should(util.mentions("@a(b", "a(b")).be.true();
+    });
+    it("should ignore missing or non-string values", function() {
+      should(util.mentions(undefined, "DE")).be.false();
+      should(util.mentions("@5", 5)).be.false();
+      should(util.mentions("@x", "")).be.false();
+    });
+  });
   describe("mdUtil.osmbcMarkdown", function() {
     function mdRenderInline(text, accessMap) {
       const osmbcMarkdown = mdUtil.osmbcMarkdown({ target: "editor" }, accessMap);
