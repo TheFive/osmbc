@@ -47,10 +47,10 @@ describe("routes/wiki", function() {
       git("rm", "-r", "-q", ".");
       git("-c", "user.name=Test", "-c", "user.email=test@osmbc", "commit", "-q", "-m", "clean up");
     }
-    await store.savePage("start", "# Welcome\n\nSee [the rules](/wiki/osmbc/rules) and [later](/wiki/osmbc/not_yet).\n", { user: "TheFive" });
-    await store.savePage("sidebar", "* [Index](/wiki)\n* Sidebar entry\n", { user: "TheFive" });
-    await store.savePage("osmbc/rules", "---\ntitle: Editorial rules\n---\n# Rules\n\n<b>no html</b>\n", { user: "TheFive" });
-    await store.savePage("osmbc/user_mapping", "---\naccess: full\n---\n# Mapping\n\nsecret list\n", { user: "TheFive" });
+    await store.savePage("start", "# Welcome\n\nSee [the rules](/wiki/osmbc/rules) and [later](/wiki/osmbc/not_yet).\n", { user: "TheFive", baseBlob: "" });
+    await store.savePage("sidebar", "* [Index](/wiki)\n* Sidebar entry\n", { user: "TheFive", baseBlob: "" });
+    await store.savePage("osmbc/rules", "---\ntitle: Editorial rules\n---\n# Rules\n\n<b>no html</b>\n", { user: "TheFive", baseBlob: "" });
+    await store.savePage("osmbc/user_mapping", "---\naccess: full\n---\n# Mapping\n\nsecret list\n", { user: "TheFive", baseBlob: "" });
   });
 
   after(function () {
@@ -174,7 +174,7 @@ describe("routes/wiki", function() {
     });
     it("should show a conflict when the page changed in between", async function () {
       const before = await store.readPage("start");
-      await store.savePage("start", before.markdown + "\nChange by someone else\n", { user: "TheFive" });
+      await store.savePage("start", before.markdown + "\nChange by someone else\n", { user: "TheFive", baseBlob: before.blob });
       const res = await full.post(wikiLink + "/start", { markdown: "my version", baseBlob: before.blob });
       should(res.status).eql(HttpStatus.CONFLICT);
       should(res.data).containEql("id=\"wikiConflict\"");
@@ -224,8 +224,8 @@ describe("routes/wiki", function() {
     let v1;
     let v2;
     before(async function() {
-      v1 = await store.savePage("hist/page", "# History\n\nfirst <i>text</i>\n", { user: "Hallo" });
-      v2 = await store.savePage("hist/page", "# History\n\nsecond text\n", { user: "TheFive" });
+      v1 = await store.savePage("hist/page", "# History\n\nfirst <i>text</i>\n", { user: "Hallo", baseBlob: "" });
+      v2 = await store.savePage("hist/page", "# History\n\nsecond text\n", { user: "TheFive", baseBlob: v1.blob });
     });
     it("should list the versions", async function () {
       const res = await full.get(wikiLink + "/hist/page?history");
@@ -273,7 +273,7 @@ describe("routes/wiki", function() {
 
   describe("move and delete", function() {
     it("should ask before moving and deleting", async function () {
-      await store.savePage("tmp/ask", "x", { user: "TheFive" });
+      await store.savePage("tmp/ask", "x", { user: "TheFive", baseBlob: "" });
       const move = await full.get(wikiLink + "/tmp/ask?move");
       should(move.data).containEql("id=\"wikiMoveSubmit\"");
       const del = await full.get(wikiLink + "/tmp/ask?delete");
@@ -281,7 +281,7 @@ describe("routes/wiki", function() {
       should((await guest.get(wikiLink + "/tmp/ask?delete")).status).eql(HttpStatus.FORBIDDEN);
     });
     it("should move a page", async function () {
-      const saved = await store.savePage("tmp/from", "moving text", { user: "TheFive" });
+      const saved = await store.savePage("tmp/from", "moving text", { user: "TheFive", baseBlob: "" });
       const res = await full.post(wikiLink + "/tmp/from", { action: "move", to: "Tmp/To Here", baseBlob: saved.blob, message: "better name" });
       should(res.status).eql(HttpStatus.MOVED_TEMPORARILY);
       should(res.headers.location).eql("/wiki/tmp/to_here");
@@ -291,7 +291,7 @@ describe("routes/wiki", function() {
       should(messages[0].text).match(/^moved wiki page tmp\/from to \[tmp\/to_here\].*: better name$/);
     });
     it("should offer the existing folders and move into one of them", async function () {
-      const saved = await store.savePage("tmp/folder_move", "folder text", { user: "TheFive" });
+      const saved = await store.savePage("tmp/folder_move", "folder text", { user: "TheFive", baseBlob: "" });
       const form = await full.get(wikiLink + "/tmp/folder_move?move");
       should(form.data).containEql("<option value=\"osmbc\">osmbc</option>");
       should(form.data).containEql("<option value=\"tmp\" selected>tmp</option>");
@@ -299,19 +299,19 @@ describe("routes/wiki", function() {
       const res = await full.post(wikiLink + "/tmp/folder_move", { action: "move", folder: "osmbc", name: "Moved Page", baseBlob: saved.blob });
       should(res.headers.location).eql("/wiki/osmbc/moved_page");
       should((await store.readPage("osmbc/moved_page")).markdown).eql("folder text\n");
-      const saved2 = await store.savePage("tmp/to_top", "x", { user: "TheFive" });
+      const saved2 = await store.savePage("tmp/to_top", "x", { user: "TheFive", baseBlob: "" });
       const res2 = await full.post(wikiLink + "/tmp/to_top", { action: "move", folder: "", name: "new_ns/top", baseBlob: saved2.blob });
       should(res2.headers.location).eql("/wiki/new_ns/top");
     });
     it("should not move onto an existing page or with a stale text", async function () {
-      const saved = await store.savePage("tmp/a", "a", { user: "TheFive" });
-      await store.savePage("tmp/b", "b", { user: "TheFive" });
+      const saved = await store.savePage("tmp/a", "a", { user: "TheFive", baseBlob: "" });
+      await store.savePage("tmp/b", "b", { user: "TheFive", baseBlob: "" });
       should((await full.post(wikiLink + "/tmp/a", { action: "move", to: "tmp/b", baseBlob: saved.blob })).status).eql(HttpStatus.CONFLICT);
       should((await full.post(wikiLink + "/tmp/a", { action: "move", to: "tmp/c", baseBlob: "0" })).status).eql(HttpStatus.CONFLICT);
       should((await full.post(wikiLink + "/tmp/a", { action: "move", to: "../c", baseBlob: saved.blob })).status).eql(HttpStatus.BAD_REQUEST);
     });
     it("should delete a page and restore it from its history", async function () {
-      const saved = await store.savePage("tmp/gone", "deleted text", { user: "TheFive" });
+      const saved = await store.savePage("tmp/gone", "deleted text", { user: "TheFive", baseBlob: "" });
       const res = await full.post(wikiLink + "/tmp/gone", { action: "delete", baseBlob: saved.blob });
       should(res.status).eql(HttpStatus.MOVED_TEMPORARILY);
       should(await store.exists("tmp/gone")).be.false();

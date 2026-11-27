@@ -135,8 +135,32 @@ export function pageAllowsAccess(frontMatter, userAccess) {
   return true;
 }
 
+function requireText(markdown) {
+  if (typeof markdown !== "string") throw invalid("Missing page text");
+}
+
+// Every change must name the version it is based on, so nobody overwrites
+// a change they have not seen.
+function requireBaseBlob(baseBlob) {
+  if (typeof baseBlob !== "string") throw invalid("Missing base version (baseBlob) of the page");
+}
+
+function assertUnchangedSince(id, current, baseBlob) {
+  const currentBlob = (current === null) ? "" : blobHash(current);
+  if (currentBlob === baseBlob) return;
+  throw new WikiError("Page " + id + " was changed in the meantime, please check it and try again", 409, {
+    conflict: true,
+    currentMarkdown: current,
+    currentBlob
+  });
+}
+
+function readIfExists(file) {
+  return fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null;
+}
+
 function normaliseText(text) {
-  text = String(text).replace(/\r\n?/g, "\n");
+  text = text.replace(/\r\n?/g, "\n");
   if (text.length > 0 && !text.endsWith("\n")) text += "\n";
   return text;
 }
@@ -263,42 +287,61 @@ export class WikiStore {
     };
   }
 
-  // options: user (required), baseBlob (hash of the text the editor
-  // started from; "" for a new page; undefined skips the check), message
+  /**
+   * Creates or edits a page and commits it. Line ends become "\n".
+   * Saving the text the page already has changes nothing (no commit, no
+   * conflict, even if the page changed since `baseBlob`).
+   * @param {string} id - Page id, e.g. "osmbc/rules".
+   * @param {string} markdown - The new page text.
+   * @param {object} options - `user` (OSM name, required), `baseBlob`
+   *   (required: blobHash of the text the editor started from, "" for a
+   *   new page), `message` (optional commit message).
+   * @returns {Promise<object>} `{ changed: false, blob }` or
+   *   `{ changed: true, created, rev, blob }`; `blob` is the hash of the
+   *   stored text, the base for the next save.
+   * @throws {WikiError} 400 for missing text/baseBlob/user or a bad id,
+   *   409 with `conflict`, `currentMarkdown`, `currentBlob` if the page
+   *   is no longer at `baseBlob`.
+   */
   async savePage(id, markdown, options = {}) {
+    requireText(markdown);
+    requireBaseBlob(options.baseBlob);
     const relative = this._pagePath(id);
     const author = gitAuthor(options.user);
     return this._exclusive(async () => {
       const file = this._absolute(relative);
       const text = normaliseText(markdown);
-      const exists = fs.existsSync(file);
-      const current = exists ? fs.readFileSync(file, "utf8") : null;
-      if (typeof options.baseBlob === "string") {
-        const currentBlob = exists ? blobHash(current) : "";
-        if (currentBlob !== options.baseBlob) {
-          throw new WikiError("Page " + id + " was changed in the meantime", 409, {
-            conflict: true,
-            currentMarkdown: current,
-            currentBlob
-          });
-        }
-      }
-      if (exists && current === text) return { changed: false, blob: blobHash(text) };
+      const current = readIfExists(file);
+      if (current === text) return { changed: false, blob: blobHash(text) };
+      assertUnchangedSince(id, current, options.baseBlob);
       fs.mkdirSync(path.dirname(file), { recursive: true });
       fs.writeFileSync(file, text, "utf8");
       await this._git(["add", "--", relative]);
-      const message = options.message || ((exists ? "Edit " : "Create ") + id);
-      const rev = await this._commit(message, author);
-      return { changed: true, created: !exists, rev, blob: blobHash(text) };
+      const created = (current === null);
+      const rev = await this._commit(options.message || ((created ? "Create " : "Edit ") + id), author);
+      return { changed: true, created, rev, blob: blobHash(text) };
     });
   }
 
+  /**
+   * Renames a page (git mv) and commits it.
+   * @param {string} fromId - Current page id.
+   * @param {string} toId - New page id, must not exist yet.
+   * @param {object} options - `user` (required), `baseBlob` (required:
+   *   blobHash of the page text the user saw), `message` (optional).
+   * @returns {Promise<{rev: string}>} The new commit.
+   * @throws {WikiError} 400 for missing baseBlob/user or a bad id, 404 if
+   *   the page is gone, 409 if the target exists or the page changed.
+   */
   async movePage(fromId, toId, options = {}) {
+    requireBaseBlob(options.baseBlob);
     const from = this._pagePath(fromId);
     const to = this._pagePath(toId);
     const author = gitAuthor(options.user);
     return this._exclusive(async () => {
-      if (!fs.existsSync(this._absolute(from))) throw new WikiError("Page " + fromId + " does not exist", 404);
+      const current = readIfExists(this._absolute(from));
+      if (current === null) throw new WikiError("Page " + fromId + " does not exist", 404);
+      assertUnchangedSince(fromId, current, options.baseBlob);
       if (fs.existsSync(this._absolute(to))) throw new WikiError("Page " + toId + " already exists", 409);
       fs.mkdirSync(path.dirname(this._absolute(to)), { recursive: true });
       await this._git(["mv", "--", from, to]);
@@ -307,11 +350,23 @@ export class WikiStore {
     });
   }
 
+  /**
+   * Deletes a page (git rm) and commits it; the history keeps it.
+   * @param {string} id - Page id.
+   * @param {object} options - `user` (required), `baseBlob` (required:
+   *   blobHash of the page text the user saw), `message` (optional).
+   * @returns {Promise<{rev: string}>} The new commit.
+   * @throws {WikiError} 400 for missing baseBlob/user or a bad id, 404 if
+   *   the page is gone, 409 if the page changed.
+   */
   async deletePage(id, options = {}) {
+    requireBaseBlob(options.baseBlob);
     const relative = this._pagePath(id);
     const author = gitAuthor(options.user);
     return this._exclusive(async () => {
-      if (!fs.existsSync(this._absolute(relative))) throw new WikiError("Page " + id + " does not exist", 404);
+      const current = readIfExists(this._absolute(relative));
+      if (current === null) throw new WikiError("Page " + id + " does not exist", 404);
+      assertUnchangedSince(id, current, options.baseBlob);
       await this._git(["rm", "--quiet", "--", relative]);
       const rev = await this._commit(options.message || ("Delete " + id), author);
       return { rev };
@@ -396,6 +451,16 @@ export class WikiStore {
     return { entry, previous, before: before || "", after: after || "" };
   }
 
+  /**
+   * Saves the text of an older revision as the new version (also brings
+   * back a deleted page). Same rules and result as `savePage`.
+   * @param {string} id - Page id.
+   * @param {string} rev - Git revision to take the text from.
+   * @param {object} options - `user`, `baseBlob` (both required, "" if the
+   *   page does not exist now), `message` (optional).
+   * @returns {Promise<object>} See `savePage`.
+   * @throws {WikiError} 404 if the page did not exist in `rev`, else as `savePage`.
+   */
   async revert(id, rev, options = {}) {
     const text = await this.pageAt(id, rev);
     if (text === null) throw new WikiError("Page " + id + " did not exist in revision " + rev, 404);

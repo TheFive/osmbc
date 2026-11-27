@@ -433,12 +433,10 @@ export function createWikiRouter(options) {
 
   async function savePage(req, res, id, current) {
     const body = req.body || {};
-    if (typeof body.markdown !== "string") throw new WikiError("Missing page text", 400);
-    const baseBlob = typeof body.baseBlob === "string" ? body.baseBlob : undefined;
     const message = commitMessage(body);
     let result;
     try {
-      result = await store.savePage(id, body.markdown, { user: req.user.OSMUser, baseBlob, message });
+      result = await store.savePage(id, body.markdown, { user: req.user.OSMUser, baseBlob: body.baseBlob, message });
     } catch (err) {
       if (!(err instanceof WikiError) || !err.conflict) throw err;
       // someone saved in between: show both texts, the next save is based
@@ -463,35 +461,28 @@ export function createWikiRouter(options) {
     const rev = revisionFrom(body.rev);
     const oldText = await store.pageAt(id, rev);
     assertTextAccess(req, oldText);
-    const baseBlob = typeof body.baseBlob === "string" ? body.baseBlob : undefined;
-    const result = await store.revert(id, rev, { user: req.user.OSMUser, baseBlob, message: commitMessage(body) });
+    const result = await store.revert(id, rev, { user: req.user.OSMUser, baseBlob: body.baseBlob, message: commitMessage(body) });
     if (result.changed) {
       notify({ type: "revert", id, user: req.user.OSMUser, rev: result.rev, message: "to " + rev.substring(0, 8), url: pageUrl(id) });
     }
     res.redirect(pageUrl(id) + "?saved");
   }
 
-  async function movePage(req, res, id, current) {
+  async function movePage(req, res, id) {
     const body = req.body || {};
     const toId = typeof body.folder === "string"
       ? pageIdFromFolderAndName(body.folder, body.name)
       : normalisePageId(body.to);
     if (!isValidPageId(toId)) throw new WikiError("Invalid wiki page name: " + toId, 400);
     if (toId === id) return res.redirect(pageUrl(id));
-    if (typeof body.baseBlob === "string" && body.baseBlob !== current.blob) {
-      throw new WikiError("Page " + id + " was changed in the meantime, please check it and try again", 409);
-    }
-    const result = await store.movePage(id, toId, { user: req.user.OSMUser, message: commitMessage(body) });
+    const result = await store.movePage(id, toId, { user: req.user.OSMUser, baseBlob: body.baseBlob, message: commitMessage(body) });
     notify({ type: "move", id: toId, fromId: id, user: req.user.OSMUser, rev: result.rev, message: commitMessage(body) || "", url: pageUrl(toId) });
     res.redirect(pageUrl(toId));
   }
 
-  async function deletePage(req, res, id, current) {
+  async function deletePage(req, res, id) {
     const body = req.body || {};
-    if (typeof body.baseBlob === "string" && body.baseBlob !== current.blob) {
-      throw new WikiError("Page " + id + " was changed in the meantime, please check it and try again", 409);
-    }
-    const result = await store.deletePage(id, { user: req.user.OSMUser, message: commitMessage(body) });
+    const result = await store.deletePage(id, { user: req.user.OSMUser, baseBlob: body.baseBlob, message: commitMessage(body) });
     notify({ type: "delete", id, user: req.user.OSMUser, rev: result.rev, message: commitMessage(body) || "", url: pageUrl(id) });
     res.redirect(basePath);
   }
@@ -507,7 +498,7 @@ export function createWikiRouter(options) {
       case "move":
       case "delete":
         if (!current) throw new WikiError("Page " + id + " does not exist", 404);
-        return action === "move" ? movePage(req, res, id, current) : deletePage(req, res, id, current);
+        return action === "move" ? movePage(req, res, id) : deletePage(req, res, id);
       default: throw new WikiError("Unknown action: " + action, 400);
     }
   }));
