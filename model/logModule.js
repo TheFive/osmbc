@@ -8,15 +8,25 @@ import config from "../config.js";
 
 import { diffChars, diffWordsWithSpace, diffLines } from "diff";
 import _debug from "debug";
+import { createHash } from "node:crypto";
 import { reportTableWrite } from "./tableWrites.js";
 const debug = _debug("OSMBC:model:logModule");
 
 
 const maxDiffLength = config.getValue("MaxDiffLength", { mustExist: true });
 
-// htmlDiffText results per "id:maxChars", least recently used first
+// htmlDiffText results per content hash, least recently used first
 const DIFF_CACHE_SIZE = 5000;
 const diffCache = new Map();
+
+function diffCacheKey(change, maxChars) {
+  const hash = createHash("sha1");
+  for (const part of [change.table, change.from, change.to, maxChars]) {
+    hash.update(String(part ?? ""));
+    hash.update("\u0000");
+  }
+  return hash.digest("base64");
+}
 
 const stripSpaces = (text) => text.replace(/\s+/g, "");
 
@@ -84,16 +94,17 @@ class Change {
    * The change as coloured HTML (inserted / deleted words, common parts as
    * "…"), at most `maxChars` characters of changed text; "only spaces"
    * changes and texts longer than MaxDiffLength get a short note instead.
-   * A stored change never changes, so the result is kept per id and
-   * length (DIFF_CACHE_SIZE entries); diffing long texts is the most
-   * expensive part of an article page with a long history.
+   * The result depends only on table, texts and `maxChars`, so it is kept
+   * under a hash of these (DIFF_CACHE_SIZE entries, least recently used
+   * dropped) — not under the id, which a restored or test database reuses.
+   * Diffing long texts is the most expensive part of an article page with
+   * a long history.
    * @param {number} [maxChars] limit of the shown changed text
    * @returns {string} HTML
    */
   htmlDiffText(maxChars) {
     debug("htmlDiffText");
-    if (!this.id) return htmlDiff(this, maxChars);
-    const key = this.id + ":" + maxChars;
+    const key = diffCacheKey(this, maxChars);
     let result = diffCache.get(key);
     if (result === undefined) {
       result = htmlDiff(this, maxChars);

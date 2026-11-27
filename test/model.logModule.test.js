@@ -99,6 +99,13 @@ describe("model/changes", function() {
       should(stored.htmlDiffText(40)).equal(expected);
       should(stored.htmlDiffText(40)).equal(expected);
     });
+    it("should not mix up two changes with the same id (restored or test database)", function() {
+      const first = new logModule.Class({ id: 4713, from: "one", to: "two" });
+      const second = new logModule.Class({ id: 4713, from: "three", to: "four" });
+      should(first.htmlDiffText(40)).containEql("two");
+      should(second.htmlDiffText(40)).containEql("four");
+      should(second.htmlDiffText(40)).not.containEql("two");
+    });
     it("should keep cached texts of different lengths apart", function() {
       const stored = new logModule.Class({ id: 4712, from: "This is The origin text", to: "And This is the changed text" });
       const short = stored.htmlDiffText(5);
