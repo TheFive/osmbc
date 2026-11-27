@@ -75,8 +75,9 @@ flowchart LR
 * Access rights are per route with `auth.checkRole("full")` or
   `checkRole(["full", "guest"], …)`. Users have `access` `full`, `guest`
   or `denied`. For guests the second argument of `checkRole` adds a
-  check: in `routes/article.js` (`isFirstCollector`) a guest may only open
-  articles they collected or are mentioned in.
+  check: in `routes/article.js` (`requireOpenForGuest`) a guest may only
+  open and comment on articles they collected or are mentioned in
+  (`Article.isOpenForGuest`).
 * Routers load the object named in the URL with `router.param`
   (e.g. `getArticleFromID` for `:article_id`) and hand it to the handler
   in `req`.

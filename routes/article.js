@@ -1131,14 +1131,16 @@ function takeCollectedDraft(req) {
 }
 
 
-function isFirstCollector(req, res, next) {
+// Guests only get articles they may work on (Article.isOpenForGuest);
+// routes without an article (collect, search) pass.
+function requireOpenForGuest(req, res, next) {
   if (!req.article) return next();
   if (req.article.isOpenForGuest(req.user.OSMUser)) return next();
   res.status(FORBIDDEN).send("This article is not allowed for guests");
 }
 
 const allowFullAccess = auth.checkRole("full");
-const allowGuestAccess = auth.checkRole(["full", "guest"], [null, isFirstCollector]);
+const allowGuestAccess = auth.checkRole(["full", "guest"], [null, requireOpenForGuest]);
 
 
 // And configure router to use render Functions
