@@ -38,8 +38,8 @@ body = """
 [#{{ footer.value }}](https://github.com/TheFive/osmbc/issues/{{ footer.value }})\
 {% endif %}\
 {% endfor %}\
-{% if commit.breaking and commit.breaking_description != commit.message %}
-  {{ commit.breaking_description }}\
+{% if commit.breaking and commit.breaking_description != commit.message %} \
+– {{ commit.breaking_description | replace(from="\n", to=" ") }}\
 {% endif %}\
 {% endfor %}
 {% endfor %}\n
