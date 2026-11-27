@@ -86,6 +86,19 @@ function isSameValue(newValue, oldValue) {
   return newValue === oldValue || newValue === normaliseText(oldValue);
 }
 
+/**
+ * Tells whether a comment mentions `@name` (user, language or "all").
+ * The name is matched literally and must end there: `@derFred` is no
+ * mention of the language `DE` (#986).
+ * @param {string} comment comment text
+ * @param {string} name user name or language id
+ * @returns {boolean} true if the comment mentions the name
+ */
+export function mentions(comment, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+  return new RegExp("@" + escaped + "(?![\\p{L}\\p{N}_])", "iu").test(comment);
+}
+
 class Article {
   constructor(proto) {
     debug("Article constructor");
@@ -116,11 +129,11 @@ class Article {
       }
     }
     if (!comment) return null;
-    if (comment.search(new RegExp("@" + userName + "\\b", "i")) >= 0) return "user";
+    if (userName && mentions(comment, userName)) return "user";
 
-    if (lang1 && comment.search(new RegExp("@" + lang1 + "\\b", "i")) >= 0) return "language";
-    if (lang2 && comment.search(new RegExp("@" + lang2 + "\\b", "i")) >= 0) return "language";
-    if (comment.search(/@all\b/i) >= 0) return "language";
+    if (lang1 && mentions(comment, lang1)) return "language";
+    if (lang2 && mentions(comment, lang2)) return "language";
+    if (mentions(comment, "all")) return "language";
     if (this.comment || (this.commentList && this.commentList.length > 0)) return "other";
     return null;
   }
@@ -137,8 +150,8 @@ class Article {
       }
     }
     if (!comment) return null;
-    if (comment.search(new RegExp("@" + what + "\\b", "i")) >= 0) return true;
-    if (includeAll && comment.search(/@all\b/i) >= 0) return true;
+    if (what && mentions(comment, what)) return true;
+    if (includeAll && mentions(comment, "all")) return true;
     return false;
   }
 

@@ -14,7 +14,6 @@ import turndownItImsize from "../util/turndown-it-imsize.js";
 
 
 import config from "../config.js";
-import { regex } from "list-matcher";
 
 import configModule from "../model/config.js";
 
@@ -22,6 +21,33 @@ const htmlRoot = config.htmlRoot();
 const url = config.url();
 
 
+
+/**
+ * Builds the alternation of user and language names for mentions.
+ * Longest names come first: the regex is used case-insensitively, so
+ * `DE` (a language) must not win over `derFred` (a user) for `@derFred`.
+ * @param {string[]} names user or language names, matched literally
+ * @returns {string} regex source that never matches for an empty list
+ */
+function namesRegexSource(names) {
+  if (names.length === 0) return "(?!)";
+  const sorted = [...names].sort((a, b) => b.length - a.length);
+  return "(?:" + sorted.map(n => n.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")).join("|") + ")";
+}
+
+// A mention ends where the name ends, not inside a longer word.
+const mentionEnd = "(?![\\p{L}\\p{N}_])";
+
+function userUrlMatcher(names) {
+  const re = new RegExp("/usert/" + namesRegexSource(names) + "$", "iu");
+  return function matcher(href) {
+    try {
+      return re.test(decodeURI(href)); // user names may contain spaces
+    } catch {
+      return re.test(href);
+    }
+  };
+}
 
 function addUserAndArticleLinkify(markdownIt, accessMap) {
   // Add a converter for User Mentions (used in Comments)
@@ -36,33 +62,24 @@ function addUserAndArticleLinkify(markdownIt, accessMap) {
       if (accessMap[u] === "guest") listGuest.push(u);
     }
   }
-  const regexDenied = regex(listDenied);
-  const regexGuest = regex(listGuest);
-  const regexAll = regex(listAll);
 
   const milaConfig = [
     {
-      matcher(href) {
-        return href.match(new RegExp(regexDenied.source + /$/.source, "i"));
-      },
+      matcher: userUrlMatcher(listDenied),
       attrs: {
         class: "bg-danger",
         style: "color:black"
       }
     },
     {
-      matcher(href) {
-        return href.match(new RegExp(regexGuest.source + /$/.source, "i"));
-      },
+      matcher: userUrlMatcher(listGuest),
       attrs: {
         class: "bg-warning",
         style: "color:black"
       }
     },
     {
-      matcher(href) {
-        return href.match(new RegExp(regexAll.source + /$/.source, "i"));
-      },
+      matcher: userUrlMatcher(listAll),
       attrs: {
         class: "bg-success",
         style: "color:black"
@@ -74,7 +91,7 @@ function addUserAndArticleLinkify(markdownIt, accessMap) {
     validate: function (text, pos, self) {
       const tail = text.slice(pos);
       if (!self.re.twitter) {
-        self.re.twitter = new RegExp(/^/.source + regexAll.source, "i");
+        self.re.twitter = new RegExp("^" + namesRegexSource(listAll) + mentionEnd, "iu");
       }
       if (self.re.twitter.test(tail)) {
         // Linkifier allows punctuation chars before prefix,
