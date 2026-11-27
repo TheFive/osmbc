@@ -191,8 +191,27 @@ function replaceTemplateVariables(template, variables = {}) {
 };
 
 
+/**
+ * Escapes all regex syntax characters, so the text matches literally.
+ * @param {string} text any text, e.g. a user name
+ * @returns {string} text usable inside a RegExp source
+ */
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+}
 
-
+/**
+ * Tells whether a comment mentions `@name` (user, language or "all").
+ * The name is matched literally and must end there: `@derFred` is no
+ * mention of the language `DE`, `@aXb` none of the user `a.b` (#986).
+ * @param {string} comment comment text
+ * @param {string} name user name or language id
+ * @returns {boolean} true if the comment mentions the name
+ */
+function mentions(comment, name) {
+  if (typeof comment !== "string" || typeof name !== "string" || name === "") return false;
+  return new RegExp("@" + escapeRegExp(name) + "(?![\\p{L}\\p{N}_])", "iu").test(comment);
+}
 
 const util = {
   isTrue: isTrue,
@@ -207,7 +226,9 @@ const util = {
   charsetDecoder: charsetDecoder,
   sleep: sleep,
   osmbcLink: osmbcLink,
-  replaceTemplateVariables: replaceTemplateVariables
+  replaceTemplateVariables: replaceTemplateVariables,
+  escapeRegExp: escapeRegExp,
+  mentions: mentions
 };
 
 export default util;

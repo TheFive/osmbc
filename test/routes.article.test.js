@@ -206,6 +206,24 @@ describe("router/article", function() {
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
   });
+  describe("guest access through a mention", function() {
+    it("should allow a guest mentioned in a comment",
+      testutil.checkUrlWithUser({
+        url: baseLink + "/article/3",
+        username: "TestUserNonExisting",
+        password: "TestUserNonExisting",
+        expectedStatusCode: HttpStatus.OK,
+        expectedMessage: "<title>BLOG#3/BLOG</title>"
+      }));
+    it("should match the guest name literally, not as regex",
+      testutil.checkUrlWithUser({
+        url: baseLink + "/article/3",
+        username: "TestUser.onExisting",
+        password: "TestUser.onExisting",
+        expectedStatusCode: HttpStatus.FORBIDDEN,
+        expectedMessage: "This article is not allowed for guests"
+      }));
+  });
   describe("route GET /article/:id/commentArea", function() {
     const url = baseLink + "/article/" + id + "/commentArea";
     it("should run with full access user", async function () {

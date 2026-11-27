@@ -9,7 +9,7 @@ mixin displayArticle(article,lang)
   - var commentRead = article.commentRead ? article.commentRead[layout.user.OSMUser] : undefined
   - upToComment = (commentRead === undefined || commentRead === null || commentRead === "" || isNaN(Number(commentRead))) ? -1 : Number(commentRead)
   - for ( i=parseInt(upToComment)+1;i<article.commentList.length;i++) {
-  -  if ((layout.user.access === "guest") && (article.commentList[i].text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i")) < 0) ) upToComment = i;
+  -  if ((layout.user.access === "guest") && !layout.mentions(article.commentList[i].text, layout.user.OSMUser) ) upToComment = i;
   - }
   if ((upToComment < article.commentList.length - 1) || showRead)
     //- phones: no icon column, "Open article" as a button in the card header
@@ -26,7 +26,7 @@ mixin displayArticle(article,lang)
         if (article.commentList)
           .card-body
               each comment,i in article.commentList
-                if ((layout.user.access === "full") || (comment.text.search(new RegExp("@" + layout.user.OSMUser + "\\b", "i")) >= 0) || (comment.text.user === layout.user.OSMUser))
+                if ((layout.user.access === "full") || layout.mentions(comment.text, layout.user.OSMUser) || (comment.user === layout.user.OSMUser))
                   if (showRead || (i > upToComment))
                         //- mark as read at the end, as a button with a tap area
                         div.d-flex.flex-wrap.align-items-center.column-gap-2

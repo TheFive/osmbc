@@ -14,6 +14,7 @@ import turndownItImsize from "../util/turndown-it-imsize.js";
 
 
 import config from "../config.js";
+import util from "./util.js";
 
 import configModule from "../model/config.js";
 
@@ -32,7 +33,7 @@ const url = config.url();
 function namesRegexSource(names) {
   if (names.length === 0) return "(?!)";
   const sorted = [...names].sort((a, b) => b.length - a.length);
-  return "(?:" + sorted.map(n => n.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")).join("|") + ")";
+  return "(?:" + sorted.map(util.escapeRegExp).join("|") + ")";
 }
 
 // A mention ends where the name ends, not inside a longer word.
