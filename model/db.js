@@ -70,6 +70,22 @@ function getPool() {
   return pool;
 }
 
+// Fields whose values never go into the slow-query log (secrets and
+// personal data, e.g. of a saved user).
+const HIDDEN_FIELDS = new Set(["apiKey", "email", "emailValidationKey"]);
+
+/**
+ * Query values as they are written to the slow-query log: values marked
+ * with `hideInLog` (see userModule.findExact) are left out completely,
+ * secret fields of saved objects are masked.
+ * @param {Array} values query parameters
+ * @returns {string} text for the log
+ */
+function valuesForLog(values) {
+  if (values.hideInLog) return "(hidden)";
+  return JSON.stringify(values, (key, value) => HIDDEN_FIELDS.has(key) ? "(hidden)" : value);
+}
+
 let deep = 0;
 // export the query method for passing queries to the pool
 function query (text, values, callback) {
@@ -87,7 +103,7 @@ function query (text, values, callback) {
     const endTime = new Date().getTime();
     if (endTime - startTime > logTime) {
       config.logger.info("SQL: >>>>>>>>>> [" + (endTime - startTime) / 1000 + "] \n" + text + "\n");
-      if (values)config.logger.info("SQL: VALUES " + JSON.stringify(values));
+      if (values) config.logger.info("SQL: VALUES " + valuesForLog(values));
       config.logger.info("SQL: <<<<<<<<<< (" + deep + ")");
     }
     if (err) {
@@ -112,7 +128,8 @@ function query (text, values, callback) {
 
 const db = {
   getPool: getPool,
-  query: query
+  query: query,
+  valuesForLog: valuesForLog
 };
 
 export default db;
