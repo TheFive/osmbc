@@ -1679,6 +1679,56 @@ describe("model/article", function() {
       should(blog.getUnEdited("EN")).eql(1);
     });
   });
+  describe("setAndSave keeps the automated translation marker (#1187)", function() {
+    const deepl = { OSMUser: "deeplPro API Call" };
+    const editor = { OSMUser: "editor" };
+    let article;
+    function setAndSave(user, data) {
+      return new Promise((resolve, reject) => article.setAndSave(user, data, (err) => err ? reject(err) : resolve()));
+    }
+    async function reload() {
+      article = await articleModule.findById(article.id);
+      await new Promise((resolve, reject) => article.calculateDerivedFromChanges((err) => err ? reject(err) : resolve()));
+    }
+    beforeEach(async function () {
+      await testutil.clearDB();
+      article = await articleModule.createNewArticle({ blog: "MARK", categoryEN: "Mapping", markdownDE: "Zeile 1\nZeile 2" });
+      // like "Translate whole blog": the service text has \n line breaks
+      await setAndSave(deepl, { markdownEN: "Line 1\nLine 2", old: { markdownEN: "" } });
+      await reload();
+      should(article.isTranslatedAutomated("EN")).be.true();
+    });
+    it("should keep it when only the category changes (browser sends \\r\\n)", async function () {
+      await setAndSave(editor, { version: article.version, categoryEN: "Software", markdownDE: "Zeile 1\r\nZeile 2", markdownEN: "Line 1\r\nLine 2" });
+      await reload();
+      should(article.categoryEN).eql("Software");
+      should(article.markdownEN).eql("Line 1\nLine 2");
+      should(article.isTranslatedAutomated("EN")).be.true();
+    });
+    it("should keep it when another language changes (#1018)", async function () {
+      await setAndSave(editor, { version: article.version, markdownDE: "Zeile 1\r\nZeile 2 korrigiert", markdownEN: "Line 1\r\nLine 2" });
+      await reload();
+      should(article.markdownDE).eql("Zeile 1\nZeile 2 korrigiert");
+      should(article.isTranslatedAutomated("EN")).be.true();
+    });
+    it("should not log a change for a text stored with \\r\\n before #1187", async function () {
+      await setAndSave(editor, { version: article.version, markdownDE: "Alt 1\r\nAlt 2" });
+      // simulate an old row: write \r\n directly, bypassing the normalisation
+      article.markdownDE = "Alt 1\r\nAlt 2";
+      await new Promise((resolve, reject) => article.save((err) => err ? reject(err) : resolve()));
+      await reload();
+      const before = await logModule.find({ oid: article.id, property: "markdownDE" });
+      should(before.length).be.above(0);
+      await setAndSave(deepl, { version: article.version, markdownDE: "Alt 1\r\nAlt 2 " });
+      const after = await logModule.find({ oid: article.id, property: "markdownDE" });
+      should(after.length).eql(before.length);
+    });
+    it("should drop it when the translated text itself changes", async function () {
+      await setAndSave(editor, { version: article.version, markdownEN: "Line 1\r\nLine 2 edited" });
+      await reload();
+      should(article.isTranslatedAutomated("EN")).be.false();
+    });
+  });
   describe("Copy Articles", function() {
     before(function (bddone) {
       testutil.importData({

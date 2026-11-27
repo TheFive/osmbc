@@ -72,6 +72,20 @@ function checkLanguageList(languages) {
   return null;
 }
 
+// Browsers submit textarea line breaks as \r\n, texts written by the server
+// (e.g. "Translate whole blog") have \n. setAndSave stores \n only.
+function normaliseText(value) {
+  return (typeof value === "string") ? value.replace(/\r\n/g, "\n").trim() : value;
+}
+
+// A form resubmits every language it shows, so an unchanged text must not
+// count as a change, or the editor becomes its last author and the
+// auto-translation marker is lost (#1187). Texts stored before #1187 may
+// still hold \r\n, so the stored value is normalised for the comparison too.
+function isSameValue(newValue, oldValue) {
+  return newValue === oldValue || newValue === normaliseText(oldValue);
+}
+
 class Article {
   constructor(proto) {
     debug("Article constructor");
@@ -281,10 +295,10 @@ class Article {
       delete data.version;
 
       for (const k in data) {
-        if (data[k] === self[k]) { delete data[k]; continue; }
         if (data[k] === undefined) { delete data[k]; continue; }
-        if (data[k]) data[k] = data[k].trim();
-        if (data[k] === "" && typeof (self[k]) === "undefined") { delete data[k]; continue; }
+        data[k] = normaliseText(data[k]);
+        if (isSameValue(data[k], self[k])) { delete data[k]; continue; }
+        if (data[k] === ""&& typeof (self[k]) === "undefined") { delete data[k]; continue; }
 
         // all values that not have to be changed are now deleted.
         // Now check, wether deletion is allowed or not.
