@@ -130,8 +130,8 @@ describe("wiki/wikiStore", function() {
       should(await store.exists("nothing")).be.false();
     });
     it("should not commit an unchanged text", async function() {
-      await store.savePage("start", "same", { user: "A" });
-      const result = await store.savePage("start", "same\n", { user: "B" });
+      const first = await store.savePage("start", "same", { user: "A", baseBlob: "" });
+      const result = await store.savePage("start", "same\n", { user: "B", baseBlob: first.blob });
       should(result.changed).be.false();
       should(git(store.directory, "rev-list", "--count", "HEAD").trim()).eql("1");
     });
@@ -147,8 +147,35 @@ describe("wiki/wikiStore", function() {
       await store.savePage("start", "v1", { user: "A", baseBlob: "" });
       await shouldReject(store.savePage("start", "other", { user: "B", baseBlob: "" }), 409);
     });
+    it("should not report a conflict when the same text was saved in between", async function() {
+      const first = await store.savePage("start", "v1", { user: "A", baseBlob: "" });
+      await store.savePage("start", "v2", { user: "B", baseBlob: first.blob });
+      const result = await store.savePage("start", "v2", { user: "C", baseBlob: first.blob });
+      should(result.changed).be.false();
+    });
+    it("should refuse a change without base version", async function() {
+      await shouldReject(store.savePage("start", "x", { user: "A" }), 400);
+      should(fs.existsSync(path.join(store.directory, "start.md"))).be.false();
+      const saved = await store.savePage("start", "x", { user: "A", baseBlob: "" });
+      await shouldReject(store.movePage("start", "other", { user: "A" }), 400);
+      await shouldReject(store.deletePage("start", { user: "A" }), 400);
+      await shouldReject(store.revert("start", saved.rev, { user: "A" }), 400);
+      should(await store.exists("start")).be.true();
+    });
+    it("should refuse a missing or non-text page text", async function() {
+      await shouldReject(store.savePage("start", undefined, { user: "A", baseBlob: "" }), 400);
+      await shouldReject(store.savePage("start", { text: "x" }, { user: "A", baseBlob: "" }), 400);
+      should(fs.existsSync(path.join(store.directory, "start.md"))).be.false();
+    });
+    it("should refuse to move or delete a page that changed in between", async function() {
+      const first = await store.savePage("start", "v1", { user: "A", baseBlob: "" });
+      await store.savePage("start", "v2", { user: "B", baseBlob: first.blob });
+      await shouldReject(store.movePage("start", "other", { user: "C", baseBlob: first.blob }), 409);
+      await shouldReject(store.deletePage("start", { user: "C", baseBlob: first.blob }), 409);
+      should((await store.readPage("start")).markdown).eql("v2\n");
+    });
     it("should serialise concurrent saves", async function() {
-      await Promise.all([1, 2, 3, 4, 5].map(n => store.savePage("p" + n, "text " + n, { user: "U" + n })));
+      await Promise.all([1, 2, 3, 4, 5].map(n => store.savePage("p" + n, "text " + n, { user: "U" + n, baseBlob: "" })));
       should(git(store.directory, "rev-list", "--count", "HEAD").trim()).eql("5");
     });
     it("should refuse a save without user", async function() {
@@ -156,36 +183,36 @@ describe("wiki/wikiStore", function() {
       should(fs.existsSync(path.join(store.directory, "start.md"))).be.false();
     });
     it("should refuse invalid ids without touching the file system", async function() {
-      await shouldReject(store.savePage("../outside", "x", { user: "A" }), 400);
+      await shouldReject(store.savePage("../outside", "x", { user: "A", baseBlob: "" }), 400);
       should(fs.existsSync(path.join(tmpRoot, "outside.md"))).be.false();
     });
     it("should list pages with titles, without media", async function() {
-      await store.savePage("start", "# Welcome\n", { user: "A" });
-      await store.savePage("osmbc/review", "---\ntitle: Review rules\naccess: full\n---\n# Ignored\n", { user: "A" });
+      await store.savePage("start", "# Welcome\n", { user: "A", baseBlob: "" });
+      await store.savePage("osmbc/review", "---\ntitle: Review rules\naccess: full\n---\n# Ignored\n", { user: "A", baseBlob: "" });
       await store.saveMedia("logo.png", pngBytes(), { user: "A" });
       const pages = await store.listPages();
       should(pages.map(p => [p.id, p.title])).eql([["osmbc/review", "Review rules"], ["start", "Welcome"]]);
       should(pages[0].frontMatter.access).eql("full");
     });
     it("should move and delete pages", async function() {
-      await store.savePage("old", "text", { user: "A" });
-      await store.movePage("old", "ns/new", { user: "B" });
+      const saved = await store.savePage("old", "text", { user: "A", baseBlob: "" });
+      await store.movePage("old", "ns/new", { user: "B", baseBlob: saved.blob });
       should(await store.readPage("old")).be.null();
       should((await store.readPage("ns/new")).markdown).eql("text\n");
-      await shouldReject(store.movePage("missing", "x", { user: "B" }), 404);
-      await store.savePage("other", "x", { user: "A" });
-      await shouldReject(store.movePage("other", "ns/new", { user: "B" }), 409);
-      await store.deletePage("ns/new", { user: "C" });
+      await shouldReject(store.movePage("missing", "x", { user: "B", baseBlob: "" }), 404);
+      const other = await store.savePage("other", "x", { user: "A", baseBlob: "" });
+      await shouldReject(store.movePage("other", "ns/new", { user: "B", baseBlob: other.blob }), 409);
+      await store.deletePage("ns/new", { user: "C", baseBlob: saved.blob });
       should(await store.exists("ns/new")).be.false();
-      await shouldReject(store.deletePage("ns/new", { user: "C" }), 404);
+      await shouldReject(store.deletePage("ns/new", { user: "C", baseBlob: saved.blob }), 404);
     });
   });
 
   describe("history", function() {
     it("should list the history across a rename and show old revisions", async function() {
-      const v1 = await store.savePage("old", "v1", { user: "A" });
-      await store.movePage("old", "new", { user: "B" });
-      const v2 = await store.savePage("new", "v2", { user: "C" });
+      const v1 = await store.savePage("old", "v1", { user: "A", baseBlob: "" });
+      await store.movePage("old", "new", { user: "B", baseBlob: v1.blob });
+      const v2 = await store.savePage("new", "v2", { user: "C", baseBlob: v1.blob });
       const history = await store.history("new");
       should(history.map(h => [h.author, h.message, h.path])).eql([
         ["C", "Edit new", "new.md"],
@@ -201,19 +228,19 @@ describe("wiki/wikiStore", function() {
     });
     it("should return an empty history for unknown pages and an empty repo", async function() {
       should(await store.history("nothing")).eql([]);
-      await store.savePage("start", "x", { user: "A" });
+      await store.savePage("start", "x", { user: "A", baseBlob: "" });
       should(await store.history("nothing")).eql([]);
     });
     it("should reject bad and unknown revisions", async function() {
-      await store.savePage("start", "x", { user: "A" });
+      await store.savePage("start", "x", { user: "A", baseBlob: "" });
       await should(store.pageAt("start", "HEAD")).be.rejectedWith(WikiError);
       await should(store.pageAt("start", "--output=x")).be.rejectedWith(WikiError);
       await shouldReject(store.pageAt("start", "0000000"), 404);
     });
     it("should revert to an old revision as a new commit", async function() {
-      const v1 = await store.savePage("start", "v1", { user: "A" });
-      await store.savePage("start", "v2", { user: "B" });
-      const result = await store.revert("start", v1.rev, { user: "C" });
+      const v1 = await store.savePage("start", "v1", { user: "A", baseBlob: "" });
+      const v2 = await store.savePage("start", "v2", { user: "B", baseBlob: v1.blob });
+      const result = await store.revert("start", v1.rev, { user: "C", baseBlob: v2.blob });
       should(result.changed).be.true();
       should((await store.readPage("start")).markdown).eql("v1\n");
       should((await store.history("start"))[0].message).match(/^Revert start to /);
@@ -222,9 +249,9 @@ describe("wiki/wikiStore", function() {
 
   describe("search", function() {
     it("should find text case-insensitively, literally", async function() {
-      await store.savePage("a", "# Lead Picture\nthe lead picture rules\n", { user: "A" });
-      await store.savePage("ns/b", "nothing here\n", { user: "A" });
-      await store.savePage("c", "a.*b regex chars\n", { user: "A" });
+      await store.savePage("a", "# Lead Picture\nthe lead picture rules\n", { user: "A", baseBlob: "" });
+      await store.savePage("ns/b", "nothing here\n", { user: "A", baseBlob: "" });
+      await store.savePage("c", "a.*b regex chars\n", { user: "A", baseBlob: "" });
       const result = await store.search("LEAD picture");
       should(result.map(r => [r.id, r.matchCount])).eql([["a", 2]]);
       should(result[0].matches[0]).eql({ line: 1, text: "# Lead Picture" });
@@ -282,7 +309,7 @@ describe("wiki/wikiStore", function() {
       git(store.directory, "remote", "add", "origin", remote);
       const branch = git(store.directory, "symbolic-ref", "--short", "HEAD").trim();
       git(store.directory, "config", "push.default", "current");
-      const result = await store.savePage("start", "x", { user: "A" });
+      const result = await store.savePage("start", "x", { user: "A", baseBlob: "" });
       // push runs in the background
       for (let i = 0; i < 50; i++) {
         try {
@@ -295,7 +322,7 @@ describe("wiki/wikiStore", function() {
     it("should only log a failing push", async function() {
       const errors = [];
       store = new WikiStore({ directory: path.join(tmpRoot, "wiki"), autoPush: true, logger: { info: () => {}, error: (m) => errors.push(m) } });
-      const result = await store.savePage("start", "x", { user: "A" });
+      const result = await store.savePage("start", "x", { user: "A", baseBlob: "" });
       should(result.changed).be.true();
       for (let i = 0; i < 50 && errors.length === 0; i++) await new Promise(resolve => setTimeout(resolve, 100));
       should(errors[0]).match(/git push failed/);

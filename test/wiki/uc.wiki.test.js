@@ -28,10 +28,10 @@ async function resetWiki() {
   fs.rmSync(wikiDir, { recursive: true, force: true });
   fs.mkdirSync(wikiDir, { recursive: true });
   git("init", "-q");
-  await store.savePage("start", "# Welcome\n\nRead the [editorial rules](/wiki/osmbc/rules) first.\n", { user: "Hallo" });
-  await store.savePage("sidebar", "* [Index](/wiki)\n* Weekly links\n", { user: "Hallo" });
-  await store.savePage("osmbc/rules", "# Rules\n\nBe nice.\n", { user: "Hallo" });
-  await store.savePage("osmbc/wide_table", "# Table\n\n| " + Array(12).fill("averyveryverylongcolumnheader").join(" | ") + " |\n|" + Array(12).fill("---").join("|") + "|\n| " + Array(12).fill("cell").join(" | ") + " |\n", { user: "Hallo" });
+  await store.savePage("start", "# Welcome\n\nRead the [editorial rules](/wiki/osmbc/rules) first.\n", { user: "Hallo", baseBlob: "" });
+  await store.savePage("sidebar", "* [Index](/wiki)\n* Weekly links\n", { user: "Hallo", baseBlob: "" });
+  await store.savePage("osmbc/rules", "# Rules\n\nBe nice.\n", { user: "Hallo", baseBlob: "" });
+  await store.savePage("osmbc/wide_table", "# Table\n\n| " + Array(12).fill("averyveryverylongcolumnheader").join(" | ") + " |\n|" + Array(12).fill("---").join("|") + "|\n| " + Array(12).fill("cell").join(" | ") + " |\n", { user: "Hallo", baseBlob: "" });
 }
 
 for (const device of [undefined, "phone"]) {
@@ -118,7 +118,7 @@ for (const device of [undefined, "phone"]) {
     });
 
     it("should restore an old version", async function() {
-      await store.savePage("osmbc/rules", "# Rules\n\nBroken.\n", { user: "Hallo" });
+      await store.savePage("osmbc/rules", "# Rules\n\nBroken.\n", { user: "Hallo", baseBlob: (await store.readPage("osmbc/rules")).blob });
       await app.openWikiPage("osmbc/rules?history");
       const wiki = app.getWikiPage();
       await wiki.clickViewVersion(1);
