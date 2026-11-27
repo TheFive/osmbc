@@ -5,6 +5,7 @@ import config from "../config.js";
 import HttpStatus from "http-status-codes";
 import userModule from "../model/user.js";
 import testutil from "./testutil.js";
+import logModule from "../model/logModule.js";
 import initialiseModules from "../util/initialise.js";
 
 const baseLink = "http://localhost:" + config.getServerPort() + config.htmlRoot();
@@ -89,6 +90,46 @@ describe("router/user", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "OSM User >TestUserNonExisting< has not enough access rights"
       }));
+  });
+  describe("routes GET /list with pages", function() {
+    const url = baseLink + "/usert/list";
+    beforeEach(function(bddone) {
+      const user = [{ OSMUser: "TestUser", access: "full", id: 1 }];
+      for (let i = 0; i < 204; i++) user.push({ OSMUser: "User" + String(i).padStart(3, "0"), access: "guest" });
+      testutil.importData({ user: user, clear: true }, bddone);
+    });
+    async function listPage(query) {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return (await client.get(url + query)).data;
+    }
+    it("should show the first 100 users and a link to the next page", async function () {
+      const body = await listPage("");
+      should(body).containEql("Page 1 of 3 (205 users)");
+      should(body).containEql(">TestUser</a>");
+      should(body).containEql(">User098</a>");
+      should(body).not.containEql(">User099</a>");
+      should(body).containEql('id="nextPage" href="/usert/list?page=2"');
+      should(body).not.containEql('id="previousPage"');
+    });
+    it("should show the last page and keep filter and sort in the links", async function () {
+      const body = await listPage("?access=guest&sort=OSMUser&page=3");
+      should(body).containEql("Page 3 of 3 (204 users)");
+      should(body).containEql(">User203</a>");
+      should(body).not.containEql(">User199</a>");
+      should(body).containEql('id="previousPage" href="/usert/list?access=guest&amp;sort=OSMUser&amp;page=2"');
+      should(body).not.containEql('id="nextPage"');
+    });
+    it("should show the last page for a page number that is too high or invalid", async function () {
+      should(await listPage("?page=99")).containEql("Page 3 of 3");
+      should(await listPage("?page=abc")).containEql("Page 1 of 3");
+    });
+    it("should sort by number of changes over all users, not only the shown page", async function () {
+      await logModule.log({ table: "article", user: "User150", oid: "1", property: "markdownDE" });
+      const body = await listPage("?sort=OSMBC-changes");
+      should(body.indexOf(">User150</a>")).be.above(-1);
+      should(body.indexOf(">User150</a>")).be.below(body.indexOf(">TestUser</a>"));
+    });
   });
   describe("routes GET /create", function() {
     const url = baseLink + "/usert/create";

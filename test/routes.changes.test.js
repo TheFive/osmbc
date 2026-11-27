@@ -121,6 +121,27 @@ describe("routes/changes", function() {
       const body = await client.get(url);
       body.data.should.containEql('<td><a href="/changes/2"><i class="fa fa-info-circle"></i></a></td>');
     });
+    async function logWithDate(date) {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return (await client.get(url + "?date=" + date)).data;
+    }
+    const changeLink = '<a href="/changes/' + changeid + '">';
+    it("should filter by day, month and year as a time range", async function () {
+      should(await logWithDate("2016-01-26")).containEql(changeLink);
+      should(await logWithDate("2016-01")).containEql(changeLink);
+      should(await logWithDate("2016")).containEql(changeLink);
+    });
+    it("should not show changes of another day, month or year", async function () {
+      should(await logWithDate("2016-01-25")).not.containEql(changeLink);
+      should(await logWithDate("2016-01-27")).not.containEql(changeLink);
+      should(await logWithDate("2016-02")).not.containEql(changeLink);
+      should(await logWithDate("2015")).not.containEql(changeLink);
+    });
+    it("should keep the prefix match for other date texts", async function () {
+      should(await logWithDate("2016-01-26T21")).containEql(changeLink);
+      should(await logWithDate("2016-01-26T22")).not.containEql(changeLink);
+    });
 
     it("should deny denied access user",
       testutil.checkUrlWithUser({

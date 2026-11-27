@@ -90,9 +90,6 @@
     }
   },
   "model/pgMap.js": {
-    "complexity": {
-      "count": 1
-    },
     "jsdoc/require-jsdoc": {
       "count": 8
     },
@@ -100,7 +97,7 @@
       "count": 1
     },
     "max-lines-per-function": {
-      "count": 3
+      "count": 2
     }
   },
   "model/translator.js": {

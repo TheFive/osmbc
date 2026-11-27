@@ -11,6 +11,51 @@ const debug = _debug("OSMBC:model:pgMap");
 const sqldebug  = _debug("OSMBC:model:sql");
 
 
+// operator prefixes of a find value, checked in this order: "!=x", "IN(a,b)",
+// "<=x", ">=x", "GE:x", ">x", "<x"; a "%" in the value means LIKE
+function parseOperator(value) {
+  if (typeof (value) !== "string") return { op: "=", value: value };
+  if (value.substring(0, 2) === "!=") return { op: "!=", value: value.substring(2, 9999) };
+  if (value.substring(0, 2) === "IN") {
+    const len = value.length;
+    assert(value.substring(2, 3) === "(");
+    assert(value.substring(len - 1, len) === ")");
+    return { op: "in", value: value.substring(3, len - 1).split(",") };
+  }
+  if (value.substring(0, 2) === "<=") return { op: "<=", value: value.substring(2) };
+  if (value.substring(0, 2) === ">=") return { op: ">=", value: value.substring(2) };
+  if (value.substring(0, 3) === "GE:") return { op: ">=", value: value.substring(3, 999999) };
+  if (value.substring(0, 1) === ">") return { op: ">", value: value.substring(1, 999999) };
+  if (value.substring(0, 1) === "<") return { op: "<", value: value.substring(1, 999999) };
+  if (value.indexOf("%") >= 0) return { op: "like", value: value };
+  return { op: "=", value: value };
+}
+
+function isConditionList(value) {
+  return Array.isArray(value) && value.length > 0 && value.every((v) => typeof v === "string");
+}
+
+// SQL condition for one field and one find value; adds the parameter
+function conditionFor(k, rawValue, parameters) {
+  const { op, value } = parseOperator(rawValue);
+  if (value === "") {
+    if (op === "=") {
+      const param = "$" + (parameters.length + 1);
+      parameters.push(k);
+      return "((data->" + param + ") is null or (data->>" + param + " = ''))";
+    }
+    if (op === "!=") {
+      const param = "$" + (parameters.length + 1);
+      parameters.push(k);
+      return "((data->" + param + ") is not null) and ((data->>" + param + ") != '')";
+    }
+  }
+  const param = "$" + (parameters.length + 1);
+  parameters.push(value);
+  if (op === "in") return "((data->'" + k + "') is not null) and ((data->>'" + k + "') = any (" + param + " ))";
+  return "data->>'" + k + "'" + op + " " + param;
+}
+
 function generateQuery(table, obj, order) {
   debug("generateQuery %s", table);
 
@@ -35,60 +80,14 @@ function generateQuery(table, obj, order) {
   } else {
     if (obj) {
       for (const k in obj) {
-        let value = obj[k];
-        let op = "=";
-        let operation = null;
-        if (typeof (value) === "string") {
-          // check first operator in string
-          if (value.substring(0, 2) === "!=") {
-            op = "!=";
-            value = value.substring(2, 9999);
-          } else if (value.substring(0, 2) === "IN") {
-            op = "in";
-            const len = value.length;
-            assert(value.substring(2, 3) === "(");
-            assert(value.substring(len - 1, len) === ")");
-            value = value.substring(3, len - 1).split(",");
-          } else if (value.substring(0, 2) === "<=") {
-            op = "<=";
-            value = value.substring(2);
-          } else if (value.substring(0, 2) === ">=") {
-            op = ">=";
-            value = value.substring(2);
-          } else if (value.substring(0, 3) === "GE:") {
-            op = ">=";
-            value = value.substring(3, 999999);
-          } else if (value.substring(0, 1) === ">") {
-            op = ">";
-            value = value.substring(1, 999999);
-          } else if (value.substring(0, 1) === "<") {
-            op = "<";
-            value = value.substring(1, 999999);
-          } else if (value.indexOf("%") >= 0) op = "like";
+        // a list of operator strings puts several conditions on one field,
+        // e.g. a time range: { timestamp: ["GE:2026-11-21", "<2026-11-22"] }
+        const values = isConditionList(obj[k]) ? obj[k] : [obj[k]];
+        for (const value of values) {
+          const operation = conditionFor(k, value, parameters);
+          if (whereClause === "") whereClause = " where " + operation;
+          else whereClause += " and " + operation;
         }
-
-        if (value === "") {
-          if (op === "=") {
-            const param = "$" + (parameters.length + 1);
-            parameters.push(k);
-            operation = "((data->" + param + ") is null or (data->>" + param + " = ''))";
-          }
-          if (op === "!=") {
-            const param = "$" + (parameters.length + 1);
-            parameters.push(k);
-            operation = "((data->" + param + ") is not null) and ((data->>" + param + ") != '')";
-          }
-        } else {
-          const param = "$" + (parameters.length + 1);
-          parameters.push(value);
-
-          operation = "data->>'" + k + "'" + op + " " + param;
-          if (op === "in") {
-            operation = "((data->'" + k + "') is not null) and ((data->>'" + k + "') = any (" + param + " ))";
-          }
-        }
-        if (whereClause === "") whereClause = " where " + operation;
-        else whereClause += " and " + operation;
       }
     }
   }
