@@ -24,7 +24,7 @@
   },
   "scripts": {
     "changelog": "git-cliff 4.4.9..HEAD --tag $npm_package_version --output CHANGELOG.md",
-    "lint": "eslint --no-error-on-unmatched-pattern app.js config.js postinstall.js bin/**/*.js export/**/*.js genstaticpage/**/*.js import/**/*.js model/**/*.js notification/**/*.js render/**/*.js routes/**/*.js tools/**/*.js test/**/*.js util/**/*.js wp-reconcile/**/*.js wiki/**/*.js public/javascripts/**/*.js",
+    "lint": "eslint --no-error-on-unmatched-pattern app.js config.js postinstall.js \"bin/**/*.js\" \"export/**/*.js\" \"genstaticpage/**/*.js\" \"import/**/*.js\" \"model/**/*.js\" \"notification/**/*.js\" \"render/**/*.js\" \"routes/**/*.js\" \"tools/**/*.js\" \"test/**/*.js\" \"util/**/*.js\" \"wp-reconcile/**/*.js\" \"wiki/**/*.js\" \"public/javascripts/**/*.js\"",
     "lint:prune": "npm run -s lint -- --prune-suppressions",
     "start": "NODE_ENV=development node ./bin/www.js",
     "test": "NODE_ENV=test TEST_HEADLESS=TRUE node tools/run-tests.mjs sh -c 'start=$(date +%s); npx mocha \"$@\"; status=$?; end=$(date +%s); elapsed=$((end-start)); printf \"\\n========================================\\n\"; printf \" Testlauf beendet in %02dm:%02ds\\n\" $((elapsed/60)) $((elapsed%60)); printf \"========================================\\n\\n\"; exit $status' --",
