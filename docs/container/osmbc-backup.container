@@ -1,6 +1,7 @@
-# OSMBC example Quadlet: daily database dump, started by
-# osmbc-backup.timer (which goes to ~/.config/systemd/user/, Quadlet
-# doesn't read timers). See docs/container.md "Backup".
+# OSMBC example Quadlet: daily database dump plus a copy of the editorial
+# config, started by osmbc-backup.timer (which goes to
+# ~/.config/systemd/user/, Quadlet doesn't read timers). See
+# docs/container.md "Backup".
 
 [Unit]
 Description=OSMBC database backup
@@ -20,11 +21,18 @@ Secret=osmbc-db-password,type=env,target=PGPASSWORD
 UserNS=keep-id:uid=999,gid=999
 # Z: SELinux label for this container only; ignored without SELinux.
 Volume=%h/osmbc/backup:/backup:Z
-# Custom format (-Fc): compressed, restorable with pg_restore. Written to
-# a temporary name first, so a failed dump never looks like a good one.
-# Keeps 14 days. In systemd units %% is a literal % and $$ a literal $
-# (else systemd puts in its own variables).
-Exec=sh -c 'set -e; f=/backup/osmbc-$$(date +%%Y-%%m-%%d_%%H%%M).dump; pg_dump -h osmbc-db -U osmbc -Fc -f "$$f.part" osmbc; mv "$$f.part" "$$f"; find /backup -name "osmbc-*.dump" -mtime +14 -delete'
+# Read-only, for the copy of the editorial config (z: shared label, the
+# app container uses the folder too).
+Volume=%h/osmbc/config:/config:ro,z
+# The editorial config is kept by the editors on the server and not
+# generated from anywhere, so it is backed up like the database: a copy
+# with the same time stamp as the dump. (The technical config holds the
+# secrets and is not copied; keep it where it is generated from.)
+# The dump is in custom format (-Fc): compressed, restorable with
+# pg_restore; written to a temporary name first, so a failed dump never
+# looks like a good one. Both kept 14 days. In systemd units %% is a
+# literal % and $$ a literal $ (else systemd puts in its own variables).
+Exec=sh -c 'set -e; t=$$(date +%%Y-%%m-%%d_%%H%%M); if [ -f /config/config.editorial.yaml ]; then cp /config/config.editorial.yaml /backup/config.editorial-$$t.yaml; fi; f=/backup/osmbc-$$t.dump; pg_dump -h osmbc-db -U osmbc -Fc -f "$$f.part" osmbc; mv "$$f.part" "$$f"; find /backup -name "osmbc-*.dump" -mtime +14 -delete; find /backup -name "config.editorial-*.yaml" -mtime +14 -delete'
 
 [Service]
 # Run once and exit; no Restart and no RemainAfterExit (that would keep
