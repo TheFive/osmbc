@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.11.0](https://github.com/TheFive/osmbc/tree/4.11.0) (2026-11-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.10.0...4.11.0)
+
+**Features:**
+
+- container: add a Containerfile and a CI job that builds and starts it
+
+**Fixed bugs:**
+
+- createdb: detect and add missing primary keys and tables
+- **BREAKING** server: stop cleanly on SIGTERM, read OSMBC_HOSTNAME instead of HOSTNAME – the environment variable HOSTNAME no longer overrides serverhostname; use OSMBC_HOSTNAME.
+- db: accept the database password from POSTGRES_PASSWORD alone
+- article: store \n line breaks so unchanged texts are no change [#1187](https://github.com/TheFive/osmbc/issues/1187) [#1018](https://github.com/TheFive/osmbc/issues/1018)
+- comments: match @mentions on the whole name [#986](https://github.com/TheFive/osmbc/issues/986)
+- comments: show date and time of comments older than a day [#952](https://github.com/TheFive/osmbc/issues/952)
+- comments: check @mentions literally everywhere [#986](https://github.com/TheFive/osmbc/issues/986)
+- comments: let a mentioned guest answer the comment
+- security: look up users by exact value [#1188](https://github.com/TheFive/osmbc/issues/1188)
+
 ## [4.10.0](https://github.com/TheFive/osmbc/tree/4.10.0) (2026-11-22)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.9.0...4.10.0)
@@ -181,17 +201,13 @@
 
 **Features:**
 
-- **BREAKING** article: offer translate into many languages to all users
-manyTranslationVisibleFor replaced by the boolean
-manyTranslationEnabled (default true).
+- **BREAKING** article: offer translate into many languages to all users – manyTranslationVisibleFor replaced by the boolean manyTranslationEnabled (default true).
 - blog: auto-translate open languages at a configured time
 - admin: show upcoming automatic actions
 
 **Fixed bugs:**
 
-- **BREAKING** security: remove server-side script plugin
-config key scripts is gone; set
-manyTranslationVisibleFor to keep the many-languages translate menu.
+- **BREAKING** security: remove server-side script plugin – config key scripts is gone; set manyTranslationVisibleFor to keep the many-languages translate menu.
 - deps: drop express-fileupload, sanitize-filename and glob
 - test: write the export log of a test run to its temp directory
 - blog: auto-translate only once per blog and language
