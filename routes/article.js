@@ -588,11 +588,11 @@ function postArticleWithOldValues(req, res, next) {
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
   // the comment field is saved together with the article, so a failed save
-  // keeps no comment (#914); guests may comment only on their own collections
-  // (as in postNewComment)
+  // keeps no comment (#914); guests may comment where they may open the
+  // article (as in postNewComment)
   if (typeof req.body.addComment === "string" && req.body.addComment.trim() !== "") {
     if (!article) return next(new Error("A comment needs an existing article."));
-    if (req.user.access === "guest" && article.firstCollector !== req.user.OSMUser) return next();
+    if (req.user.access === "guest" && !article.isOpenForGuest(req.user.OSMUser)) return next();
     changes.addComment = req.body.addComment;
   }
 
@@ -645,9 +645,8 @@ function postNewComment(req, res, next) {
 
   if (article) returnToUrl = htmlroot + "/article/" + article.id;
 
-  if (req.user.access === "guest") {
-    if (article.firstCollector !== req.user.OSMUser) return next();
-  }
+  // a guest mentioned in a comment may answer it
+  if (req.user.access === "guest" && !article.isOpenForGuest(req.user.OSMUser)) return next();
 
 
   article.addCommentFunction(req.user, comment, function(err) {
@@ -1133,16 +1132,8 @@ function takeCollectedDraft(req) {
 
 
 function isFirstCollector(req, res, next) {
-  if (req.article && req.article.firstCollector === req.user.OSMUser) return next();
   if (!req.article) return next();
-  const user = req.user.OSMUser;
-  const comments = req.article.commentList;
-  if (comments) {
-    for (let i = 0; i < comments.length; i++) {
-      const comment = comments[i];
-      if (util.mentions(comment.text, user)) return next();
-    }
-  }
+  if (req.article.isOpenForGuest(req.user.OSMUser)) return next();
   res.status(FORBIDDEN).send("This article is not allowed for guests");
 }
 
