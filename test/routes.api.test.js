@@ -65,6 +65,12 @@ describe("router/api", function() {
 
       should(body.status).eql(401);
     });
+    it("should not take an operator as a personal ApiKey (#1188)", async function () {
+      for (const key of ["%", ">", "!=x", "GE:0"]) {
+        const body = await axios.get(baseLink + "/api/monitor/" + encodeURIComponent(key), { validateStatus: (status) => true });
+        should(body.status).eql(401, key);
+      }
+    });
   });
   describe("monitor postgres functions", function() {
     afterEach(function() {
@@ -116,6 +122,22 @@ describe("router/api", function() {
 
       should(body.data).eql("No OSMUser given, could not resolve email address");
       should(body.status).eql(422);
+    });
+    it("should not resolve an operator as OSMUser or email (#1188)", async function () {
+      for (const value of [{ OSMUser: "%" }, { OSMUser: "<Z" }, { email: "%" }]) {
+        const body = await axios.post(
+          baseLink + "/api/collectArticle/testapikey.TBC",
+          Object.assign({ collection: "simple Text" }, value),
+          { validateStatus: (status) => true });
+        should(body.status).eql(422, JSON.stringify(value));
+      }
+    });
+    it("should answer 400 for an OSMUser that is not a text", async function () {
+      const body = await axios.post(
+        baseLink + "/api/collectArticle/testapikey.TBC",
+        { collection: "simple Text", OSMUser: ["TheFive"] },
+        { validateStatus: (status) => true });
+      should(body.status).eql(400);
     });
     it("should work with OSMUser", async function () {
       const body = await axios.post(

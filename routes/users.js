@@ -131,10 +131,10 @@ function renderUserId(req, res, next) {
   series([
     function findAndLoaduserByName(cb) {
       debug("findAndLoaduserByName");
-      userModule.findOne({ OSMUser: id }, function findAndLoaduserCB(err, result) {
+      userModule.findExact("OSMUser", id, function findAndLoaduserCB(err, result) {
         debug("findAndLoaduser_CB");
         if (err) return cb(err);
-        user = result;
+        user = result[0];
         if (user) id = user.id;
         return cb();
       });

@@ -42,7 +42,7 @@ function ensureAuthentificated(req, res, next) {
     res.json({});
     return;
   }
-  userModule.find({ SlackUser: req.body.user_name }, function(err, user) {
+  userModule.findExact("SlackUser", req.body.user_name, function(err, user) {
     if (err) {
       config.logger.error(err);
       return next(err);

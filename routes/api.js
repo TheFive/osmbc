@@ -43,9 +43,10 @@ function verifyApiKey(apiKey, req, next) {
     return next();
   }
 
-  userModule.findOne({ apiKey: apiKey }, function(err, user) {
-    if (err || !user) return next(notAuthorised());
-    req.user = user;
+  // exact match only: find() would read "%", ">" … as an operator (#1188)
+  userModule.findExact("apiKey", apiKey, function(err, users) {
+    if (err || users.length !== 1) return next(notAuthorised());
+    req.user = users[0];
     return next();
   });
 }
@@ -126,20 +127,23 @@ function collectArticle(req, res, next) {
       }
     },
     function getOSMuser(cb) {
-      const query = {};
-      if (req.body.OSMUser) {
-        query.OSMUser = req.body.OSMUser;
-      } else {
+      let field = "OSMUser";
+      if (!req.body.OSMUser) {
         if (!req.body.email) {
           const err = new Error("No OSMUser && EMail given");
           err.type = "API";
           err.status = 422;
           return cb(err);
         }
-        query.email = req.body.email;
+        field = "email";
       }
-      userModule.findOne(query, function(err, userFound) {
-        if (err || !userFound) {
+      userModule.findExact(field, req.body[field], function(err, users) {
+        if (err) {
+          err.type = "API";
+          return cb(err);
+        }
+        const userFound = users[0];
+        if (!userFound) {
           const err = new Error("No OSMUser given, could not resolve email address");
           err.type = "API";
           err.status = 422;
