@@ -8,6 +8,7 @@ import config from "../config.js";
 
 import { diffChars, diffWordsWithSpace, diffLines } from "diff";
 import _debug from "debug";
+import { reportTableWrite } from "./tableWrites.js";
 const debug = _debug("OSMBC:model:logModule");
 
 
@@ -104,6 +105,7 @@ function log(object, callback) {
   function _log(object, callback) {
     if (typeof (object.timestamp) === "undefined") object.timestamp = new Date();
     db.query("insert into changes (data) values ($1) ", [object], function(err) {
+      reportTableWrite("changes");
       return callback(err);
     });
   }

@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { userHasAccess } from "../wiki/wikiStore.js";
-import { auto, each } from "async";
 import moment from "moment-timezone";
 
 import util from "../util/util.js";
@@ -10,7 +9,7 @@ import { osmbcMarkdown } from "../util/md_util.js";
 import configModule from "../model/config.js";
 import firstDraft from "../model/firstDraft.js";
 
-import { getTBC, find } from "../model/blog.js";
+import { getNavbarBlogs } from "../model/navbarBlogs.js";
 import { getAvatar as _getAvatar } from "../model/user.js";
 
 import _debug from "debug";
@@ -51,6 +50,48 @@ const layoutConst = {
 
 
 
+// Menu bar data for one user from the shared navbar blogs
+// (model/navbarBlogs.js): the blog lists (copies, the blogs themselves are
+// shared and read only), the unread mention counts for the Inbox badges,
+// the user's mentions per blog for the Inbox page, the languages in use.
+function navbarDataFor(user, blogs) {
+  const mainLang = user.getMainLang();
+  const usedLanguages = {};
+  if (user.language) usedLanguages[user.language] = true;
+  for (const blog of [...blogs.open, ...blogs.edit]) {
+    for (const k in blog._usedLanguages) usedLanguages[k] = true;
+  }
+  const listOfOpenBlog = blogs.open.slice();
+  const listOfEditBlog = blogs.edit.filter((blog) => !blog["reviewComment" + mainLang]);
+  const listOfReviewBlog = blogs.edit.filter((blog) => blog["reviewComment" + mainLang] && !blog["close" + mainLang]);
+
+  const mentions = new Map();
+  let userMentions = 0;
+  let mainLangMentions = 0;
+  let secondLangMentions = 0;
+  for (const blog of [...listOfOpenBlog, ...listOfEditBlog, ...listOfReviewBlog]) {
+    const m = blog.mentionsFor(user);
+    mentions.set(blog.name, m);
+    userMentions += calculateUnreadMessages(m.userMention, user.OSMUser);
+    mainLangMentions += calculateUnreadMessages(m.mainLangMention, user.OSMUser);
+    secondLangMentions += calculateUnreadMessages(m.secondLangMention, user.OSMUser);
+  }
+  const empty = { userMention: [], mainLangMention: [], secondLangMention: [] };
+  return {
+    usedLanguages,
+    listOfOpenBlog,
+    listOfEditBlog,
+    listOfReviewBlog,
+    editBlog: blogs.edit.slice(),
+    tbc: blogs.tbc,
+    tbcOwnArticleNumber: blogs.tbc.mentionsFor(user).tbcOwnArticleNumber,
+    userMentions,
+    mainLangMentions,
+    secondLangMentions,
+    mentionsOf: (blog) => mentions.get(blog.name) || empty
+  };
+}
+
 function prepareRenderLayout(req, res, next) {
   debug("prepareRenderLayout");
 
@@ -69,98 +110,13 @@ function prepareRenderLayout(req, res, next) {
 
   const languages = language.getLid();
 
-
-  let userMentions = 0;
-  let mainLangMentions = 0;
-  let secondLangMentions = 0;
-  const usedLanguages = {};
-  if (req.user.language) usedLanguages[req.user.language] = true;
-
-  auto({
-
-    tbc: function (callback) {
-      const blog = getTBC();
-      blog.calculateDerived(req.user, function(err) {
-        if (err) return callback(err);
-        callback(null, blog);
-      });
-    },
-    listOfOpenBlog:
-    function (callback) {
-      find({ status: "open" }, function(err, result) {
-        if (err) return callback(err);
-        const list = [];
-        for (let i = 0; i < result.length; i++) {
-          list.push(result[i]);
-        }
-        each(list, function(item, cb) {
-          item.calculateDerived(req.user, function(err) {
-            if (err) return cb(err);
-            userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
-            mainLangMentions += calculateUnreadMessages(item._mainLangMention, req.user.OSMUser);
-            secondLangMentions += calculateUnreadMessages(item._secondLangMention, req.user.OSMUser);
-            for (const k in item._usedLanguages) usedLanguages[k] = true;
-            cb();
-          });
-        }, function(err) {
-          callback(err, list);
-        });
-      });
-    },
-    editBlog: function (callback) {
-      find({ status: "edit" }, function(err, list) {
-        if (err) return callback(err);
-        each(list, function(item, cb) {
-          item.calculateDerived(req.user, function(err) {
-            if (err) return cb(err);
-            for (const k in item._usedLanguages) usedLanguages[k] = true;
-            cb();
-          });
-        }, function(err) { callback(err, list); });
-      });
-    },
-    listOfEditBlog: ["editBlog",
-      function (param, callback) {
-        const list = [];
-        for (let i = 0; i < param.editBlog.length; i++) {
-          if (!(param.editBlog[i]["reviewComment" + req.user.getMainLang()])) {
-            list.push(param.editBlog[i]);
-          }
-        }
-        for (let i = 0; i < list.length; i++) {
-          const item = list[i];
-          userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
-          mainLangMentions += calculateUnreadMessages(item._mainLangMention, req.user.OSMUser);
-          secondLangMentions += calculateUnreadMessages(item._secondLangMention, req.user.OSMUser);
-        }
-
-        callback(null, list);
-      }],
-    listOfReviewBlog: ["editBlog",
-      function (param, callback) {
-        const list = [];
-        for (let i = 0; i < param.editBlog.length; i++) {
-          if ((param.editBlog[i]["reviewComment" + req.user.getMainLang()]) &&
-              !(param.editBlog[i]["close" + req.user.getMainLang()])) {
-            list.push(param.editBlog[i]);
-          }
-        }
-        for (let i = 0; i < list.length; i++) {
-          const item = list[i];
-          userMentions += calculateUnreadMessages(item._userMention, req.user.OSMUser);
-          mainLangMentions += calculateUnreadMessages(item._mainLangMention, req.user.OSMUser);
-          secondLangMentions += calculateUnreadMessages(item._secondLangMention, req.user.OSMUser);
-        }
-
-        callback(null, list);
-      }]
-  },
-
-  function (err, result) {
+  getNavbarBlogs(function (err, blogs) {
     if (err) {
       debug(JSON.stringify(err));
       return next(err);
     }
+    const result = navbarDataFor(req.user, blogs);
+    const usedLanguages = result.usedLanguages;
     // Small screens (below Bootstrap's lg breakpoint) work in one language,
     // see the osmbc_view cookie set in layout.pug.
     const mobileView = /(?:^|;\s*)osmbc_view=mobile(?:;|$)/.test((req.headers && req.headers.cookie) || "");
@@ -174,10 +130,6 @@ function prepareRenderLayout(req, res, next) {
     // choice for the mobile language: the active languages and the user's own
     const ownLanguages = [req.user.getMainLang(), req.user.getSecondLang(), req.user.getLang3(), req.user.getLang4()].concat(req.user.getLanguages() || []);
     const mobileLanguages = languages.filter((item) => usedLanguages[item] || ownLanguages.indexOf(item) >= 0);
-    if (!result.editBlog) result.editBlog = [];
-    if (!result.listOfOpenBlog) result.listOfOpenBlog = [];
-    if (!result.listOfEditBlog) result.listOfEditBlog = [];
-    if (!result.listOfReviewBlog) result.listOfReviewBlog = [];
     const markdown = osmbcMarkdown({ target: "editor" });
 
     const manyTranslationEnabled = config.getValue("manyTranslationEnabled", { default: true }) !== false;
@@ -208,9 +160,11 @@ function prepareRenderLayout(req, res, next) {
     res.rendervar.layout = Object.assign({}, layoutConst, {
       user: req.user,
       languages: languages,
-      userMentions: userMentions,
-      mainLangMentions: mainLangMentions,
-      secondLangMentions: secondLangMentions,
+      userMentions: result.userMentions,
+      mainLangMentions: result.mainLangMentions,
+      secondLangMentions: result.secondLangMentions,
+      mentionsOf: result.mentionsOf,
+      tbcOwnArticleNumber: result.tbcOwnArticleNumber,
       listOfOpenBlog: result.listOfOpenBlog,
       listOfEditBlog: result.listOfEditBlog,
       listOfReviewBlog: result.listOfReviewBlog,
@@ -235,8 +189,7 @@ function prepareRenderLayout(req, res, next) {
       exportProfiles: exportProfiles
     });
     next();
-  }
-  );
+  });
 }
 
 

@@ -28,7 +28,7 @@ import _debug from "debug";
 import _markdownIt from "markdown-it";
 import { ZipArchive } from "archiver";
 import blogRenderer from "../render/BlogRenderer.js";
-import { NO_CATEGORY_YET, UNPUBLISHED } from "./specialCategories.js";
+import { UNPUBLISHED } from "./specialCategories.js";
 const markdown = _markdownIt();
 const debug = _debug("OSMBC:model:blog");
 
@@ -64,7 +64,9 @@ function sanitizeBlogKey(blog) {
 
 class Blog {
   #statusCount = null;
-  // articles of the blog, loaded by calculateDerived
+  // automated translations per language, see calculateAutoTranslate
+  #autoTranslateCount = null;
+  // articles of the blog, loaded by calculateStatus
   #articles = null;
 
   constructor(proto) {
@@ -91,7 +93,7 @@ class Blog {
   }
 
   getAutoTranslate(l) {
-    if (this.#statusCount !== null) return this.#statusCount[l].autoTranslate;
+    if (this.#autoTranslateCount !== null) return this.#autoTranslateCount[l];
     return "?";
   }
 
@@ -1300,98 +1302,113 @@ class Blog {
     });
   }
 
+  /**
+   * Derived data of the blog for `user`: everything calculateStatus
+   * computes, plus the user's mentions as `_userMention`,
+   * `_mainLangMention`, `_secondLangMention` and `_tbcOwnArticleNumber`.
+   * The articles are loaded only once per blog object.
+   * @param {object} user a User or a plain object with OSMUser (and
+   *   optionally mainLang/secondLang, e.g. the actor of an automatic rule)
+   * @param {Function} callback (err)
+   */
   calculateDerived(user, callback) {
     debug("calculateDerived");
     assert(user);
-    // already done, nothing to do.
-    if (this.#statusCount !== null) return callback();
     const self = this;
-    self.#statusCount = {};
-
-    self._userMention = [];
-    self._mainLangMention = [];
-    self._secondLangMention = [];
-
-    self._tbcOwnArticleNumber = 0;
-
-    self._unsolvedComments = {};
-
-    self._usedLanguages = {};
-    self._upcomingEvents = null;
-    const mainLang = user.mainLang;
-    const secondLang = user.secondLang;
-    let i, j;
-
-    articleModule.find({ blog: self }, function (err, result) {
+    self.calculateStatus(function(err) {
       if (err) return callback(err);
-      assert(Array.isArray(result));
-      self.#articles = result;
-      articleModule.calculateDerivedFromChangesForList(result, function(err) {
+      self.calculateAutoTranslate(function(err) {
         if (err) return callback(err);
-        for (const l in language.getLanguages()) {
-          const statusLang = {};
-
-          statusLang.unedited = 0;
-          statusLang.expected = 0;
-          statusLang.autoTranslate = 0;
-          statusLang.noTranslate = 0;
-          self._unsolvedComments[l] = 0;
-          for (j = 0; j < result.length; j++) {
-            const article = result[j];
-            const c = article.categoryEN;
-            if (c === "Upcoming Events") self._upcomingEvents = article;
-            if (c === UNPUBLISHED) continue;
-            statusLang.expected += 1;
-            const m = article["markdown" + l];
-            if (m === "no translation") {
-              statusLang.noTranslate += 1;
-            } else {
-              if (!m || m === "" || c === NO_CATEGORY_YET) {
-                statusLang.unedited += 1;
-              } else {
-                if (article.isTranslatedAutomated(l)) {
-                  statusLang.autoTranslate += 1;
-                }
-              }
-            }
-            // check, wether language is used in blog
-            if (m && m !== "no translation") self._usedLanguages[l] = true;
-            if (article.commentList && article.commentStatus === "open") {
-              if (!m || m !== "no translation") self._unsolvedComments[l] += 1;
-            }
-          }
-          self.#statusCount[l] = statusLang;
-        }
-        if (!result) return callback();
-        for (i = 0; i < result.length; i++) {
-          if (self.name === "TBC") {
-            if (result[i].firstCollector === user.OSMUser) {
-              self._tbcOwnArticleNumber += 1;
-            }
-          }
-          if (result[i].commentList) {
-            if (result[i].commentStatus === "solved") continue;
-            for (j = 0; j < result[i].commentList.length; j++) {
-              const comment = result[i].commentList[j].text;
-
-              if (util.mentions(comment, user.OSMUser)) {
-                self._userMention.push(result[i]);
-                break;
-              }
-              if ((mainLang && util.mentions(comment, mainLang)) || util.mentions(comment, "all")) {
-                self._mainLangMention.push(result[i]);
-                break;
-              }
-              if ((secondLang && util.mentions(comment, secondLang)) || util.mentions(comment, "all")) {
-                self._secondLangMention.push(result[i]);
-                break;
-              }
-            }
-          }
-        }
+        self.#setMentions(user);
         return callback();
       });
     });
+  }
+
+  #setMentions(user) {
+    const mentions = this.mentionsFor(user);
+    this._userMention = mentions.userMention;
+    this._mainLangMention = mentions.mainLangMention;
+    this._secondLangMention = mentions.secondLangMention;
+    this._tbcOwnArticleNumber = mentions.tbcOwnArticleNumber;
+  }
+
+  /**
+   * The part of the derived data that is the same for every user: text
+   * status counts per language (getUnEdited, getExpected, getWritten …),
+   * `_usedLanguages`, `_unsolvedComments`, `_upcomingEvents`. Loads the
+   * articles once; a second call does nothing. Automated translations
+   * (getAutoTranslate) need calculateAutoTranslate in addition.
+   * @param {Function} callback (err)
+   */
+  calculateStatus(callback) {
+    debug("calculateStatus");
+    if (this.#statusCount !== null) return callback();
+    const self = this;
+    articleModule.find({ blog: self }, function (err, result) {
+      if (err) return callback(err);
+      assert(Array.isArray(result));
+      const statusCount = {};
+      self._unsolvedComments = {};
+      self._usedLanguages = {};
+      self._upcomingEvents = null;
+      for (const article of result) {
+        if (article.categoryEN === "Upcoming Events") self._upcomingEvents = article;
+      }
+      for (const l in language.getLanguages()) {
+        const counted = countLanguage(result, l);
+        statusCount[l] = counted.status;
+        self._unsolvedComments[l] = counted.unsolvedComments;
+        if (counted.used) self._usedLanguages[l] = true;
+      }
+      self.#articles = result;
+      self.#statusCount = statusCount;
+      return callback();
+    });
+  }
+
+  /**
+   * Count the texts per language whose last author is a translation
+   * service (getAutoTranslate). Reads the authors of all articles from the
+   * changes table, the most expensive part of the derived data, so only
+   * pages that show these counts call it. Runs calculateStatus first if
+   * needed; a second call does nothing.
+   * @param {Function} callback (err)
+   */
+  calculateAutoTranslate(callback) {
+    debug("calculateAutoTranslate");
+    if (this.#autoTranslateCount !== null) return callback();
+    const self = this;
+    self.calculateStatus(function(err) {
+      if (err) return callback(err);
+      const articles = self.#articles;
+      articleModule.calculateDerivedFromChangesForList(articles, function(err) {
+        if (err) return callback(err);
+        const counts = {};
+        for (const l in language.getLanguages()) counts[l] = countAutoTranslate(articles, l);
+        self.#autoTranslateCount = counts;
+        return callback();
+      });
+    });
+  }
+
+  /**
+   * Articles of the blog with an unsolved comment that mentions `user`,
+   * the user's main or second language (or "all"), and for the TBC blog
+   * the number of articles the user collected. Needs calculateStatus first;
+   * the result is new for every call and may be kept by the caller.
+   * @param {object} user a User or a plain object with OSMUser
+   * @returns {{userMention: Array, mainLangMention: Array, secondLangMention: Array, tbcOwnArticleNumber: number}} mentions
+   */
+  mentionsFor(user) {
+    const result = { userMention: [], mainLangMention: [], secondLangMention: [], tbcOwnArticleNumber: 0 };
+    const [mainLang, secondLang] = languagePair(user);
+    for (const article of (this.#articles || [])) {
+      if (this.name === "TBC" && article.firstCollector === user.OSMUser) result.tbcOwnArticleNumber += 1;
+      const kind = mentionKind(article, user.OSMUser, mainLang, secondLang);
+      if (kind) result[kind].push(article);
+    }
+    return result;
   }
 
   getCategories() {
@@ -1434,6 +1451,53 @@ class Blog {
   }
 }
 
+
+// text status of one language over the articles of a blog (calculateStatus);
+// the rule per article is Article.textStatus
+function countLanguage(articles, l) {
+  const status = { unedited: 0, expected: 0, noTranslate: 0 };
+  let unsolvedComments = 0;
+  let used = false;
+  for (const article of articles) {
+    const textStatus = article.textStatus(l);
+    if (textStatus === "unpublished") continue;
+    status.expected += 1;
+    if (textStatus === "noTranslation") status.noTranslate += 1;
+    if (textStatus === "unwritten") status.unedited += 1;
+    if (article.isFormulated(l)) used = true;
+    if (article.commentList && article.commentStatus === "open" && textStatus !== "noTranslation") unsolvedComments += 1;
+  }
+  return { status, unsolvedComments, used };
+}
+
+// written texts in language l whose last author is a translation service
+function countAutoTranslate(articles, l) {
+  let count = 0;
+  for (const article of articles) {
+    if (article.textStatus(l) === "written" && article.isTranslatedAutomated(l)) count += 1;
+  }
+  return count;
+}
+
+// main and second language of a User, or of a plain object (rule actor,
+// tests) that may carry mainLang/secondLang
+function languagePair(user) {
+  if (typeof user.getMainLang === "function") return [user.getMainLang(), user.getSecondLang()];
+  return [user.mainLang, user.secondLang];
+}
+
+// which inbox list an article belongs to for a user: a comment that
+// mentions the user directly wins, then one for the main language (or
+// "all"), then one for the second language, whatever their order in the
+// comment list; solved comments count for nobody
+function mentionKind(article, osmUser, mainLang, secondLang) {
+  if (!article.commentList || article.commentStatus === "solved") return null;
+  const texts = article.commentList.map((entry) => entry.text);
+  if (texts.some((t) => util.mentions(t, osmUser))) return "userMention";
+  if (texts.some((t) => (mainLang && util.mentions(t, mainLang)) || util.mentions(t, "all"))) return "mainLangMention";
+  if (secondLang && texts.some((t) => util.mentions(t, secondLang))) return "secondLangMention";
+  return null;
+}
 
 function create (proto) {
   debug("create");

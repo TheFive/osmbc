@@ -61,13 +61,14 @@ block content
       h2= "Inbox Direct Mention:"
 
   for blog in bloglist
-    if blog._userMention && blog._userMention.length>0
+    - const mentions = layout.mentionsOf(blog)
+    if mentions.userMention.length>0
       .row
         .col-1
         .col-11
           h4=blog.name+" "+blog.getStatus(layout.left_lang)
-          p="User mentions: "+blog._userMention.length
-        for article in blog._userMention
+          p="User mentions: "+mentions.userMention.length
+        for article in mentions.userMention
           +displayArticle(article,left_lang)
 
   if (layout.user.access === "full")
@@ -77,22 +78,23 @@ block content
         h2= "Inbox Indirect Mention:"
 
     for blog in bloglist
-      if blog._mainLangMention && blog._mainLangMention.length > 0
+      - const mentions = layout.mentionsOf(blog)
+      if mentions.mainLangMention.length > 0
         .row
           .col-1
           .col-11
             h4=blog.name+" "+blog.getStatus(layout.left_lang)
-            p=left_lang+" mentions: "+blog._mainLangMention.length
-          for article in blog._mainLangMention
+            p=left_lang+" mentions: "+mentions.mainLangMention.length
+          for article in mentions.mainLangMention
                 +displayArticle(article,left_lang)
 
-      if blog._secondLangMention && blog._secondLangMention.length > 0
+      if mentions.secondLangMention.length > 0
         .row
           .col-1
           .col-11
             h4=blog.name+" "+blog.getStatus(layout.right_lang)
-            p=right_lang+" mentions: "+blog._secondLangMention.length
-          for article in blog._secondLangMention
+            p=right_lang+" mentions: "+mentions.secondLangMention.length
+          for article in mentions.secondLangMention
                 +displayArticle(article,left_lang)
 
   p.row

@@ -25,6 +25,7 @@ import app from "../app.js";
 
 import pgMap from "../model/pgMap.js";
 import db from "../model/db.js";
+import { reportTableWrite } from "../model/tableWrites.js";
 import blogModule from "../model/blog.js";
 import articleModule from "../model/article.js";
 import logModule from "../model/logModule.js";
@@ -157,7 +158,11 @@ function importData(data, callback) {
             db.query.bind(null, "ALTER SEQUENCE blog_id_seq RESTART WITH 1;"),
             db.query.bind(null, "ALTER SEQUENCE article_id_seq RESTART WITH 1;"),
             db.query.bind(null, "ALTER SEQUENCE changes_id_seq RESTART WITH 1;")
-          ], cb0a);
+          ], function(err) {
+            // direct SQL bypasses pgMap: tell the caches (model/tableWrites.js)
+            ["usert", "blog", "article", "changes", "config"].forEach(reportTableWrite);
+            cb0a(err);
+          });
         } else return cb0a();
       },
       function importAllUsers(cb1) {

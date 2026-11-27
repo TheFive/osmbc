@@ -43,7 +43,6 @@ import createDOMPurify from "dompurify";
 
 
 import _debug from "debug";
-import { NO_CATEGORY_YET, UNPUBLISHED } from "../model/specialCategories.js";
 const debug = _debug("OSMBC:routes:article");
 
 const router      = Router();
@@ -985,21 +984,12 @@ function renderList(req, res, next) {
       articleModule.find(query, order, function(err, result) {
         debug("renderList->findArticleFunction->find");
         if (err) return callback(err);
+        // same rule as the blog's status counts (Article.textStatus)
         if (typeof (writtenLang) === "string") {
-          result = result.filter(function(article) {
-            return article.categoryEN !== UNPUBLISHED && article.isFormulated(writtenLang);
-          });
+          result = result.filter((article) => article.textStatus(writtenLang) === "written");
         }
         if (typeof (unwrittenLang) === "string") {
-          // Mirrors the "unedited" count in Blog.prototype.calculateDerived:
-          // not unpublished, not deliberately left untranslated, and either
-          // no markdown yet or still sitting in the placeholder category.
-          result = result.filter(function(article) {
-            if (article.categoryEN === UNPUBLISHED) return false;
-            const m = article["markdown" + unwrittenLang];
-            if (m === "no translation") return false;
-            return !m || m === "" || article.categoryEN === NO_CATEGORY_YET;
-          });
+          result = result.filter((article) => article.textStatus(unwrittenLang) === "unwritten");
         }
         articles = result;
         callback();
