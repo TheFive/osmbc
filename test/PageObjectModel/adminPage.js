@@ -47,7 +47,7 @@ class AdminPage extends Page {
   async clickCreateBlogMenu(options) {
     await this.assertPage();
     should.exist(options.confirm);
-    should(await this.isPage());
+    should(await this.isPage()).be.true();
     // Tools Menu
     const menu = await this._driver.findElement(By.xpath('//*[@id="navbarSupportedContent"]/ul[1]/li[2]'));
     await menu.click();

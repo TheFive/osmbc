@@ -140,18 +140,18 @@ describe("uc.article", function() {
         await ap.selectAndPasteTextInMarkdown("EN", 0, 0, Key.chord(cmdCtrl, "v"));
         // should be replaced to a wait on reaction on Browser, unclear what to wait for
 
-        should(await ap.waitMarkdownInputToBe("EN", "[](https://Link-to-be-insert.ed)the origin text."));
+        await ap.waitMarkdownInputToBe("EN", "[](https://Link-to-be-insert.ed)the origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 16, 16, Key.chord(cmdCtrl, "v"));
         // should be replaced to a wait on reaction on Browser, unclear what to wait for
 
-        should(await ap.waitMarkdownInputToBe("EN", "the origin text.[](https://Link-to-be-insert.ed)"));
+        await ap.waitMarkdownInputToBe("EN", "the origin text.[](https://Link-to-be-insert.ed)");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 4, 4, Key.chord(cmdCtrl, "v"));
 
-        should(await ap.waitMarkdownInputToBe("EN", "the [](https://Link-to-be-insert.ed)origin text."));
+        await ap.waitMarkdownInputToBe("EN", "the [](https://Link-to-be-insert.ed)origin text.");
       });
       it("should return new value if link is inserted with selection", async function() {
         const ap = osmbcApp.getArticlePage();
@@ -163,18 +163,18 @@ describe("uc.article", function() {
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 0, 3, Key.chord(cmdCtrl, "v"));
 
-        should(await ap.waitMarkdownInputToBe("EN", "[the](https://Link-to-be-insert.ed) origin text."));
+        await ap.waitMarkdownInputToBe("EN", "[the](https://Link-to-be-insert.ed) origin text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 4, 10, Key.chord(cmdCtrl, "v"));
         // await ap.waitMarkdownInputToBe("EN", "the [origin](https://Link-to-be-insert.ed) text.");
         // was: by waiting error occurs due to timing isshue
-        should(await ap.waitMarkdownInputToBe("EN", "the [origin](https://Link-to-be-insert.ed) text."));
+        await ap.waitMarkdownInputToBe("EN", "the [origin](https://Link-to-be-insert.ed) text.");
 
         await ap.fillMarkdownInput("EN", "the origin text.");
         await ap.selectAndPasteTextInMarkdown("EN", 11, 16, Key.chord(cmdCtrl, "v"));
 
-        should(await ap.waitMarkdownInputToBe("EN", "the origin [text.](https://Link-to-be-insert.ed)"));
+        await ap.waitMarkdownInputToBe("EN", "the origin [text.](https://Link-to-be-insert.ed)");
       });
     });
     /* eslint-enable mocha/no-synchronous-tests */
