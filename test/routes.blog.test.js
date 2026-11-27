@@ -253,10 +253,8 @@ describe("routes/blog", function() {
 
       const blog = await blogModule.findOne({ name: "WN999" });
       should(blog.teamStringDE).eql("Modern override for WN999");
-      blog.createTeamString("DE", function (err, result) {
-        should(err).eql(null);
-        should(result).eql("Modern override for WN999");
-      });
+      const result = await new Promise((resolve, reject) => blog.createTeamString("DE", (err, r) => err ? reject(err) : resolve(r)));
+      should(result).eql("Modern override for WN999");
     });
   });
   describe("route POST /blog/:blog_id/setReviewComment", function () {

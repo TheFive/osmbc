@@ -974,18 +974,16 @@ describe("router/article", function() {
         version: 1
       });
 
-      logModule.find({ table: "article" }, function(err, result) {
-        should.not.exist(err);
-        should(result[1]).eql({
-          oid: "2",
-          blog: "BLOG",
-          user: "TestUser",
-          table: "article",
-          property: "action",
-          to: "Review Change of markdownDE",
-          timestamp: "2016-05-25T20:00:00.000Z",
-          id: "10"
-        });
+      const result = await logModule.find({ table: "article" });
+      should(result[1]).eql({
+        oid: "2",
+        blog: "BLOG",
+        user: "TestUser",
+        table: "article",
+        property: "action",
+        to: "Review Change of markdownDE",
+        timestamp: "2016-05-25T20:00:00.000Z",
+        id: "10"
       });
     });
     it("should fail with wrong old Values", async function () {

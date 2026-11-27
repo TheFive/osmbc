@@ -126,20 +126,18 @@ describe("router/api", function() {
 
       should(body.data).eql("Article Collected in TBC.");
       should(body.status).eql(200);
-      articleModule.find({}, function(err, articles) {
-        should.not.exist(err);
-        should(articles).eql([
-          {
-            id: "1",
-            version: 2,
-            categoryEN: "-- no category yet --",
-            blog: "TBC",
-            title: "NOT GIVEN",
-            collection: "simple Text",
-            firstCollector: "TheFive"
-          }
-        ]);
-      });
+      const articles = await articleModule.find({});
+      should(articles).eql([
+        {
+          id: "1",
+          version: 2,
+          categoryEN: "-- no category yet --",
+          blog: "TBC",
+          title: "NOT GIVEN",
+          collection: "simple Text",
+          firstCollector: "TheFive"
+        }
+      ]);
     });
     it("should work with alternative email", async function () {
       nock("https://www.link.org")
@@ -152,20 +150,18 @@ describe("router/api", function() {
 
       should(body.data).eql("Article Collected in TBC.");
       should(body.status).eql(200);
-      articleModule.find({}, function(err, articles) {
-        should.not.exist(err);
-        should(articles).eql([
-          {
-            id: "1",
-            version: 2,
-            categoryEN: "-- no category yet --",
-            blog: "TBC",
-            title: "Page Title",
-            collection: "simple Text with https://www.link.org/something",
-            firstCollector: "TheFive"
-          }
-        ]);
-      });
+      const articles = await articleModule.find({});
+      should(articles).eql([
+        {
+          id: "1",
+          version: 2,
+          categoryEN: "-- no category yet --",
+          blog: "TBC",
+          title: "Page Title",
+          collection: "simple Text with https://www.link.org/something",
+          firstCollector: "TheFive"
+        }
+      ]);
     });
     it("should work more infos", async function () {
       const body = await axios.post(
@@ -175,22 +171,20 @@ describe("router/api", function() {
 
       should(body.data).eql("Article Collected in TBC.");
       should(body.status).eql(200);
-      articleModule.find({}, function(err, articles) {
-        should.not.exist(err);
-        should(articles).eql([
-          {
-            id: "1",
-            version: 2,
-            categoryEN: "category given",
-            markdownDE: "Hier der erste Text",
-            markdownEN: "Some Text in English",
-            blog: "TBC",
-            title: "Title",
-            collection: "simple Text with https://www.link.ong/something",
-            firstCollector: "TheFive"
-          }
-        ]);
-      });
+      const articles = await articleModule.find({});
+      should(articles).eql([
+        {
+          id: "1",
+          version: 2,
+          categoryEN: "category given",
+          markdownDE: "Hier der erste Text",
+          markdownEN: "Some Text in English",
+          blog: "TBC",
+          title: "Title",
+          collection: "simple Text with https://www.link.ong/something",
+          firstCollector: "TheFive"
+        }
+      ]);
     });
     it("should work more and set markdown correct", async function () {
       const body = await axios.post(
@@ -201,21 +195,19 @@ describe("router/api", function() {
 
       should(body.data).eql("Article Collected in TBC.");
       should(body.status).eql(200);
-      articleModule.find({}, function(err, articles) {
-        should.not.exist(err);
-        should(articles).eql([
-          {
-            id: "1",
-            version: 2,
-            categoryEN: "-- no category yet --",
-            markdownDE: "Hier der erste Text",
-            blog: "TBC",
-            title: "Title",
-            collection: "simple Text with https://www.link.ong/something",
-            firstCollector: "TheFive"
-          }
-        ]);
-      });
+      const articles = await articleModule.find({});
+      should(articles).eql([
+        {
+          id: "1",
+          version: 2,
+          categoryEN: "-- no category yet --",
+          markdownDE: "Hier der erste Text",
+          blog: "TBC",
+          title: "Title",
+          collection: "simple Text with https://www.link.ong/something",
+          firstCollector: "TheFive"
+        }
+      ]);
     });
     it("should collect with simple GET call", async function () {
       const body = await axios.get(
@@ -224,20 +216,18 @@ describe("router/api", function() {
 
       should(body.data).eql("https://localhost:35043/article/1");
       should(body.status).eql(200);
-      articleModule.find({}, function(err, articles) {
-        should.not.exist(err);
-        should(articles).eql([
-          {
-            id: "1",
-            version: 2,
-            categoryEN: "-- no category yet --",
-            blog: "TBC",
-            title: "NOT GIVEN",
-            collection: "simple%20text",
-            firstCollector: "TheFive"
-          }
-        ]);
-      });
+      const articles = await articleModule.find({});
+      should(articles).eql([
+        {
+          id: "1",
+          version: 2,
+          categoryEN: "-- no category yet --",
+          blog: "TBC",
+          title: "NOT GIVEN",
+          collection: "simple%20text",
+          firstCollector: "TheFive"
+        }
+      ]);
     });
   });
 
