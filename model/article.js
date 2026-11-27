@@ -142,6 +142,19 @@ class Article {
     return false;
   }
 
+  /**
+   * Tells whether a guest may open, change and comment on this article:
+   * they collected it, or a comment mentions them (e.g. an editor asks
+   * them something). Full users need no such check.
+   * @param {string} OSMUser name of the guest
+   * @returns {boolean} true if the guest may work on the article
+   */
+  isOpenForGuest(OSMUser) {
+    if (this.firstCollector === OSMUser) return true;
+    if (!Array.isArray(this.commentList)) return false;
+    return this.commentList.some((comment) => util.mentions(comment.text, OSMUser));
+  }
+
   getCommentRead(user) {
     debug("Article.prototype.getCommentUnread");
     if (!this.commentList) return false;

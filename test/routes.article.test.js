@@ -715,6 +715,14 @@ describe("router/article", function() {
       should(article.version).eql(2);
       should(article.commentList.map((c) => c.text)).eql(["comment", "new comment"]);
     });
+    it("should save the comment of a guest mentioned in a comment", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      const body = await client.post(baseLink + "/article/3/witholdvalues", { addComment: "my answer" });
+      should(body.status).eql(HttpStatus.OK);
+      const article = await articleModule.findById(3);
+      should(article.commentList.map((c) => c.text)).eql(["comment for @TestUserNonExisting", "my answer"]);
+    });
     it("should keep no comment when the save fails (#914)", async function () {
       const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
       await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
@@ -1106,6 +1114,17 @@ describe("router/article", function() {
         expectedStatusCode: HttpStatus.FORBIDDEN,
         expectedMessage: "This article is not allowed for guests"
       }));
+  });
+  describe("route POST /:article_id/addComment/ by a mentioned guest", function() {
+    it("should let a guest answer a comment that mentions them", async function () {
+      const client = testutil.getWrappedAxiosClient({ maxRedirects: 10 });
+      await client.post(baseLink + "/login", { username: "TestUserNonExisting", password: "TestUserNonExisting" });
+      const body = await client.post(baseLink + "/article/3/addComment", { comment: "my answer" });
+      should(body.status).eql(HttpStatus.OK);
+      const article = await articleModule.findById(3);
+      should(article.commentList.map((c) => c.text)).eql(["comment for @TestUserNonExisting", "my answer"]);
+      should(article.commentList[1].user).eql("TestUserNonExisting");
+    });
   });
   describe("route POST /:article_id/editComment/", function() {
     const url = baseLink + "/article/2/editComment/0";
