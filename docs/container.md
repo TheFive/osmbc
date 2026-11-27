@@ -23,7 +23,7 @@ configuration keys are the same ([config.md](config.md)).
 ```text
 reverse proxy (host, TLS) ──> 127.0.0.1:3000 ──> osmbc ──┐   network "osmbc"
                                                          └──> osmbc-db (PostgreSQL)
-osmbc-backup.timer (daily) ──> osmbc-backup ──> pg_dump ──> backup/
+osmbc-backup.timer (daily) ──> osmbc-backup ──> pg_dump + editorial config ──> backup/
 ```
 
 | Unit (file in [`container/`](container/)) | What it is |
@@ -31,7 +31,7 @@ osmbc-backup.timer (daily) ──> osmbc-backup ──> pg_dump ──> backup/
 | `osmbc.network` | private network; the database is reachable only from it |
 | `osmbc-db.container` | PostgreSQL, data in `db/`, no published port |
 | `osmbc.container` | OSMBC, published on `127.0.0.1` only |
-| `osmbc-backup.container` | one-off job: `pg_dump` into `backup/` |
+| `osmbc-backup.container` | one-off job: `pg_dump` and a copy of the editorial config into `backup/` |
 | `osmbc-backup.timer` | starts the backup job daily (a plain systemd timer) |
 
 Logs go to stdout/stderr, so to the journal: `journalctl --user -u osmbc`.
@@ -101,7 +101,7 @@ mkdir -p ~/osmbc/config ~/osmbc/data ~/osmbc/db ~/osmbc/backup
 | `config/` | `/config` (read-only) | `config.production.yaml`, optional editorial file | **yes** (holds secrets, keep it private) |
 | `data/` | `/data` | `cache/` (rebuilt automatically), `profile/` (public profile pages), `log/` (mail and export log) | `profile/` optional (rebuilt when users save their settings), rest no |
 | `db/` | `/var/lib/postgresql` in `osmbc-db` | PostgreSQL's files | **no**: copying them while the database runs gives a broken copy; back up the dumps instead |
-| `backup/` | `/backup` in `osmbc-backup` | daily dumps | **yes** |
+| `backup/` | `/backup` in `osmbc-backup` | daily dumps and copies of the editorial config | **yes** |
 
 So a server backup only needs `config/` and `backup/`. OSMBC creates the
 subfolders of `data/` itself at start.
@@ -219,8 +219,11 @@ osmbc-tool() {
 osmbc-tool node import/createdb.js --createTables --createIndex --addUser <OSM user name>
 ```
 
-**Restore a dump** (moving from another server, or from `backup/`). Stop
-OSMBC, keep the database running, and replace the database:
+**Restore a dump** (moving from another server, or from `backup/`). The
+editorial config belongs to it: put the old server's file, or the
+`config.editorial-<time>.yaml` next to the dump, into
+`config/config.editorial.yaml`. Stop OSMBC, keep the database running,
+and replace the database:
 
 ```sh
 systemctl --user stop osmbc
@@ -270,8 +273,16 @@ Podman 6.2.1.
 `osmbc-db` over the network and writes
 `backup/osmbc-<YYYY-MM-DD_HHMM>.dump` (`pg_dump -Fc`, compressed; the time
 in the zone of `TZ=` in the unit), first
-under a `.part` name, so a failed dump never looks like a good one. Dumps
-older than 14 days are deleted. It uses the same PostgreSQL image as the
+under a `.part` name, so a failed dump never looks like a good one.
+
+Next to it, with the same time stamp, it puts
+`backup/config.editorial-<YYYY-MM-DD_HHMM>.yaml`, a copy of
+`config/config.editorial.yaml` (if that file exists under this name). The
+editorial settings (languages, export profiles, workflow rules) are kept
+by the editors on the server, so they are data like the database and are
+restored together with it. The technical config is not copied: it holds
+the secrets and is generated from wherever it is kept (e.g. Ansible).
+Dumps and copies older than 14 days are deleted. It uses the same PostgreSQL image as the
 database, because `pg_dump` must not be older than the server.
 
 ```sh
@@ -282,7 +293,9 @@ pg_restore --list ~/osmbc/backup/<file>.dump | head   # check a dump
 
 The dump contains everything in the database, including the sessions
 table and the users' settings; keep `backup/` as private as `config/`.
-To restore one, see [section 7](#7-new-database-or-restoring-a-dump).
+To restore one, see [section 7](#7-new-database-or-restoring-a-dump);
+copy the editorial config of the same time back to
+`config/config.editorial.yaml`.
 
 ## 9. Updating
 
