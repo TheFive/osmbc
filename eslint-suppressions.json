@@ -78,7 +78,7 @@
   },
   "model/logModule.js": {
     "jsdoc/require-jsdoc": {
-      "count": 10
+      "count": 9
     }
   },
   "model/osmcalLoader.js": {
