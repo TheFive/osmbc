@@ -206,7 +206,7 @@ describe("views/user", function() {
     await userPage.fillEMail("test@test.org");
     await userPage.clickSave();
 
-    should(mailChecker.calledOnce);
+    should(mailChecker.calledOnce).be.true();
 
     // find verification link in email
     const mail = mailChecker.getCall(0).args[0].text;
