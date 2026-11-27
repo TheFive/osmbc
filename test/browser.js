@@ -183,6 +183,10 @@ async function startBrowser(options = {}) {
     });
     if (device.deviceMetrics.touch) await driver.sendDevToolsCommand("Emulation.setTouchEmulationEnabled", { enabled: true });
   }
+  // dates formatted in the browser (comment times, localtime.js) look the
+  // same on every machine and in CI, so HTML snapshots stay comparable
+  await driver.sendDevToolsCommand("Emulation.setLocaleOverride", { locale: "en-US" });
+  await driver.sendDevToolsCommand("Emulation.setTimezoneOverride", { timezoneId: "Europe/Berlin" });
   // pageLoad below the mocha timeout, so a hanging load fails with a stack
   // trace of the step instead of a bare "Timeout of 20000ms exceeded"
   await driver.manage().setTimeouts({ implicit: 700, script: 700, pageLoad: 10000 });

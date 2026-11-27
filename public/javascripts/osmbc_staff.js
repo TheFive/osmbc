@@ -5,7 +5,7 @@
 /* exported chooseLanguageSet */
 /* exported setUserConfig */
 /* exported addSpinnerAndSubmit */
-/* exported fitToContentIn, fitToContent */
+/* exported fitToContentIn, fitToContent, showCommentTimes */
 
 
 // Link check for #linkArea and the .preview elements.
@@ -293,6 +293,33 @@ function fitToContentIn(container) {
 }
 jQuery(document).on("input focusin", "textarea[data-fit-content]", function () { fitToContent(this); });
 jQuery(function () { fitToContentIn(document); });
+
+// comment times (commentArea.pug): the server writes "8 hours ago"; from
+// 24 hours on the date and time in the browser's timezone are shown
+// instead, so the order of older comments is clear on phones too. The
+// other form is the tooltip. Called on page load and by redrawFunc().
+const DAY_MS = 24 * 60 * 60 * 1000;
+function formatCommentTime(date) {
+  const options = { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" };
+  if (date.getFullYear() !== new Date().getFullYear()) options.year = "numeric";
+  return date.toLocaleString(undefined, options);
+}
+function showCommentTimes(container) {
+  jQuery(container).find("time[data-comment-time]").each(function () {
+    const date = new Date(this.getAttribute("datetime"));
+    if (Number.isNaN(date.getTime())) return;
+    const fromNow = this.dataset.fromNow || this.textContent;
+    this.dataset.fromNow = fromNow;
+    const exact = formatCommentTime(date);
+    if (Date.now() - date.getTime() >= DAY_MS) {
+      this.textContent = exact;
+      this.title = fromNow;
+    } else {
+      this.title = exact;
+    }
+  });
+}
+jQuery(function () { showCommentTimes(document); });
 
 // history.pug: open the full text of a change, but not when a link was hit
 jQuery(document).on("click", "[data-history-toggle]", function (event) {

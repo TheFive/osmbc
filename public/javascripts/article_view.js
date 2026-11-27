@@ -1,6 +1,6 @@
 
 
-/* global highlightWrongLinks, urlWoErrorWhileEdit, fitToContentIn */
+/* global highlightWrongLinks, urlWoErrorWhileEdit, fitToContentIn, showCommentTimes */
 
 /* exported myclick, ondragstartflag */
 /* exported callAndRedraw, setNoTranslation, translate */
@@ -856,6 +856,7 @@ function redrawFunc(redraw) {
     for (k in json) {
       $(k).html(json[k]);
       fitToContentIn(k);
+      showCommentTimes(k);
     }
   });
 }

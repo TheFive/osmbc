@@ -309,6 +309,17 @@ class ArticlePage extends StandardPage {
     return this._driver.findElement(By.id("languageFlags")).isDisplayed();
   }
 
+  // comment area: shown text and tooltip of every comment time, in order
+  async getCommentTimes() {
+    await this.assertPage();
+    const times = await this._driver.findElements(By.css("#commentArea time[data-comment-time]"));
+    const result = [];
+    for (const time of times) {
+      result.push({ text: await time.getText(), title: await time.getAttribute("title") });
+    }
+    return result;
+  }
+
   // comment area: number of comments marked unread (envelope)
   async countUnreadComments() {
     return (await this._driver.findElements(By.css("#commentArea button[aria-label='Mark as read']"))).length;
