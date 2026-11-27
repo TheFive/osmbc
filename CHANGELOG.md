@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.11.1](https://github.com/TheFive/osmbc/tree/4.11.1) (2026-11-27)
+
+[Full Changelog](https://github.com/TheFive/osmbc/compare/4.11.0...4.11.1)
+
+**Fixed bugs:**
+
+- wiki: conflict check on every change, input checks in the store
+- changes: key the diff cache by content, not by change id
+
+**Performance:**
+
+- article: render partial views and mails with a template cache [#1182](https://github.com/TheFive/osmbc/issues/1182)
+- layout: cache the menu bar blogs instead of loading them per request
+- changes,users: time range for the history log, pages for the user list
+- changes: skip the character diff and cache the history diffs
+
 ## [4.11.0](https://github.com/TheFive/osmbc/tree/4.11.0) (2026-11-27)
 
 [Full Changelog](https://github.com/TheFive/osmbc/compare/4.10.0...4.11.0)
