@@ -8,6 +8,7 @@ import { osmbcMarkdown } from "../util/md_util.js";
 import { strict as assert } from "assert";
 
 import Renderer from "./Renderer.js";
+import { UNPUBLISHED } from "../model/specialCategories.js";
 
 class HtmlRenderer extends Renderer {
   /**
@@ -175,7 +176,7 @@ class HtmlRenderer extends Renderer {
   articleTitle(lang, article) {
     debug("HtmlRenderer.prototype.article");
     let text = article.displayTitle(999);
-    if (article.categoryEN === "--unpublished--") {
+    if (article.categoryEN === UNPUBLISHED) {
       let reason2 = "No Reason given";
       if (article.unpublishReason) reason2 = article.unpublishReason;
       text += "<br>" + reason2;

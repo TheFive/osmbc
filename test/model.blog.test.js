@@ -1404,11 +1404,11 @@ describe("model/blog", function() {
         sinon.stub(blogRenderer, "createRenderer").callsFake(function(type, blog, options) {
           const realRenderer = originalCreateRenderer(type, blog, options);
           return {
-            renderBlog(lang, data, createEmptyForOpenLanguage) {
+            renderBlog(lang, data) {
               if (blog.name === "WN256" && lang === "EN") {
                 throw new Error("Simulated render failure for WN256/EN");
               }
-              return realRenderer.renderBlog(lang, data, createEmptyForOpenLanguage);
+              return realRenderer.renderBlog(lang, data);
             }
           };
         });

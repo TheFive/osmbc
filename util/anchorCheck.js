@@ -5,6 +5,7 @@
 // emits these ids, so they can only be checked against the database.
 
 import articleModule from "../model/article.js";
+import { UNPUBLISHED } from "../model/specialCategories.js";
 
 export const ANCHOR_RE = /^#wn(\d+)_(\d+)$/i;
 // anchors as link targets inside markdown, e.g. "](#wn796_33564)"
@@ -28,7 +29,7 @@ export function checkAnchor(anchor, expectedBlog, callback) {
     if (err) return callback(err);
     if (!article) return callback(null, `Anchor "${anchor}" refers to a non-existing article`);
     if (article.blog !== issue) return callback(null, `Anchor "${anchor}" points to an article in ${article.blog}, not ${issue}`);
-    if (article.categoryEN === "--unpublished--") return callback(null, `Anchor "${anchor}" points to an unpublished article`);
+    if (article.categoryEN === UNPUBLISHED) return callback(null, `Anchor "${anchor}" points to an unpublished article`);
     return callback(null, "OK");
   });
 }

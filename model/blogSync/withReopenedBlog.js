@@ -14,9 +14,9 @@
 // restoreOverrides (optional): fields to restore to a DIFFERENT value than
 // what the blog originally had, merged on top of the captured original
 // state right before the final setAndSave. Exists for close<LANG>: found
-// via a real Hugo-export diff that the renderer (render/Renderer.js) skips
-// a language's content entirely unless close<LANG> is true
-// (render/Renderer.js: `if (onlyClosed && !this.blog["close"+lang])`), so
+// via a real Hugo-export diff that the all-languages Markdown export
+// (model/blog.js) writes only the header (`renderHeaderOnly`) for a
+// language unless close<LANG> is true, so
 // syncing that flag matters for correct output - but it must never be set
 // to its new (possibly `true`) value *before* `action` runs
 // Article.prototype.isChangeAllowed() locks markdown<LANG> once that

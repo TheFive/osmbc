@@ -28,6 +28,7 @@ import _debug from "debug";
 import _markdownIt from "markdown-it";
 import { ZipArchive } from "archiver";
 import blogRenderer from "../render/BlogRenderer.js";
+import { NO_CATEGORY_YET, UNPUBLISHED } from "./specialCategories.js";
 const markdown = _markdownIt();
 const debug = _debug("OSMBC:model:blog");
 
@@ -512,7 +513,7 @@ class Blog {
       }
       const anchors = new Set();
       (self.#articles || []).forEach(function(article) {
-        if (article.categoryEN === "--unpublished--") return;
+        if (article.categoryEN === UNPUBLISHED) return;
         findAnchors(article["markdown" + lang]).forEach((anchor) => anchors.add(anchor));
       });
       eachSeries(Array.from(anchors), function(anchor, cb) {
@@ -777,7 +778,7 @@ class Blog {
         eachLimit(articleList, 1, function (article, cb2) {
           debug("translateArticles.forEach");
           if (article.categoryEN === "Upcoming Events") return cb2();
-          if (article.categoryEN === "--unpublished--") return cb2();
+          if (article.categoryEN === UNPUBLISHED) return cb2();
 
           // to lang already defined
           if (article["markdown" + toLang] && article["markdown" + toLang].length > 0) return cb2();
@@ -900,7 +901,7 @@ class Blog {
             }
             r.predecessorId = pid;
           }
-          if (options.warningOnEmptyMarkdown && r.categoryEN !== "--unpublished--" &&
+          if (options.warningOnEmptyMarkdown && r.categoryEN !== UNPUBLISHED &&
             (!r["markdown" + options.lang] || r["markdown" + options.lang].trim() === "")) {
             containsEmptyArticlesWarning = true;
           }
@@ -1158,8 +1159,11 @@ class Blog {
           // Use profile-specified options or default to production for HTML
           const resolvedOptions = rendererOptions || ((rendererType === "HTML") ? { target: "production" } : undefined);
           const renderer = blogRenderer.createRenderer(rendererType, self, resolvedOptions);
-          const createEmptyForOpenLanguage = exportAllLanguagesInMarkdown && self["close" + exportLang] !== true;
-          const result = renderer.renderBlog(exportLang, data, createEmptyForOpenLanguage);
+          // all languages as Markdown: a still open language gets a file
+          // with the header only, its articles are not ready yet
+          const result = (exportAllLanguagesInMarkdown && !isClosed(exportLang))
+            ? renderer.renderHeaderOnly(exportLang, data)
+            : renderer.renderBlog(exportLang, data);
 
           if (asMarkdown && multiExport) {
             bundleWriter.append(result, { fileName: markdownExportFileName(exportLang) });
@@ -1336,13 +1340,13 @@ class Blog {
             const article = result[j];
             const c = article.categoryEN;
             if (c === "Upcoming Events") self._upcomingEvents = article;
-            if (c === "--unpublished--") continue;
+            if (c === UNPUBLISHED) continue;
             statusLang.expected += 1;
             const m = article["markdown" + l];
             if (m === "no translation") {
               statusLang.noTranslate += 1;
             } else {
-              if (!m || m === "" || c === "-- no category yet --") {
+              if (!m || m === "" || c === NO_CATEGORY_YET) {
                 statusLang.unedited += 1;
               } else {
                 if (article.isTranslatedAutomated(l)) {
@@ -1772,7 +1776,7 @@ function buildExportZipForBlogLangs(blogsWithLangs, profileConfig, onArchiveRead
         let content;
         try {
           const renderer = blogRenderer.createRenderer(rendererType, blog, rendererOptions);
-          content = renderer.renderBlog(exportLang, data, false);
+          content = renderer.renderBlog(exportLang, data);
         } catch (renderErr) {
           failures.push({ blog, lang: exportLang, error: renderErr });
           return langCb();

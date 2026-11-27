@@ -21,6 +21,7 @@ import logModule from "../model/logModule.js";
 import configModule from "../model/config.js";
 import pgMap from "../model/pgMap.js";
 import translator from "../model/translator.js";
+import { UNPUBLISHED } from "./specialCategories.js";
 
 const debug = _debug("OSMBC:model:article");
 
@@ -258,13 +259,13 @@ class Article {
       data.commentStatus = "open";
     }
 
-    if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
+    if (data.categoryEN === UNPUBLISHED || data.blog === "Trash") {
       if ((!data.unpublishReason || data.unpublishReason.trim() === "") &&
         (!self.unpublishReason || self.unpublishReason.trim() === "")) {
         return callback(new Error("Missing reason for unpublishing article."));
       }
     }
-    if (self.categoryEN !== "--unpublished--" && data.blog === "Trash") {
+    if (self.categoryEN !== UNPUBLISHED && data.blog === "Trash") {
       return callback(new Error("Only unpublished articles can be moved to trash."));
     }
 
@@ -294,7 +295,7 @@ class Article {
       },
       function addCommentWhenUnpublished(cb) {
         debug("addCommentWhenUnpublished");
-        if (data.categoryEN === "--unpublished--" || data.blog === "Trash") {
+        if (data.categoryEN === UNPUBLISHED || data.blog === "Trash") {
           let text = "#solved because set to --unpublished--.\n\nReason: " + data.unpublishReason;
           if (data.unpublishReference) text += "\n" + data.unpublishReference;
           comments.push(text);
@@ -541,7 +542,7 @@ class Article {
               let dropIt = false;
               if (result[i].id === self.id) dropIt = true;
               if (result[i].blog === "Trash") dropIt = true;
-              if (result[i].categoryEN === "--unpublished--") dropIt = true;
+              if (result[i].categoryEN === UNPUBLISHED) dropIt = true;
               if (dropIt) {
                 result.splice(i, 1);
               }

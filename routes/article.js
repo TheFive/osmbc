@@ -43,6 +43,7 @@ import createDOMPurify from "dompurify";
 
 
 import _debug from "debug";
+import { NO_CATEGORY_YET, UNPUBLISHED } from "../model/specialCategories.js";
 const debug = _debug("OSMBC:routes:article");
 
 const router      = Router();
@@ -986,7 +987,7 @@ function renderList(req, res, next) {
         if (err) return callback(err);
         if (typeof (writtenLang) === "string") {
           result = result.filter(function(article) {
-            return article.categoryEN !== "--unpublished--" && article.isFormulated(writtenLang);
+            return article.categoryEN !== UNPUBLISHED && article.isFormulated(writtenLang);
           });
         }
         if (typeof (unwrittenLang) === "string") {
@@ -994,10 +995,10 @@ function renderList(req, res, next) {
           // not unpublished, not deliberately left untranslated, and either
           // no markdown yet or still sitting in the placeholder category.
           result = result.filter(function(article) {
-            if (article.categoryEN === "--unpublished--") return false;
+            if (article.categoryEN === UNPUBLISHED) return false;
             const m = article["markdown" + unwrittenLang];
             if (m === "no translation") return false;
-            return !m || m === "" || article.categoryEN === "-- no category yet --";
+            return !m || m === "" || article.categoryEN === NO_CATEGORY_YET;
           });
         }
         articles = result;

@@ -2,6 +2,7 @@ import _debug from "debug";
 const debug = _debug("OSMBC:render:Renderer");
 
 import config from "../config.js";
+import { NO_CATEGORY_YET, UNPUBLISHED } from "../model/specialCategories.js";
 
 
 class Renderer {
@@ -62,7 +63,7 @@ class Renderer {
       renderedArticle = this._renderArticleStandard(lang, article);
     }
 
-    if (article.categoryEN === "--unpublished--") {
+    if (article.categoryEN === UNPUBLISHED) {
       renderedArticle = this._renderArticleUnpublished(renderedArticle, article);
     }
 
@@ -175,81 +176,59 @@ class Renderer {
   }
 
   /**
-   * Renders the complete blog for the given language.
-   * Iterates over all registered categories, renders articles within them,
-   * and appends a warning for any articles in unregistered categories.
+   * Renders only the header of the issue (e.g. Hugo front matter with the
+   * lead picture), no articles. Used for a language that is still open
+   * when all languages are exported at once.
    * @param {string} lang - The language code.
-   * @param {object} articleData - Object containing `articles` map and `teamString`.
-   * @param {boolean} [onlyClosed=false] - If true, returns only the front text for unclosed blogs.
+   * @param {object} articleData - Result of `blog.getPreviewData` (only `articles.Picture` is read).
+   * @returns {string} The header markup.
+   */
+  renderHeaderOnly(lang, articleData) {
+    return this._generateFrontText(lang, articleData.articles.Picture || []);
+  }
+
+  /**
+   * Renders the complete blog for the given language: header, the
+   * categories in the blog's order, a warning for articles in categories
+   * the blog does not list, and the team line. Does not change
+   * `articleData`, so the same data can be rendered again.
+   * @param {string} lang - The language code.
+   * @param {object} articleData - Result of `blog.getPreviewData`: `articles` map, `teamString`, `containsEmptyArticlesWarning`.
    * @returns {string} The fully rendered blog markup.
    */
-  renderBlog(lang, articleData, onlyClosed = false) {
+  renderBlog(lang, articleData) {
     debug("renderBlog");
-
     const articles = articleData.articles;
-    const pictureArticles = articles.Picture || [];
-    const teamString = articleData.teamString;
-    let preview = this._generateFrontText(lang, pictureArticles);
-
-    if (onlyClosed && !this.blog["close" + lang]) {
-        return preview;
-    }
-    const blog = this.blog;
-    let i, j;
-    preview += this.subtitle(lang);
-    const clist = blog.getCategories();
-
+    let preview = this.renderHeaderOnly(lang, articleData) + this.subtitle(lang);
     if (articleData.containsEmptyArticlesWarning) {
       preview += this._containsEmptyArticlesWarning(lang);
     }
 
-    // Generate the blog result along the categories
-    for (i = 0; i < clist.length; i++) {
-      const category = clist[i].EN;
-
-      // ignore any "unpublished" category not in edit mode
-      if (category === "--unpublished--") continue;
-
-      // articles without a real category assigned yet are unfinished
-      // editorial work (same tier as empty markdown, see
-      // runAutoEditMode's statusCount), not intended publish content -
-      // skip them here too, in case this placeholder ever ends up
-      // registered as one of the blog's own categories (real case: WN230).
-      if (category === "-- no category yet --") continue;
-
-      // If the category exists, generate HTML for it
-      if (typeof (articles[category]) !== "undefined") {
-        debug("Generating HTML for category %s", category);
-        let htmlForCategory = "";
-
-        for (j = 0; j < articles[category].length; j++) {
-          const row = articles[category][j];
-
-          const articleMarkdown = this.renderArticle(lang, row);
-
-          htmlForCategory += articleMarkdown + "\n\n";
-        }
-        const header = this.categoryTitle(lang, clist[i]);
-
-        htmlForCategory = header + this._listAroundArticles(htmlForCategory);
-
-        preview += htmlForCategory;
-        delete articles[category];
-      }
+    // Unpublished and not yet categorised articles are not part of the
+    // issue, also when a blog lists them as categories (real case: WN230).
+    const done = new Set([UNPUBLISHED, NO_CATEGORY_YET]);
+    for (const category of this.blog.getCategories()) {
+      const name = category.EN;
+      if (done.has(name) || articles[name] === undefined) continue;
+      done.add(name);
+      preview += this._renderCategory(lang, category, articles[name]);
     }
-
-    delete articles["--unpublished--"];
-    // articles without a real category assigned yet are unfinished
-    // editorial work (same tier as empty markdown, see
-    // runAutoEditMode's statusCount), not intended publish content -
-    // drop them from the preview/export like unpublished articles, instead
-    // of falling through to the "missing category" warning below.
-    delete articles["-- no category yet --"];
-    for (const k in articles) {
-      preview += this._renderMissingCategory(k, articles[k]);
+    for (const name of Object.keys(articles)) {
+      if (!done.has(name)) preview += this._renderMissingCategory(name, articles[name]);
     }
+    return preview + this._formatTeamString(articleData.teamString);
+  }
 
-    return preview + this._formatTeamString(teamString);
+  /**
+   * Renders one category: its title and its articles as a list.
+   * @param {string} lang - The language code.
+   * @param {object} category - Category entry of the blog (`EN` plus translations).
+   * @param {Array<object>} articles - The articles in this category.
+   * @returns {string} The rendered category markup.
+   */
+  _renderCategory(lang, category, articles) {
+    const body = articles.map((article) => this.renderArticle(lang, article) + "\n\n").join("");
+    return this.categoryTitle(lang, category) + this._listAroundArticles(body);
   }
 }
 

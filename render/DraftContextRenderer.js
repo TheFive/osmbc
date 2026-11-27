@@ -73,7 +73,7 @@ class DraftContextRenderer extends MarkdownRenderer {
    */
   renderBlog(lang, articleData) {
     this._lang = lang;
-    return super.renderBlog(lang, articleData, false).trim();
+    return super.renderBlog(lang, articleData).trim();
   }
 }
 
