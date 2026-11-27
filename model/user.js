@@ -11,7 +11,7 @@ import config from "../config.js";
 import { load } from "cheerio";
 import axios from "axios";
 import InternalCache from "../util/internalCache.js";
-import { CONFLICT, UNAUTHORIZED, FORBIDDEN } from "http-status-codes";
+import { CONFLICT, UNAUTHORIZED, FORBIDDEN, BAD_REQUEST } from "http-status-codes";
 import _debug from "debug";
 const debug = _debug("OSMBC:model:user");
 
@@ -136,7 +136,7 @@ class User {
     series([
       function checkUserName(cb) {
         if (data.OSMUser && data.OSMUser !== self.OSMUser) {
-          find({ OSMUser: data.OSMUser }, function (err, result) {
+          findExact("OSMUser", data.OSMUser, function (err, result) {
             if (err) return callback(err);
             if (result && result.length) {
               const err = new Error("User >" + data.OSMUser + "< already exists.");
@@ -416,7 +416,9 @@ function createNewUser (proto, callback) {
       return callback(e);
     }
     const user = create(proto);
-    find({ OSMUser: user.OSMUser }, function (err, result) {
+    // a user may be created without a name (it is set later)
+    const sameName = (typeof user.OSMUser === "string") ? findExact.bind(null, "OSMUser", user.OSMUser) : (cb) => cb(null, []);
+    sameName(function (err, result) {
       if (err) return callback(err);
       if (result && result.length > 0) {
         const err = new Error("User >" + user.OSMUser + "< already exists.");
@@ -566,6 +568,31 @@ function find(obj, ord, callback) {
     });
   });
 }
+/**
+ * Finds the users whose field equals the value exactly. Unlike find(),
+ * the value is never read as an operator (`<`, `!=`, `IN(…)`, `%` …,
+ * see #1188), so OSM display names, mail addresses and other request
+ * values can be passed as they are. The field name comes from code.
+ * @param {string} field user field, e.g. "OSMUser", "email"
+ * @param {string} value value to compare with; anything but a string is
+ *   rejected with status 400
+ * @param {Function} [callback] (err, users); without it a promise
+ * @returns {Promise<User[]>|undefined} the users, if no callback is given
+ */
+function findExact(field, value, callback) {
+  assert(/^[A-Za-z]+$/.test(field), "field name from code expected");
+  function _findExact(cb) {
+    if (typeof value !== "string") {
+      const error = new Error(field + " must be a text");
+      error.status = BAD_REQUEST;
+      return cb(error);
+    }
+    pgMap.find({ table: "usert", create: create }, { sql: "where data->>'" + field + "' = $1", params: [value] }, cb);
+  }
+  if (callback) return _findExact(callback);
+  return new Promise((resolve, reject) => _findExact((err, result) => err ? reject(err) : resolve(result)));
+}
+
 function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
@@ -757,6 +784,7 @@ const userModule = {
   findOne: findOne,
   findById: findById,
   find: find,
+  findExact: findExact,
   migrateData: migrateData,
   create: create,
   createNewUser: createNewUser,

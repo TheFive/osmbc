@@ -102,7 +102,7 @@ function initialise(app) {
       config.logger.error(JSON.stringify(user, null, 2));
       return done(null, null);
     }
-    userModule.find({ OSMUser: user }, function(err, result) {
+    userModule.findExact("OSMUser", user, function(err, result) {
       if (err) return done(null, null);
       if (result.length === 1) {
         const overWriteRole = config.getValue("DefineRole");

@@ -115,6 +115,24 @@ describe("model/user", function() {
         });
       });
     });
+    describe("findExact", function() {
+      it("should find a user by the exact name", async function() {
+        const result = await userModule.findExact("OSMUser", "Test");
+        should(result.map((u) => u.OSMUser)).eql(["Test"]);
+      });
+      it("should never read the value as an operator (#1188)", async function() {
+        for (const name of ["<U", ">A", "!=Test", "GE:A", "IN(TheFive)", "INGO", "%", "Test%"]) {
+          should(await userModule.findExact("OSMUser", name)).eql([], name);
+        }
+      });
+      it("should reject a value that is not a text", async function() {
+        await should(userModule.findExact("OSMUser", ["Test"])).be.rejectedWith({ status: 400 });
+      });
+      it("should create a user whose name starts with an operator", async function() {
+        await userModule.createNewUser({ OSMUser: "IN(TheFive)", access: "guest" });
+        should((await userModule.findExact("OSMUser", "IN(TheFive)")).length).eql(1);
+      });
+    });
     describe("findById", function() {
       it("should find saved Object", function(bddone) {
         userModule.findById(idToFindLater, function(err, result) {

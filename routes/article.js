@@ -165,7 +165,8 @@ function renderArticleId(req, res, next) {
     // Find the associated blog for this article
 
     firstCollectorAccess: function (cb) {
-      userModule.find({ OSMUser: article.firstCollector }, function (err, userArray) {
+      if (typeof article.firstCollector !== "string") return cb();
+      userModule.findExact("OSMUser", article.firstCollector, function (err, userArray) {
         if (err) return cb(err);
         let user = null;
         if (userArray.length >= 0) user = userArray[0];
