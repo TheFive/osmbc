@@ -3,9 +3,7 @@
 import { Router } from "express";
 import { auto, series, parallel, each } from "async";
 import { strict as assert } from "assert";
-import { resolve } from "path";
 import { NOT_FOUND, FORBIDDEN, BAD_GATEWAY, BAD_REQUEST, CONFLICT } from "http-status-codes";
-import { renderFile } from "pug";
 
 
 
@@ -285,31 +283,28 @@ function renderArticleId(req, res, next) {
 }
 
 
+// The partial views below are rendered with res.render (callback form, no
+// response sent): it uses Express' template cache ("view cache", on in
+// production), pug's renderFile would compile the template on every call.
+
 function renderArticleIdVotes(req, res, next) {
   debug("renderArticleIdVotes");
-
-  const votes = configModule.getConfig("votes");
 
   const article = req.article;
   assert(article);
 
-
-  auto({},
-    function (err) {
-      debug("renderArticleIdVotes->finalFunction");
+  const rendervars = {
+    layout: res.rendervar.layout,
+    article: article,
+    votes: configModule.getConfig("votes")
+  };
+  res.render("voteButtons", rendervars, function(err, voteButtons) {
+    if (err) return next(err);
+    res.render("voteButtonsList", rendervars, function(err, voteButtonsList) {
       if (err) return next(err);
-
-
-      const rendervars = {
-        layout: res.rendervar.layout,
-        article: article,
-        votes: votes
-      };
-      const voteButtons = renderFile(resolve(config.getDirName(), "views", "voteButtons.pug"), rendervars);
-      const voteButtonsList = renderFile(resolve(config.getDirName(), "views", "voteButtonsList.pug"), rendervars);
       res.json({ "#voteButtons": voteButtons, "#voteButtonsList": voteButtonsList });
-    }
-  );
+    });
+  });
 }
 
 function renderArticleIdCommentArea(req, res, next) {
@@ -324,32 +319,24 @@ function renderArticleIdCommentArea(req, res, next) {
   if (req.query.editComment) params.editComment = req.query.editComment;
 
 
-  auto({
-    accessMap: createAccessMapFn(res.rendervar.layout.activeLanguages)
-  },
-  function (err, result) {
+  createAccessMapFn(res.rendervar.layout.activeLanguages)(function (err, accessMap) {
     debug("renderArticleCommentArea->finalFunction");
     if (err) return next(err);
     // Overwrite Markdown Renderer from layout module, with renderer supporting access map
-    const markdown = osmbcMarkdown({ target: "editor" }, result.accessMap);
+    const markdown = osmbcMarkdown({ target: "editor" }, accessMap);
     res.rendervar.layout.md_renderInline = (text) => markdown.renderInline(text ?? "");
-
-
 
     const rendervars = {
       layout: res.rendervar.layout,
       article: article,
       params: params,
-      accessMap: result.accessMap
-
+      accessMap: accessMap
     };
-    renderFile(resolve(config.getDirName(), "views", "article", "commentArea.pug"), rendervars, function(err, commentArea) {
-      if (err) config.logger.error(err);
+    res.render("article/commentArea", rendervars, function(err, commentArea) {
       if (err) return next(err);
       res.json({ "#commentArea": commentArea });
     });
-  }
-  );
+  });
 }
 
 
@@ -373,27 +360,17 @@ function renderArticleIdVotesBlog(req, res, next) {
   // the route takes any second path part, e.g. a mistyped or relative url
   if (!vote) return next();
 
-  auto({ },
-    function (err) {
-      debug("renderArticleIdVotes->finalFunction");
-
-      if (err) return next(err);
-
-
-      const rendervars = {
-        layout: res.rendervar.layout,
-        article: article,
-        vote: vote
-      };
-
-      renderFile(resolve(config.getDirName(), "views", "voteLabel.pug"), rendervars, function(err, result) {
-        if (err) config.logger.error(err);
-        if (err) return next(err);
-        const v = {};
-        v["#vote_" + voteName + "_" + article.id] = result;
-        res.json(v);
-      });
-    });
+  const rendervars = {
+    layout: res.rendervar.layout,
+    article: article,
+    vote: vote
+  };
+  res.render("voteLabel", rendervars, function(err, result) {
+    if (err) return next(err);
+    const v = {};
+    v["#vote_" + voteName + "_" + article.id] = result;
+    res.json(v);
+  });
 }
 
 
