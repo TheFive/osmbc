@@ -19,6 +19,7 @@
 - comments: check @mentions literally everywhere [#986](https://github.com/TheFive/osmbc/issues/986)
 - comments: let a mentioned guest answer the comment
 - security: look up users by exact value [#1188](https://github.com/TheFive/osmbc/issues/1188)
+- db: keep secrets out of the slow-query log
 
 ## [4.10.0](https://github.com/TheFive/osmbc/tree/4.10.0) (2026-11-22)
 
