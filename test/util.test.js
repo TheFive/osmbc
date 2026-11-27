@@ -175,6 +175,18 @@ describe("util", function() {
       const r = mdRenderInline("@ende is telling @user1 about @user2", { ende: "full", user1: "denied", user2: "guest", en: "full" });
       should(r).eql('<p><a href="https://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling <a href="https://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="https://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');
     });
+    it("should colour a mixed case user name that starts with a language (#986)", function() {
+      const r = mdRenderInline("@derFred and @de", { derFred: "full", DE: "full", ES: "denied", Jones: "guest" });
+      should(r).eql('<p><a href="https://localhost:35043/usert/derFred" class="bg-success" style="color:black" target="_blank" rel="noopener">@derFred</a> and <a href="https://localhost:35043/usert/de" class="bg-success" style="color:black" target="_blank" rel="noopener">@de</a></p>\n');
+    });
+    it("should not colour a name that is only the start of a word", function() {
+      const r = mdRenderInline("@denis is no mention", { DE: "full" });
+      should(r).eql("<p>@denis is no mention</p>\n");
+    });
+    it("should not take the colour of a name that only ends the user name", function() {
+      const r = mdRenderInline("@Jones", { ES: "denied", Jones: "guest" });
+      should(r).eql('<p><a href="https://localhost:35043/usert/Jones" class="bg-warning" style="color:black" target="_blank" rel="noopener">@Jones</a></p>\n');
+    });
     it("should do colour mentions after a linebreak", function() {
       const r = mdRenderInline("@ende is telling \n@user1 about @user2\n", { ende: "full", user1: "denied", user2: "guest", en: "full" });
       should(r).eql('<p><a href="https://localhost:35043/usert/ende" class="bg-success" style="color:black" target="_blank" rel="noopener">@ende</a> is telling\n<a href="https://localhost:35043/usert/user1" class="bg-danger" style="color:black" target="_blank" rel="noopener">@user1</a> about <a href="https://localhost:35043/usert/user2" class="bg-warning" style="color:black" target="_blank" rel="noopener">@user2</a></p>\n');

@@ -92,6 +92,17 @@ describe("model/article", function() {
       should(a.getCommentMention("User", "ES")).eql("other");
     });
 
+    it("should not select language if a mixed case user name starts with it (#986)", function() {
+      const a = createArticleWithComment("@derFred please check");
+      should(a.getCommentMention("Other", "DE")).eql("other");
+      should(a.isMentioned("DE")).be.false();
+      should(a.isMentioned("derFred")).be.true();
+    });
+    it("should match user names with regex characters literally", function() {
+      const a = createArticleWithComment("ping @a.b(c please");
+      should(a.isMentioned("a.b(c")).be.true();
+      should(a.isMentioned("axb(c")).be.false();
+    });
     it("should select user with space", function() {
       const a = createArticleWithComment("should to something @user name", "Test more");
       should(a.getCommentMention("user name", "ES")).eql("user");
@@ -1677,6 +1688,28 @@ describe("model/article", function() {
       should(blog.getAutoTranslate("EN")).eql(1);
       should(blog.getUnEdited("DE")).eql(1);
       should(blog.getUnEdited("EN")).eql(1);
+    });
+  });
+  describe("inbox mentions of a blog (#986)", function() {
+    it("should not count a mixed case user name as language mention", async function () {
+      await testutil.clearDB();
+      await articleModule.createNewArticle({
+        blog: "MENTIONS",
+        commentStatus: "open",
+        commentList: [{ user: "x", timestamp: "2026-11-20T10:00:00.000Z", text: "@derFred please check" }]
+      });
+      await articleModule.createNewArticle({
+        blog: "MENTIONS",
+        commentStatus: "open",
+        commentList: [{ user: "x", timestamp: "2026-11-20T10:00:00.000Z", text: "@de please check" }]
+      });
+      await blogModule.createNewBlog(testUser, { name: "MENTIONS", status: "edit" }, true);
+      const blog = await blogModule.findOne({ name: "MENTIONS" });
+      const reader = { OSMUser: "reader", mainLang: "DE", secondLang: "EN" };
+      await new Promise((resolve, reject) => blog.calculateDerived(reader, (err) => err ? reject(err) : resolve()));
+      should(blog._userMention.length).eql(0);
+      should(blog._mainLangMention.length).eql(1);
+      should(blog._mainLangMention[0].commentList[0].text).eql("@de please check");
     });
   });
   describe("setAndSave keeps the automated translation marker (#1187)", function() {
