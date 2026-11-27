@@ -69,9 +69,14 @@ const layout = {
   url: config.getValue("url")
 };
 
+// Like Express' "view cache": compiled once in production. renderFile is
+// synchronous, and a comment can send a mail to dozens of users, so
+// compiling for every mail blocks the server for all other requests.
+const cacheMailTemplates = process.env.NODE_ENV === "production";
+
 function renderPugTemplate(templateDir, templateName, data) {
   const templatePath = join(templateDir, templateName);
-  return Promise.resolve(pug.renderFile(templatePath, data));
+  return Promise.resolve(pug.renderFile(templatePath, Object.assign({}, data, { cache: cacheMailTemplates })));
 }
 
 
