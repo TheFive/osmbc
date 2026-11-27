@@ -12,6 +12,7 @@ import { fetchExternalPage } from "../util/externalPage.js";
 import DraftContextRenderer, { DRAFT_MARKER, PLACEHOLDER_PREFIX } from "../render/DraftContextRenderer.js";
 import { CLAUDE_AI } from "./serviceUsers.js";
 import { BAD_REQUEST } from "http-status-codes";
+import { UNPUBLISHED } from "./specialCategories.js";
 
 const debug = _debug("OSMBC:model:firstDraft");
 
@@ -91,7 +92,7 @@ function languageName(lang) {
 
 // Categories an editor sets by hand or that other code fills,
 // never proposed by Claude
-const notForClaude = ["Picture", "Breaking news", "About us", "[Actual Category]", "Weekly exercise:", "Releases", "Upcoming Events", "--unpublished--"];
+const notForClaude = ["Picture", "Breaking news", "About us", "[Actual Category]", "Weekly exercise:", "Releases", "Upcoming Events", UNPUBLISHED];
 
 // The categories Claude may choose, with the description the editors see
 // on the collect page (config "categorydescription"). A category without a

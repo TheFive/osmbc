@@ -16,6 +16,7 @@ import { CONFLICT } from "http-status-codes";
 import blogSyncMerger from "../model/blogSync/blogSyncMerger.js";
 import { withReopenedBlog } from "../model/blogSync/withReopenedBlog.js";
 import { SYNTHETIC_MIGRATION_USER_NAME } from "../notification/migrationFilter.js";
+import { NO_CATEGORY_YET, UNPUBLISHED } from "../model/specialCategories.js";
 
 const debug = _debug("OSMBC:routes:api");
 const publicApiRouter  = express.Router();
@@ -84,7 +85,7 @@ function isPostgresUp(req, res) {
 function collectArticle(req, res, next) {
   debug("collectArticle");
   const changes = {};
-  changes.categoryEN = "-- no category yet --";
+  changes.categoryEN = NO_CATEGORY_YET;
   if (req.body.categoryEN) {
     changes.categoryEN = req.body.categoryEN;
   }
@@ -177,7 +178,7 @@ function collectArticle(req, res, next) {
 function collectArticleLink(req, res, next) {
   debug("collectArticleLink");
   const changes = {};
-  changes.categoryEN = "-- no category yet --";
+  changes.categoryEN = NO_CATEGORY_YET;
   changes.blog = "TBC";
   const collection = encodeURI(req.query.collection);
   if (!req.user) return next(new Error("for collect not defined"));
@@ -1036,7 +1037,7 @@ function applyBlogSync(req, res, next) {
     articleModule.find({ blog: blog.name }, function(err, articles) {
       if (err) return cb(err);
       async.eachSeries(articles, function(article, cbEach) {
-        article.setAndSave(migrationUser, { categoryEN: "--unpublished--", unpublishReason: REPLACE_UNPUBLISH_REASON, version: article.version }, function(err) {
+        article.setAndSave(migrationUser, { categoryEN: UNPUBLISHED, unpublishReason: REPLACE_UNPUBLISH_REASON, version: article.version }, function(err) {
           if (err) {
             result.errors.push({ id: article.id, error: "trash(unpublish): " + err.message });
             return cbEach();

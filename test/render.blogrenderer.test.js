@@ -745,7 +745,7 @@ describe("render/blogrenderer", function () {
             should(result).not.containEql("Warning: This export contains empty Articles");
         });
 
-        it("should return only front text for not-closed blog when onlyClosed is true", function () {
+        it("should return only the front text with renderHeaderOnly", function () {
             const htmlRenderer = BlogRenderer.createRenderer("HTML", createBlog(false));
             const articleData = {
                 articles: { News: [] },
@@ -753,8 +753,37 @@ describe("render/blogrenderer", function () {
                 containsEmptyArticlesWarning: true,
             };
 
-            const result = htmlRenderer.renderBlog("DE", articleData, true);
+            const result = htmlRenderer.renderHeaderOnly("DE", articleData);
             should(result).equal('<meta charset="utf-8"/>\n');
+        });
+
+        it("should leave articleData unchanged, so a second render gives the same text", function () {
+            const htmlRenderer = BlogRenderer.createRenderer("HTML", createBlog(true));
+            const article = articleModule.create({ id: 3, blog: "WN999", categoryEN: "News", markdownDE: "Text" });
+            const missing = articleModule.create({ id: 4, blog: "WN999", categoryEN: "Unknown", markdownDE: "Anderer" });
+            const articleData = {
+                articles: { News: [article], Unknown: [missing], "--unpublished--": [], "-- no category yet --": [] },
+                teamString: "",
+                containsEmptyArticlesWarning: false,
+            };
+
+            const first = htmlRenderer.renderBlog("DE", articleData);
+            should(Object.keys(articleData.articles)).eql(["News", "Unknown", "--unpublished--", "-- no category yet --"]);
+            should(htmlRenderer.renderBlog("DE", articleData)).equal(first);
+            should(first).containEql("Blog Missing Cat: Unknown");
+            should(first).not.containEql("Blog Missing Cat: --unpublished--");
+            should(first).not.containEql("Blog Missing Cat: -- no category yet --");
+        });
+
+        it("should render a category listed twice in the blog only once", function () {
+            const blog = createBlog(true);
+            blog.getCategories = () => [{ EN: "News", DE: "News" }, { EN: "News", DE: "News" }];
+            const htmlRenderer = BlogRenderer.createRenderer("HTML", blog);
+            const article = articleModule.create({ id: 5, blog: "WN999", categoryEN: "News", markdownDE: "Einmal da" });
+            const articleData = { articles: { News: [article] }, teamString: "", containsEmptyArticlesWarning: false };
+
+            const result = htmlRenderer.renderBlog("DE", articleData);
+            should(result.split("Einmal da").length - 1).equal(1);
         });
     });
 

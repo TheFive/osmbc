@@ -317,14 +317,6 @@ class HugoMarkdownRenderer extends MarkdownRenderer {
 
         return text + "\n\n";
     }
-
-    _renderMissingCategory(name, articles) {
-        return super._renderMissingCategory(name, articles);
-    }
-
-    renderBlog(lang, articleData, onlyClosed = false) {
-        return super.renderBlog(lang, articleData, onlyClosed);
-    }
 }
 
 export default HugoMarkdownRenderer;

@@ -197,7 +197,7 @@
   },
   "render/HugoMarkdownRenderer.js": {
     "jsdoc/require-jsdoc": {
-      "count": 15
+      "count": 13
     }
   },
   "render/MarkdownRenderer.js": {

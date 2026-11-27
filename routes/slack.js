@@ -12,6 +12,7 @@ import userModule from "../model/user.js";
 import htmlTitle from "../model/htmltitle.js";
 import articleModule from "../model/article.js";
 import _debug from "debug";
+import { NO_CATEGORY_YET } from "../model/specialCategories.js";
 const router   = Router();
 const debug = _debug("OSMBC:routes:slack");
 
@@ -118,7 +119,7 @@ function postSlackCreateUseTBC(req, res, next) {
       title: title,
       collection: url,
       firstCollector: req.user.OSMUser,
-      categoryEN: "-- no category yet --",
+      categoryEN: NO_CATEGORY_YET,
       blog: blog
     };
     articleModule.createNewArticle(function(err, result) {

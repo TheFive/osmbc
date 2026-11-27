@@ -504,7 +504,7 @@ describe("router/api blogSync (Blog-Sync-Merger)", function() {
     });
   });
 
-  describe("POST /blogSync/apply (write endpoint) - close<LANG> flags (see render/Renderer.js's onlyClosed gate)", function() {
+  describe("POST /blogSync/apply (write endpoint) - close<LANG> flags (open languages are exported header only, see model/blog.js)", function() {
     let articleId;
 
     beforeEach(function(bddone) {
