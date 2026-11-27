@@ -587,7 +587,10 @@ function findExact(field, value, callback) {
       error.status = BAD_REQUEST;
       return cb(error);
     }
-    pgMap.find({ table: "usert", create: create }, { sql: "where data->>'" + field + "' = $1", params: [value] }, cb);
+    // the value may be a secret (API key) or personal data (mail address)
+    const params = [value];
+    params.hideInLog = true;
+    pgMap.find({ table: "usert", create: create }, { sql: "where data->>'" + field + "' = $1", params: params }, cb);
   }
   if (callback) return _findExact(callback);
   return new Promise((resolve, reject) => _findExact((err, result) => err ? reject(err) : resolve(result)));

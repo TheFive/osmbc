@@ -125,6 +125,15 @@ describe("model/user", function() {
           should(await userModule.findExact("OSMUser", name)).eql([], name);
         }
       });
+      it("should keep the value out of the slow-query log", async function() {
+        const spy = sinon.spy(db, "query");
+        try {
+          await userModule.findExact("apiKey", "secret");
+          should(spy.firstCall.args[1].hideInLog).be.true();
+        } finally {
+          spy.restore();
+        }
+      });
       it("should reject a value that is not a text", async function() {
         await should(userModule.findExact("OSMUser", ["Test"])).be.rejectedWith({ status: 400 });
       });
