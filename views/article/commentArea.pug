@@ -27,9 +27,14 @@ if (article.commentList)
           //- away from the name
           div.d-flex.flex-wrap.align-items-center.column-gap-2
             b=comment.user
-            span.text-body-secondary.small=layout.moment(comment.timestamp).fromNow()
+            //- osmbc_staff.js showCommentTimes: date in the browser's timezone
+            //- from 24 hours on, the exact time as tooltip (#952)
+            time.text-body-secondary.small(datetime=layout.moment(comment.timestamp).toISOString() data-comment-time="")=layout.moment(comment.timestamp).fromNow()
             if (comment.editstamp)
-              i.text-body-secondary.small="edit: " + layout.moment(comment.editstamp).fromNow()
+              i.text-body-secondary.small
+                | edit:
+                |
+                time(datetime=layout.moment(comment.editstamp).toISOString() data-comment-time="")=layout.moment(comment.editstamp).fromNow()
             if layout.user.OSMUser === comment.user && params.editComment != i
               button.btn.btn-link.osmbc-tap-square(type="button" id="EditComment"+i data-redraw=commentAreaUrl + "?editComment=" + i aria-label="Edit comment" title="Edit comment")
                 i.fa.fa-pencil
