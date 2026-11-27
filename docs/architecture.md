@@ -243,6 +243,48 @@ field with the language code as suffix (`markdownDE` on the article,
 `exportedEN`, `closeEN` on the blog …), so a
 language id must never be renamed once it holds data.
 
+### Text status of an article: one rule
+
+Whether a text counts as written is decided in one place:
+`Article.textStatus(lang)` in `model/article.js` returns `unpublished`
+(not counted), `noTranslation`, `unwritten` (no text yet, or still in
+`-- no category yet --`) or `written`. Everything that counts or selects
+texts uses it:
+
+* the blog's status counts (`Blog.calculateStatus`: `getUnEdited`,
+  `getWritten`, `getExpected`, `getNoTranslate`) and the automated
+  translation count (`Blog.calculateAutoTranslate`), shown in the menu
+  bar, the start page status table, the blog header and the blog list;
+* the article list filters `writtenLang` / `unwrittenLang`
+  (`routes/article.js`), the targets of the start page table links — so
+  the number on a badge and the length of the list behind it match.
+
+Rules for changes:
+
+* Change the rule in `textStatus` only, never in a caller.
+* A second implementation of the same rule (e.g. a SQL query that counts
+  without loading the articles) is listed here with its file, and a test
+  compares its result with `textStatus` on the same data (as
+  `test/model.navbarBlogs.test.js` does for the cached counts). Both are
+  changed in the same commit.
+
+The same applies to the inbox mentions (`Blog.mentionsFor`, rule in
+`mentionKind` in `model/blog.js`: a direct mention of the user wins, then
+the main language or `@all`, then the second language).
+
+### Menu bar data is cached
+
+`routes/layout.js` runs for every page and shows the TBC, open and edit
+blogs with their counts. `model/navbarBlogs.js` keeps them with the part
+of the derived data that is the same for every user; the user's mentions
+come from `Blog.mentionsFor` per request. The cache is dropped after every
+write to `article`, `blog` or `changes` in the process
+(`model/tableWrites.js`, reported by `pgMap.save`/`remove`/`createTables`
+and `logModule.log`) and after 60 seconds at the latest, for writes by
+another process. Code that writes these tables with its own SQL must call
+`reportTableWrite`. The cached blogs and articles are shared between
+requests: read only, never save them.
+
 ## Output: rendering and export
 
 `render/BlogRenderer.js` `createRenderer(type, blog)` returns the

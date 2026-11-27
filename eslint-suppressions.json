@@ -23,16 +23,13 @@
   },
   "model/blog.js": {
     "complexity": {
-      "count": 4
+      "count": 3
     },
     "jsdoc/require-jsdoc": {
-      "count": 43
-    },
-    "max-depth": {
-      "count": 1
+      "count": 42
     },
     "max-lines-per-function": {
-      "count": 3
+      "count": 2
     },
     "max-params": {
       "count": 1

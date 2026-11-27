@@ -15,6 +15,7 @@ import moment from "moment";
 import auth from "../routes/auth.js";
 import translator from "../model/translator.js";
 import blogTransitionScheduler from "../model/blogTransitionScheduler.js";
+import navbarBlogs from "../model/navbarBlogs.js";
 
 const debug = _debug("OSMBC:routes:index");
 
@@ -24,6 +25,12 @@ const router = express.Router();
 
 const appName = config.getValue("AppName", { mustExist: true });
 /* GET home page. */
+
+// the blog status table (mixin blogStatusTable) shows automated
+// translations, which the menu bar blogs only count on request
+function statusTableCounts(layout) {
+  return (cb) => navbarBlogs.calculateAutoTranslate([...layout.listOfOpenBlog, ...layout.editBlog], cb);
+}
 
 function renderHome(req, res, next) {
   debug("renderHome");
@@ -44,7 +51,8 @@ function renderHome(req, res, next) {
     fullVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "full" }, { column: "OSMUser", desc: false }),
     guestVisitorsToday: userModule.find.bind(userModule, { lastAccess: ">" + todayStart.toISOString(), access: "guest" }, { column: "OSMUser", desc: false }),
     newUsers: userModule.getNewUsers.bind(userModule),
-    nextActions: blogTransitionScheduler.getNextActions
+    nextActions: blogTransitionScheduler.getNextActions,
+    statusTable: statusTableCounts(res.rendervar.layout)
   }, function(err, result) {
     if (err) return next(err);
 
@@ -77,7 +85,8 @@ function renderGuestHome(req, res, next) {
   todayStart.setSeconds(0);
 
   async.auto({
-    articles: articleModule.find.bind(articleModule, { firstCollector: req.user.OSMUser }, { column: "blog", desc: true })
+    articles: articleModule.find.bind(articleModule, { firstCollector: req.user.OSMUser }, { column: "blog", desc: true }),
+    statusTable: statusTableCounts(res.rendervar.layout)
   }, function(err, result) {
     if (err) return next(err);
     res.set("content-type", "text/html");

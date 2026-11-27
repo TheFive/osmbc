@@ -21,7 +21,7 @@ import logModule from "../model/logModule.js";
 import configModule from "../model/config.js";
 import pgMap from "../model/pgMap.js";
 import translator from "../model/translator.js";
-import { UNPUBLISHED } from "./specialCategories.js";
+import { NO_CATEGORY_YET, UNPUBLISHED } from "./specialCategories.js";
 
 const debug = _debug("OSMBC:model:article");
 
@@ -862,6 +862,25 @@ class Article {
 
   isNoTranslation(lang) {
     return (this["markdown" + lang] && this["markdown" + lang] === "no translation");
+  }
+
+  /**
+   * Status of the text in `lang` as the blog counts it (status badges,
+   * start page table, menu bar) and the article list filters
+   * `writtenLang` / `unwrittenLang` select it — the one place of this
+   * rule, see docs/architecture.md "Text status of an article".
+   * "unpublished": not counted at all; "noTranslation": left untranslated
+   * on purpose; "unwritten": no text yet, or still without a category;
+   * "written": everything else.
+   * @param {string} lang language key, e.g. "DE"
+   * @returns {string} "unpublished", "noTranslation", "unwritten" or "written"
+   */
+  textStatus(lang) {
+    if (this.categoryEN === UNPUBLISHED) return "unpublished";
+    const m = this["markdown" + lang];
+    if (m === "no translation") return "noTranslation";
+    if (!m || this.categoryEN === NO_CATEGORY_YET) return "unwritten";
+    return "written";
   }
 }
 

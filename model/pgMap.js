@@ -6,6 +6,7 @@ import util from "../util/util.js";
 
 import { series, each, eachOf } from "async";
 import _debug from "debug";
+import { reportTableWrite } from "./tableWrites.js";
 const debug = _debug("OSMBC:model:pgMap");
 const sqldebug  = _debug("OSMBC:model:sql");
 
@@ -208,11 +209,16 @@ function save(options, callback) {
       );
     }
   }
+  // report every write attempt, also a failed one (see model/tableWrites.js)
+  const reported = (cb) => (err, result) => {
+    reportTableWrite(self.getTable());
+    cb(err, result);
+  };
   if (callback) {
-    return _save(options, callback);
+    return _save(options, reported(callback));
   }
   return new Promise((resolve, reject) => {
-    _save(options, (err, result) => err ? reject(err) : resolve(result));
+    _save(options, reported((err, result) => err ? reject(err) : resolve(result)));
   });
 }
 
@@ -229,7 +235,10 @@ function remove(callback) {
   // we have to change the beer
   debug("call delete");
 
-  db.query("delete from " + table + " where id = $1", [self.id], callback);
+  db.query("delete from " + table + " where id = $1", [self.id], function(err, result) {
+    reportTableWrite(table);
+    callback(err, result);
+  });
 }
 
 function convertResultFunction(module, callback) {
@@ -427,7 +436,10 @@ function createTables(pgObject, options, analyse, callback) {
         debug("tabledrop");
         if (options.verbose)config.logger.info("Drop Table " + pgObject.table);
         const dropString = "DROP TABLE IF EXISTS " + pgObject.table + " CASCADE";
-        db.query(dropString, cb);
+        db.query(dropString, function(err) {
+          reportTableWrite(pgObject.table);
+          cb(err);
+        });
       } else return cb();
     },
     function tablecreation(cb) {
