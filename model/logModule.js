@@ -14,6 +14,63 @@ const debug = _debug("OSMBC:model:logModule");
 
 const maxDiffLength = config.getValue("MaxDiffLength", { mustExist: true });
 
+// htmlDiffText results per "id:maxChars", least recently used first
+const DIFF_CACHE_SIZE = 5000;
+const diffCache = new Map();
+
+const stripSpaces = (text) => text.replace(/\s+/g, "");
+
+// "only spaces added" / "only spaces removed", or null. Such a change keeps
+// the text without white space, so for any other change the expensive
+// character diff is not needed (same answer, see htmlDiffText).
+function onlySpacesNote(change, from, to) {
+  if (stripSpaces(from) !== stripSpaces(to)) return null;
+  const diffTool = (change.table === "config") ? diffLines : diffChars;
+  let onlySpacesAdd = true;
+  let onlySpacesDel = true;
+  diffTool(from, to).forEach(function (part) {
+    const partOnlySpace = (part.value.trim() === "");
+    if (part.removed) {
+      onlySpacesAdd = false;
+      if (!partOnlySpace) onlySpacesDel = false;
+    }
+    if (part.added) {
+      onlySpacesDel = false;
+      if (!partOnlySpace) onlySpacesAdd = false;
+    }
+  });
+  if (onlySpacesAdd) return '<span class="osmbc-inserted">ONLY SPACES ADDED</span>';
+  if (onlySpacesDel) return '<span class="osmbc-deleted">Only spaces removed</span>';
+  return null;
+}
+
+function htmlDiff(change, maxChars) {
+  const from = change.from ? String(change.from) : "";
+  const to = change.to ? String(change.to) : "";
+
+  if (from.length > maxDiffLength || to.length > maxDiffLength) {
+    return "Disabled for texts longer than " + maxDiffLength.toString() + " chars.";
+  }
+  if (from === to) return "<span>no change</span>";
+  const note = onlySpacesNote(change, from, to);
+  if (note) return note;
+
+  let result = "";
+  let chars = (maxChars === undefined) ? 9999999 : maxChars;
+  diffWordsWithSpace(from, to).forEach(function (part) {
+    // green for additions, red for deletions, grey for common parts
+    let styleColor = 'style="color:grey"';
+    if (part.added) styleColor = 'class="osmbc-inserted"';
+    if (part.removed) styleColor = 'class="osmbc-deleted"';
+    let partstr = part.value;
+    if (!(part.added || part.removed)) partstr = "…";
+    partstr = partstr.substring(0, chars);
+    chars -= Math.max(0, partstr.length);
+    result += "<span " + styleColor + ">" + partstr + "</span>\n";
+  });
+  return result;
+}
+
 class Change {
   constructor(proto) {
     debug("Change");
@@ -23,70 +80,31 @@ class Change {
     }
   }
 
+  /**
+   * The change as coloured HTML (inserted / deleted words, common parts as
+   * "…"), at most `maxChars` characters of changed text; "only spaces"
+   * changes and texts longer than MaxDiffLength get a short note instead.
+   * A stored change never changes, so the result is kept per id and
+   * length (DIFF_CACHE_SIZE entries); diffing long texts is the most
+   * expensive part of an article page with a long history.
+   * @param {number} [maxChars] limit of the shown changed text
+   * @returns {string} HTML
+   */
   htmlDiffText(maxChars) {
     debug("htmlDiffText");
-    let from = "";
-    let to = "";
-
-    if (this.from) from = String(this.from);
-    if (this.to) to = String(this.to);
-
-    if (from.length > maxDiffLength || to.length > maxDiffLength) {
-      return "Disabled for texts longer than " + maxDiffLength.toString() + " chars.";
+    if (!this.id) return htmlDiff(this, maxChars);
+    const key = this.id + ":" + maxChars;
+    let result = diffCache.get(key);
+    if (result === undefined) {
+      result = htmlDiff(this, maxChars);
+      if (diffCache.size >= DIFF_CACHE_SIZE) diffCache.delete(diffCache.keys().next().value);
+    } else {
+      diffCache.delete(key); // re-insert below: most recently used last
     }
-
-    // first check on only spaces
-    let diffTool = diffChars;
-    if (this.table === "config") {
-      diffTool = diffLines;
-    }
-    let diff = diffTool(from, to);
-    let onlySpacesAdd = true;
-    let onlySpacesDel = true;
-    if (from === to) {
-      return "<span>no change</span>";
-    }
-    diff.forEach(function (part) {
-      const partOnlySpace = (part.value.trim() === "");
-      if (part.removed) {
-        onlySpacesAdd = false;
-        if (!partOnlySpace) onlySpacesDel = false;
-      }
-
-      if (part.added) {
-        onlySpacesDel = false;
-        if (!partOnlySpace) onlySpacesAdd = false;
-      }
-    });
-    if (onlySpacesAdd) {
-      return '<span class="osmbc-inserted">ONLY SPACES ADDED</span>';
-    }
-    if (onlySpacesDel) {
-      return '<span class="osmbc-deleted">Only spaces removed</span>';
-    }
-    diff = diffWordsWithSpace(from, to);
-
-    let result = "";
-    let chars = maxChars;
-    if (chars === undefined) chars = 9999999;
-    diff.forEach(function (part) {
-      // green for additions, red for deletions
-      // grey for common parts
-      let styleColor = 'style="color:grey"';
-      if (part.added) {
-        styleColor = 'class="osmbc-inserted"';
-      }
-      if (part.removed) {
-        styleColor = 'class="osmbc-deleted"';
-      }
-      let partstr = part.value;
-      if (!(part.added || part.removed)) partstr = "…";
-      partstr = partstr.substring(0, chars);
-      chars -= Math.max(0, partstr.length);
-      result += "<span " + styleColor + ">" + partstr + "</span>\n";
-    });
+    diffCache.set(key, result);
     return result;
   }
+
 
   getTable() {
     return "changes";

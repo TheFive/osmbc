@@ -92,6 +92,25 @@ describe("model/changes", function() {
       should(change.htmlDiffText(40)).eql('<span class="osmbc-deleted">Only spaces removed</span>');
     });
 
+    it("should give a stored change the same text from the cache", function() {
+      const proto = { from: "This is The origin text", to: "And This is the changed text" };
+      const expected = new logModule.Class(proto).htmlDiffText(40);
+      const stored = new logModule.Class({ id: 4711, ...proto });
+      should(stored.htmlDiffText(40)).equal(expected);
+      should(stored.htmlDiffText(40)).equal(expected);
+    });
+    it("should keep cached texts of different lengths apart", function() {
+      const stored = new logModule.Class({ id: 4712, from: "This is The origin text", to: "And This is the changed text" });
+      const short = stored.htmlDiffText(5);
+      const long = stored.htmlDiffText(40);
+      should(short).not.equal(long);
+      should(stored.htmlDiffText(5)).equal(short);
+    });
+    it("should find spaces moved to another place as a normal change", function() {
+      const change = new logModule.Class({ from: "a b", to: "ab " });
+      should(change.htmlDiffText(40)).not.containEql("ONLY SPACES");
+      should(change.htmlDiffText(40)).not.containEql("Only spaces");
+    });
     it("should find find changes in long text", function() {
       const markdownDE = fs.readFileSync(path.resolve(config.getDirName(), "test", "data", "model.longmarkdownDE.txt"), "UTF8");
       const markdownDE2 = fs.readFileSync(path.resolve(config.getDirName(), "test", "data", "model.longmarkdownDE2.txt"), "UTF8");
