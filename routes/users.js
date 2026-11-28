@@ -34,13 +34,28 @@ function requestedPage(req) {
   return (Number.isInteger(page) && page > 0) ? page : 1;
 }
 
-// URL of another page of the list, keeping filters and sort order
-function listPageUrl(req, page) {
+// the list's query parameters without the ones named in `drop`
+function listParams(req, drop) {
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(req.query)) {
-    if (k !== "page" && typeof v === "string") params.set(k, v);
+    if (!drop.includes(k) && typeof v === "string") params.set(k, v);
   }
+  return params;
+}
+
+// URL of another page of the list, keeping filters, search and sort order
+function listPageUrl(req, page) {
+  const params = listParams(req, ["page"]);
   params.set("page", String(page));
+  return htmlroot + "/usert/list?" + params.toString();
+}
+
+// URL of the list sorted by another column, keeping filters and search;
+// sorting starts again at page 1
+function listSortUrl(req, column, desc) {
+  const params = listParams(req, ["page", "sort", "desc"]);
+  params.set("sort", column);
+  if (desc) params.set("desc", "true");
   return htmlroot + "/usert/list?" + params.toString();
 }
 
@@ -73,7 +88,7 @@ function renderList(req, res, next) {
     if (req.query.temporaryGuest === "false") query.temporaryGuest = false;
   }
 
-  userModule.find(query, sort, function(err, allUsers) {
+  userModule.search(query, sort, req.query.search, function(err, allUsers) {
     if (err) return next(err);
     const pages = Math.max(1, Math.ceil(allUsers.length / USERS_PER_PAGE));
     const page = Math.min(requestedPage(req), pages);
@@ -89,8 +104,11 @@ function renderList(req, res, next) {
       res.set("content-type", "text/html");
       res.render("userList", {
         layout: res.rendervar.layout,
-        query: query,
         users: users,
+        search: req.query.search ?? "",
+        // filters and sort order the search form sends along
+        keptParams: [...listParams(req, ["page", "search"])],
+        sortUrl: (column, desc) => listSortUrl(req, column, desc),
         paging: {
           page: page,
           pages: pages,

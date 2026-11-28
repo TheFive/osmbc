@@ -131,6 +131,43 @@ describe("router/user", function() {
       should(body.indexOf(">User150</a>")).be.below(body.indexOf(">TestUser</a>"));
     });
   });
+  describe("routes GET /list with search", function() {
+    const url = baseLink + "/usert/list";
+    beforeEach(function(bddone) {
+      const user = [{ OSMUser: "TestUser", access: "full", id: 1 },
+        { OSMUser: "FreshGuest", access: "guest", SlackUser: "fresh-mm" },
+        { OSMUser: "OtherGuest", access: "guest" }];
+      for (let i = 0; i < 120; i++) user.push({ OSMUser: "Mapper" + String(i).padStart(3, "0"), access: "guest" });
+      testutil.importData({ user: user, clear: true }, bddone);
+    });
+    async function listPage(query) {
+      const client = testutil.getWrappedAxiosClient();
+      await client.post(baseLink + "/login", { username: "TestUser", password: "TestUser" });
+      return client.get(url + query);
+    }
+    it("should show only the users that match and say how many", async function () {
+      const body = (await listPage("?access=guest&search=fresh")).data;
+      should(body).containEql(">FreshGuest</a>");
+      should(body).not.containEql(">OtherGuest</a>");
+      should(body).containEql('<p id="userSearchCount">1 user found</p>');
+      should(body).containEql('value="fresh"');
+    });
+    it("should find the Mattermost name", async function () {
+      should((await listPage("?search=FRESH-MM")).data).containEql(">FreshGuest</a>");
+    });
+    it("should keep the search in the page and sort links and the filter in the form", async function () {
+      const body = (await listPage("?access=guest&search=mapper&page=2")).data;
+      should(body).containEql("Page 2 of 2 (120 users)");
+      should(body).containEql('id="previousPage" href="/usert/list?access=guest&amp;search=mapper&amp;page=1"');
+      should(body).containEql('id="sortWeeklyAuthor" href="/usert/list?access=guest&amp;search=mapper&amp;sort=mdWeeklyAuthor"');
+      should(body).containEql('<input type="hidden" name="access" value="guest">');
+      should(body).not.containEql('name="page"');
+    });
+    it("should answer 400 for a search that is not a text", async function () {
+      const response = await listPage("?search=a&search=b");
+      should(response.status).eql(HttpStatus.BAD_REQUEST);
+    });
+  });
   describe("routes GET /create", function() {
     const url = baseLink + "/usert/create";
     it("should create a new user", async function () {

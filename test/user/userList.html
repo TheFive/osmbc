@@ -47,6 +47,9 @@
         <row></row>
       </p>
       <div>
+        <form class="d-flex flex-wrap align-items-end gap-2 my-2" id="userSearch" method="get" action="/usert/list"><input type="hidden" name="access" value="full"><input type="hidden" name="sort" value="mdWeeklyAuthor">
+          <div class="flex-grow-1"><label class="form-label" for="userSearchText">Search OSM name, author name or Mattermost name</label><input class="form-control" id="userSearchText" type="search" name="search" value="" maxlength="100"></div><button class="btn btn-primary" id="userSearchButton" type="submit">Search</button>
+        </form>
         <table class="table table-striped table-responsive">
           <thead>
             <tr>

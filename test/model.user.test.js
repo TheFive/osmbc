@@ -142,6 +142,42 @@ describe("model/user", function() {
         should((await userModule.findExact("OSMUser", "IN(TheFive)")).length).eql(1);
       });
     });
+    describe("search", function() {
+      function search(query, text) {
+        return new Promise((resolve, reject) => userModule.search(query, { column: "OSMUser" }, text,
+          (err, users) => err ? reject(err) : resolve(users.map(u => u.OSMUser))));
+      }
+      before(async function() {
+        await userModule.createNewUser({ OSMUser: "NewMapper", access: "guest", SlackUser: "nm-chat" });
+        await userModule.createNewUser({ OSMUser: "OldHand", access: "full", mdWeeklyAuthor: "[Mapper Max](https://example.org)" });
+        await userModule.createNewUser({ OSMUser: "50%Mapper", access: "denied" });
+      });
+      it("should find a part of the OSM name, ignoring case", async function() {
+        should(await search({}, "newmap")).eql(["NewMapper"]);
+      });
+      it("should find the blog author name and the Mattermost name", async function() {
+        should(await search({}, " MAPPER ")).eql(["50%Mapper", "NewMapper", "OldHand"]);
+        should(await search({}, "nm-chat")).eql(["NewMapper"]);
+      });
+      it("should combine the search with the filter", async function() {
+        should(await search({ access: "full" }, "mapper")).eql(["OldHand"]);
+        should(await search({ access: "guest" }, "mapper")).eql(["NewMapper"]);
+      });
+      it("should keep all users for an empty or missing text", async function() {
+        const all = await search({});
+        should(all.length).be.above(4);
+        should(await search({}, "  ")).eql(all);
+      });
+      it("should read the text as plain text, not as an operator (#1188)", async function() {
+        should(await search({}, "%")).eql(["50%Mapper"]);
+        should(await search({}, "<")).eql([]);
+        should(await search({}, "!=x")).eql([]);
+      });
+      it("should reject a text that is not a string or too long", async function() {
+        await should(search({}, ["a", "b"])).be.rejectedWith({ status: 400 });
+        await should(search({}, "x".repeat(101))).be.rejectedWith({ status: 400 });
+      });
+    });
     describe("findById", function() {
       it("should find saved Object", function(bddone) {
         userModule.findById(idToFindLater, function(err, result) {

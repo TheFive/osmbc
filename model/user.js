@@ -596,6 +596,40 @@ function findExact(field, value, callback) {
   return new Promise((resolve, reject) => _findExact((err, result) => err ? reject(err) : resolve(result)));
 }
 
+// fields the user list search looks in: OSM name, blog author name,
+// Mattermost name (feedback often names someone by that one)
+const SEARCH_FIELDS = ["OSMUser", "mdWeeklyAuthor", "SlackUser"];
+const SEARCH_MAX_LENGTH = 100;
+
+function matchesSearchText(user, text) {
+  return SEARCH_FIELDS.some(field => typeof user[field] === "string" && user[field].toLowerCase().includes(text));
+}
+
+/**
+ * Finds users like find() and keeps only those whose OSM name, blog author
+ * name or Mattermost name contains the search text, ignoring case. The
+ * text is compared as plain text, never read as an operator (see #1188).
+ * An empty or missing text keeps all users.
+ * @param {object} query filter passed to find() (from code, not the request)
+ * @param {object} sort sort order passed to find()
+ * @param {string} [text] search text from the request; anything but a
+ *   string, or more than 100 characters, is rejected with status 400
+ * @param {Function} callback (err, users)
+ */
+function search(query, sort, text, callback) {
+  if (typeof text !== "undefined" && (typeof text !== "string" || text.length > SEARCH_MAX_LENGTH)) {
+    const error = new Error("Search text must be a text of at most " + SEARCH_MAX_LENGTH + " characters");
+    error.status = BAD_REQUEST;
+    return callback(error);
+  }
+  const needle = (text ?? "").trim().toLowerCase();
+  find(query, sort, function (err, users) {
+    if (err) return callback(err);
+    if (needle === "") return callback(null, users);
+    return callback(null, users.filter(user => matchesSearchText(user, needle)));
+  });
+}
+
 function findById(id, callback) {
   function _findById(id, callback) {
     debug("findById %s", id);
@@ -788,6 +822,7 @@ const userModule = {
   findById: findById,
   find: find,
   findExact: findExact,
+  search: search,
   migrateData: migrateData,
   create: create,
   createNewUser: createNewUser,
