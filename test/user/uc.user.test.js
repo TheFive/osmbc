@@ -254,6 +254,22 @@ describe("views/user", function() {
 
     await testutil.expectHtml(driver, "user", "userList");
   });
+  it("should find a user in the list by a part of the name", async function() {
+    await userModule.createNewUser({ OSMUser: "FreshGuest", access: "guest" });
+    await userModule.createNewUser({ OSMUser: "OtherGuest", access: "guest", SlackUser: "fresh-mm" });
+    await userModule.createNewUser({ OSMUser: "Unrelated", access: "guest" });
+
+    const osmbcApp = new OsmbcApp(driver);
+    await osmbcApp.openUserListPage("guest");
+    const userListPage = osmbcApp.getUserListPage();
+    await userListPage.searchFor("fresh");
+    should(await userListPage.getShownUserNames()).eql(["FreshGuest", "OtherGuest"]);
+    should(await userListPage.getSearchCount()).eql("2 users found");
+
+    // the filter (guests) stays, sorting keeps the search
+    await userListPage.clickSortByWeeklyAuthor();
+    should((await userListPage.getShownUserNames()).sort()).eql(["FreshGuest", "OtherGuest"]);
+  });
 });
 
 

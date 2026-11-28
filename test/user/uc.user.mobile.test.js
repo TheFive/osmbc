@@ -5,6 +5,7 @@ import testutil from "../testutil.js";
 import userModule, { avatarTest } from "../../model/user.js";
 import util from "../../util/util.js";
 import UserPage from "../PageObjectModel/userPage.js";
+import OsmbcApp from "../PageObjectModel/osmbcApp.js";
 
 const osmbcLink = util.osmbcLink;
 
@@ -41,6 +42,16 @@ describe("uc/user on small screens", function() {
     await userPage.fillMdWeeklyAuthor("Mobile Author");
     await userPage.clickSave();
     await driver.wait(async () => (await userModule.findOne({ OSMUser: "TheFive" })).mdWeeklyAuthor === "Mobile Author", 5000, "not saved");
+  });
+  it("should search the user list with a tap-sized field and button", async function() {
+    await userModule.createNewUser({ OSMUser: "FreshGuest", access: "guest" });
+    driver = await testutil.getNewDriver("TheFive", { device: "phone" });
+    const osmbcApp = new OsmbcApp(driver);
+    await osmbcApp.openUserListPage("guest");
+    const userListPage = osmbcApp.getUserListPage();
+    should(await userListPage.tapTargetsTooSmall("#userSearchText, #userSearchButton")).eql([]);
+    await userListPage.searchFor("FRESH");
+    should(await userListPage.getShownUserNames()).eql(["FreshGuest"]);
   });
   it("should show the placeholder for an avatar that does not load", async function() {
     driver = await testutil.getNewDriver("TheFive", { device: "phone" });

@@ -17,20 +17,28 @@ block content
 
   row
     div
+      //- search within the chosen list (filters and sort order stay)
+      form#userSearch.d-flex.flex-wrap.align-items-end.gap-2.my-2(method="get" action=layout.htmlroot + "/usert/list")
+        each param in keptParams
+          input(type="hidden" name=param[0] value=param[1])
+        div.flex-grow-1
+          label.form-label(for="userSearchText") Search OSM name, author name or Mattermost name
+          input.form-control#userSearchText(type="search" name="search" value=search maxlength="100")
+        button.btn.btn-primary#userSearchButton(type="submit") Search
+      if search !== "" && paging.pages <= 1
+        p#userSearchCount=paging.total + (paging.total === 1 ? " user found" : " users found")
       +userListPaging(paging)
       table.table.table-striped.table-responsive
-        - var params="?";
-        - for (k in query) params+=k+"="+query[k]+"&";
         thead
           tr
             th="color"
             th
-              a(href=layout.htmlroot+"/usert/list"+params+"sort=OSMUser") Name
+              a(href=sortUrl("OSMUser")) Name
             th="OSM"
             th
-              a(id="sortWeeklyAuthor" href=layout.htmlroot+"/usert/list"+params+"sort=mdWeeklyAuthor") WeeklyAuthor
+              a(id="sortWeeklyAuthor" href=sortUrl("mdWeeklyAuthor")) WeeklyAuthor
             th
-              a(id="sortOSMBCChanges" href=layout.htmlroot+"/usert/list"+params+"sort=OSMBC-changes")="OSMBC Changes"
+              a(id="sortOSMBCChanges" href=sortUrl("OSMBC-changes"))="OSMBC Changes"
             th
               | Email
             th
@@ -42,11 +50,11 @@ block content
             th
               | Status
             th
-              a(href=layout.htmlroot+"/usert/list"+params+"sort=language") Language
+              a(href=sortUrl("language")) Language
             th
               | access
             th
-              a(href=layout.htmlroot+"/usert/list"+params+"sort=lastAccess&desc=true") lastAccess
+              a(href=sortUrl("lastAccess", true)) lastAccess
 
         tbody
           each user in users
@@ -58,7 +66,7 @@ block content
                 if (user.OSMUser  && user.OSMUser != '')
                   a(href=layout.htmlroot+'/usert/' + user.id)=user.OSMUser
                 else
-                  a(href=layout.htmlroot+'/usert/' user.id) Missing Name
+                  a(href=layout.htmlroot+'/usert/' + user.id) Missing Name
               td
                  a(href='http://www.openstreetmap.org/user/' + user.OSMUser) [OSM]
               td

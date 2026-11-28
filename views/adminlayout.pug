@@ -2,7 +2,8 @@ include mixins
 
 block all
   doctype html
-  html(lang='en')
+  //- osmbc-mobile: CSS rules for mobile mode (style.css), as in layout.pug
+  html(lang='en' class=(typeof layout !== "undefined" && layout && layout.mobileView) ? "osmbc-mobile" : undefined)
     head
       meta(charset='utf-8')
       meta(http-equiv='X-UA-Compatible', content='IE=edge')
