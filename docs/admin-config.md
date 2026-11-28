@@ -155,6 +155,48 @@ Which OSMCAL events the "Upcoming Events" article shows, per language:
 | `excludeCountries` / `includeCountries` | Country codes to leave out / to show only. |
 | `enableCountryFlags` | `true`: country flags from `calendarflags` in the table. |
 
+## `firstdraftprompt` — First Draft Prompt (Claude)
+
+*First Draft* lets Claude write a first draft of an item from a collected
+link. The text is a starting point: an editor always reads, corrects and
+completes it. The server admin switches the function on in the
+configuration file (`FirstDraftConfig` with an API key, `visibleFor`:
+`full` = all full users, `guest` = full users and guests, or a list of
+OSM user names; see [config.md](config.md)). Only these users see the
+First Draft buttons and this configuration.
+
+Where it appears:
+
+- **Collect page** — after entering a link, the draft is written in the
+  user's language (on a phone: the phone language). For a new link it
+  starts by itself; if the search found the link in other articles, only
+  after a click on *First Draft*, so duplicates are checked first.
+  Claude also proposes a short title and a category; they replace the
+  page title and "-- no category yet --" unless the user changed them.
+  *Save with draft* stores the (edited) draft, *Save link only* stores
+  the link without text. There is no personal switch: everybody in
+  `visibleFor` gets it.
+- **Article page** — menu *First Draft* (on a phone: a button below the
+  empty text field), one entry per empty language and collected link. The
+  draft is saved into the article at once; to discard it, delete the text
+  and save.
+
+Every draft is saved as user `ClaudeAI`, the editor's changes on top of it
+as the editor. So the history shows what Claude wrote and what the
+editors changed; `ClaudeAI` does not appear in the credits. For full users
+Claude also sees the current state of the issue in that language, so that
+the wording of the items varies; guests' drafts are made without it (they
+may not see other editors' texts).
+
+This configuration is the instruction for Claude (system prompt), plain
+text: how an item looks (length, first sentence, tense, where the link
+goes), tone and typography. Improve it when the drafts repeat the same
+mistake, and compare the drafts with the editors' changes in the history.
+Not needed here: the target language, the URL, the page text, the issue
+context and the list of categories, which OSMBC adds to each request
+itself (categories with their description from `categorydescription`; a
+category without a description is never proposed).
+
 ## `helpmenu` — Configure Help Menu
 
 The entries of the help menu (question mark in the navigation bar). A
