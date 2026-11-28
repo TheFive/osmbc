@@ -38,8 +38,7 @@ describe("router/admin config help", function() {
       const source = fs.readFileSync(path.resolve(config.getDirName(), "model", "config.js"), "UTF8");
       const names = [...source.matchAll(/initConfigElement\.bind\(null, "([^"]+)"\)/g)].map(m => m[1]);
       should(names).containEql("slacknotification");
-      // the First Draft prompt is not documented for all editors yet
-      const missing = names.filter(n => n !== "firstdraftprompt" && help.getDocSection("admin-config.md", n) === null);
+      const missing = names.filter(n => help.getDocSection("admin-config.md", n) === null);
       should(missing).eql([]);
     });
     it("should return only the section of one config", function () {
